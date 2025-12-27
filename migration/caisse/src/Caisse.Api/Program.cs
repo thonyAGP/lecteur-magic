@@ -15,6 +15,7 @@ using Caisse.Application.DevisesRef.Queries;
 using Caisse.Application.CaisseDevises.Queries;
 using Caisse.Application.CaisseDevises.Commands;
 using Caisse.Application.Ecarts.Queries;
+using Caisse.Application.Ventes.Queries;
 using Caisse.Infrastructure;
 using MediatR;
 using Serilog;
@@ -280,6 +281,23 @@ try
     .WithName("CalculerEcartSession")
     .WithSummary("Calculate the discrepancy (écart) for a session")
     .WithDescription("Returns detailed breakdown of expected vs counted amounts, including by currency/payment mode")
+    .WithOpenApi();
+
+    // ============ Ventes Endpoints ============
+    var ventes = app.MapGroup("/api/ventes").WithTags("Ventes");
+
+    ventes.MapGet("/solde-giftpass/{societe}/{compte}/{filiation}", async (
+        string societe,
+        int compte,
+        int filiation,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetSoldeGiftPassQuery(societe, compte, filiation));
+        return Results.Ok(result);
+    })
+    .WithName("GetSoldeGiftPass")
+    .WithSummary("Get total Gift Pass balance for a client")
+    .WithDescription("Migrated from Magic Prg_237 - Sums solde_credit_conso from cc_total_par_type table")
     .WithOpenApi();
 
     app.Run();

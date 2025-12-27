@@ -16,6 +16,7 @@ public class CaisseDbContext : DbContext, ICaisseDbContext
     public DbSet<CaisseDevise> Devises => Set<CaisseDevise>();
     public DbSet<CaisseParametres> Parametres => Set<CaisseParametres>();
     public DbSet<DeviseReference> DeviseReferences => Set<DeviseReference>();
+    public DbSet<CcTotalParType> CcTotauxParType => Set<CcTotalParType>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

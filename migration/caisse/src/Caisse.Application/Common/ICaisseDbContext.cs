@@ -13,6 +13,7 @@ public interface ICaisseDbContext
     DbSet<CaisseDevise> Devises { get; }
     DbSet<CaisseParametres> Parametres { get; }
     DbSet<DeviseReference> DeviseReferences { get; }
+    DbSet<CcTotalParType> CcTotauxParType { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
