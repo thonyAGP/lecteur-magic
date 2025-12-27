@@ -20,5 +20,9 @@ public class FermerSessionCommandValidator : AbstractValidator<FermerSessionComm
 
         RuleFor(x => x.SeuilAlerte)
             .GreaterThanOrEqualTo(0).WithMessage("SeuilAlerte ne peut pas etre negatif");
+
+        RuleFor(x => x.CommentaireEcart)
+            .MaximumLength(30).WithMessage("CommentaireEcart max 30 caracteres")
+            .When(x => x.CommentaireEcart != null);
     }
 }

@@ -79,4 +79,20 @@ public class FermerSessionCommandValidatorTests
         var result = _validator.TestValidate(command);
         result.ShouldHaveValidationErrorFor(x => x.SeuilAlerte);
     }
+
+    [Fact]
+    public void Should_Fail_When_CommentaireEcart_TooLong()
+    {
+        var command = new FermerSessionCommand("LISE", 55, CommentaireEcart: "Ce commentaire depasse 30 caracteres limite");
+        var result = _validator.TestValidate(command);
+        result.ShouldHaveValidationErrorFor(x => x.CommentaireEcart);
+    }
+
+    [Fact]
+    public void Should_Pass_When_CommentaireEcart_AtLimit()
+    {
+        var command = new FermerSessionCommand("LISE", 55, CommentaireEcart: "123456789012345678901234567890"); // exactly 30
+        var result = _validator.TestValidate(command);
+        result.ShouldNotHaveValidationErrorFor(x => x.CommentaireEcart);
+    }
 }
