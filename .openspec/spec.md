@@ -97,13 +97,19 @@ Composant "Sessions_Reprises" - 30 programmes:
     - Service: `IEcartCalculator` avec regles metier completes
     - Calcul: V, F, D, L ajoutent; A, K soustraient
     - Validation: SeuilAlerte configurable, ForceClosureOnEcart
-  - **108 tests unitaires** (validators + ecarts + coffre)
+  - **116 tests unitaires** (validators + ecarts + coffre + ventes)
   - Commits: `ee415a0` (coffre), `c3250fd` (fix null), `168deb3` (validation commentaire)
+
+- [x] **ADH/Ventes - Prg_237 Solde Gift Pass** - Migre 2025-12-27
+  - Endpoint: `GET /api/ventes/solde-giftpass/{societe}/{compte}/{filiation}`
+  - Table: `ccpartyp` (cc_total_par_type)
+  - Query CQRS: GetSoldeGiftPassQuery
+  - 8 tests unitaires (validator)
 
 ### Modules en cours
 
-- [ ] **ADH** - Autres modules (309 progs restants)
-  - Priorite 2: Ventes (24 progs)
+- [ ] **ADH** - Autres modules (308 progs restants)
+  - Priorite 2: Ventes (23 progs restants)
   - Priorite 3: Telephone (20 progs)
 
 ### Modules explores
@@ -128,6 +134,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 - (aucune)
 
 ### Terminees
+- [x] **Migration Prg_237 Solde Gift Pass** (terminee: 2025-12-27) - Premier programme Ventes migre, 10 tables, 116 tests
 - [x] **Flux coffre ouverture/fermeture** (terminee: 2025-12-27) - 4 details ouverture (I,C,K,L), validation ecart, 108 tests
 - [x] **Logique metier ecarts** (terminee: 2025-12-27) - Value Objects, IEcartCalculator, validation fermeture
 - [x] **API Caisse complete** (terminee: 2025-12-27) - 24 endpoints, 9 tables, Clean Architecture
@@ -187,6 +194,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2025-12-27: **Migration Prg_237 Solde Gift Pass** - Premier programme Ventes migre vers C#, endpoint /api/ventes/solde-giftpass, table ccpartyp, 116 tests
 - 2025-12-27: **Flux coffre complet** - Ouverture avec 4 details (I,C,K,L) + coffre, fermeture avec validation ecart, 108 tests
 - 2025-12-27: Fix entites non-null pour DB (commentaire_ecart, montants) + validation CommentaireEcart max 30 car
 - 2025-12-27: **Logique metier ecarts** - Value Objects (EcartSession, EcartMontants, EcartDevise), IEcartCalculator, validation fermeture avec seuil
@@ -212,4 +220,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2025-12-27 20:20*
+*Derniere mise a jour: 2025-12-27 21:15*
