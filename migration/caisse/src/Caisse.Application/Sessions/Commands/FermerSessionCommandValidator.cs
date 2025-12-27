@@ -12,5 +12,13 @@ public class FermerSessionCommandValidator : AbstractValidator<FermerSessionComm
 
         RuleFor(x => x.ChronoSession)
             .GreaterThan(0).WithMessage("ChronoSession invalide");
+
+        RuleFor(x => x.MontantCompteCaisse)
+            .GreaterThanOrEqualTo(0)
+            .When(x => x.MontantCompteCaisse.HasValue)
+            .WithMessage("MontantCompteCaisse ne peut pas etre negatif");
+
+        RuleFor(x => x.SeuilAlerte)
+            .GreaterThanOrEqualTo(0).WithMessage("SeuilAlerte ne peut pas etre negatif");
     }
 }

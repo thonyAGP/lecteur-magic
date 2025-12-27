@@ -42,4 +42,41 @@ public class FermerSessionCommandValidatorTests
         var result = _validator.TestValidate(command);
         result.ShouldHaveValidationErrorFor(x => x.ChronoSession);
     }
+
+    [Fact]
+    public void Should_Pass_With_Optional_Parameters()
+    {
+        var command = new FermerSessionCommand(
+            "LISE", 55,
+            MontantCompteCaisse: 1000,
+            CommentaireEcart: "Test",
+            ForceClosureOnEcart: true,
+            SeuilAlerte: 50);
+        var result = _validator.TestValidate(command);
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+
+    [Fact]
+    public void Should_Fail_When_MontantCompteCaisse_Negative()
+    {
+        var command = new FermerSessionCommand("LISE", 55, MontantCompteCaisse: -100);
+        var result = _validator.TestValidate(command);
+        result.ShouldHaveValidationErrorFor(x => x.MontantCompteCaisse);
+    }
+
+    [Fact]
+    public void Should_Pass_When_MontantCompteCaisse_Zero()
+    {
+        var command = new FermerSessionCommand("LISE", 55, MontantCompteCaisse: 0);
+        var result = _validator.TestValidate(command);
+        result.ShouldNotHaveValidationErrorFor(x => x.MontantCompteCaisse);
+    }
+
+    [Fact]
+    public void Should_Fail_When_SeuilAlerte_Negative()
+    {
+        var command = new FermerSessionCommand("LISE", 55, SeuilAlerte: -10);
+        var result = _validator.TestValidate(command);
+        result.ShouldHaveValidationErrorFor(x => x.SeuilAlerte);
+    }
 }
