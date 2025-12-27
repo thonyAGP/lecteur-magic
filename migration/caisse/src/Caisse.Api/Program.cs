@@ -14,6 +14,7 @@ using Caisse.Application.Parametres.Queries;
 using Caisse.Application.DevisesRef.Queries;
 using Caisse.Application.CaisseDevises.Queries;
 using Caisse.Application.CaisseDevises.Commands;
+using Caisse.Application.Ecarts.Queries;
 using Caisse.Infrastructure;
 using MediatR;
 using Serilog;
@@ -263,6 +264,22 @@ try
         return result.Success ? Results.Ok(result) : Results.BadRequest(result);
     })
     .WithName("UpdateCaisseDevise")
+    .WithOpenApi();
+
+    // ============ Ecarts Endpoints ============
+    var ecarts = app.MapGroup("/api/ecarts").WithTags("Ecarts");
+
+    ecarts.MapGet("/{utilisateur}/{chronoSession}", async (
+        string utilisateur,
+        double chronoSession,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new CalculerEcartSessionQuery(utilisateur, chronoSession));
+        return Results.Ok(result);
+    })
+    .WithName("CalculerEcartSession")
+    .WithSummary("Calculate the discrepancy (écart) for a session")
+    .WithDescription("Returns detailed breakdown of expected vs counted amounts, including by currency/payment mode")
     .WithOpenApi();
 
     app.Run();

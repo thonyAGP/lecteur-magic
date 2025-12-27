@@ -1,4 +1,6 @@
 using Caisse.Application.Common.Behaviors;
+using Caisse.Application.Ecarts.Services;
+using Caisse.Domain.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +20,9 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssembly(assembly);
+
+        // Domain services
+        services.AddScoped<IEcartCalculator, EcartCalculator>();
 
         return services;
     }
