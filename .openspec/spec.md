@@ -106,6 +106,15 @@ Composant "Sessions_Reprises" - 30 programmes:
   - Query CQRS: GetSoldeGiftPassQuery
   - 8 tests unitaires (validator)
 
+- [x] **ADH/Ventes - Prg_250 Solde Resort Credit** - Migre 2025-12-27
+  - Endpoint: `GET /api/ventes/solde-resortcredit/{societe}/{compte}/{filiation}/{service}`
+  - Table: `resort_credit`
+  - Query CQRS: GetSoldeResortCreditQuery
+  - Logique: IF(attribue > utilise, attribue - utilise, 0)
+  - **Dashboard HTML visuel** a la racine (/)
+  - 15 tests unitaires (validator)
+  - 131 tests au total
+
 ### Modules en cours
 
 - [ ] **ADH** - Autres modules (308 progs restants)
@@ -134,6 +143,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 - (aucune)
 
 ### Terminees
+- [x] **Migration Prg_250 Solde Resort Credit** (terminee: 2025-12-27) - Dashboard HTML, 131 tests
 - [x] **Migration Prg_237 Solde Gift Pass** (terminee: 2025-12-27) - Premier programme Ventes migre, 10 tables, 116 tests
 - [x] **Flux coffre ouverture/fermeture** (terminee: 2025-12-27) - 4 details ouverture (I,C,K,L), validation ecart, 108 tests
 - [x] **Logique metier ecarts** (terminee: 2025-12-27) - Value Objects, IEcartCalculator, validation fermeture
@@ -194,6 +204,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2025-12-27: **Migration Prg_250 Solde Resort Credit** - Endpoint /api/ventes/solde-resortcredit, table resort_credit, dashboard HTML visuel, 131 tests
 - 2025-12-27: **Migration Prg_237 Solde Gift Pass** - Premier programme Ventes migre vers C#, endpoint /api/ventes/solde-giftpass, table ccpartyp, 116 tests
 - 2025-12-27: **Flux coffre complet** - Ouverture avec 4 details (I,C,K,L) + coffre, fermeture avec validation ecart, 108 tests
 - 2025-12-27: Fix entites non-null pour DB (commentaire_ecart, montants) + validation CommentaireEcart max 30 car
