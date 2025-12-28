@@ -33,6 +33,8 @@ using Caisse.Application.EzCard.Queries;
 using Caisse.Application.EzCard.Commands;
 using Caisse.Application.Depot.Queries;
 using Caisse.Application.Depot.Commands;
+using Caisse.Application.Divers.Queries;
+using Caisse.Application.Divers.Commands;
 using Caisse.Infrastructure;
 using MediatR;
 using Serilog;
@@ -737,6 +739,71 @@ try
     .WithName("RetirerDepot")
     .WithSummary("Withdraw a deposit")
     .WithDescription("Migrated from Magic Prg_40 Comptes de depot - Marks a deposit as withdrawn")
+    .WithOpenApi();
+
+    // ============ Divers Endpoints (Phase 12 - Utility programs) ============
+    var divers = app.MapGroup("/api/divers").WithTags("Divers");
+
+    divers.MapGet("/langue/{societe}/{codeUtilisateur}", async (
+        string societe,
+        string codeUtilisateur,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetLangueUtilisateurQuery(societe, codeUtilisateur));
+        return Results.Ok(result);
+    })
+    .WithName("GetLangueUtilisateur")
+    .WithSummary("Get user language and menu visibility")
+    .WithDescription("Migrated from Magic Prg_45 Recuperation langue - Returns language code and visible menus")
+    .WithOpenApi();
+
+    divers.MapGet("/titre/{codeEcran}", async (
+        string codeEcran,
+        string? typeProgramme,
+        string? codeLangue,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetTitreEcranQuery(codeEcran, typeProgramme, codeLangue));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetTitreEcran")
+    .WithSummary("Get screen title in user language")
+    .WithDescription("Migrated from Magic Prg_43 Recuperation du titre - Multilingual screen titles")
+    .WithOpenApi();
+
+    divers.MapGet("/acces-informaticien/{societe}/{codeUtilisateur}", async (
+        string societe,
+        string codeUtilisateur,
+        bool? supprimerMessages,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new VerifierAccesInformaticienQuery(
+            societe, codeUtilisateur, supprimerMessages ?? false));
+        return Results.Ok(result);
+    })
+    .WithName("VerifierAccesInformaticien")
+    .WithSummary("Check IT admin access")
+    .WithDescription("Migrated from Magic Prg_42 Controle Login Informaticien - Checks if user has IT admin rights")
+    .WithOpenApi();
+
+    divers.MapPost("/valider-dates", async (ValiderIntegriteDatesQuery query, IMediator mediator) =>
+    {
+        var result = await mediator.Send(query);
+        return result.IsValid ? Results.Ok(result) : Results.BadRequest(result);
+    })
+    .WithName("ValiderIntegriteDates")
+    .WithSummary("Validate date integrity for transactions")
+    .WithDescription("Migrated from Magic Prg_48 Controles - Integrite dates - Validates accounting dates")
+    .WithOpenApi();
+
+    divers.MapPost("/session-timestamp", async (UpdateSessionTimestampCommand command, IMediator mediator) =>
+    {
+        var result = await mediator.Send(command);
+        return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+    })
+    .WithName("UpdateSessionTimestamp")
+    .WithSummary("Update session timestamp")
+    .WithDescription("Migrated from Magic Prg_47 Date/Heure session user - Updates the session modification date")
     .WithOpenApi();
 
     app.Run();
