@@ -16,6 +16,19 @@ using Caisse.Application.CaisseDevises.Queries;
 using Caisse.Application.CaisseDevises.Commands;
 using Caisse.Application.Ecarts.Queries;
 using Caisse.Application.Ventes.Queries;
+using Caisse.Application.EasyCheckOut.Commands;
+using Caisse.Application.EasyCheckOut.Queries;
+using Caisse.Application.Zooms.Queries;
+using Caisse.Application.Members.Queries;
+using Caisse.Application.Solde.Queries;
+using Caisse.Application.Extrait.Queries;
+using Caisse.Application.Garanties.Queries;
+using Caisse.Application.Change.Queries;
+using Caisse.Application.Telephone.Queries;
+using Caisse.Application.Telephone.Commands;
+using Caisse.Application.Factures.Queries;
+using Caisse.Application.Factures.Commands;
+using Caisse.Application.Identification.Queries;
 using Caisse.Infrastructure;
 using MediatR;
 using Serilog;
@@ -46,6 +59,7 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseStaticFiles();
 
     // ============ Sessions Endpoints ============
     var sessions = app.MapGroup("/api/sessions").WithTags("Sessions");
@@ -315,6 +329,344 @@ try
     .WithDescription("Migrated from Magic Prg_250 - Calculates IF(attribue > utilise, attribue - utilise, 0)")
     .WithOpenApi();
 
+    // ============ EasyCheckOut Endpoints ============
+    var checkout = app.MapGroup("/api/easycheckout").WithTags("EasyCheckOut");
+
+    checkout.MapPost("/solde", async (SoldeEasyCheckOutCommand command, IMediator mediator) =>
+    {
+        var result = await mediator.Send(command);
+        return result.TransactionValidee ? Results.Ok(result) : Results.BadRequest(result);
+    })
+    .WithName("SoldeEasyCheckOut")
+    .WithSummary("Execute Easy Check Out balance calculation")
+    .WithDescription("Migrated from Magic Prg_64 SOLDE_EASY_CHECK_OUT - Complete checkout process with PDF generation")
+    .WithOpenApi();
+
+    checkout.MapGet("/edition", async (
+        bool erreursSeules,
+        bool editionAuto,
+        bool testPes,
+        DateOnly dateEdition,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new EditionEasyCheckOutQuery(erreursSeules, editionAuto, testPes, dateEdition));
+        return Results.Ok(result);
+    })
+    .WithName("EditionEasyCheckOut")
+    .WithSummary("Generate Easy Check Out edition and email")
+    .WithDescription("Migrated from Magic Prg_65 EDITION_EASY_CHECK_OUT - Generates PDF and sends email to clients")
+    .WithOpenApi();
+
+    checkout.MapGet("/extrait/{societe}/{dateDepart}", async (
+        string societe,
+        DateOnly dateDepart,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new ExtraitEasyCheckOutQuery(societe, dateDepart));
+        return Results.Ok(result);
+    })
+    .WithName("ExtraitEasyCheckOut")
+    .WithSummary("Get Easy Check Out extract for next day departures")
+    .WithDescription("Migrated from Magic Prg_53 EXTRAIT_EASY_CHECKOUT - Generates account extract for J+1 departures")
+    .WithOpenApi();
+
+    // ============ Zooms Endpoints (Phase 1) ============
+    var zooms = app.MapGroup("/api/zooms").WithTags("Zooms");
+
+    zooms.MapGet("/moyens-reglement/{societe}", async (string societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetMoyensReglementQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetMoyensReglement")
+    .WithSummary("Get payment methods for a company")
+    .WithOpenApi();
+
+    zooms.MapGet("/tables/{nomTable}", async (string nomTable, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetTablesReferenceQuery(nomTable));
+        return Results.Ok(result);
+    })
+    .WithName("GetTablesReference")
+    .WithSummary("Get reference table entries (services, articles, etc.)")
+    .WithOpenApi();
+
+    zooms.MapGet("/devises/{societe}", async (string societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetDevisesZoomQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetDevisesZoom")
+    .WithSummary("Get currencies for a company")
+    .WithOpenApi();
+
+    zooms.MapGet("/garanties/{societe}", async (string societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetGarantiesQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetGaranties")
+    .WithSummary("Get guarantee types for a company")
+    .WithOpenApi();
+
+    zooms.MapGet("/depots-objets/{societe}", async (string societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetDepotsObjetsQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetDepotsObjets")
+    .WithSummary("Get deposit object types for a company")
+    .WithOpenApi();
+
+    zooms.MapGet("/depots-devises/{societe}", async (string societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetDepotsDevisesQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetDepotsDevises")
+    .WithSummary("Get deposit currencies for a company")
+    .WithOpenApi();
+
+    zooms.MapGet("/pays", async (string? codeLangue, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetPaysQuery(codeLangue));
+        return Results.Ok(result);
+    })
+    .WithName("GetPays")
+    .WithSummary("Get countries/nationalities")
+    .WithOpenApi();
+
+    zooms.MapGet("/types-taux-change/{societe}", async (string societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetTypesTauxChangeQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetTypesTauxChange")
+    .WithSummary("Get exchange rate types for a company")
+    .WithOpenApi();
+
+    // ============ Members Endpoints (Phase 2) ============
+    var members = app.MapGroup("/api/members").WithTags("Members");
+
+    members.MapGet("/club-med-pass/{societe}/{compte}/{filiation}", async (
+        string societe,
+        int compte,
+        int filiation,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetClubMedPassQuery(societe, compte, filiation));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetClubMedPass")
+    .WithSummary("Get Club Med Pass (EzCard) for a member")
+    .WithDescription("Migrated from Magic Prg_160 GetCMP - Returns card_code from ez_card table if status is not in Opposition")
+    .WithOpenApi();
+
+    // ============ Solde Endpoints (Phase 3) ============
+    var solde = app.MapGroup("/api/solde").WithTags("Solde");
+
+    solde.MapGet("/{societe}/{codeAdherent}/{filiation}", async (
+        string societe,
+        int codeAdherent,
+        int filiation,
+        DateOnly? dateSolde,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetSoldeCompteQuery(societe, codeAdherent, filiation, dateSolde));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetSoldeCompte")
+    .WithSummary("Get account balance details")
+    .WithDescription("Migrated from Magic Prg_192 SOLDE_COMPTE - Complete balance with deposits, sales, guarantees")
+    .WithOpenApi();
+
+    // ============ Ventes Historique Endpoints (Phase 4) ============
+    ventes.MapGet("/historique/{societe}/{codeGm}/{filiation}", async (
+        string societe,
+        int codeGm,
+        int filiation,
+        DateOnly? dateDebut,
+        DateOnly? dateFin,
+        int? limit,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetHistoVentesQuery(societe, codeGm, filiation, dateDebut, dateFin, limit ?? 50));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetHistoVentes")
+    .WithSummary("Get sales history for an account")
+    .WithDescription("Migrated from Magic Prg_239-241 Histo ventes payantes - Transaction history with details")
+    .WithOpenApi();
+
+    // ============ Extrait Endpoints (Phase 5) ============
+    var extrait = app.MapGroup("/api/extrait").WithTags("Extrait");
+
+    extrait.MapGet("/{societe}/{codeAdherent}/{filiation}", async (
+        string societe,
+        int codeAdherent,
+        int filiation,
+        DateOnly? dateDebut,
+        DateOnly? dateFin,
+        string? triPar,
+        string? codeService,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetExtraitCompteQuery(
+            societe, codeAdherent, filiation, dateDebut, dateFin, triPar, codeService));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetExtraitCompte")
+    .WithSummary("Generate account statement")
+    .WithDescription("Migrated from Magic Prg_69 EXTRAIT_COMPTE - Account statement with sorting and service filter")
+    .WithOpenApi();
+
+    // ============ Garanties Endpoints (Phase 6) ============
+    var garanties = app.MapGroup("/api/garanties").WithTags("Garanties");
+
+    garanties.MapGet("/{societe}/{codeAdherent}/{filiation}", async (
+        string societe,
+        int codeAdherent,
+        int filiation,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetGarantieCompteQuery(societe, codeAdherent, filiation));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetGarantieCompte")
+    .WithSummary("Get account guarantees/deposits")
+    .WithDescription("Migrated from Magic Prg_111 GARANTIE - Account guarantee deposits with available types")
+    .WithOpenApi();
+
+    // ============ Change Endpoints (Phase 7) ============
+    var change = app.MapGroup("/api/change").WithTags("Change");
+
+    change.MapGet("/devise-locale/{societe}", async (
+        string societe,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetDeviseLocaleQuery(societe));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetDeviseLocale")
+    .WithSummary("Get local currency for a company")
+    .WithDescription("Migrated from Magic Prg_21 - Returns the local/base currency")
+    .WithOpenApi();
+
+    change.MapGet("/taux/{societe}", async (
+        string societe,
+        string? codeDevise,
+        DateOnly? dateReference,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetTauxChangeQuery(societe, codeDevise, dateReference));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetTauxChange")
+    .WithSummary("Get exchange rates for a company")
+    .WithDescription("Migrated from Magic Prg_20 - List of available exchange rates")
+    .WithOpenApi();
+
+    change.MapGet("/calculer", async (
+        string societe,
+        string typeDevise,
+        string deviseSource,
+        int nbDecimales,
+        string deviseLocale,
+        string? modePaiement,
+        double montant,
+        string typeOperation,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new CalculerEquivalentQuery(
+            societe, typeDevise, deviseSource, nbDecimales,
+            deviseLocale, modePaiement ?? "", montant, typeOperation));
+        return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+    })
+    .WithName("CalculerEquivalent")
+    .WithSummary("Calculate currency equivalent")
+    .WithDescription("Migrated from Magic Prg_22 - Currency conversion with exchange rates")
+    .WithOpenApi();
+
+    // ============ Telephone Endpoints (Phase 8) ============
+    var telephone = app.MapGroup("/api/telephone").WithTags("Telephone");
+
+    telephone.MapGet("/{societe}/{codeGm}/{filiation}", async (
+        string societe,
+        int codeGm,
+        int filiation,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetLigneTelephoneQuery(societe, codeGm, filiation));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetLignesTelephone")
+    .WithSummary("Get phone lines for an account")
+    .WithDescription("Migrated from Magic Prg_202 - Read autocom codes for a guest")
+    .WithOpenApi();
+
+    telephone.MapPost("/gerer", async (GererLigneTelephoneCommand command, IMediator mediator) =>
+    {
+        var result = await mediator.Send(command);
+        return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+    })
+    .WithName("GererLigneTelephone")
+    .WithSummary("Open or close a phone line")
+    .WithDescription("Migrated from Magic Prg_208/210 - OPEN_PHONE_LINE / CLOSE_PHONE_LINE")
+    .WithOpenApi();
+
+    // ============ Factures Endpoints (Phase 10) ============
+    var factures = app.MapGroup("/api/factures").WithTags("Factures");
+
+    factures.MapGet("/checkout/{societe}/{codeGm}/{filiation}", async (
+        string societe,
+        int codeGm,
+        int filiation,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetFacturesCheckOutQuery(societe, codeGm, filiation));
+        return result.Success ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetFacturesCheckOut")
+    .WithSummary("Get checkout invoices for an account")
+    .WithDescription("Migrated from Magic Prg_54 FACTURES_CHECK_OUT - Invoices for checkout process")
+    .WithOpenApi();
+
+    factures.MapPost("/creer", async (CreerFactureCommand command, IMediator mediator) =>
+    {
+        var result = await mediator.Send(command);
+        return result.Success ? Results.Ok(result) : Results.BadRequest(result);
+    })
+    .WithName("CreerFacture")
+    .WithSummary("Create a new VAT invoice")
+    .WithDescription("Migrated from Magic Prg_97 Saisie_facture_tva V3 - Create invoice with TVA calculation")
+    .WithOpenApi();
+
+    // ============ Identification Endpoints (Phase 11) ============
+    var identification = app.MapGroup("/api/identification").WithTags("Identification");
+
+    identification.MapPost("/verifier", async (VerifierOperateurQuery query, IMediator mediator) =>
+    {
+        var result = await mediator.Send(query);
+        return result.Authentifie ? Results.Ok(result) : Results.Unauthorized();
+    })
+    .WithName("VerifierOperateur")
+    .WithSummary("Verify operator credentials")
+    .WithDescription("Migrated from Magic Prg_158 Selection Identification - Login verification")
+    .WithOpenApi();
+
+    identification.MapGet("/session/{societe}/{codeOperateur}", async (
+        string societe,
+        string codeOperateur,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new VerifierSessionCaisseQuery(societe, codeOperateur));
+        return Results.Ok(result);
+    })
+    .WithName("VerifierSessionCaisse")
+    .WithSummary("Check if a cash session is open")
+    .WithDescription("Migrated from Magic Prg_328 Verif session caisse ouverte - Session status check")
+    .WithOpenApi();
+
     // ============ Dashboard ============
     app.MapGet("/", () => Results.Content(GetDashboardHtml(), "text/html"))
         .WithName("Dashboard")
@@ -474,25 +826,89 @@ static string GetDashboardHtml() => """
 
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-value">26</div>
+                <div class="stat-value">52</div>
                 <div class="stat-label">Endpoints</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">11</div>
+                <div class="stat-value">36</div>
                 <div class="stat-label">Tables mappées</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">116</div>
+                <div class="stat-value">327</div>
                 <div class="stat-label">Tests unitaires</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">2</div>
-                <div class="stat-label">Progs Ventes migrés</div>
+                <div class="stat-value">11</div>
+                <div class="stat-label">Modules migrés</div>
             </div>
         </div>
 
         <div class="section">
-            <h2 class="section-title">📊 Ventes (Migrés depuis Magic)</h2>
+            <h2 class="section-title">🔍 Zooms - Phase 1 (8 endpoints)</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/moyens-reglement/{societe}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/tables/{nomTable}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/devises/{societe}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/garanties/{societe}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/depots-objets/{societe}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/depots-devises/{societe}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/pays</span>
+                </div>
+                <div class="endpoint">
+                    <span class="method">GET</span>
+                    <span class="path">/api/zooms/types-taux-change/{societe}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">👤 Members - Phase 2</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/members/club-med-pass/{societe}/{compte}/{filiation}</span>
+                    </div>
+                    <div class="desc">Prg_160 GetCMP - Club Med Pass (ez_card table)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">💵 Solde - Phase 3</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/solde/{societe}/{codeAdherent}/{filiation}</span>
+                    </div>
+                    <div class="desc">Prg_192 - Solde compte complet (ventes, dépôts, garanties)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📊 Ventes - Phase 4</h2>
             <div class="endpoints">
                 <div class="endpoint">
                     <div>
@@ -507,6 +923,86 @@ static string GetDashboardHtml() => """
                         <span class="path">/api/ventes/solde-resortcredit/{societe}/{compte}/{filiation}/{service}</span>
                     </div>
                     <div class="desc">Prg_250 - Solde Resort Credit (attribué - utilisé)</div>
+                </div>
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/ventes/historique/{societe}/{codeGm}/{filiation}</span>
+                    </div>
+                    <div class="desc">Prg_239-241 - Historique des ventes payantes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📋 Extrait - Phase 5</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/extrait/{societe}/{codeAdherent}/{filiation}</span>
+                    </div>
+                    <div class="desc">Prg_69 - Extrait de compte avec tri et filtres</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🔒 Garanties - Phase 6</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/garanties/{societe}/{codeAdherent}/{filiation}</span>
+                    </div>
+                    <div class="desc">Prg_111 - Dépôts de garantie du compte</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">💱 Change - Phase 7</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/change/devise-locale/{societe}</span>
+                    </div>
+                    <div class="desc">Prg_21 - Devise locale</div>
+                </div>
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/change/taux/{societe}</span>
+                    </div>
+                    <div class="desc">Prg_20 - Taux de change</div>
+                </div>
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/change/calculer</span>
+                    </div>
+                    <div class="desc">Prg_22 - Calcul équivalent devise</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📞 Telephone - Phase 8</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div>
+                        <span class="method">GET</span>
+                        <span class="path">/api/telephone/{societe}/{codeGm}/{filiation}</span>
+                    </div>
+                    <div class="desc">Prg_202 - Lignes téléphoniques</div>
+                </div>
+                <div class="endpoint">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="path">/api/telephone/gerer</span>
+                    </div>
+                    <div class="desc">Prg_208/210 - Ouvrir/Fermer ligne</div>
                 </div>
             </div>
         </div>
@@ -549,7 +1045,10 @@ static string GetDashboardHtml() => """
             <div id="result" class="result"></div>
         </div>
 
-        <a href="/swagger" class="swagger-link">📖 Voir documentation Swagger complète →</a>
+        <div style="display: flex; gap: 2rem; margin-top: 1.5rem;">
+            <a href="/zooms.html" class="swagger-link" style="background: linear-gradient(90deg, #00d9ff, #00ff88); color: #000; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: bold;">🔍 Ouvrir l'écran Zooms interactif →</a>
+            <a href="/swagger" class="swagger-link">📖 Documentation Swagger →</a>
+        </div>
 
         <footer>
             <p>Migration Magic Unipaas v12.03 → C# .NET 8 | CSK0912</p>

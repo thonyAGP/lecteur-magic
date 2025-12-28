@@ -19,6 +19,44 @@ public class CaisseDbContext : DbContext, ICaisseDbContext
     public DbSet<CcTotalParType> CcTotauxParType => Set<CcTotalParType>();
     public DbSet<ResortCredit> ResortCredits => Set<ResortCredit>();
 
+    // Tables Prg_64 - Solde Easy Check Out
+    public DbSet<GmRecherche> GmRecherches => Set<GmRecherche>();
+    public DbSet<GmComplet> GmComplets => Set<GmComplet>();
+    public DbSet<DepotGarantie> DepotGaranties => Set<DepotGarantie>();
+    public DbSet<Initialisation> Initialisations => Set<Initialisation>();
+    public DbSet<DateComptable> DatesComptables => Set<DateComptable>();
+    public DbSet<Garantie> Garanties => Set<Garantie>();
+    public DbSet<Email> Emails => Set<Email>();
+
+    // Tables Zooms - Phase 1
+    public DbSet<MoyenReglement> MoyensReglement => Set<MoyenReglement>();
+    public DbSet<TableReference> TablesReference => Set<TableReference>();
+    public DbSet<DeviseZoom> DevisesZoom => Set<DeviseZoom>();
+    public DbSet<DepotObjet> DepotsObjets => Set<DepotObjet>();
+    public DbSet<DepotDevise> DepotsDevises => Set<DepotDevise>();
+    public DbSet<Pays> Pays => Set<Pays>();
+    public DbSet<TypeTauxChange> TypesTauxChange => Set<TypeTauxChange>();
+
+    // Tables Member Lookup - Phase 2
+    public DbSet<EzCard> EzCards => Set<EzCard>();
+
+    // Tables Solde - Phase 3
+    public DbSet<CompteGm> ComptesGm => Set<CompteGm>();
+    public DbSet<CcTotal> CcTotaux => Set<CcTotal>();
+    public DbSet<Mouvement> Mouvements => Set<Mouvement>();
+    public DbSet<Village> Villages => Set<Village>();
+    public DbSet<MoyenPaiement> MoyensPaiement => Set<MoyenPaiement>();
+
+    // Tables Ventes - Phase 4
+    public DbSet<TransactionBarEntete> TransactionsBarEntete => Set<TransactionBarEntete>();
+    public DbSet<TransactionBarDetail> TransactionsBarDetail => Set<TransactionBarDetail>();
+
+    // Tables Change - Phase 7
+    public DbSet<TauxChange> TauxChanges => Set<TauxChange>();
+
+    // Tables Telephone - Phase 8
+    public DbSet<LigneTelephone> LignesTelephone => Set<LigneTelephone>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CaisseDbContext).Assembly);

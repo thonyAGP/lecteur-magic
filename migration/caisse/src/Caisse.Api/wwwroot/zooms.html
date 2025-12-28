@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zooms - Migration Magic</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .back-link {
+            color: #888;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .back-link:hover { color: #00d9ff; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .tab.active {
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            color: #000;
+            font-weight: bold;
+            border-color: transparent;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .form-group label {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .form-group input, .form-group select {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 0.95rem;
+            min-width: 150px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+        button {
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.02); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Data Grid */
+        .grid-container {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .grid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .grid-title { color: #00ff88; font-weight: 600; }
+        .grid-count { color: #888; font-size: 0.9rem; }
+
+        .grid-search {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.2);
+            color: #00d9ff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        tr.selected { background: rgba(0,217,255,0.2); }
+
+        .table-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .table-wrapper::-webkit-scrollbar { width: 8px; }
+        .table-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #00d9ff; border-radius: 4px; }
+
+        /* Status */
+        .status {
+            padding: 1rem 1.5rem;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .status .selected-info { color: #00ff88; }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            color: #888;
+        }
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Empty state */
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        /* Error */
+        .error {
+            background: rgba(255,68,68,0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        /* Tag badges */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-yes { background: #00ff88; color: #000; }
+        .badge-no { background: #ff4444; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Zooms - Référentiels</h1>
+            <a href="/" class="back-link">← Retour Dashboard</a>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="devises">Devises</div>
+            <div class="tab" data-tab="moyens-reglement">Moyens Règlement</div>
+            <div class="tab" data-tab="garanties">Garanties</div>
+            <div class="tab" data-tab="depots-objets">Dépôts Objets</div>
+            <div class="tab" data-tab="depots-devises">Dépôts Devises</div>
+            <div class="tab" data-tab="pays">Pays</div>
+            <div class="tab" data-tab="types-taux-change">Types Taux Change</div>
+            <div class="tab" data-tab="tables">Tables Référence</div>
+        </div>
+
+        <div class="controls">
+            <div class="form-group">
+                <label>Société</label>
+                <input type="text" id="societe" value="C" maxlength="2" style="width: 80px;">
+            </div>
+            <div class="form-group" id="tableNameGroup" style="display: none;">
+                <label>Nom Table</label>
+                <select id="nomTable">
+                    <option value="M_SER">Services (M_SER)</option>
+                    <option value="M_ART">Articles (M_ART)</option>
+                    <option value="M_OPE">Opérateurs (M_OPE)</option>
+                    <option value="M_CAI">Caisses (M_CAI)</option>
+                </select>
+            </div>
+            <button onclick="loadData()">Charger</button>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div class="grid-container">
+            <div class="grid-header">
+                <span class="grid-title" id="gridTitle">Devises</span>
+                <input type="text" class="grid-search" id="searchInput" placeholder="Rechercher..." oninput="filterTable()">
+                <span class="grid-count" id="gridCount">0 éléments</span>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <span>Chargement...</span>
+            </div>
+
+            <div id="empty" class="empty" style="display: none;">
+                Aucune donnée. Cliquez sur "Charger" pour récupérer les données.
+            </div>
+
+            <div class="table-wrapper" id="tableWrapper" style="display: none;">
+                <table>
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="status">
+                <span id="statusText">Prêt</span>
+                <span class="selected-info" id="selectedInfo"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        let currentTab = 'devises';
+        let currentData = [];
+        let selectedRow = null;
+
+        // Tab configuration
+        const tabConfig = {
+            'devises': {
+                title: 'Devises',
+                endpoint: (s) => `/api/zooms/devises/${s}`,
+                columns: ['societe', 'codeDevise', 'libelle', 'taux', 'numero'],
+                headers: ['Société', 'Code', 'Libellé', 'Taux', 'Numéro'],
+                needsSociete: true
+            },
+            'moyens-reglement': {
+                title: 'Moyens de Règlement',
+                endpoint: (s) => `/api/zooms/moyens-reglement/${s}`,
+                columns: ['societe', 'mop', 'devise', 'typeOperation', 'tauxDeChange'],
+                headers: ['Société', 'MOP', 'Devise', 'Type Op.', 'Taux Change'],
+                needsSociete: true
+            },
+            'garanties': {
+                title: 'Types de Garantie',
+                endpoint: (s) => `/api/zooms/garanties/${s}`,
+                columns: ['societe', 'codeGarantie', 'libelle', 'montant', 'codeClasse'],
+                headers: ['Société', 'Code', 'Libellé', 'Montant', 'Classe'],
+                needsSociete: true
+            },
+            'depots-objets': {
+                title: 'Dépôts Objets',
+                endpoint: (s) => `/api/zooms/depots-objets/${s}`,
+                columns: ['societe', 'codeObjet', 'libelle'],
+                headers: ['Société', 'Code', 'Libellé'],
+                needsSociete: true
+            },
+            'depots-devises': {
+                title: 'Dépôts Devises',
+                endpoint: (s) => `/api/zooms/depots-devises/${s}`,
+                columns: ['societe', 'moyenPaiement', 'libelle'],
+                headers: ['Société', 'Moyen Paiement', 'Libellé'],
+                needsSociete: true
+            },
+            'pays': {
+                title: 'Pays / Nationalités',
+                endpoint: () => `/api/zooms/pays`,
+                columns: ['codePays', 'libelle', 'codeLangue', 'monnaie', 'codeTelephone'],
+                headers: ['Code', 'Libellé', 'Langue', 'Monnaie', 'Indicatif'],
+                needsSociete: false
+            },
+            'types-taux-change': {
+                title: 'Types Taux de Change',
+                endpoint: (s) => `/api/zooms/types-taux-change/${s}`,
+                columns: ['societe', 'code', 'libelle', 'utilise'],
+                headers: ['Société', 'Code', 'Libellé', 'Utilisé'],
+                needsSociete: true
+            },
+            'tables': {
+                title: 'Tables de Référence',
+                endpoint: (s, t) => `/api/zooms/tables/${t}`,
+                columns: ['nomTable', 'codeAlpha5', 'libelle20', 'valeurNumerique', 'classe'],
+                headers: ['Table', 'Code', 'Libellé', 'Valeur', 'Classe'],
+                needsSociete: false,
+                needsTableName: true
+            }
+        };
+
+        // Tab click handlers
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+
+                const config = tabConfig[currentTab];
+                document.getElementById('gridTitle').textContent = config.title;
+                document.getElementById('tableNameGroup').style.display = config.needsTableName ? 'flex' : 'none';
+
+                // Clear data
+                currentData = [];
+                renderTable();
+                document.getElementById('empty').style.display = 'block';
+                document.getElementById('tableWrapper').style.display = 'none';
+            });
+        });
+
+        async function loadData() {
+            const societe = document.getElementById('societe').value.trim();
+            const nomTable = document.getElementById('nomTable').value;
+            const config = tabConfig[currentTab];
+
+            if (config.needsSociete && !societe) {
+                showError('Veuillez entrer une société');
+                return;
+            }
+
+            showLoading(true);
+            hideError();
+
+            try {
+                const url = config.needsTableName
+                    ? config.endpoint(societe, nomTable)
+                    : config.endpoint(societe);
+
+                const response = await fetch(API_BASE + url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                currentData = await response.json();
+                renderTable();
+                document.getElementById('statusText').textContent = `Chargé à ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                showError(`Erreur: ${error.message}`);
+                currentData = [];
+                renderTable();
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function renderTable() {
+            const config = tabConfig[currentTab];
+            const thead = document.getElementById('tableHead');
+            const tbody = document.getElementById('tableBody');
+            const wrapper = document.getElementById('tableWrapper');
+            const empty = document.getElementById('empty');
+            const count = document.getElementById('gridCount');
+
+            // Headers
+            thead.innerHTML = '<tr>' + config.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+
+            // Body
+            if (currentData.length === 0) {
+                tbody.innerHTML = '';
+                wrapper.style.display = 'none';
+                empty.style.display = 'block';
+                count.textContent = '0 éléments';
+                return;
+            }
+
+            empty.style.display = 'none';
+            wrapper.style.display = 'block';
+
+            tbody.innerHTML = currentData.map((row, idx) => {
+                const cells = config.columns.map(col => {
+                    let val = row[col];
+                    if (val === true) return '<span class="badge badge-yes">Oui</span>';
+                    if (val === false) return '<span class="badge badge-no">Non</span>';
+                    if (val === 'O') return '<span class="badge badge-yes">O</span>';
+                    if (val === 'N') return '<span class="badge badge-no">N</span>';
+                    if (typeof val === 'number') return val.toLocaleString('fr-FR');
+                    return val ?? '';
+                }).join('</td><td>');
+                return `<tr data-idx="${idx}" onclick="selectRow(this)"><td>${cells}</td></tr>`;
+            }).join('');
+
+            count.textContent = `${currentData.length} élément${currentData.length > 1 ? 's' : ''}`;
+        }
+
+        function filterTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visible = 0;
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const show = text.includes(search);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            document.getElementById('gridCount').textContent = `${visible} / ${currentData.length} éléments`;
+        }
+
+        function selectRow(tr) {
+            document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('selected'));
+            tr.classList.add('selected');
+            selectedRow = currentData[parseInt(tr.dataset.idx)];
+
+            const config = tabConfig[currentTab];
+            const key = config.columns[1]; // Usually the code column
+            document.getElementById('selectedInfo').textContent =
+                `Sélectionné: ${selectedRow[key] || selectedRow[config.columns[0]]}`;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'flex' : 'none';
+            if (show) {
+                document.getElementById('tableWrapper').style.display = 'none';
+                document.getElementById('empty').style.display = 'none';
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Initial state
+        document.getElementById('empty').style.display = 'block';
+    </script>
+</body>
+</html>

@@ -113,13 +113,91 @@ Composant "Sessions_Reprises" - 30 programmes:
   - Logique: IF(attribue > utilise, attribue - utilise, 0)
   - **Dashboard HTML visuel** a la racine (/)
   - 15 tests unitaires (validator)
-  - 131 tests au total
+
+- [x] **ADH/Zooms - Phase 1** - Migre 2025-12-27
+  - 8 endpoints: `/api/zooms/{type}`
+  - 7 tables REF: moyens-reglement, tables, devises, garanties, depots-objets, depots-devises, pays, types-taux-change
+  - Entites: MoyenReglement, TableReference, DeviseZoom, DepotObjet, DepotDevise, Pays, TypeTauxChange
+  - Ecran interactif: `/zooms.html`
+  - Fix decimal->double pour colonnes SQL float
+
+- [x] **ADH/Members - Prg_160 GetCMP** - Migre 2025-12-27
+  - Endpoint: `GET /api/members/club-med-pass/{societe}/{compte}/{filiation}`
+  - Table: `ezcard` (ez_card)
+  - Query CQRS: GetClubMedPassQuery
+  - Retourne: CardCode si status != 'O' (Opposition)
+  - 14 tests unitaires (validator)
+
+- [x] **ADH/Solde - Prg_192 SOLDE_COMPTE** - Migre 2025-12-28
+  - Endpoint: `GET /api/solde/{societe}/{compte}/{filiation}`
+  - Tables: operations (operations_dat), ccpartyp (cc_total_par_type)
+  - Query CQRS: GetSoldeCompteQuery
+  - Calcul: SUM(Credit) - SUM(Debit) par service
+  - 7 tests unitaires
+
+- [x] **ADH/Ventes - Prg_238 Historique** - Migre 2025-12-28
+  - Endpoint: `GET /api/ventes/historique/{societe}/{compte}/{filiation}`
+  - Table: ccventes (cc_ventes)
+  - Query CQRS: GetHistoVentesQuery
+  - Liste toutes les ventes avec tri par date
+  - 7 tests unitaires
+
+- [x] **ADH/Extrait - Prg_69 EXTRAIT_COMPTE** - Migre 2025-12-28
+  - Endpoint: `GET /api/extrait/{societe}/{compte}/{filiation}`
+  - Tables: operations (operations_dat), services (cafil048_dat)
+  - Query CQRS: GetExtraitCompteQuery
+  - Mouvements tries par date avec cumul progressif
+  - 7 tests unitaires
+
+- [x] **ADH/Garantie - Prg_111 GARANTIE** - Migre 2025-12-28
+  - Endpoint: `GET /api/garantie/{societe}/{compte}/{filiation}`
+  - Tables: depot_garantie, cafil069_dat (types garantie)
+  - Query CQRS: GetGarantieCompteQuery
+  - Depots actifs avec jointure sur types garantie
+  - 7 tests unitaires
+
+- [x] **ADH/Change - Phase 7** - Migre 2025-12-28
+  - 3 endpoints: devise-locale, taux, calculer
+  - Table: taux_change (cafil028_dat)
+  - Entite: TauxChange avec logique metier
+  - Queries: GetDeviseLocaleQuery, GetTauxChangeQuery, CalculerEquivalentQuery
+  - Logique: Achat UNI=TauxAchat, Achat BI=TauxVente, Vente=divise par TauxVente
+  - 47 tests unitaires
+  - **244 tests au total**
+
+- [x] **ADH/Telephone - Phase 8** - Migre 2025-12-28
+  - 2 endpoints: get lignes, gerer (open/close)
+  - Table: pi_dat (lignes_telephone)
+  - Entite: LigneTelephone avec methodes Ouvrir/Fermer
+  - Query: GetLigneTelephoneQuery
+  - Command: GererLigneTelephoneCommand (OPEN/CLOSE)
+  - Etats: O=Ouvert, F=Ferme, B=Bloque
+  - 28 tests unitaires
+
+- [x] **ADH/EasyCheckOut - Phase 9** - Migre 2025-12-28
+  - 3 endpoints: solde, edition, extrait
+  - Queries: EditionEasyCheckOutQuery, ExtraitEasyCheckOutQuery
+  - Command: SoldeEasyCheckOutCommand
+  - 8 tests unitaires
+
+- [x] **ADH/Factures - Phase 10** - Migre 2025-12-28
+  - 2 endpoints: checkout, creer
+  - Query: GetFacturesCheckOutQuery
+  - Command: CreerFactureCommand
+  - Calcul TVA automatique
+  - 29 tests unitaires
+
+- [x] **ADH/Identification - Phase 11** - Migre 2025-12-28
+  - 2 endpoints: verifier, session
+  - Queries: VerifierOperateurQuery, VerifierSessionCaisseQuery
+  - Verification droits operateur et session caisse
+  - 17 tests unitaires
+  - **327 tests au total**
 
 ### Modules en cours
 
-- [ ] **ADH** - Autres modules (308 progs restants)
-  - Priorite 2: Ventes (23 progs restants)
-  - Priorite 3: Telephone (20 progs)
+- [ ] **ADH** - Modules secondaires restants (~180 progs)
+  - EzCard, Depot, Divers
 
 ### Modules explores
 
@@ -136,13 +214,22 @@ Composant "Sessions_Reprises" - 30 programmes:
 ## Taches
 
 ### A traiter
-- [ ] Completer niveau 4 (Editions/exports)
-- [ ] Migrer un programme ADH simple vers TypeScript
+- [ ] Modules secondaires ADH (EzCard, Depot, Divers)
+- [ ] Tests d'integration sur CSK0912
+- [ ] Documentation utilisateur API
 
 ### En cours
 - (aucune)
 
 ### Terminees
+- [x] **Phase 11: Identification (2 endpoints)** (terminee: 2025-12-28) - Login + Session check, 327 tests total
+- [x] **Phase 10: Factures (2 endpoints)** (terminee: 2025-12-28) - Checkout + Creation, 310 tests total
+- [x] **Phase 9: EasyCheckOut (3 endpoints)** (terminee: 2025-12-28) - Solde + Edition + Extrait, 281 tests total
+- [x] **Phase 8: Telephone (2 endpoints)** (terminee: 2025-12-28) - Query + Command, 272 tests total
+- [x] **Phase 7: Change (3 endpoints)** (terminee: 2025-12-28) - Calcul equivalent devise, 244 tests total
+- [x] **Phase 3-6: Solde, Ventes, Extrait, Garantie** (terminee: 2025-12-28) - 4 queries, 197 tests total
+- [x] **Phase 2: Members (Prg_160 GetCMP)** (terminee: 2025-12-27) - Endpoint members/club-med-pass, 145 tests
+- [x] **Phase 1: Zooms (8 endpoints)** (terminee: 2025-12-27) - 7 tables REF, ecran interactif, fix decimal/double
 - [x] **Migration Prg_250 Solde Resort Credit** (terminee: 2025-12-27) - Dashboard HTML, 131 tests
 - [x] **Migration Prg_237 Solde Gift Pass** (terminee: 2025-12-27) - Premier programme Ventes migre, 10 tables, 116 tests
 - [x] **Flux coffre ouverture/fermeture** (terminee: 2025-12-27) - 4 details ouverture (I,C,K,L), validation ecart, 108 tests
@@ -160,12 +247,29 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Plans
 
-### Plan actuel: Prochaines etapes
+### Plan actuel: Migration ADH Complete (2025-12-28)
 
-1. ~~Ajouter logique metier manquante (validation, calculs ecarts)~~ FAIT
-2. ~~Implementer flux complet ouverture/fermeture (coffre, devises)~~ FAIT
-3. Migrer module Ventes (24 progs)
-4. Tests d'integration avec donnees reelles
+**Progression: 11 modules migres, 327 tests, 52 endpoints**
+
+| Phase | Module | Endpoints | Tests | Statut |
+|-------|--------|-----------|-------|--------|
+| 1 | Zooms | 8 | 14 | FAIT |
+| 2 | Members | 1 | 14 | FAIT |
+| 3 | Solde | 1 | 7 | FAIT |
+| 4 | Ventes | 3 | 22 | FAIT |
+| 5 | Extrait | 1 | 7 | FAIT |
+| 6 | Garantie | 1 | 7 | FAIT |
+| 7 | Change | 3 | 47 | FAIT |
+| 8 | Telephone | 2 | 28 | FAIT |
+| 9 | EasyCheckOut | 3 | 8 | FAIT |
+| 10 | Factures | 2 | 29 | FAIT |
+| 11 | Identification | 2 | 17 | FAIT |
+| - | Caisse (base) | 24 | 126 | FAIT |
+
+**Prochaines etapes:**
+1. Tests d'integration avec donnees reelles
+2. Modules secondaires (EzCard, Depot, Divers)
+3. Documentation utilisateur
 
 ### Historique des plans
 
@@ -204,6 +308,14 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2025-12-28: **Phase 11: Identification** - VerifierOperateur + VerifierSessionCaisse, 327 tests total
+- 2025-12-28: **Phase 10: Factures** - GetFacturesCheckOut + CreerFacture, calcul TVA
+- 2025-12-28: **Phase 9: EasyCheckOut** - Edition + Extrait queries, complete workflow
+- 2025-12-28: **Phase 8: Telephone** - LigneTelephone entity, 2 endpoints (get/gerer), OPEN/CLOSE commands
+- 2025-12-28: **Phase 7: Change** - TauxChange entity, 3 endpoints (devise-locale/taux/calculer), logique conversion bidirectionnelle
+- 2025-12-28: **Phase 3-6: Solde, Ventes, Extrait, Garantie** - 4 nouvelles queries, 7 entites, 52 tests validators
+- 2025-12-27: **Phase 2: Members (Prg_160 GetCMP)** - Endpoint /api/members/club-med-pass, table ezcard, 14 tests, 145 tests total
+- 2025-12-27: **Phase 1: Zooms (8 endpoints)** - 7 tables REF, 7 entites, ecran interactif /zooms.html, fix decimal->double
 - 2025-12-27: **Migration Prg_250 Solde Resort Credit** - Endpoint /api/ventes/solde-resortcredit, table resort_credit, dashboard HTML visuel, 131 tests
 - 2025-12-27: **Migration Prg_237 Solde Gift Pass** - Premier programme Ventes migre vers C#, endpoint /api/ventes/solde-giftpass, table ccpartyp, 116 tests
 - 2025-12-27: **Flux coffre complet** - Ouverture avec 4 details (I,C,K,L) + coffre, fermeture avec validation ecart, 108 tests
@@ -231,4 +343,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2025-12-27 21:15*
+*Derniere mise a jour: 2025-12-28 10:00*
