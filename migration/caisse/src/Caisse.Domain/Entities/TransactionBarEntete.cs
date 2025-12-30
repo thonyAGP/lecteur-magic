@@ -6,31 +6,25 @@ namespace Caisse.Domain.Entities;
 /// </summary>
 public class TransactionBarEntete
 {
-    public long Id { get; private set; }
+    public string BarId { get; private set; } = string.Empty;
+    public string PosId { get; private set; } = string.Empty;
+    public string BarmanId { get; private set; } = string.Empty;
+    public string TicketNumber { get; private set; } = string.Empty;
+    public string DateTicket { get; private set; } = string.Empty;
+    public string TimeTicket { get; private set; } = string.Empty;
+    public double TotalTicket { get; private set; }
+    public double TotalPaye { get; private set; }
+    public double TotalCreditConso { get; private set; }
+    public string EzCardId { get; private set; } = string.Empty;
     public string Societe { get; private set; } = string.Empty;
-    public int CodeGm { get; private set; }
+    public int Adherent { get; private set; }
     public int Filiation { get; private set; }
-    public DateOnly DateComptable { get; private set; }
-    public TimeOnly HeureTransaction { get; private set; }
-    public string TypeTransaction { get; private set; } = string.Empty;
-    public string ModePaiement { get; private set; } = string.Empty;
-    public double MontantTotal { get; private set; }
-    public double MontantTva { get; private set; }
-    public string DeviseTransaction { get; private set; } = string.Empty;
-    public double TauxChange { get; private set; }
-    public int NumeroTicket { get; private set; }
-    public string Operateur { get; private set; } = string.Empty;
-    public string EtatTransaction { get; private set; } = string.Empty;
-    public string NumChambre { get; private set; } = string.Empty;
-    public string CodeService { get; private set; } = string.Empty;
-    public string Commentaire { get; private set; } = string.Empty;
-    public DateOnly? DateAnnulation { get; private set; }
-    public string MotifAnnulation { get; private set; } = string.Empty;
+    public string TaiCodeForfait { get; private set; } = string.Empty;
 
     private TransactionBarEntete() { }
 
-    // Business logic
-    public bool IsAnnulee => EtatTransaction == "A";
-    public bool IsValidee => EtatTransaction == "V";
-    public bool IsPending => EtatTransaction == "P";
+    // Business logic - mapped properties for compatibility
+    public int CodeGm => Adherent;
+    public string NumeroTicket => TicketNumber;
+    public double MontantTotal => TotalTicket;
 }

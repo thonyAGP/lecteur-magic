@@ -3,1557 +3,800 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Caisse - Migration Magic ADH</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>CA0142 - Gestion de la caisse</title>
+    <style>
+        /*
+         * Conversion DLU → Pixels (basé sur XML Prg_121.xml)
+         * Form: Width=939 DLU, Height=178 DLU, HorizontalFactor=8
+         * Navigation: 117.375 × 22.25
+         * Scale X: 0.5 (DLU × 0.5 = pixels)
+         * Scale Y: 1.0 (DLU = pixels)
+         */
+        :root {
+            --scale-x: 0.62;       /* Calibré: 939 × 0.62 = 582px */
+            --scale-y: 1.80;       /* Calibré: 178 × 1.80 = 320px (+35%) */
+            --form-width: 582px;
+            --form-height: 320px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .magic-window {
+            background-color: #dce6f4;
+            border: 2px outset #c0c0c0;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            width: var(--form-width);
+        }
+
+        /* Title bar - Windows style */
+        .title-bar {
+            background: linear-gradient(to right, #0058a3, #3d9eff);
+            color: white;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            height: 20px;
+        }
+
+        .title-bar .title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar .icon {
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #4a9, #2a7);
+            border-radius: 2px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 1px;
+        }
+
+        .window-controls button {
+            width: 18px;
+            height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px;
+            cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-controls .close-btn { background: #ff6b6b; color: white; }
+
+        /* Window content - relative positioning container */
+        .window-content {
+            position: relative;
+            height: var(--form-height);
+            overflow: hidden;
+        }
+
+        /* Header bar (Y=2, H=21) - relief style */
+        .header-bar {
+            position: absolute;
+            left: 0;
+            top: calc(2 * var(--scale-y) * 1px);
+            width: calc(931 * var(--scale-x) * 1px);
+            height: calc(21 * var(--scale-y) * 1px);
+            background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
+            border: 1px solid #a0a0a0;
+        }
+
+        /* Logo Orace (X=5, Y=4, W=59, H=18) */
+        .logo-orace {
+            position: absolute;
+            left: calc(5 * var(--scale-x) * 1px);
+            top: calc(4 * var(--scale-y) * 1px);
+            width: calc(59 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-orace img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Fallback si image non disponible */
+        .logo-orace.fallback {
+            background: #2d5a2d;
+            color: #90ee90;
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        /* User info (X=75, Y=8, W=365, H=8) */
+        .user-info {
+            position: absolute;
+            left: calc(75 * var(--scale-x) * 1px);
+            top: calc(8 * var(--scale-y) * 1px);
+            width: calc(365 * var(--scale-x) * 1px);
+            height: calc(8 * var(--scale-y) * 1px);
+            font-size: 10px;
+            font-weight: bold;
+            color: #000080;
+            letter-spacing: 1px;
+        }
+
+        /* Coffre status (X=450, Y=8, W=203, H=8) */
+        .coffre-status {
+            position: absolute;
+            left: calc(450 * var(--scale-x) * 1px);
+            top: calc(8 * var(--scale-y) * 1px);
+            width: calc(203 * var(--scale-x) * 1px);
+            height: calc(8 * var(--scale-y) * 1px);
+            font-size: 10px;
+            color: #800000;
+            text-align: center;
+        }
+
+        /* Date (X=663, Y=8, W=259, H=8) */
+        .date-info {
+            position: absolute;
+            left: calc(663 * var(--scale-x) * 1px);
+            top: calc(8 * var(--scale-y) * 1px);
+            width: calc(259 * var(--scale-x) * 1px);
+            height: calc(8 * var(--scale-y) * 1px);
+            font-size: 10px;
+            color: #000080;
+            text-align: right;
+        }
+
+        /* Coffre Reception label (X=7, Y=24, W=200, H=12) */
+        .coffre-label {
+            position: absolute;
+            left: calc(7 * var(--scale-x) * 1px);
+            top: calc(24 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(12 * var(--scale-y) * 1px);
+            font-size: 10px;
+            font-weight: bold;
+            color: #008000;
+            text-align: center;
+        }
+
+        .coffre-label.hidden { display: none; }
+
+        /* Image caisse (X=52, Y=39, W=111, H=40) */
+        .caisse-image {
+            position: absolute;
+            left: calc(52 * var(--scale-x) * 1px);
+            top: calc(39 * var(--scale-y) * 1px);
+            width: calc(111 * var(--scale-x) * 1px);
+            height: calc(40 * var(--scale-y) * 1px);
+            background: #f0f0f0;
+            border: 1px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #666;
+        }
+
+        /* Status zone - simple horizontal rectangle like Magic */
+        .status-zone {
+            position: absolute;
+            left: calc(289 * var(--scale-x) * 1px);
+            top: calc(46 * var(--scale-y) * 1px);
+            width: calc(353 * var(--scale-x) * 1px);
+            height: calc(14 * var(--scale-y) * 1px);  /* Juste la hauteur du texte */
+            border: 1px solid #808080;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Status label - centered text */
+        .status-label {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .status-label.fermee { color: #cc0000; }  /* Rouge quand fermée */
+        .status-label.ouverte { color: #008000; } /* Vert quand ouverte */
+
+        /* Session info - positioned below status zone when open */
+        .session-info {
+            position: absolute;
+            left: calc(289 * var(--scale-x) * 1px);
+            top: calc(65 * var(--scale-y) * 1px);
+            width: calc(353 * var(--scale-x) * 1px);
+        }
+
+        .session-row {
+            display: flex;
+            align-items: center;
+            height: calc(12 * var(--scale-y) * 1px);
+            font-size: 10px;
+        }
+
+        .session-row .label {
+            width: calc(71 * var(--scale-x) * 1px);
+            text-align: right;
+            padding-right: 4px;
+        }
+
+        .session-row .value {
+            flex: 1;
+            font-weight: bold;
+            color: #000080;
+            text-align: center;
+        }
+
+        .session-info.hidden { display: none; }
+
+        /* Bottom bar (Y=151, H=24) */
+        .bottom-bar {
+            position: absolute;
+            left: 0;
+            top: calc(151 * var(--scale-y) * 1px);
+            width: calc(931 * var(--scale-x) * 1px);
+            height: calc(24 * var(--scale-y) * 1px);
+            background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
+            border: 1px solid #a0a0a0;
+        }
+
+        /* Buttons - Windows 11 style */
+        .magic-btn {
+            position: absolute;
+            background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            text-align: center;
+            padding: 0 4px;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .magic-btn:hover:not(:disabled) {
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+            border-color: #0078d4;
+        }
+
+        .magic-btn:active:not(:disabled) {
+            background: linear-gradient(to bottom, #e0e0e0, #d0d0d0);
+        }
+
+        .magic-btn:disabled {
+            color: #808080;
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        .magic-btn.hidden { display: none; }
+
+        /* Right side buttons (X=726) */
+        .btn-appro-caisse {
+            left: calc(726 * var(--scale-x) * 1px);
+            top: calc(26 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-appro-produits {
+            left: calc(726 * var(--scale-x) * 1px);
+            top: calc(48 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-remise-caisse {
+            left: calc(726 * var(--scale-x) * 1px);
+            top: calc(70 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-historiques {
+            left: calc(726 * var(--scale-x) * 1px);
+            top: calc(92 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        /* Left side buttons */
+        .btn-regul-tpe {
+            left: calc(7 * var(--scale-x) * 1px);
+            top: calc(85 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-telecollecte-tpe {
+            left: calc(7 * var(--scale-x) * 1px);
+            top: calc(107 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-visu-sessions {
+            left: calc(7 * var(--scale-x) * 1px);
+            top: calc(129 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        /* Middle buttons */
+        .btn-consultation {
+            left: calc(238 * var(--scale-x) * 1px);
+            top: calc(129 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-impression {
+            left: calc(485 * var(--scale-x) * 1px);
+            top: calc(129 * var(--scale-y) * 1px);
+            width: calc(440 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        /* Bottom row buttons (Y=154) */
+        .btn-quitter {
+            left: calc(7 * var(--scale-x) * 1px);
+            top: calc(154 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-ouvrir {
+            left: calc(238 * var(--scale-x) * 1px);
+            top: calc(154 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-continuer {
+            left: calc(469 * var(--scale-x) * 1px);
+            top: calc(154 * var(--scale-y) * 1px);
+            width: calc(224 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        .btn-fermer {
+            left: calc(726 * var(--scale-x) * 1px);
+            top: calc(154 * var(--scale-y) * 1px);
+            width: calc(200 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+        }
+
+        /* API status indicator */
+        .api-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            background: #333;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 10px;
+            border-radius: 4px;
+        }
+
+        .api-status.error { color: #f00; }
+
+        /* Modal overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-window {
+            background: #dce6f4;
+            border: 2px outset #c0c0c0;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.4);
+            min-width: 400px;
+            max-width: 600px;
+            max-height: 80vh;
+        }
+
+        .modal-title-bar {
+            background: linear-gradient(to right, #0058a3, #3d9eff);
+            color: white;
+            padding: 2px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            height: 20px;
+        }
+
+        .modal-close {
+            background: #ff6b6b;
+            color: white;
+            border: 1px outset #c0c0c0;
+            width: 18px;
+            height: 14px;
+            font-size: 9px;
+            cursor: pointer;
+        }
+
+        .modal-content {
+            padding: 12px;
+            overflow-y: auto;
+            max-height: calc(80vh - 40px);
+        }
+
+        .modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .modal-content th, .modal-content td {
+            border: 1px solid #808080;
+            padding: 4px;
+            text-align: left;
+        }
+
+        .modal-content th {
+            background: #c0c0c0;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="number"] {
+            width: 100%;
+            padding: 2px 4px;
+            border: 1px inset #808080;
+            font-size: 10px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+
+        .modal-btn {
+            padding: 4px 16px;
+            background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .modal-btn:hover { border-color: #0078d4; }
+        .modal-btn.primary { background: #0078d4; color: white; }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .form-row label {
+            width: 120px;
+            font-size: 10px;
+        }
+
+        .form-row input {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <i class="fas fa-cash-register"></i>
-                <span>Caisse ADH</span>
+    <div class="magic-window">
+        <!-- Title bar -->
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Gestion de la caisse</span>
             </div>
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-
-        <div class="sidebar-user" id="userInfo">
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-details">
-                <span class="user-name">Non connecte</span>
-                <span class="user-role">-</span>
+            <div class="window-controls">
+                <button class="min-btn">_</button>
+                <button class="max-btn">□</button>
+                <button class="close-btn">X</button>
             </div>
         </div>
 
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="#" class="nav-link active" data-page="dashboard">
-                    <i class="fas fa-home"></i>
-                    <span>Tableau de bord</span>
-                </a>
-            </li>
-            <li class="nav-section">Session Caisse</li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="identification">
-                    <i class="fas fa-key"></i>
-                    <span>Identification</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="session">
-                    <i class="fas fa-door-open"></i>
-                    <span>Ouverture / Fermeture</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="comptage">
-                    <i class="fas fa-calculator"></i>
-                    <span>Comptage Caisse</span>
-                </a>
-            </li>
-            <li class="nav-section">Operations</li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="ventes">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Ventes</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="devises">
-                    <i class="fas fa-coins"></i>
-                    <span>Devises & Coffre</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="change">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Change</span>
-                </a>
-            </li>
-            <li class="nav-section">Consultation</li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="compte">
-                    <i class="fas fa-user-circle"></i>
-                    <span>Compte Client</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="extrait">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Extrait de Compte</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="garantie">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Garanties</span>
-                </a>
-            </li>
-            <li class="nav-section">Services</li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="checkout">
-                    <i class="fas fa-plane-departure"></i>
-                    <span>Easy Check-Out</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="factures">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <span>Facturation</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="telephone">
-                    <i class="fas fa-phone"></i>
-                    <span>Telephone</span>
-                </a>
-            </li>
-            <li class="nav-section">Cartes & Depots</li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="ezcard">
-                    <i class="fas fa-id-card"></i>
-                    <span>EzCard / Club Pass</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link" data-page="depot">
-                    <i class="fas fa-box"></i>
-                    <span>Depots</span>
-                </a>
-            </li>
-            <li class="nav-section">Referentiels</li>
-            <li class="nav-item">
-                <a href="zooms.html" class="nav-link">
-                    <i class="fas fa-search"></i>
-                    <span>Zooms</span>
-                </a>
-            </li>
-        </ul>
+        <!-- Window content with absolute positioning -->
+        <div class="window-content">
+            <!-- Header bar decoration -->
+            <div class="header-bar"></div>
 
-        <div class="sidebar-footer">
-            <div class="session-info" id="sessionInfo">
-                <span class="session-status closed">Session fermee</span>
+            <!-- Logo Orace - %club_images%orace.bmp -->
+            <div class="logo-orace" id="logoOrace">
+                <img src="/magic-images/orace.bmp" alt="ORACE" onerror="this.parentElement.classList.add('fallback'); this.style.display='none'; this.parentElement.textContent='ORACE';">
             </div>
-        </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="topbar">
-            <div class="topbar-left">
-                <h2 id="pageTitle">Tableau de bord</h2>
+            <!-- User info (Expression 1: user + terminal) -->
+            <div class="user-info" id="userInfo">D S I O P (21)</div>
+
+            <!-- Coffre status message (Expression 26) -->
+            <div class="coffre-status" id="coffreStatus">Le coffre 2 est ferme</div>
+
+            <!-- Date -->
+            <div class="date-info" id="currentDate">WWW DD MMM YYYY</div>
+
+            <!-- Coffre Reception label (Visible if session open) -->
+            <div class="coffre-label" id="coffreLabel">Coffre Reception</div>
+
+            <!-- Caisse image - hidden in Magic runtime -->
+            <!-- <div class="caisse-image">%club_im</div> -->
+
+            <!-- Status zone - simple rectangle -->
+            <div class="status-zone">
+                <div class="status-label fermee" id="statusLabel">Fermee</div>
             </div>
-            <div class="topbar-right">
-                <div class="topbar-info">
-                    <span id="villageName">Village: -</span>
-                    <span id="currentDate"></span>
-                </div>
-                <div class="topbar-actions">
-                    <button class="btn-icon" onclick="refreshData()" title="Rafraichir">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                    <button class="btn-icon" onclick="showSettings()" title="Parametres">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
 
-        <div class="content-wrapper" id="contentWrapper">
-            <!-- Dashboard Page -->
-            <div class="page active" id="page-dashboard">
-                <div class="stats-grid">
-                    <div class="stat-card primary">
-                        <div class="stat-icon"><i class="fas fa-cash-register"></i></div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statSessions">-</span>
-                            <span class="stat-label">Sessions Ouvertes</span>
-                        </div>
-                    </div>
-                    <div class="stat-card success">
-                        <div class="stat-icon"><i class="fas fa-coins"></i></div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statDevises">-</span>
-                            <span class="stat-label">Devises en Caisse</span>
-                        </div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statVentes">-</span>
-                            <span class="stat-label">Ventes du Jour</span>
-                        </div>
-                    </div>
-                    <div class="stat-card info">
-                        <div class="stat-icon"><i class="fas fa-balance-scale"></i></div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statEcart">0.00</span>
-                            <span class="stat-label">Ecart Caisse</span>
-                        </div>
-                    </div>
+            <!-- Session info - separate, shown when session open -->
+            <div class="session-info hidden" id="sessionInfo">
+                <div class="session-row">
+                    <span class="label">par</span>
+                    <span class="value" id="sessionUser">-</span>
                 </div>
-
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-clock"></i> Sessions Recentes</h3>
-                        </div>
-                        <div class="card-body">
-                            <table class="data-table" id="recentSessions">
-                                <thead>
-                                    <tr>
-                                        <th>Chrono</th>
-                                        <th>Operateur</th>
-                                        <th>Date</th>
-                                        <th>Statut</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-chart-pie"></i> Repartition Devises</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="devises-chart" id="devisesChart">
-                                <div class="chart-placeholder">
-                                    <i class="fas fa-chart-pie"></i>
-                                    <span>Chargement...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="session-row">
+                    <span class="label">le</span>
+                    <span class="value" id="sessionDate">##/##/####</span>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-bolt"></i> Actions Rapides</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="quick-actions">
-                            <button class="action-btn" onclick="navigateTo('session')">
-                                <i class="fas fa-door-open"></i>
-                                <span>Ouvrir Session</span>
-                            </button>
-                            <button class="action-btn" onclick="navigateTo('ventes')">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>Nouvelle Vente</span>
-                            </button>
-                            <button class="action-btn" onclick="navigateTo('compte')">
-                                <i class="fas fa-search"></i>
-                                <span>Consulter Compte</span>
-                            </button>
-                            <button class="action-btn" onclick="navigateTo('checkout')">
-                                <i class="fas fa-plane-departure"></i>
-                                <span>Easy Check-Out</span>
-                            </button>
-                            <button class="action-btn" onclick="navigateTo('change')">
-                                <i class="fas fa-exchange-alt"></i>
-                                <span>Change Devise</span>
-                            </button>
-                            <button class="action-btn" onclick="navigateTo('comptage')">
-                                <i class="fas fa-calculator"></i>
-                                <span>Comptage</span>
-                            </button>
-                        </div>
-                    </div>
+                <div class="session-row">
+                    <span class="label">à</span>
+                    <span class="value" id="sessionTime">HH:MM:SS</span>
                 </div>
             </div>
 
-            <!-- Identification Page -->
-            <div class="page" id="page-identification">
-                <div class="auth-container">
-                    <div class="auth-card">
-                        <div class="auth-header">
-                            <i class="fas fa-user-lock"></i>
-                            <h2>Identification Operateur</h2>
-                        </div>
-                        <form id="loginForm" onsubmit="handleLogin(event)">
-                            <div class="form-group">
-                                <label for="loginSociete">Societe</label>
-                                <input type="text" id="loginSociete" value="C" maxlength="2" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="loginOperateur">Code Operateur</label>
-                                <input type="text" id="loginOperateur" maxlength="10" required autofocus>
-                            </div>
-                            <div class="form-group">
-                                <label for="loginPassword">Mot de Passe</label>
-                                <input type="password" id="loginPassword" maxlength="50" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fas fa-sign-in-alt"></i> Se Connecter
-                            </button>
-                        </form>
-                        <div id="loginError" class="alert alert-error" style="display: none;"></div>
-                        <div id="loginSuccess" class="alert alert-success" style="display: none;"></div>
-                    </div>
-                </div>
-            </div>
+            <!-- Right side operation buttons (Visible Exp 12/13: session open) -->
+            <button class="magic-btn btn-appro-caisse hidden" id="btnApproCaisse">Appro caisse</button>
+            <button class="magic-btn btn-appro-produits hidden" id="btnApproProduits">Appro produits</button>
+            <button class="magic-btn btn-remise-caisse hidden" id="btnRemiseCaisse">Remise en caisse</button>
+            <button class="magic-btn btn-historiques hidden" id="btnHistoriques">Historiques</button>
 
-            <!-- Session Page -->
-            <div class="page" id="page-session">
-                <div class="page-header">
-                    <h3>Gestion Session Caisse</h3>
-                    <div class="page-actions">
-                        <button class="btn btn-secondary" onclick="loadSessions()">
-                            <i class="fas fa-sync-alt"></i> Rafraichir
-                        </button>
-                    </div>
-                </div>
+            <!-- Left side buttons -->
+            <button class="magic-btn btn-regul-tpe" id="btnRegulTpe">Régul. Télécollecte</button>
+            <button class="magic-btn btn-telecollecte-tpe" id="btnTelecollecteTpe">Telecollecte TPE</button>
+            <button class="magic-btn btn-visu-sessions" id="btnVisuSessions">Visu sessions</button>
 
-                <div class="session-panels">
-                    <!-- Opening Panel -->
-                    <div class="card session-card">
-                        <div class="card-header success">
-                            <h3><i class="fas fa-door-open"></i> Ouverture Caisse</h3>
-                        </div>
-                        <div class="card-body">
-                            <form id="openSessionForm" onsubmit="handleOpenSession(event)">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="openSociete" value="C" maxlength="2" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Operateur</label>
-                                        <input type="text" id="openOperateur" maxlength="10" required>
-                                    </div>
-                                </div>
+            <!-- Middle buttons -->
+            <button class="magic-btn btn-consultation" id="btnConsultation">Consultation</button>
+            <button class="magic-btn btn-impression hidden" id="btnImpression">Impression du dernier ticket</button>
 
-                                <div class="section-title">Solde Initial</div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Especes</label>
-                                        <input type="number" id="openMontantEspeces" step="0.01" value="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Devises</label>
-                                        <input type="number" id="openMontantDevises" step="0.01" value="0">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Cartes</label>
-                                        <input type="number" id="openMontantCartes" step="0.01" value="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Cheques</label>
-                                        <input type="number" id="openMontantCheques" step="0.01" value="0">
-                                    </div>
-                                </div>
+            <!-- Bottom bar decoration -->
+            <div class="bottom-bar"></div>
 
-                                <div class="section-title">Apport Coffre</div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Montant Apport</label>
-                                        <input type="number" id="openApportCoffre" step="0.01" value="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Nb Devises</label>
-                                        <input type="number" id="openNbDevises" value="0">
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn btn-success btn-block">
-                                    <i class="fas fa-play"></i> Ouvrir Session
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Closing Panel -->
-                    <div class="card session-card">
-                        <div class="card-header danger">
-                            <h3><i class="fas fa-door-closed"></i> Fermeture Caisse</h3>
-                        </div>
-                        <div class="card-body">
-                            <form id="closeSessionForm" onsubmit="handleCloseSession(event)">
-                                <div class="form-group">
-                                    <label>Session a Fermer</label>
-                                    <select id="closeSessionSelect" required>
-                                        <option value="">-- Selectionner --</option>
-                                    </select>
-                                </div>
-
-                                <div class="section-title">Comptage Final</div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Especes</label>
-                                        <input type="number" id="closeMontantEspeces" step="0.01" value="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Devises</label>
-                                        <input type="number" id="closeMontantDevises" step="0.01" value="0">
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Cartes</label>
-                                        <input type="number" id="closeMontantCartes" step="0.01" value="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Cheques</label>
-                                        <input type="number" id="closeMontantCheques" step="0.01" value="0">
-                                    </div>
-                                </div>
-
-                                <div class="ecart-display" id="ecartDisplay" style="display: none;">
-                                    <div class="ecart-label">Ecart detecte:</div>
-                                    <div class="ecart-value" id="ecartValue">0.00</div>
-                                </div>
-
-                                <div class="form-group" id="commentaireGroup" style="display: none;">
-                                    <label>Commentaire Ecart (obligatoire si ecart)</label>
-                                    <textarea id="closeCommentaire" maxlength="30" rows="2"></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-danger btn-block">
-                                    <i class="fas fa-stop"></i> Fermer Session
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sessions List -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-list"></i> Sessions en Cours</h3>
-                    </div>
-                    <div class="card-body">
-                        <table class="data-table" id="sessionsTable">
-                            <thead>
-                                <tr>
-                                    <th>Chrono</th>
-                                    <th>Operateur</th>
-                                    <th>Date Ouverture</th>
-                                    <th>Heure</th>
-                                    <th>Montant Initial</th>
-                                    <th>Statut</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Comptage Page -->
-            <div class="page" id="page-comptage">
-                <div class="page-header">
-                    <h3>Comptage Caisse</h3>
-                </div>
-
-                <div class="comptage-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-coins"></i> Comptage Especes</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="comptage-grid">
-                                <div class="comptage-section">
-                                    <h4>Billets</h4>
-                                    <div class="comptage-row">
-                                        <span class="denomination">500 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="500" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">200 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="200" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">100 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="100" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">50 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="50" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">20 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="20" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">10 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="10" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">5 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="5" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                </div>
-
-                                <div class="comptage-section">
-                                    <h4>Pieces</h4>
-                                    <div class="comptage-row">
-                                        <span class="denomination">2 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="2" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">1 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="1" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">0.50 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="0.5" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">0.20 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="0.2" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">0.10 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="0.1" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">0.05 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="0.05" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">0.02 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="0.02" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                    <div class="comptage-row">
-                                        <span class="denomination">0.01 EUR</span>
-                                        <input type="number" class="comptage-input" data-value="0.01" value="0" min="0">
-                                        <span class="comptage-total">0.00</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="comptage-summary">
-                                <div class="summary-row">
-                                    <span>Total Compte:</span>
-                                    <span class="summary-value" id="totalComptage">0.00 EUR</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span>Total Theorique:</span>
-                                    <span class="summary-value" id="totalTheorique">0.00 EUR</span>
-                                </div>
-                                <div class="summary-row ecart">
-                                    <span>Ecart:</span>
-                                    <span class="summary-value" id="ecartComptage">0.00 EUR</span>
-                                </div>
-                            </div>
-
-                            <div class="comptage-actions">
-                                <button class="btn btn-secondary" onclick="resetComptage()">
-                                    <i class="fas fa-undo"></i> Reinitialiser
-                                </button>
-                                <button class="btn btn-primary" onclick="validerComptage()">
-                                    <i class="fas fa-check"></i> Valider Comptage
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ventes Page -->
-            <div class="page" id="page-ventes">
-                <div class="page-header">
-                    <h3>Gestion des Ventes</h3>
-                </div>
-
-                <div class="tabs">
-                    <button class="tab active" data-tab="historique">Historique</button>
-                    <button class="tab" data-tab="giftpass">Solde Gift Pass</button>
-                    <button class="tab" data-tab="resortcredit">Resort Credit</button>
-                </div>
-
-                <div class="tab-content active" id="tab-historique">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-history"></i> Historique des Ventes</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="venteSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Compte</label>
-                                        <input type="text" id="venteCompte" maxlength="20">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="text" id="venteFiliation" maxlength="4">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchVentes()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="data-table" id="ventesTable">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Heure</th>
-                                        <th>Article</th>
-                                        <th>Quantite</th>
-                                        <th>Montant</th>
-                                        <th>Mode Paiement</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="tab-giftpass">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-gift"></i> Solde Gift Pass</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="gpSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Compte</label>
-                                        <input type="text" id="gpCompte" maxlength="20">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="text" id="gpFiliation" maxlength="4">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchGiftPass()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="solde-display" id="giftPassResult" style="display: none;">
-                                <div class="solde-card">
-                                    <div class="solde-label">Solde Gift Pass</div>
-                                    <div class="solde-value" id="gpSolde">0.00</div>
-                                    <div class="solde-devise" id="gpDevise">EUR</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-content" id="tab-resortcredit">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-credit-card"></i> Resort Credit</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="rcSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Compte</label>
-                                        <input type="text" id="rcCompte" maxlength="20">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="text" id="rcFiliation" maxlength="4">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Service</label>
-                                        <input type="text" id="rcService" maxlength="10">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchResortCredit()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="solde-display" id="resortCreditResult" style="display: none;">
-                                <div class="solde-card">
-                                    <div class="solde-label">Resort Credit Disponible</div>
-                                    <div class="solde-value" id="rcSolde">0.00</div>
-                                    <div class="solde-devise" id="rcDevise">EUR</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Devises Page -->
-            <div class="page" id="page-devises">
-                <div class="page-header">
-                    <h3>Gestion Devises & Coffre</h3>
-                </div>
-
-                <div class="devises-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-coins"></i> Devises en Caisse</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Session</label>
-                                <select id="deviseSessionSelect" onchange="loadDevisesSession()">
-                                    <option value="">-- Selectionner une session --</option>
-                                </select>
-                            </div>
-                            <table class="data-table" id="devisesTable">
-                                <thead>
-                                    <tr>
-                                        <th>Devise</th>
-                                        <th>Libelle</th>
-                                        <th>Quantite</th>
-                                        <th>Montant</th>
-                                        <th>Taux</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-vault"></i> Coffre</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="coffre-status" id="coffreStatus">
-                                <div class="coffre-icon closed">
-                                    <i class="fas fa-lock"></i>
-                                </div>
-                                <span>Coffre Ferme</span>
-                            </div>
-                            <table class="data-table" id="coffreTable">
-                                <thead>
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>Devise</th>
-                                        <th>Montant</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Change Page -->
-            <div class="page" id="page-change">
-                <div class="page-header">
-                    <h3>Operations de Change</h3>
-                </div>
-
-                <div class="change-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-exchange-alt"></i> Calculateur de Change</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="change-calculator">
-                                <div class="change-input">
-                                    <label>Montant</label>
-                                    <input type="number" id="changeMontant" step="0.01" value="100" oninput="calculateChange()">
-                                </div>
-                                <div class="change-arrow">
-                                    <button class="btn-icon" onclick="swapDevises()">
-                                        <i class="fas fa-exchange-alt"></i>
-                                    </button>
-                                </div>
-                                <div class="change-output">
-                                    <label>Resultat</label>
-                                    <div class="change-result" id="changeResult">0.00</div>
-                                </div>
-                            </div>
-
-                            <div class="change-devises">
-                                <div class="form-group">
-                                    <label>Devise Source</label>
-                                    <select id="changeDeviseSource" onchange="calculateChange()">
-                                        <option value="EUR">EUR - Euro</option>
-                                        <option value="USD">USD - Dollar US</option>
-                                        <option value="GBP">GBP - Livre Sterling</option>
-                                        <option value="CHF">CHF - Franc Suisse</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Devise Cible</label>
-                                    <select id="changeDeviseCible" onchange="calculateChange()">
-                                        <option value="USD">USD - Dollar US</option>
-                                        <option value="EUR">EUR - Euro</option>
-                                        <option value="GBP">GBP - Livre Sterling</option>
-                                        <option value="CHF">CHF - Franc Suisse</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="change-info">
-                                <span id="changeTaux">Taux: -</span>
-                                <span id="changeType">Type: -</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-list"></i> Taux de Change</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Societe</label>
-                                <input type="text" id="tauxSociete" value="C" maxlength="2">
-                                <button class="btn btn-secondary" onclick="loadTauxChange()">Charger</button>
-                            </div>
-                            <table class="data-table" id="tauxTable">
-                                <thead>
-                                    <tr>
-                                        <th>Devise</th>
-                                        <th>Taux Achat</th>
-                                        <th>Taux Vente</th>
-                                        <th>Date MAJ</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Compte Page -->
-            <div class="page" id="page-compte">
-                <div class="page-header">
-                    <h3>Consultation Compte Client</h3>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-search"></i> Recherche Compte</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="search-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Societe</label>
-                                    <input type="text" id="compteSociete" value="C" maxlength="2">
-                                </div>
-                                <div class="form-group">
-                                    <label>N Compte</label>
-                                    <input type="text" id="compteNumero" maxlength="20">
-                                </div>
-                                <div class="form-group">
-                                    <label>Filiation</label>
-                                    <input type="text" id="compteFiliation" maxlength="4">
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary" onclick="searchCompte()">
-                                        <i class="fas fa-search"></i> Rechercher
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="compteResult" style="display: none;">
-                    <div class="compte-header-card">
-                        <div class="compte-info">
-                            <div class="compte-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="compte-details">
-                                <h3 id="compteNom">-</h3>
-                                <span id="compteRef">Compte: -</span>
-                            </div>
-                        </div>
-                        <div class="compte-solde">
-                            <span class="solde-label">Solde Global</span>
-                            <span class="solde-amount" id="compteSoldeGlobal">0.00 EUR</span>
-                        </div>
-                    </div>
-
-                    <div class="compte-tabs">
-                        <button class="compte-tab active" data-comptab="soldes">Soldes par Service</button>
-                        <button class="compte-tab" data-comptab="clubmed">Club Med Pass</button>
-                    </div>
-
-                    <div class="compte-tab-content active" id="comptab-soldes">
-                        <div class="card">
-                            <div class="card-body">
-                                <table class="data-table" id="soldesTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Service</th>
-                                            <th>Credit</th>
-                                            <th>Debit</th>
-                                            <th>Solde</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="compte-tab-content" id="comptab-clubmed">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="clubmed-pass" id="clubmedPass">
-                                    <div class="pass-icon">
-                                        <i class="fas fa-id-card"></i>
-                                    </div>
-                                    <div class="pass-info">
-                                        <span class="pass-label">Numero Club Med Pass</span>
-                                        <span class="pass-number" id="passNumber">-</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Extrait Page -->
-            <div class="page" id="page-extrait">
-                <div class="page-header">
-                    <h3>Extrait de Compte</h3>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-file-alt"></i> Recherche Extrait</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="search-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Societe</label>
-                                    <input type="text" id="extraitSociete" value="C" maxlength="2">
-                                </div>
-                                <div class="form-group">
-                                    <label>Compte</label>
-                                    <input type="text" id="extraitCompte" maxlength="20">
-                                </div>
-                                <div class="form-group">
-                                    <label>Filiation</label>
-                                    <input type="text" id="extraitFiliation" maxlength="4">
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary" onclick="searchExtrait()">
-                                        <i class="fas fa-search"></i> Rechercher
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="printExtrait()">
-                                        <i class="fas fa-print"></i> Imprimer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" id="extraitResult" style="display: none;">
-                    <div class="card-header">
-                        <h3><i class="fas fa-list"></i> Mouvements</h3>
-                        <span class="badge" id="extraitCount">0 mouvements</span>
-                    </div>
-                    <div class="card-body">
-                        <table class="data-table" id="extraitTable">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Service</th>
-                                    <th>Libelle</th>
-                                    <th>Debit</th>
-                                    <th>Credit</th>
-                                    <th>Solde</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Garantie Page -->
-            <div class="page" id="page-garantie">
-                <div class="page-header">
-                    <h3>Garanties et Depots</h3>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-shield-alt"></i> Recherche Garanties</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="search-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Societe</label>
-                                    <input type="text" id="garantieSociete" value="C" maxlength="2">
-                                </div>
-                                <div class="form-group">
-                                    <label>Compte</label>
-                                    <input type="text" id="garantieCompte" maxlength="20">
-                                </div>
-                                <div class="form-group">
-                                    <label>Filiation</label>
-                                    <input type="text" id="garantieFiliation" maxlength="4">
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-primary" onclick="searchGarantie()">
-                                        <i class="fas fa-search"></i> Rechercher
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card" id="garantieResult" style="display: none;">
-                    <div class="card-header">
-                        <h3><i class="fas fa-list"></i> Depots Actifs</h3>
-                        <span class="badge" id="garantieTotal">Total: 0.00 EUR</span>
-                    </div>
-                    <div class="card-body">
-                        <table class="data-table" id="garantieTable">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Libelle</th>
-                                    <th>Montant</th>
-                                    <th>Date Depot</th>
-                                    <th>Statut</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Checkout Page -->
-            <div class="page" id="page-checkout">
-                <div class="page-header">
-                    <h3>Easy Check-Out</h3>
-                </div>
-
-                <div class="checkout-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-plane-departure"></i> Departs du Jour</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="checkoutSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Date</label>
-                                        <input type="date" id="checkoutDate">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchCheckout()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="data-table" id="checkoutTable">
-                                <thead>
-                                    <tr>
-                                        <th>Compte</th>
-                                        <th>Nom</th>
-                                        <th>Chambre</th>
-                                        <th>Solde</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-user-check"></i> Checkout Individuel</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Compte</label>
-                                    <input type="text" id="checkoutCompte" maxlength="20">
-                                </div>
-                                <div class="form-group">
-                                    <label>Filiation</label>
-                                    <input type="text" id="checkoutFiliation" maxlength="4">
-                                </div>
-                            </div>
-                            <div class="checkout-actions">
-                                <button class="btn btn-info" onclick="getSoldeCheckout()">
-                                    <i class="fas fa-balance-scale"></i> Solde
-                                </button>
-                                <button class="btn btn-secondary" onclick="getEditionCheckout()">
-                                    <i class="fas fa-file-pdf"></i> Edition
-                                </button>
-                                <button class="btn btn-primary" onclick="getExtraitCheckout()">
-                                    <i class="fas fa-file-alt"></i> Extrait
-                                </button>
-                                <button class="btn btn-success" onclick="processCheckout()">
-                                    <i class="fas fa-check-circle"></i> Valider Checkout
-                                </button>
-                            </div>
-
-                            <div id="checkoutResultPanel" style="display: none;">
-                                <div class="checkout-summary">
-                                    <h4>Resume Checkout</h4>
-                                    <div class="summary-grid">
-                                        <div class="summary-item">
-                                            <span class="label">Solde Final</span>
-                                            <span class="value" id="checkoutSolde">0.00</span>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="label">Garanties</span>
-                                            <span class="value" id="checkoutGaranties">0.00</span>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="label">A Payer</span>
-                                            <span class="value highlight" id="checkoutAPayer">0.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Factures Page -->
-            <div class="page" id="page-factures">
-                <div class="page-header">
-                    <h3>Facturation</h3>
-                </div>
-
-                <div class="factures-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-file-invoice"></i> Factures Checkout</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="factSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Compte</label>
-                                        <input type="text" id="factCompte" maxlength="20">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="text" id="factFiliation" maxlength="4">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchFactures()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="data-table" id="facturesTable">
-                                <thead>
-                                    <tr>
-                                        <th>N Facture</th>
-                                        <th>Date</th>
-                                        <th>Montant HT</th>
-                                        <th>TVA</th>
-                                        <th>Montant TTC</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-plus-circle"></i> Nouvelle Facture</h3>
-                        </div>
-                        <div class="card-body">
-                            <form id="newFactureForm" onsubmit="createFacture(event)">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Compte</label>
-                                        <input type="text" id="newFactCompte" maxlength="20" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="text" id="newFactFiliation" maxlength="4" required>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Montant HT</label>
-                                        <input type="number" id="newFactMontant" step="0.01" required oninput="calculateTVA()">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Taux TVA (%)</label>
-                                        <select id="newFactTauxTVA" onchange="calculateTVA()">
-                                            <option value="20">20%</option>
-                                            <option value="10">10%</option>
-                                            <option value="5.5">5.5%</option>
-                                            <option value="0">0%</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>TVA</label>
-                                        <input type="number" id="newFactTVA" step="0.01" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Montant TTC</label>
-                                        <input type="number" id="newFactTTC" step="0.01" readonly>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Libelle</label>
-                                    <input type="text" id="newFactLibelle" maxlength="100">
-                                </div>
-                                <button type="submit" class="btn btn-success btn-block">
-                                    <i class="fas fa-save"></i> Creer Facture
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Telephone Page -->
-            <div class="page" id="page-telephone">
-                <div class="page-header">
-                    <h3>Gestion Telephone</h3>
-                </div>
-
-                <div class="telephone-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-phone"></i> Lignes Telephoniques</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="telSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Compte</label>
-                                        <input type="text" id="telCompte" maxlength="20">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Chambre</label>
-                                        <input type="text" id="telChambre" maxlength="10">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchLignes()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="data-table" id="lignesTable">
-                                <thead>
-                                    <tr>
-                                        <th>Numero</th>
-                                        <th>Chambre</th>
-                                        <th>Compte</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-cog"></i> Gestion Ligne</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Numero Ligne</label>
-                                    <input type="text" id="telNumero" maxlength="20">
-                                </div>
-                                <div class="form-group">
-                                    <label>Compte</label>
-                                    <input type="text" id="telLigneCompte" maxlength="20">
-                                </div>
-                            </div>
-                            <div class="telephone-actions">
-                                <button class="btn btn-success" onclick="ouvrirLigne()">
-                                    <i class="fas fa-phone"></i> Ouvrir Ligne
-                                </button>
-                                <button class="btn btn-danger" onclick="fermerLigne()">
-                                    <i class="fas fa-phone-slash"></i> Fermer Ligne
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- EzCard Page -->
-            <div class="page" id="page-ezcard">
-                <div class="page-header">
-                    <h3>Gestion EzCard / Club Med Pass</h3>
-                </div>
-
-                <div class="ezcard-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-id-card"></i> Recherche Carte</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="ezcardSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Code GM</label>
-                                        <input type="number" id="ezcardCodeGm" min="1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="number" id="ezcardFiliation" value="0" min="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchEzCards()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="data-table" id="ezcardsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Code Carte</th>
-                                        <th>Statut</th>
-                                        <th>Date Creation</th>
-                                        <th>Date Expiration</th>
-                                        <th>Plafond</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-ban"></i> Desactivation Carte</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Code Carte</label>
-                                    <input type="text" id="ezcardCode" maxlength="20">
-                                </div>
-                                <div class="form-group">
-                                    <label>Motif</label>
-                                    <input type="text" id="ezcardMotif" placeholder="Perdu, Vol, etc." maxlength="100">
-                                </div>
-                            </div>
-                            <button class="btn btn-danger" onclick="desactiverEzCard()">
-                                <i class="fas fa-times-circle"></i> Desactiver la Carte
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-spell-check"></i> Validation Caracteres</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group" style="flex: 2">
-                                    <label>Texte a valider</label>
-                                    <input type="text" id="validerTexte" placeholder="Saisir le texte a verifier">
-                                </div>
-                                <div class="form-group">
-                                    <label>Mode strict</label>
-                                    <select id="validerStrictMode">
-                                        <option value="false">Non (remplacer par espaces)</option>
-                                        <option value="true">Oui (supprimer)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary" onclick="validerCaracteres()">
-                                <i class="fas fa-check"></i> Valider
-                            </button>
-                            <div id="validationResult" class="validation-result" style="margin-top: 15px; display: none;">
-                                <div class="result-status"></div>
-                                <div class="result-cleaned"></div>
-                                <div class="result-detected"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Depot Page -->
-            <div class="page" id="page-depot">
-                <div class="page-header">
-                    <h3>Gestion des Depots</h3>
-                </div>
-
-                <div class="depot-container">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-box"></i> Recherche Depots</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="search-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Societe</label>
-                                        <input type="text" id="depotSociete" value="C" maxlength="2">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Code GM</label>
-                                        <input type="number" id="depotCodeGm" min="1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Filiation</label>
-                                        <input type="number" id="depotFiliation" value="0" min="0">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-primary" onclick="searchDepots()">
-                                            <i class="fas fa-search"></i> Rechercher
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="depot-summary" id="depotSummary" style="display: none;">
-                                <div class="summary-item">
-                                    <span class="summary-label">Total Depots:</span>
-                                    <span class="summary-value" id="depotTotal">0.00</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Total Retraits:</span>
-                                    <span class="summary-value" id="depotRetrait">0.00</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-label">Solde Net:</span>
-                                    <span class="summary-value" id="depotSolde">0.00</span>
-                                </div>
-                            </div>
-                            <table class="data-table" id="depotsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>Devise</th>
-                                        <th>Montant</th>
-                                        <th>Date Depot</th>
-                                        <th>Etat</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-hand-holding-usd"></i> Retirer Depot</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Type Depot</label>
-                                    <select id="depotType">
-                                        <option value="D">Devise</option>
-                                        <option value="O">Objet</option>
-                                        <option value="S">Scelle</option>
-                                        <option value="G">Garantie</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Devise</label>
-                                    <input type="text" id="depotDevise" value="EUR" maxlength="3">
-                                </div>
-                                <div class="form-group">
-                                    <label>Operateur</label>
-                                    <input type="text" id="depotOperateur" maxlength="20">
-                                </div>
-                            </div>
-                            <button class="btn btn-warning" onclick="retirerDepot()">
-                                <i class="fas fa-sign-out-alt"></i> Retirer le Depot
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Toast Notifications -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- Modal -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal" id="modal">
-            <div class="modal-header">
-                <h3 id="modalTitle">Modal</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer" id="modalFooter"></div>
+            <!-- Bottom row workflow buttons -->
+            <button class="magic-btn btn-quitter" id="btnQuitter" onclick="quitter()">Quitter</button>
+            <button class="magic-btn btn-ouvrir" id="btnOuvrir" onclick="ouvrirSession()">Ouvrir la session</button>
+            <button class="magic-btn btn-continuer" id="btnContinuer" disabled>Continuer la session</button>
+            <button class="magic-btn btn-fermer" id="btnFermer" disabled onclick="fermerSession()">Fermer la session</button>
         </div>
     </div>
 
-    <script src="js/app.js"></script>
+    <div class="api-status" id="apiStatus">API: Connecting...</div>
+
+    <script>
+        const CONTEXT = {
+            societe: 'C',
+            utilisateur: 'DSIOP',
+            terminal: 21,
+            runMode: 'R',
+            langue: 'E'
+        };
+
+        let sessionState = {
+            status: 'F',  // F=Fermee, O=Ouverte, B=Bloquee
+            chrono: null,
+            utilisateur: null,
+            dateOuverture: null,
+            heureOuverture: null,
+            coffreOuvert: false,
+            hasTicket: false
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            updateDate();
+            await checkApiConnection();
+            await loadSessionState();
+            updateUI();
+        });
+
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-GB', options);
+        }
+
+        async function checkApiConnection() {
+            try {
+                const response = await fetch('/api/sessions');
+                if (response.ok) {
+                    document.getElementById('apiStatus').textContent = 'API: OK';
+                    document.getElementById('apiStatus').classList.remove('error');
+                    return true;
+                }
+            } catch (e) {}
+            document.getElementById('apiStatus').textContent = 'API: Error';
+            document.getElementById('apiStatus').classList.add('error');
+            return false;
+        }
+
+        async function loadSessionState() {
+            try {
+                const response = await fetch(`/api/sessions/active?utilisateur=${CONTEXT.utilisateur}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        sessionState = {
+                            status: 'O',
+                            chrono: result.data.chrono,
+                            utilisateur: result.data.utilisateur,
+                            dateOuverture: result.data.dateDebutSession,
+                            heureOuverture: result.data.heureDebutSession,
+                            coffreOuvert: false,
+                            hasTicket: result.data.dateFinSession !== '00000000'
+                        };
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading session:', e);
+            }
+        }
+
+        function updateUI() {
+            // Expression 1: user + terminal
+            document.getElementById('userInfo').textContent =
+                CONTEXT.utilisateur.split('').join(' ') + ' (' + CONTEXT.terminal + ')';
+
+            // Expression 26: coffre message
+            document.getElementById('coffreStatus').textContent =
+                'Le coffre 2 est ' + (sessionState.coffreOuvert ? 'ouvert' : 'ferme');
+
+            const sessionOpen = sessionState.status === 'O';
+            const sessionClosed = sessionState.status === 'F';
+            const notBlocked = sessionState.status !== 'B';
+
+            // Status label
+            const statusLabel = document.getElementById('statusLabel');
+            if (sessionOpen) {
+                statusLabel.textContent = 'Ouverte';
+                statusLabel.className = 'status-label ouverte';
+            } else {
+                statusLabel.textContent = 'Fermee';
+                statusLabel.className = 'status-label fermee';
+            }
+
+            // Session info (Visible Exp 8: session open)
+            const sessionInfo = document.getElementById('sessionInfo');
+            if (sessionOpen) {
+                sessionInfo.classList.remove('hidden');
+                document.getElementById('sessionUser').textContent = sessionState.utilisateur || '-';
+                document.getElementById('sessionDate').textContent = formatDate(sessionState.dateOuverture);
+                document.getElementById('sessionTime').textContent = formatTime(sessionState.heureOuverture);
+            } else {
+                sessionInfo.classList.add('hidden');
+            }
+
+            // Coffre label (Visible Exp 24)
+            document.getElementById('coffreLabel').classList.toggle('hidden', !sessionOpen);
+
+            // Right side operations (Visible Exp 12/13: session open)
+            document.getElementById('btnApproCaisse').classList.toggle('hidden', !sessionOpen);
+            document.getElementById('btnApproProduits').classList.toggle('hidden', !sessionOpen);
+            document.getElementById('btnRemiseCaisse').classList.toggle('hidden', !sessionOpen);
+            document.getElementById('btnHistoriques').classList.toggle('hidden', !sessionOpen);
+
+            // Consultation (Visible Exp 11: session closed)
+            document.getElementById('btnConsultation').classList.toggle('hidden', sessionOpen);
+
+            // Impression ticket (Visible Exp 17: has ticket)
+            document.getElementById('btnImpression').classList.toggle('hidden', !sessionState.hasTicket);
+
+            // Bottom buttons visibility (Visible Exp 10: not blocked)
+            document.getElementById('btnOuvrir').style.display = notBlocked ? '' : 'none';
+            document.getElementById('btnContinuer').style.display = notBlocked ? '' : 'none';
+            document.getElementById('btnFermer').style.display = notBlocked ? '' : 'none';
+
+            // Bottom buttons enabled (Exp 6/7)
+            document.getElementById('btnOuvrir').disabled = !sessionClosed;
+            document.getElementById('btnContinuer').disabled = !sessionOpen;
+            document.getElementById('btnFermer').disabled = !sessionOpen;
+
+            // Keep button text as "Continuer la session"
+            // (chrono is not displayed on button in Magic)
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr || dateStr.length !== 8 || dateStr === '00000000') return '##/##/####';
+            return `${dateStr.substring(6,8)}/${dateStr.substring(4,6)}/${dateStr.substring(0,4)}`;
+        }
+
+        function formatTime(timeStr) {
+            if (!timeStr || timeStr.length < 4) return 'HH:MM:SS';
+            const p = timeStr.padStart(6, '0');
+            return `${p.substring(0,2)}:${p.substring(2,4)}:${p.substring(4,6)}`;
+        }
+
+        function quitter() {
+            if (confirm('Voulez-vous quitter?')) {
+                window.location.href = '/';
+            }
+        }
+
+        async function ouvrirSession() {
+            try {
+                const response = await fetch('/api/sessions/ouvrir', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        utilisateur: CONTEXT.utilisateur
+                    })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        await loadSessionState();
+                        updateUI();
+                    } else {
+                        alert('Erreur: ' + (result.errorMessage || 'Echec'));
+                    }
+                }
+            } catch (e) {
+                alert('Erreur connexion');
+            }
+        }
+
+        async function fermerSession() {
+            if (!confirm('Fermer la session?')) return;
+            try {
+                const response = await fetch('/api/sessions/fermer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        utilisateur: CONTEXT.utilisateur,
+                        chrono: sessionState.chrono
+                    })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        sessionState.status = 'F';
+                        updateUI();
+                    } else {
+                        alert('Erreur: ' + (result.errorMessage || 'Echec'));
+                    }
+                }
+            } catch (e) {
+                alert('Erreur connexion');
+            }
+        }
+    </script>
 </body>
 </html>

@@ -80,23 +80,25 @@ Composant "Sessions_Reprises" - 30 programmes:
   - Scripts SQL: `migration/mecano/sql/`
   - Doc: `openspec/mecano/MECANO_SPEC.md`
 
-- [x] **ADH/Gestion Caisse** - API C# .NET 8 COMPLETE - Valide 2025-12-28
+- [x] **ADH/Gestion Caisse** - API C# .NET 8 COMPLETE - Valide 2025-12-29
   - Solution: `migration/caisse/Caisse.sln`
   - 5 projets: Domain, Application, Infrastructure, Api, Shared
   - **Interface graphique complete:** 15 ecrans SPA (HTML/CSS/JS)
-  - **62 endpoints** couvrant tous les modules migres
-  - **458 tests unitaires**
+  - **~70 endpoints** couvrant tous les modules migres
+  - **527 tests unitaires** (100% pass)
   - Swagger: http://localhost:5287/swagger
   - Interface: http://localhost:5287/
 
   **Modules migres:**
   - Sessions, Devises, Articles, Details, Coffre, Parametres
-  - Ventes (Gift Pass, Resort Credit, Historique)
+  - Ventes (Gift Pass, Resort Credit, Historique, PrintTicket)
   - Zooms (8 endpoints), Members, Solde, Extrait, Garantie
   - Change (3 endpoints), Telephone, EasyCheckOut, Factures
   - Identification, EzCard (3 endpoints), Depot (2 endpoints)
-  - **Divers (5 endpoints)** - Langue, Titre, AccesInfo, IntegriteDates, SessionTimestamp
-  - Commits: `ee415a0` (coffre), `a916e27` (Divers module)
+  - Divers (5 endpoints) - Langue, Titre, AccesInfo, IntegriteDates, SessionTimestamp
+  - Utilitaires (10 endpoints) - Init, Backup, Restore, Export, Import, Purge, Maintenance, PrintTicket, LogViewer, SystemInfo
+  - ChangementCompte (12 endpoints) - Menu, Separation, Fusion, Historique
+  - Menus (5 endpoints) - MenuCaisse, MenuVentes, MenuChange, MenuDepot, MenuFactures
 
 - [x] **ADH/Ventes - Prg_237 Solde Gift Pass** - Migre 2025-12-27
   - Endpoint: `GET /api/ventes/solde-giftpass/{societe}/{compte}/{filiation}`
@@ -194,8 +196,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ### Modules en cours
 
-- [ ] **ADH** - Modules secondaires restants (~180 progs)
-  - EzCard, Depot, Divers
+- [ ] **ADH** - Tests d'integration et documentation
 
 ### Modules explores
 
@@ -212,12 +213,11 @@ Composant "Sessions_Reprises" - 30 programmes:
 ## Taches
 
 ### A traiter
-- [ ] Modules secondaires ADH (EzCard, Depot, Divers)
 - [ ] Tests d'integration sur CSK0912
 - [ ] Documentation utilisateur API
 
 ### En cours
-- (aucune)
+- [ ] Mise en production et tests finaux
 
 ### Terminees
 - [x] **Phase 11: Identification (2 endpoints)** (terminee: 2025-12-28) - Login + Session check, 327 tests total
@@ -310,6 +310,8 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2025-12-29: **MIGRATION ADH COMPLETE** - 527 tests unitaires (100% pass), ~70 endpoints, 18 modules migres, build Release operationnel
+- 2025-12-29: Fix validators Societe (MaxLength 2->10), correction tests Ventes orphelins, nettoyage fichiers agents
 - 2025-12-28: **Interface Graphique Complete** - 15 ecrans SPA (dashboard, sessions, ventes, EzCard, depot, etc.), 411 tests total
 - 2025-12-28: **Phase 12: Divers** - 5 programmes prioritaires (Prg_42,43,45,47,48), 5 endpoints, 458 tests total
 - 2025-12-28: **Phase 12: Depot** - GetExtraitDepot + RetirerDepot, 2 endpoints
@@ -349,4 +351,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2025-12-28 10:00*
+*Derniere mise a jour: 2025-12-29 10:00*

@@ -1,7 +1,7 @@
 namespace Caisse.Domain.Entities;
 
 /// <summary>
-/// Table cafil028_dat - Taux de change
+/// Table taux_change_dat - Taux de change
 /// Source: Magic Table ID 50
 /// </summary>
 public class TauxChange

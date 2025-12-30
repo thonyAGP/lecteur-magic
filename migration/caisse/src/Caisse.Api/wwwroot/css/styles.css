@@ -1455,3 +1455,133 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-dark);
 }
+
+/* ========================================
+   Divers Module Styles
+   ======================================== */
+
+.result-panel {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+}
+
+.result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.result-item.large {
+    grid-column: span 2;
+}
+
+.result-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.result-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.result-value.highlight {
+    color: var(--primary);
+    font-size: 1.25rem;
+}
+
+/* Access Status */
+.access-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.access-icon {
+    font-size: 2.5rem;
+}
+
+.access-icon.authorized {
+    color: var(--success);
+}
+
+.access-icon.denied {
+    color: var(--danger);
+}
+
+.access-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.access-text.success {
+    color: var(--success);
+}
+
+.access-text.error {
+    color: var(--danger);
+}
+
+/* Validation Status */
+.validation-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.validation-icon {
+    font-size: 2.5rem;
+}
+
+.validation-icon.valid {
+    color: var(--success);
+}
+
+.validation-icon.invalid {
+    color: var(--warning);
+}
+
+.validation-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.validation-text.success {
+    color: var(--success);
+}
+
+.validation-text.error {
+    color: var(--warning);
+}
+
+/* Verifications List */
+.verifications-list {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.verifications-list h4 {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}

@@ -19,7 +19,7 @@ public class GetHistoVentesQueryValidatorTests
     public void Should_Pass_When_Valid_With_Dates()
     {
         var query = new GetHistoVentesQuery("CS", 12345678, 1,
-            new DateOnly(2025, 1, 1), new DateOnly(2025, 12, 31));
+            "20250101", "20251231");
         var result = _validator.TestValidate(query);
         result.ShouldNotHaveAnyValidationErrors();
     }
@@ -45,7 +45,7 @@ public class GetHistoVentesQueryValidatorTests
     [Fact]
     public void Should_Fail_When_Societe_TooLong()
     {
-        var query = new GetHistoVentesQuery("ABC", 12345678, 1);
+        var query = new GetHistoVentesQuery("ABCDEFGHIJK", 12345678, 1); // > 10 chars
         var result = _validator.TestValidate(query);
         result.ShouldHaveValidationErrorFor(x => x.Societe);
     }

@@ -8,13 +8,14 @@ namespace Caisse.Application.Ventes.Queries;
 /// <summary>
 /// Query pour récupérer l'historique des ventes
 /// Migration des programmes Magic Prg_239-241 "Histo ventes payantes"
+/// Table: bartransacent
 /// </summary>
 public record GetHistoVentesQuery(
     string Societe,
     int CodeGm,
     int Filiation,
-    DateOnly? DateDebut = null,
-    DateOnly? DateFin = null,
+    string? DateDebut = null,
+    string? DateFin = null,
     int Limit = 50) : IRequest<GetHistoVentesResult>;
 
 public record GetHistoVentesResult
@@ -27,29 +28,17 @@ public record GetHistoVentesResult
 
 public record VenteDto
 {
-    public long TransactionId { get; init; }
-    public DateOnly DateComptable { get; init; }
-    public TimeOnly HeureTransaction { get; init; }
-    public string TypeTransaction { get; init; } = string.Empty;
-    public string ModePaiement { get; init; } = string.Empty;
-    public double MontantTotal { get; init; }
-    public double MontantTva { get; init; }
-    public string DeviseTransaction { get; init; } = string.Empty;
-    public int NumeroTicket { get; init; }
-    public string Operateur { get; init; } = string.Empty;
-    public string EtatTransaction { get; init; } = string.Empty;
-    public string CodeService { get; init; } = string.Empty;
-    public string Commentaire { get; init; } = string.Empty;
-    public List<VenteLigneDto> Lignes { get; init; } = new();
-}
-
-public record VenteLigneDto
-{
-    public string CodeArticle { get; init; } = string.Empty;
-    public string LibelleArticle { get; init; } = string.Empty;
-    public int Quantite { get; init; }
-    public double PrixUnitaire { get; init; }
-    public double MontantLigne { get; init; }
+    public string BarId { get; init; } = string.Empty;
+    public string TicketNumber { get; init; } = string.Empty;
+    public string DateTicket { get; init; } = string.Empty;
+    public string TimeTicket { get; init; } = string.Empty;
+    public double TotalTicket { get; init; }
+    public double TotalPaye { get; init; }
+    public double TotalCreditConso { get; init; }
+    public string EzCardId { get; init; } = string.Empty;
+    public string PosId { get; init; } = string.Empty;
+    public string BarmanId { get; init; } = string.Empty;
+    public string TaiCodeForfait { get; init; } = string.Empty;
 }
 
 public class GetHistoVentesQueryValidator : AbstractValidator<GetHistoVentesQuery>
@@ -58,7 +47,7 @@ public class GetHistoVentesQueryValidator : AbstractValidator<GetHistoVentesQuer
     {
         RuleFor(x => x.Societe)
             .NotEmpty().WithMessage("Societe is required")
-            .MaximumLength(2).WithMessage("Societe must be at most 2 characters");
+            .MaximumLength(10).WithMessage("Societe must be at most 10 characters");
 
         RuleFor(x => x.CodeGm)
             .GreaterThan(0).WithMessage("CodeGm must be positive");
@@ -88,62 +77,39 @@ public class GetHistoVentesQueryHandler : IRequestHandler<GetHistoVentesQuery, G
             .AsNoTracking()
             .Where(t =>
                 t.Societe == request.Societe &&
-                t.CodeGm == request.CodeGm &&
-                t.Filiation == request.Filiation &&
-                t.EtatTransaction != "A"); // Exclure les annulées
+                t.Adherent == request.CodeGm &&
+                t.Filiation == request.Filiation);
 
-        if (request.DateDebut.HasValue)
-            query = query.Where(t => t.DateComptable >= request.DateDebut.Value);
+        if (!string.IsNullOrEmpty(request.DateDebut))
+            query = query.Where(t => string.Compare(t.DateTicket, request.DateDebut) >= 0);
 
-        if (request.DateFin.HasValue)
-            query = query.Where(t => t.DateComptable <= request.DateFin.Value);
+        if (!string.IsNullOrEmpty(request.DateFin))
+            query = query.Where(t => string.Compare(t.DateTicket, request.DateFin) <= 0);
 
         var totalCount = await query.CountAsync(cancellationToken);
-        var totalMontant = await query.SumAsync(t => t.MontantTotal, cancellationToken);
+        var totalMontant = totalCount > 0
+            ? await query.SumAsync(t => t.TotalTicket, cancellationToken)
+            : 0;
 
         var transactions = await query
-            .OrderByDescending(t => t.DateComptable)
-            .ThenByDescending(t => t.HeureTransaction)
+            .OrderByDescending(t => t.DateTicket)
+            .ThenByDescending(t => t.TimeTicket)
             .Take(request.Limit)
             .Select(t => new VenteDto
             {
-                TransactionId = t.Id,
-                DateComptable = t.DateComptable,
-                HeureTransaction = t.HeureTransaction,
-                TypeTransaction = t.TypeTransaction,
-                ModePaiement = t.ModePaiement,
-                MontantTotal = t.MontantTotal,
-                MontantTva = t.MontantTva,
-                DeviseTransaction = t.DeviseTransaction,
-                NumeroTicket = t.NumeroTicket,
-                Operateur = t.Operateur,
-                EtatTransaction = t.EtatTransaction,
-                CodeService = t.CodeService,
-                Commentaire = t.Commentaire
+                BarId = t.BarId,
+                TicketNumber = t.TicketNumber,
+                DateTicket = t.DateTicket,
+                TimeTicket = t.TimeTicket,
+                TotalTicket = t.TotalTicket,
+                TotalPaye = t.TotalPaye,
+                TotalCreditConso = t.TotalCreditConso,
+                EzCardId = t.EzCardId,
+                PosId = t.PosId,
+                BarmanId = t.BarmanId,
+                TaiCodeForfait = t.TaiCodeForfait
             })
             .ToListAsync(cancellationToken);
-
-        // Récupérer les lignes de détail pour chaque transaction
-        var transactionIds = transactions.Select(t => t.TransactionId).ToList();
-        var lignes = await _context.TransactionsBarDetail
-            .AsNoTracking()
-            .Where(d => transactionIds.Contains(d.TransactionId))
-            .ToListAsync(cancellationToken);
-
-        foreach (var vente in transactions)
-        {
-            vente.Lignes.AddRange(
-                lignes.Where(l => l.TransactionId == vente.TransactionId)
-                    .Select(l => new VenteLigneDto
-                    {
-                        CodeArticle = l.CodeArticle,
-                        LibelleArticle = l.LibelleArticle,
-                        Quantite = l.Quantite,
-                        PrixUnitaire = l.PrixUnitaire,
-                        MontantLigne = l.MontantLigne
-                    })
-            );
-        }
 
         return new GetHistoVentesResult
         {

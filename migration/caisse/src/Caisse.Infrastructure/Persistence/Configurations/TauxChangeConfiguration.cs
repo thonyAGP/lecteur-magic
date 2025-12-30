@@ -8,7 +8,7 @@ public class TauxChangeConfiguration : IEntityTypeConfiguration<TauxChange>
 {
     public void Configure(EntityTypeBuilder<TauxChange> builder)
     {
-        builder.ToTable("cafil028_dat");
+        builder.ToTable("taux_change_dat");
         builder.HasNoKey();
 
         builder.Property(e => e.Societe)

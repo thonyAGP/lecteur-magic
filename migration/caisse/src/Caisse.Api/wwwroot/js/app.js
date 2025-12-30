@@ -134,7 +134,10 @@ function navigateTo(page) {
         'garantie': 'Garanties et Depots',
         'checkout': 'Easy Check-Out',
         'factures': 'Facturation',
-        'telephone': 'Gestion Telephone'
+        'telephone': 'Gestion Telephone',
+        'ezcard': 'EzCard / Club Med Pass',
+        'depot': 'Gestion des Depots',
+        'divers': 'Administration - Divers'
     };
     document.getElementById('pageTitle').textContent = titles[page] || page;
 
@@ -1502,5 +1505,249 @@ async function retirerDepot() {
     } catch (error) {
         console.error('Error withdrawing depot:', error);
         showToast('Erreur lors du retrait du depot', 'error');
+    }
+}
+
+// ========================================
+// Divers Functions (Prg_42, 43, 45, 47, 48)
+// ========================================
+
+async function getLangueUtilisateur() {
+    const societe = document.getElementById('langueSociete').value;
+    const utilisateur = document.getElementById('langueUtilisateur').value;
+
+    if (!utilisateur) {
+        showToast('Veuillez saisir un code utilisateur', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/api/divers/langue/${societe}/${utilisateur}`
+        );
+        const data = await response.json();
+
+        document.getElementById('langueCode').textContent = data.codeLangue || '-';
+        document.getElementById('langueLibelle').textContent = data.libelleLangue || '-';
+        document.getElementById('langueMenuVisible').textContent = data.menuVisible ? 'Oui' : 'Non';
+        showElement('langueResult');
+
+        showToast(`Langue: ${data.codeLangue || 'FRA'}`, 'success');
+    } catch (error) {
+        console.error('Error getting langue:', error);
+        showToast('Erreur lors de la recuperation de la langue', 'error');
+    }
+}
+
+async function getTitreEcran() {
+    const codeEcran = document.getElementById('titreCodeEcran').value;
+    const codeLangue = document.getElementById('titreCodeLangue').value;
+
+    if (!codeEcran) {
+        showToast('Veuillez saisir un code ecran', 'warning');
+        return;
+    }
+
+    try {
+        let url = `${API_BASE}/api/divers/titre/${codeEcran}`;
+        if (codeLangue) {
+            url += `?codeLangue=${codeLangue}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        document.getElementById('titreEcranCode').textContent = data.codeEcran || codeEcran;
+        document.getElementById('titreEcranValue').textContent = data.titreEcran || '-';
+        document.getElementById('titreEcranLangue').textContent = data.codeLangue || 'FRA';
+        showElement('titreResult');
+
+        if (data.found) {
+            showToast(`Titre trouve: ${data.titreEcran}`, 'success');
+        } else {
+            showToast('Titre non trouve, fallback utilise', 'warning');
+        }
+    } catch (error) {
+        console.error('Error getting titre:', error);
+        showToast('Erreur lors de la recuperation du titre', 'error');
+    }
+}
+
+async function verifierAccesInformaticien() {
+    const societe = document.getElementById('accesSociete').value;
+    const utilisateur = document.getElementById('accesUtilisateur').value;
+
+    if (!utilisateur) {
+        showToast('Veuillez saisir un code utilisateur', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `${API_BASE}/api/divers/acces-informaticien/${societe}/${utilisateur}`
+        );
+        const data = await response.json();
+
+        const statusDiv = document.getElementById('accesStatus');
+        if (data.estAutorise) {
+            statusDiv.innerHTML = `
+                <div class="access-icon authorized">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="access-text success">Acces Autorise</div>
+            `;
+        } else {
+            statusDiv.innerHTML = `
+                <div class="access-icon denied">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="access-text error">${data.messageErreur || 'Acces Refuse'}</div>
+            `;
+        }
+
+        document.getElementById('accesUser').textContent = data.codeUtilisateur || utilisateur;
+        document.getElementById('accesRole').textContent = data.roleUtilisateur || '-';
+        showElement('accesResult');
+
+        showToast(data.estAutorise ? 'Acces informaticien autorise' : 'Acces refuse',
+                  data.estAutorise ? 'success' : 'warning');
+    } catch (error) {
+        console.error('Error checking access:', error);
+        showToast('Erreur lors de la verification', 'error');
+    }
+}
+
+async function validerIntegriteDates(event) {
+    event.preventDefault();
+
+    const societe = document.getElementById('datesSociete').value;
+    const typeOperation = document.getElementById('datesTypeOperation').value;
+    const dateTransaction = document.getElementById('datesTransaction').value;
+    const dateOuverture = document.getElementById('datesOuverture').value;
+
+    if (!dateTransaction) {
+        showToast('Veuillez saisir une date de transaction', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/divers/valider-dates`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                societe,
+                typeOperation,
+                dateTransaction,
+                dateOuvertureSession: dateOuverture || null
+            })
+        });
+
+        const data = await response.json();
+
+        // Update status
+        const statusDiv = document.getElementById('datesStatus');
+        if (data.isValid) {
+            statusDiv.innerHTML = `
+                <div class="validation-icon valid">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="validation-text success">Dates Valides</div>
+            `;
+        } else {
+            statusDiv.innerHTML = `
+                <div class="validation-icon invalid">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="validation-text error">${data.messageErreur || 'Dates Invalides'}</div>
+            `;
+        }
+
+        // Update values
+        document.getElementById('datesTransValue').textContent = dateTransaction;
+        document.getElementById('datesComptableValue').textContent = data.dateComptable || '-';
+        document.getElementById('datesLimiteValue').textContent = data.dateLimite || '-';
+        document.getElementById('datesToleranceValue').textContent = `${data.joursToleranceParametre || 3} jours`;
+
+        // Show verifications if fermeture
+        const verificationsDiv = document.getElementById('datesVerifications');
+        if (data.verificationsDetails && data.verificationsDetails.length > 0) {
+            const tbody = document.querySelector('#verificationsTable tbody');
+            tbody.innerHTML = data.verificationsDetails.map(v => `
+                <tr>
+                    <td>${v.nomTable}</td>
+                    <td>${v.nombreEnregistrements}</td>
+                    <td>
+                        <span class="badge ${v.hasErrors ? 'badge-closed' : 'badge-open'}">
+                            ${v.message || (v.hasErrors ? 'Erreur' : 'OK')}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+            verificationsDiv.style.display = 'block';
+        } else {
+            verificationsDiv.style.display = 'none';
+        }
+
+        showElement('datesResult');
+        showToast(data.isValid ? 'Validation reussie' : 'Probleme de validation',
+                  data.isValid ? 'success' : 'warning');
+    } catch (error) {
+        console.error('Error validating dates:', error);
+        showToast('Erreur lors de la validation des dates', 'error');
+    }
+}
+
+async function updateSessionTimestamp(event) {
+    event.preventDefault();
+
+    const societe = document.getElementById('tsSociete').value;
+    const codeCaisse = document.getElementById('tsCodeCaisse').value;
+    const operateur = document.getElementById('tsOperateur').value;
+    const dateHeure = document.getElementById('tsDateHeure').value;
+
+    try {
+        const response = await fetch(`${API_BASE}/api/divers/session-timestamp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                societe,
+                codeCaisse,
+                codeOperateur: operateur,
+                dateHeure: dateHeure || null
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('tsChronoValue').textContent = data.chronoSession || '-';
+            document.getElementById('tsUserValue').textContent = data.utilisateur || '-';
+            document.getElementById('tsAvantValue').textContent = formatDateTime(data.dateHeureAvant);
+            document.getElementById('tsApresValue').textContent = formatDateTime(data.dateHeureApres);
+            showElement('timestampResult');
+            showToast('Timestamp mis a jour avec succes', 'success');
+        } else {
+            showToast(data.messageErreur || 'Erreur lors de la mise a jour', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating timestamp:', error);
+        showToast('Erreur lors de la mise a jour du timestamp', 'error');
+    }
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '-';
+    try {
+        const date = new Date(dateStr);
+        return date.toLocaleString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    } catch {
+        return dateStr;
     }
 }

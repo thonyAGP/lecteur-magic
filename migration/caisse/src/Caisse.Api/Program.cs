@@ -1,5 +1,6 @@
 using Caisse.Api.Middleware;
 using Caisse.Application;
+using Microsoft.Extensions.FileProviders;
 using Caisse.Application.Sessions.Commands;
 using Caisse.Application.Sessions.Queries;
 using Caisse.Application.Devises.Commands;
@@ -77,6 +78,22 @@ try
     app.UseDefaultFiles();
     app.UseStaticFiles();
 
+    // Serve Magic images from configured path (MagicPaths:ClubImages)
+    var clubImagesPath = builder.Configuration["MagicPaths:ClubImages"];
+    if (!string.IsNullOrEmpty(clubImagesPath) && Directory.Exists(clubImagesPath))
+    {
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(clubImagesPath),
+            RequestPath = "/magic-images"
+        });
+        Log.Information("Magic images served from: {Path}", clubImagesPath);
+    }
+    else
+    {
+        Log.Warning("Magic images path not found: {Path}. Using fallback.", clubImagesPath);
+    }
+
     // ============ Sessions Endpoints ============
     var sessions = app.MapGroup("/api/sessions").WithTags("Sessions");
 
@@ -102,6 +119,16 @@ try
         return result.Success ? Results.Ok(result) : Results.BadRequest(result);
     })
     .WithName("FermerSession")
+    .WithOpenApi();
+
+    // Prg_116: Vérification concurrence sessions
+    sessions.MapGet("/concurrence/{utilisateur}", async (string utilisateur, IMediator mediator) =>
+    {
+        var sessions = await mediator.Send(new GetSessionsQuery(utilisateur, 10));
+        var hasOpenSession = sessions.Any(s => s.EstOuverte);
+        return Results.Ok(new { CanOpen = !hasOpenSession, HasOpenSession = hasOpenSession });
+    })
+    .WithName("CheckSessionConcurrence")
     .WithOpenApi();
 
     // ============ Devises Endpoints ============
@@ -343,8 +370,8 @@ try
         string societe,
         int codeGm,
         int filiation,
-        DateOnly? dateDebut,
-        DateOnly? dateFin,
+        string? dateDebut,
+        string? dateFin,
         int? limit,
         IMediator mediator) =>
     {
@@ -358,8 +385,8 @@ try
         string societe,
         int codeGm,
         int filiation,
-        DateOnly? dateDebut,
-        DateOnly? dateFin,
+        string? dateDebut,
+        string? dateFin,
         int? limit,
         IMediator mediator) =>
     {
@@ -373,8 +400,8 @@ try
         string societe,
         int codeGm,
         int filiation,
-        DateOnly? dateDebut,
-        DateOnly? dateFin,
+        string? dateDebut,
+        string? dateFin,
         int? limit,
         IMediator mediator) =>
     {

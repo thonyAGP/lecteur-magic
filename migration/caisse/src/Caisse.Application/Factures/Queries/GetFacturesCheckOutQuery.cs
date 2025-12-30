@@ -80,25 +80,26 @@ public class GetFacturesCheckOutQueryHandler : IRequestHandler<GetFacturesCheckO
         CancellationToken cancellationToken)
     {
         // Récupérer les transactions comme factures potentielles
+        // Note: bartransacent ne contient pas d'état - on prend toutes les transactions
         var transactions = await _context.TransactionsBarEntete
             .AsNoTracking()
             .Where(t => t.Societe == request.Societe &&
-                       t.CodeGm == request.CodeGm &&
-                       t.Filiation == request.Filiation &&
-                       t.EtatTransaction == "V") // Only validated transactions
-            .OrderByDescending(t => t.DateComptable)
+                       t.Adherent == request.CodeGm &&
+                       t.Filiation == request.Filiation)
+            .OrderByDescending(t => t.DateTicket)
+            .ThenByDescending(t => t.TimeTicket)
             .ToListAsync(cancellationToken);
 
-        var factures = transactions.Select((t, index) => new FactureDto
+        var factures = transactions.Select(t => new FactureDto
         {
-            NumeroFacture = $"F{t.DateComptable:yyyyMMdd}{t.NumeroTicket:D3}",
-            DateFacture = t.DateComptable,
-            TypeFacture = t.TypeTransaction,
-            MontantHT = (decimal)(t.MontantTotal - t.MontantTva),
-            MontantTVA = (decimal)t.MontantTva,
-            MontantTTC = (decimal)t.MontantTotal,
-            Etat = t.EtatTransaction,
-            LibelleEtat = t.IsValidee ? "Validée" : t.IsAnnulee ? "Annulée" : "En cours"
+            NumeroFacture = $"F{t.DateTicket}{t.TicketNumber}",
+            DateFacture = ParseDateTicket(t.DateTicket),
+            TypeFacture = t.TaiCodeForfait,
+            MontantHT = (decimal)(t.TotalTicket * 0.8), // Estimation HT (TVA 20%)
+            MontantTVA = (decimal)(t.TotalTicket * 0.2),
+            MontantTTC = (decimal)t.TotalTicket,
+            Etat = t.TotalPaye >= t.TotalTicket ? "P" : "E", // P=Payée, E=En cours
+            LibelleEtat = t.TotalPaye >= t.TotalTicket ? "Payée" : "En cours"
         }).ToList();
 
         var totalTTC = factures.Sum(f => f.MontantTTC);
@@ -111,11 +112,24 @@ public class GetFacturesCheckOutQueryHandler : IRequestHandler<GetFacturesCheckO
             Societe = request.Societe,
             CodeGm = request.CodeGm,
             Filiation = request.Filiation,
-            NombreFactures = factures.Count,
+            NombreFactures = factures.Count(),
             TotalHT = totalHT,
             TotalTVA = totalTVA,
             TotalTTC = totalTTC,
             Factures = factures
         };
+    }
+
+    private static DateOnly ParseDateTicket(string dateTicket)
+    {
+        // Format: YYYYMMDD
+        if (dateTicket.Length == 8 &&
+            int.TryParse(dateTicket[..4], out var year) &&
+            int.TryParse(dateTicket[4..6], out var month) &&
+            int.TryParse(dateTicket[6..8], out var day))
+        {
+            return new DateOnly(year, month, day);
+        }
+        return DateOnly.MinValue;
     }
 }
