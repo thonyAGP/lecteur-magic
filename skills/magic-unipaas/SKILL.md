@@ -230,6 +230,38 @@ Task (MainProgram="Y/N")
 - `CTRL_GUI0_COMBO` : Liste deroulante
 - `CTRL_GUI0_SUBFORM` : Sous-formulaire
 
+**Window Types (WindowType val=X)**
+| Val | Type | Comportement |
+|-----|------|--------------|
+| 1 | MDI Child | Fenetre enfant dans conteneur MDI |
+| 2 | SDI | Fenetre autonome independante (principale) |
+| 3 | Child | Enfant du parent, suit son cycle de vie |
+| 5 | Floating | Peut etre deplacee hors du MDI |
+| 6 | Modal | **BLOQUANT** - arrete le flux, attend fermeture |
+| 8 | Tool | Petite fenetre outil |
+| 9 | Fit-to-MDI | S'adapte a l'espace MDI |
+| 10 | MDI Child (explicit) | Enfant MDI explicite |
+
+**Ordre d'execution des taches**
+```
+Task Prefix  → Initialisation (executee UNE fois au demarrage)
+   ↓
+Record Prefix → Avant chaque enregistrement
+   ↓
+Control Prefix → Avant chaque controle
+   ↓
+Control Suffix → Apres chaque controle
+   ↓
+Record Suffix → Apres chaque enregistrement
+   ↓
+Task Suffix  → Finalisation (executee UNE fois a la fin)
+```
+
+**Fonctions/Events et portee**
+- Une fonction ou event doit etre **declare dans la tache ou au-dessus** pour etre "trappee"
+- Les handlers d'evenements sont definis au niveau Task (Level="H")
+- Les events peuvent etre leves via `RaiseEvent` avec `InternalEventID`
+
 **InternalEventID courants**
 | ID | Action |
 |----|--------|
@@ -403,4 +435,101 @@ Chaque phase doit etre validee AVANT de passer a la suivante :
 ```
 /magic-flow <prg_id>   # Extraire l'arbre d'appels d'un programme
 ```
+
+### Tracage du flux de demarrage (OBLIGATOIRE avant migration UI)
+
+**Etape 1 : Identifier le MainProgram**
+```bash
+grep -r 'MainProgram="Y"' *.xml
+# → Generalement Prg_1.xml
+```
+
+**Etape 2 : Extraire les CallTask sequentiels**
+```bash
+grep -E "CallTask|TaskID" Prg_1.xml | head -50
+# → Liste ordonnee des appels
+```
+
+**Etape 3 : Mapper les WindowTypes**
+Pour chaque programme appele, verifier :
+```bash
+grep "WindowType" Prg_XXX.xml
+# val="2" (SDI) = ecran principal visible
+# val="6" (Modal) = popup bloquant
+# val="1" (MDI Child) = sous-fenetre
+```
+
+**Etape 4 : Construire l'arbre d'appels COMPLET**
+```
+Main (Prg_1)
+  └→ Prg_2 (init silencieux, pas d'UI)
+  └→ Prg_165 "Start" (WindowType=1, init visible)
+  └→ Prg_328 (verification, pas d'UI)
+  └→ Prg_162 "Menu caisse GM" (MENU INTERMEDIAIRE - pas de form SDI visible!)
+      └→ Prg_121 "CA0142 - Gestion de la caisse" (WindowType=2, SDI) ← PREMIER ECRAN VISIBLE
+```
+
+**ATTENTION : Menu Intermediaire vs Ecran Visible**
+
+Un programme peut etre un "menu intermediaire" qui:
+1. N'affiche PAS de form SDI visible
+2. Execute immediatement un CallTask vers un autre programme
+3. Sert de routeur/dispatcher
+
+**Comment detecter un menu intermediaire:**
+```bash
+# 1. Verifier si le programme a un form SDI (WindowType=2)
+grep "WindowType.*val=\"2\"" Prg_XXX.xml
+# Si AUCUN resultat → c'est probablement un menu intermediaire
+
+# 2. Chercher les CallTask immediats
+grep -A5 "CallTask" Prg_XXX.xml | head -20
+# Si CallTask dans Task Prefix → appel immediat au demarrage
+```
+
+**Regle d'or :** Suivre TOUTE la chaine de CallTask jusqu'a trouver le programme
+avec un form SDI (WindowType=2) visible - c'est LUI le vrai ecran!
+
+**Etape 5 : Valider visuellement (OBLIGATOIRE)**
+- Comparer avec une capture d'ecran de l'application originale
+- Le TITRE de l'ecran (ex: "CA0142") doit correspondre au Public Name du programme
+- Ne migrer que ce qui est REELLEMENT affiche dans le flux
+
+### Tracage inverse (OBLIGATOIRE avant migration partielle)
+
+**Principe :** Quand on migre un programme SPECIFIQUE, remonter a l'INVERSE jusqu'au Main pour :
+1. Connaitre les variables initialisees avant l'appel
+2. Comprendre le contexte d'execution
+3. Identifier les parametres passes
+
+**Exemple :**
+```
+Je dois migrer Prg_121 (CA0142 - Gestion de la caisse)
+  ↑
+Prg_162 l'appelle (Menu caisse GM) → quels parametres sont passes ?
+  ↑
+Prg_1 l'appelle (Main) → contexte initial complet
+```
+
+**Note :** Les 17 parametres de Prg_121 sont initialises par Prg_162 :
+- Param 1-6 : Identifiants (societe, utilisateur, terminal)
+- Param 7-12 : Etat session (ouvert/ferme, coffre)
+- Param 13-17 : Configuration (devise, masques)
+
+**Methode :**
+```bash
+# Trouver qui appelle mon programme
+grep -r "obj=\"162\"" *.xml
+# → Trouve Prg_1.xml et d'autres
+
+# Pour chaque appelant, remonter recursivement
+grep -r "obj=\"[ID_APPELANT]\"" *.xml
+# → Jusqu'a atteindre MainProgram
+```
+
+**Variables a tracer :**
+- Parametres passes via TSK_PARAMS
+- Variables globales (Definition="4")
+- Variables de session (utilisateur, terminal, societe)
+- Resultats de sous-taches precedentes
 </flow_driven_migration>

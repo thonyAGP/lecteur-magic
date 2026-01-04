@@ -5,28 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CA0142 - Gestion de la caisse</title>
     <style>
-        /*
-         * Conversion DLU → Pixels (basé sur XML Prg_121.xml)
-         * Form: Width=939 DLU, Height=178 DLU, HorizontalFactor=8
-         * Navigation: 117.375 × 22.25
-         * Scale X: 0.5 (DLU × 0.5 = pixels)
-         * Scale Y: 1.0 (DLU = pixels)
-         */
-        :root {
-            --scale-x: 0.62;       /* Calibré: 939 × 0.62 = 582px */
-            --scale-y: 1.80;       /* Calibré: 178 × 1.80 = 320px (+35%) */
-            --form-width: 582px;
-            --form-height: 320px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Style Windows classique - fidele a Magic Unipaas */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
             font-size: 11px;
             background-color: #808080;
             min-height: 100vh;
@@ -36,1201 +19,419 @@
         }
 
         .magic-window {
-            background-color: #dce6f4;
-            border: 2px outset #c0c0c0;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-            width: var(--form-width);
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 960px;
         }
 
-        /* Title bar - Windows style */
         .title-bar {
-            background: linear-gradient(to right, #0058a3, #3d9eff);
+            background: linear-gradient(to right, #0a246a, #a6caf0);
             color: white;
-            padding: 2px 4px;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: bold;
             font-size: 11px;
-            height: 20px;
         }
 
-        .title-bar .title {
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
+
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Zone info - CA0142 specifique */
+        .info-zone {
+            background: #ffffcc;
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
+        }
+
+        .info-left {
+            display: flex;
+            flex-direction: column;
             gap: 4px;
         }
 
-        .title-bar .icon {
-            width: 14px;
-            height: 14px;
-            background: linear-gradient(135deg, #4a9, #2a7);
-            border-radius: 2px;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 1px;
-        }
-
-        .window-controls button {
-            width: 18px;
-            height: 14px;
-            border: 1px outset #c0c0c0;
-            font-size: 9px;
-            cursor: pointer;
-            background: #c0c0c0;
-        }
-
-        .window-controls .close-btn { background: #ff6b6b; color: white; }
-
-        /* Window content - relative positioning container */
-        .window-content {
-            position: relative;
-            height: var(--form-height);
-            overflow: hidden;
-        }
-
-        /* Header bar (Y=2, H=21) - relief style */
-        .header-bar {
-            position: absolute;
-            left: 0;
-            top: calc(2 * var(--scale-y) * 1px);
-            width: calc(931 * var(--scale-x) * 1px);
-            height: calc(21 * var(--scale-y) * 1px);
-            background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
-            border: 1px solid #a0a0a0;
-        }
-
-        /* Logo Orace (X=5, Y=4, W=59, H=18) */
-        .logo-orace {
-            position: absolute;
-            left: calc(5 * var(--scale-x) * 1px);
-            top: calc(4 * var(--scale-y) * 1px);
-            width: calc(59 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-orace img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        /* Fallback si image non disponible */
-        .logo-orace.fallback {
-            background: #2d5a2d;
-            color: #90ee90;
-            font-size: 8px;
+        .info-user {
             font-weight: bold;
-        }
-
-        /* User info (X=75, Y=8, W=365, H=8) */
-        .user-info {
-            position: absolute;
-            left: calc(75 * var(--scale-x) * 1px);
-            top: calc(8 * var(--scale-y) * 1px);
-            width: calc(365 * var(--scale-x) * 1px);
-            height: calc(8 * var(--scale-y) * 1px);
-            font-size: 10px;
-            font-weight: bold;
-            color: #000080;
-            letter-spacing: 1px;
-        }
-
-        /* Coffre status (X=450, Y=8, W=203, H=8) */
-        .coffre-status {
-            position: absolute;
-            left: calc(450 * var(--scale-x) * 1px);
-            top: calc(8 * var(--scale-y) * 1px);
-            width: calc(203 * var(--scale-x) * 1px);
-            height: calc(8 * var(--scale-y) * 1px);
-            font-size: 10px;
-            color: #800000;
-            text-align: center;
-        }
-
-        /* Date (X=663, Y=8, W=259, H=8) */
-        .date-info {
-            position: absolute;
-            left: calc(663 * var(--scale-x) * 1px);
-            top: calc(8 * var(--scale-y) * 1px);
-            width: calc(259 * var(--scale-x) * 1px);
-            height: calc(8 * var(--scale-y) * 1px);
-            font-size: 10px;
-            color: #000080;
-            text-align: right;
-        }
-
-        /* Coffre Reception label (X=7, Y=24, W=200, H=12) */
-        .coffre-label {
-            position: absolute;
-            left: calc(7 * var(--scale-x) * 1px);
-            top: calc(24 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(12 * var(--scale-y) * 1px);
-            font-size: 10px;
-            font-weight: bold;
-            color: #008000;
-            text-align: center;
-        }
-
-        .coffre-label.hidden { display: none; }
-
-        /* Image caisse (X=52, Y=39, W=111, H=40) */
-        .caisse-image {
-            position: absolute;
-            left: calc(52 * var(--scale-x) * 1px);
-            top: calc(39 * var(--scale-y) * 1px);
-            width: calc(111 * var(--scale-x) * 1px);
-            height: calc(40 * var(--scale-y) * 1px);
-            background: #f0f0f0;
-            border: 1px solid #808080;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: #666;
-        }
-
-        /* Status zone - simple horizontal rectangle like Magic */
-        .status-zone {
-            position: absolute;
-            left: calc(289 * var(--scale-x) * 1px);
-            top: calc(46 * var(--scale-y) * 1px);
-            width: calc(353 * var(--scale-x) * 1px);
-            height: calc(14 * var(--scale-y) * 1px);  /* Juste la hauteur du texte */
-            border: 1px solid #808080;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Status label - centered text */
-        .status-label {
             font-size: 12px;
-            font-weight: bold;
-            text-align: center;
         }
 
-        .status-label.fermee { color: #cc0000; }  /* Rouge quand fermée */
-        .status-label.ouverte { color: #008000; } /* Vert quand ouverte */
-
-        /* Session info - positioned below status zone when open */
-        .session-info {
-            position: absolute;
-            left: calc(289 * var(--scale-x) * 1px);
-            top: calc(65 * var(--scale-y) * 1px);
-            width: calc(353 * var(--scale-x) * 1px);
-        }
-
-        .session-row {
-            display: flex;
-            align-items: center;
-            height: calc(12 * var(--scale-y) * 1px);
-            font-size: 10px;
-        }
-
-        .session-row .label {
-            width: calc(71 * var(--scale-x) * 1px);
-            text-align: right;
-            padding-right: 4px;
-        }
-
-        .session-row .value {
-            flex: 1;
-            font-weight: bold;
-            color: #000080;
-            text-align: center;
-        }
-
-        .session-info.hidden { display: none; }
-
-        /* Bottom bar (Y=151, H=24) */
-        .bottom-bar {
-            position: absolute;
-            left: 0;
-            top: calc(151 * var(--scale-y) * 1px);
-            width: calc(931 * var(--scale-x) * 1px);
-            height: calc(24 * var(--scale-y) * 1px);
-            background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
-            border: 1px solid #a0a0a0;
-        }
-
-        /* Buttons - Windows 11 style */
-        .magic-btn {
-            position: absolute;
-            background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
-            border: 1px solid #d0d0d0;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 10px;
-            text-align: center;
-            padding: 0 4px;
-            transition: background 0.15s, border-color 0.15s;
-        }
-
-        .magic-btn:hover:not(:disabled) {
-            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
-            border-color: #0078d4;
-        }
-
-        .magic-btn:active:not(:disabled) {
-            background: linear-gradient(to bottom, #e0e0e0, #d0d0d0);
-        }
-
-        .magic-btn:disabled {
-            color: #808080;
-            cursor: default;
-            opacity: 0.7;
-        }
-
-        .magic-btn.hidden { display: none; }
-
-        /* Right side buttons (X=726) */
-        .btn-appro-caisse {
-            left: calc(726 * var(--scale-x) * 1px);
-            top: calc(26 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-appro-produits {
-            left: calc(726 * var(--scale-x) * 1px);
-            top: calc(48 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-remise-caisse {
-            left: calc(726 * var(--scale-x) * 1px);
-            top: calc(70 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-historiques {
-            left: calc(726 * var(--scale-x) * 1px);
-            top: calc(92 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        /* Left side buttons */
-        .btn-regul-tpe {
-            left: calc(7 * var(--scale-x) * 1px);
-            top: calc(85 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-telecollecte-tpe {
-            left: calc(7 * var(--scale-x) * 1px);
-            top: calc(107 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-visu-sessions {
-            left: calc(7 * var(--scale-x) * 1px);
-            top: calc(129 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        /* Middle buttons */
-        .btn-consultation {
-            left: calc(238 * var(--scale-x) * 1px);
-            top: calc(129 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-impression {
-            left: calc(485 * var(--scale-x) * 1px);
-            top: calc(129 * var(--scale-y) * 1px);
-            width: calc(440 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        /* Bottom row buttons (Y=154) */
-        .btn-quitter {
-            left: calc(7 * var(--scale-x) * 1px);
-            top: calc(154 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-ouvrir {
-            left: calc(238 * var(--scale-x) * 1px);
-            top: calc(154 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-continuer {
-            left: calc(469 * var(--scale-x) * 1px);
-            top: calc(154 * var(--scale-y) * 1px);
-            width: calc(224 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        .btn-fermer {
-            left: calc(726 * var(--scale-x) * 1px);
-            top: calc(154 * var(--scale-y) * 1px);
-            width: calc(200 * var(--scale-x) * 1px);
-            height: calc(18 * var(--scale-y) * 1px);
-        }
-
-        /* API status indicator */
-        .api-status {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            padding: 4px 8px;
-            background: #333;
-            color: #0f0;
-            font-family: monospace;
-            font-size: 10px;
-            border-radius: 4px;
-        }
-
-        .api-status.error { color: #f00; }
-
-        /* Module navigation panel */
-        .modules-nav {
-            position: fixed;
-            bottom: 40px;
-            left: 10px;
-            background: #2d2d2d;
-            border-radius: 8px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 100;
-        }
-
-        .modules-nav h3 {
-            color: #fff;
-            font-size: 10px;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #555;
-            padding-bottom: 5px;
-        }
-
-        .modules-nav a {
-            color: #aaa;
-            text-decoration: none;
-            font-size: 10px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-
-        .modules-nav a:hover {
-            background: #444;
-            color: #fff;
-        }
-
-        /* Modal overlay */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-
-        .modal-window {
-            background: #dce6f4;
-            border: 2px outset #c0c0c0;
-            box-shadow: 4px 4px 12px rgba(0,0,0,0.4);
-            min-width: 400px;
-            max-width: 600px;
-            max-height: 80vh;
-        }
-
-        .modal-title-bar {
-            background: linear-gradient(to right, #0058a3, #3d9eff);
-            color: white;
-            padding: 2px 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .info-coffre {
+            color: #0000ff;
             font-size: 11px;
-            height: 20px;
         }
 
-        .modal-close {
-            background: #ff6b6b;
-            color: white;
-            border: 1px outset #c0c0c0;
-            width: 18px;
-            height: 14px;
-            font-size: 9px;
-            cursor: pointer;
+        .info-date {
+            font-size: 11px;
         }
 
-        .modal-content {
-            padding: 12px;
-            overflow-y: auto;
-            max-height: calc(80vh - 40px);
-        }
-
-        .modal-content table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10px;
-        }
-
-        .modal-content th, .modal-content td {
-            border: 1px solid #808080;
-            padding: 4px;
-            text-align: left;
-        }
-
-        .modal-content th {
-            background: #c0c0c0;
-        }
-
-        .modal-content input[type="text"],
-        .modal-content input[type="number"] {
-            width: 100%;
-            padding: 2px 4px;
-            border: 1px inset #808080;
-            font-size: 10px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            margin-top: 12px;
-        }
-
-        .modal-btn {
-            padding: 4px 16px;
-            background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
-            border: 1px solid #d0d0d0;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 10px;
-        }
-
-        .modal-btn:hover { border-color: #0078d4; }
-        .modal-btn.primary { background: #0078d4; color: white; }
-
-        .form-row {
+        .info-right {
             display: flex;
             align-items: center;
+            gap: 8px;
+        }
+
+        .etat-caisse {
+            padding: 4px 12px;
+            font-weight: bold;
+            font-size: 12px;
+            border: 2px inset #808080;
+        }
+
+        .etat-fermee { background: #ff4444; color: white; }
+        .etat-ouverte { background: #44ff44; color: black; }
+        .etat-bloquee { background: #ffff44; color: black; }
+
+        /* Grille de boutons - layout exact CA0142 */
+        .button-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px 224px 200px;
+            gap: 8px;
             margin-bottom: 8px;
         }
 
-        .form-row label {
-            width: 120px;
-            font-size: 10px;
+        .button-column {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .form-row input {
-            flex: 1;
+        /* Bouton Magic style */
+        .magic-btn {
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 8px;
+            text-align: left;
         }
+        .magic-btn:active { border-style: inset; }
+        .magic-btn:disabled { color: #808080; cursor: not-allowed; }
+        .magic-btn:hover:not(:disabled) { background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%); }
+
+        /* Bouton action principal */
+        .action-btn {
+            height: 22px;
+            min-width: 200px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 16px;
+        }
+        .action-btn:active { border-style: inset; }
+        .action-btn:disabled { color: #808080; cursor: not-allowed; }
+
+        /* Barre d'actions du bas */
+        .action-bar {
+            display: flex;
+            gap: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #808080;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .session-info { color: #006600; font-weight: bold; }
+
+        /* Spacer pour alignement vertical */
+        .spacer { flex: 1; }
     </style>
 </head>
 <body>
     <div class="magic-window">
-        <!-- Title bar -->
         <div class="title-bar">
             <div class="title">
                 <div class="icon"></div>
-                <span>Gestion de la caisse</span>
+                <span>CA0142 - Gestion de la caisse</span>
             </div>
             <div class="window-controls">
-                <button class="min-btn">_</button>
-                <button class="max-btn">□</button>
-                <button class="close-btn">X</button>
+                <button>_</button>
+                <button>□</button>
+                <button onclick="quitter()">×</button>
             </div>
         </div>
 
-        <!-- Window content with absolute positioning -->
         <div class="window-content">
-            <!-- Header bar decoration -->
-            <div class="header-bar"></div>
-
-            <!-- Logo Orace - %club_images%orace.bmp -->
-            <div class="logo-orace" id="logoOrace">
-                <img src="/magic-images/orace.bmp" alt="ORACE" onerror="this.parentElement.classList.add('fallback'); this.style.display='none'; this.parentElement.textContent='ORACE';">
-            </div>
-
-            <!-- User info (Expression 1: user + terminal) -->
-            <div class="user-info" id="userInfo">D S I O P (21)</div>
-
-            <!-- Coffre status message (Expression 26) -->
-            <div class="coffre-status" id="coffreStatus">Le coffre 2 est ferme</div>
-
-            <!-- Date -->
-            <div class="date-info" id="currentDate">WWW DD MMM YYYY</div>
-
-            <!-- Coffre Reception label (Visible if session open) -->
-            <div class="coffre-label" id="coffreLabel">Coffre Reception</div>
-
-            <!-- Caisse image - hidden in Magic runtime -->
-            <!-- <div class="caisse-image">%club_im</div> -->
-
-            <!-- Status zone - simple rectangle -->
-            <div class="status-zone">
-                <div class="status-label fermee" id="statusLabel">Fermee</div>
-            </div>
-
-            <!-- Session info - separate, shown when session open -->
-            <div class="session-info hidden" id="sessionInfo">
-                <div class="session-row">
-                    <span class="label">par</span>
-                    <span class="value" id="sessionUser">-</span>
+            <!-- Zone info - correspond a la capture CA0142 -->
+            <div class="info-zone">
+                <div class="info-left">
+                    <span class="info-user" id="infoUser">D S I O P (21)</span>
+                    <span class="info-coffre" id="infoCoffre">Le coffre 2 est ferme</span>
+                    <span class="info-date" id="infoDate"></span>
                 </div>
-                <div class="session-row">
-                    <span class="label">le</span>
-                    <span class="value" id="sessionDate">##/##/####</span>
-                </div>
-                <div class="session-row">
-                    <span class="label">à</span>
-                    <span class="value" id="sessionTime">HH:MM:SS</span>
+                <div class="info-right">
+                    <span id="etatCaisse" class="etat-caisse etat-fermee">Fermee</span>
                 </div>
             </div>
 
-            <!-- Right side operation buttons (Visible Exp 12/13: session open) -->
-            <button class="magic-btn btn-appro-caisse hidden" id="btnApproCaisse" onclick="openApproCaisse()">Appro caisse</button>
-            <button class="magic-btn btn-appro-produits hidden" id="btnApproProduits" onclick="openApproProduits()">Appro produits</button>
-            <button class="magic-btn btn-remise-caisse hidden" id="btnRemiseCaisse" onclick="openRemiseCaisse()">Remise en caisse</button>
-            <button class="magic-btn btn-historiques hidden" id="btnHistoriques" onclick="navigateTo('extrait.html')">Historiques</button>
+            <!-- Grille de boutons - positions exactes de Prg_121 -->
+            <div class="button-grid">
+                <!-- Colonne 1 (X=7) -->
+                <div class="button-column">
+                    <button class="magic-btn" id="btnRegulTelecollecte" onclick="regulTelecollecte()">Regul. Telecollecte</button>
+                    <button class="magic-btn" id="btnTelecollecteTPE" onclick="telecollecteTPE()">Telecollecte TPE</button>
+                    <button class="magic-btn" id="btnVisuSessions" onclick="visuSessions()">Visu sessions</button>
+                </div>
 
-            <!-- Left side buttons -->
-            <button class="magic-btn btn-regul-tpe" id="btnRegulTpe" onclick="openRegulTpe()">Régul. Télécollecte</button>
-            <button class="magic-btn btn-telecollecte-tpe" id="btnTelecollecteTpe" onclick="openTelecollecte()">Telecollecte TPE</button>
-            <button class="magic-btn btn-visu-sessions" id="btnVisuSessions" onclick="navigateTo('sessions.html')">Visu sessions</button>
+                <!-- Colonne 2 (X=238) -->
+                <div class="button-column">
+                    <div class="spacer"></div>
+                    <button class="magic-btn" id="btnConsultation" onclick="consultation()">Consultation</button>
+                </div>
 
-            <!-- Middle buttons -->
-            <button class="magic-btn btn-consultation" id="btnConsultation" onclick="navigateTo('sessions.html?mode=consult')">Consultation</button>
-            <button class="magic-btn btn-impression hidden" id="btnImpression" onclick="printTicket()">Impression du dernier ticket</button>
+                <!-- Colonne 3 (X=469-485) - centrale -->
+                <div class="button-column">
+                    <div class="spacer"></div>
+                    <button class="magic-btn" id="btnPointage" onclick="pointageAppRem()" style="display:none;">Pointage Appro/Remise</button>
+                    <button class="magic-btn" id="btnDernierTicket" onclick="imprimerDernierTicket()" style="display:none;">Impression du dernier ticket recapitulatif</button>
+                </div>
 
-            <!-- Bottom bar decoration -->
-            <div class="bottom-bar"></div>
+                <!-- Colonne 4 (X=726) - droite -->
+                <div class="button-column">
+                    <button class="magic-btn session-only" id="btnApproCaisse" onclick="approCaisse()" disabled>Appro caisse</button>
+                    <button class="magic-btn session-only" id="btnApproProduits" onclick="approProduits()" disabled>Appro produits</button>
+                    <button class="magic-btn session-only" id="btnRemiseCaisse" onclick="remiseCaisse()" disabled>Remise en caisse</button>
+                    <button class="magic-btn" id="btnHistoriques" onclick="historiques()" style="display:none;">Historiques</button>
+                </div>
 
-            <!-- Bottom row workflow buttons -->
-            <button class="magic-btn btn-quitter" id="btnQuitter" onclick="quitter()">Quitter</button>
-            <button class="magic-btn btn-ouvrir" id="btnOuvrir" onclick="ouvrirSession()">Ouvrir la session</button>
-            <button class="magic-btn btn-continuer" id="btnContinuer" disabled>Continuer la session</button>
-            <button class="magic-btn btn-fermer" id="btnFermer" disabled onclick="fermerSession()">Fermer la session</button>
-        </div>
-    </div>
-
-    <!-- Module navigation panel -->
-    <div class="modules-nav">
-        <h3>Modules ADH</h3>
-        <a href="sessions.html">Sessions</a>
-        <a href="zooms.html">Zooms</a>
-        <a href="telephone.html">Telephone</a>
-        <a href="change.html">Change</a>
-        <a href="ventes.html">Ventes</a>
-        <a href="extrait.html">Extrait</a>
-        <a href="garanties.html">Garanties</a>
-        <a href="easycheckout.html">Easy Check-Out</a>
-        <a href="factures.html">Factures</a>
-        <a href="changement-compte.html">Changement Compte</a>
-    </div>
-
-    <!-- Modal: Appro Caisse -->
-    <div class="modal-overlay" id="modalApproCaisse">
-        <div class="modal-window">
-            <div class="modal-title-bar">
-                <span>Approvisionnement Caisse</span>
-                <button class="modal-close" onclick="closeModal('modalApproCaisse')">X</button>
+                <!-- Colonne 5 vide pour alignement -->
+                <div class="button-column"></div>
             </div>
-            <div class="modal-content">
-                <div class="form-row">
-                    <label>Devise:</label>
-                    <select id="approDevise" style="flex:1;"></select>
-                </div>
-                <div class="form-row">
-                    <label>Montant:</label>
-                    <input type="number" id="approMontant" step="0.01" value="0.00">
-                </div>
-                <div class="form-row">
-                    <label>Commentaire:</label>
-                    <input type="text" id="approCommentaire" maxlength="30">
-                </div>
-                <div class="modal-buttons">
-                    <button class="modal-btn" onclick="closeModal('modalApproCaisse')">Annuler</button>
-                    <button class="modal-btn primary" onclick="submitApproCaisse()">Valider</button>
-                </div>
+
+            <!-- Barre d'actions du bas - positions exactes -->
+            <div class="action-bar">
+                <button class="action-btn" onclick="quitter()">Quitter</button>
+                <button class="action-btn" id="btnOuvrirSession" onclick="ouvrirSession()">Ouvrir la session</button>
+                <button class="action-btn" id="btnContinuerSession" onclick="continuerSession()" disabled>Continuer la session</button>
+                <button class="action-btn" id="btnFermerSession" onclick="fermerSession()" disabled>Fermer la session</button>
             </div>
         </div>
-    </div>
 
-    <!-- Modal: Appro Produits -->
-    <div class="modal-overlay" id="modalApproProduits">
-        <div class="modal-window">
-            <div class="modal-title-bar">
-                <span>Approvisionnement Produits</span>
-                <button class="modal-close" onclick="closeModal('modalApproProduits')">X</button>
-            </div>
-            <div class="modal-content">
-                <div class="form-row">
-                    <label>Article:</label>
-                    <select id="produitArticle" style="flex:1;"></select>
-                </div>
-                <div class="form-row">
-                    <label>Quantité:</label>
-                    <input type="number" id="produitQuantite" value="1" min="1">
-                </div>
-                <div class="modal-buttons">
-                    <button class="modal-btn" onclick="closeModal('modalApproProduits')">Annuler</button>
-                    <button class="modal-btn primary" onclick="submitApproProduits()">Valider</button>
-                </div>
-            </div>
+        <div class="status-bar">
+            <span id="statusSession" class="session-info">Session: Fermee</span>
+            <span id="statusUser">Utilisateur: -</span>
+            <span id="statusTerminal">Terminal: -</span>
         </div>
     </div>
-
-    <!-- Modal: Remise Caisse -->
-    <div class="modal-overlay" id="modalRemiseCaisse">
-        <div class="modal-window">
-            <div class="modal-title-bar">
-                <span>Remise en Caisse</span>
-                <button class="modal-close" onclick="closeModal('modalRemiseCaisse')">X</button>
-            </div>
-            <div class="modal-content">
-                <div class="form-row">
-                    <label>Devise:</label>
-                    <select id="remiseDevise" style="flex:1;"></select>
-                </div>
-                <div class="form-row">
-                    <label>Montant:</label>
-                    <input type="number" id="remiseMontant" step="0.01" value="0.00">
-                </div>
-                <div class="form-row">
-                    <label>Commentaire:</label>
-                    <input type="text" id="remiseCommentaire" maxlength="30">
-                </div>
-                <div class="modal-buttons">
-                    <button class="modal-btn" onclick="closeModal('modalRemiseCaisse')">Annuler</button>
-                    <button class="modal-btn primary" onclick="submitRemiseCaisse()">Valider</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Régul TPE -->
-    <div class="modal-overlay" id="modalRegulTpe">
-        <div class="modal-window">
-            <div class="modal-title-bar">
-                <span>Régularisation Télécollecte</span>
-                <button class="modal-close" onclick="closeModal('modalRegulTpe')">X</button>
-            </div>
-            <div class="modal-content">
-                <p style="font-size:11px;margin-bottom:10px;">Régulariser les écarts de télécollecte TPE</p>
-                <div class="form-row">
-                    <label>Montant écart:</label>
-                    <input type="number" id="regulMontant" step="0.01" value="0.00">
-                </div>
-                <div class="modal-buttons">
-                    <button class="modal-btn" onclick="closeModal('modalRegulTpe')">Annuler</button>
-                    <button class="modal-btn primary" onclick="submitRegulTpe()">Valider</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Télécollecte -->
-    <div class="modal-overlay" id="modalTelecollecte">
-        <div class="modal-window">
-            <div class="modal-title-bar">
-                <span>Télécollecte TPE</span>
-                <button class="modal-close" onclick="closeModal('modalTelecollecte')">X</button>
-            </div>
-            <div class="modal-content">
-                <p style="font-size:11px;margin-bottom:10px;">Lancer la télécollecte des terminaux de paiement</p>
-                <div id="telecollecteStatus" style="padding:10px;background:#f0f0f0;border:1px solid #808080;font-size:10px;">
-                    En attente...
-                </div>
-                <div class="modal-buttons">
-                    <button class="modal-btn" onclick="closeModal('modalTelecollecte')">Fermer</button>
-                    <button class="modal-btn primary" onclick="submitTelecollecte()">Lancer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="api-status" id="apiStatus">API: Connecting...</div>
 
     <script>
+        // Contexte global - correspond aux parametres Prg_121
         const CONTEXT = {
             societe: 'C',
-            utilisateur: 'DSIOP',
-            terminal: 21,
-            runMode: 'R',
-            langue: 'E'
+            utilisateur: 'ANT',
+            terminal: '21',
+            etatCaisse: 'F', // F=Fermee, O=Ouverte, B=Bloquee
+            coffre2Ferme: true,
+            sessionActive: null
         };
 
-        let sessionState = {
-            status: 'F',  // F=Fermee, O=Ouverte, B=Bloquee
-            chrono: null,
-            utilisateur: null,
-            dateOuverture: null,
-            heureOuverture: null,
-            coffreOuvert: false,
-            hasTicket: false
-        };
-
+        // Initialisation
         document.addEventListener('DOMContentLoaded', async () => {
-            updateDate();
-            await checkApiConnection();
-            await loadSessionState();
-            updateUI();
+            afficherDate();
+            afficherContexte();
+            await verifierSession();
+            await verifierCoffre2();
+            mettreAJourBoutons();
         });
 
-        function updateDate() {
+        // Afficher la date courante
+        function afficherDate() {
             const now = new Date();
-            const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-GB', options);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('infoDate').textContent = now.toLocaleDateString('fr-FR', options);
         }
 
-        async function checkApiConnection() {
+        // Afficher le contexte utilisateur
+        function afficherContexte() {
+            // Format Magic: "D S I O P (21)" = code utilisateur (terminal)
+            document.getElementById('infoUser').textContent =
+                `${CONTEXT.utilisateur} (${CONTEXT.terminal})`;
+            document.getElementById('statusUser').textContent = `Utilisateur: ${CONTEXT.utilisateur}`;
+            document.getElementById('statusTerminal').textContent = `Terminal: ${CONTEXT.terminal}`;
+        }
+
+        // Verifier l'etat du coffre 2 (sous-tache "Controle COFFRE2" de Prg_121)
+        async function verifierCoffre2() {
             try {
-                const response = await fetch('/api/sessions');
+                const response = await fetch(`/api/coffre/etat?terminal=${CONTEXT.terminal}`);
                 if (response.ok) {
-                    document.getElementById('apiStatus').textContent = 'API: OK';
-                    document.getElementById('apiStatus').classList.remove('error');
-                    return true;
+                    const data = await response.json();
+                    CONTEXT.coffre2Ferme = data.coffre2Ferme !== false;
                 }
-            } catch (e) {}
-            document.getElementById('apiStatus').textContent = 'API: Error';
-            document.getElementById('apiStatus').classList.add('error');
-            return false;
+            } catch (e) {
+                console.log('Coffre API non disponible, mode demo');
+            }
+
+            document.getElementById('infoCoffre').textContent =
+                CONTEXT.coffre2Ferme ? 'Le coffre 2 est ferme' : 'Le coffre 2 est ouvert';
         }
 
-        async function loadSessionState() {
+        // Verifier session active
+        async function verifierSession() {
             try {
-                const response = await fetch(`/api/sessions/active?utilisateur=${CONTEXT.utilisateur}`);
+                const response = await fetch(`/api/sessions?utilisateur=${CONTEXT.utilisateur}&limit=10`);
                 if (response.ok) {
-                    const result = await response.json();
-                    if (result.success && result.data) {
-                        sessionState = {
-                            status: 'O',
-                            chrono: result.data.chrono,
-                            utilisateur: result.data.utilisateur,
-                            dateOuverture: result.data.dateDebutSession,
-                            heureOuverture: result.data.heureDebutSession,
-                            coffreOuvert: false,
-                            hasTicket: result.data.dateFinSession !== '00000000'
-                        };
+                    const sessions = await response.json();
+                    const active = sessions.find(s => s.isActive || s.dateFinSession === '00000000');
+                    if (active) {
+                        CONTEXT.sessionActive = active;
+                        CONTEXT.etatCaisse = 'O'; // Ouverte
+                        document.getElementById('statusSession').textContent =
+                            `Session: Ouverte (${active.chrono})`;
+                    } else {
+                        CONTEXT.etatCaisse = 'F'; // Fermee
+                        document.getElementById('statusSession').textContent = 'Session: Fermee';
                     }
                 }
             } catch (e) {
-                console.error('Error loading session:', e);
+                document.getElementById('statusSession').textContent = 'Session: Erreur connexion';
+            }
+
+            mettreAJourEtat();
+        }
+
+        // Mettre a jour l'affichage de l'etat
+        function mettreAJourEtat() {
+            const etatEl = document.getElementById('etatCaisse');
+            etatEl.classList.remove('etat-fermee', 'etat-ouverte', 'etat-bloquee');
+
+            switch (CONTEXT.etatCaisse) {
+                case 'O':
+                    etatEl.textContent = 'Ouverte';
+                    etatEl.classList.add('etat-ouverte');
+                    break;
+                case 'B':
+                    etatEl.textContent = 'Bloquee';
+                    etatEl.classList.add('etat-bloquee');
+                    break;
+                default:
+                    etatEl.textContent = 'Fermee';
+                    etatEl.classList.add('etat-fermee');
             }
         }
 
-        function updateUI() {
-            // Expression 1: user + terminal
-            document.getElementById('userInfo').textContent =
-                CONTEXT.utilisateur.split('').join(' ') + ' (' + CONTEXT.terminal + ')';
+        // Mettre a jour les boutons selon l'etat - logique exacte de Prg_121
+        function mettreAJourBoutons() {
+            const estFermee = CONTEXT.etatCaisse === 'F';
+            const estOuverte = CONTEXT.etatCaisse === 'O';
+            const estBloquee = CONTEXT.etatCaisse === 'B';
 
-            // Expression 26: coffre message
-            document.getElementById('coffreStatus').textContent =
-                'Le coffre 2 est ' + (sessionState.coffreOuvert ? 'ouvert' : 'ferme');
+            // Expression 6: {0,3}=MlsTrans('Fermee') - bouton Ouvrir actif si Fermee
+            document.getElementById('btnOuvrirSession').disabled = !estFermee;
 
-            const sessionOpen = sessionState.status === 'O';
-            const sessionClosed = sessionState.status === 'F';
-            const notBlocked = sessionState.status !== 'B';
+            // Expression 7: {0,3}=MlsTrans('Ouverte') - boutons Continuer/Fermer actifs si Ouverte
+            document.getElementById('btnContinuerSession').disabled = !estOuverte;
+            document.getElementById('btnFermerSession').disabled = !estOuverte;
 
-            // Status label
-            const statusLabel = document.getElementById('statusLabel');
-            if (sessionOpen) {
-                statusLabel.textContent = 'Ouverte';
-                statusLabel.className = 'status-label ouverte';
-            } else {
-                statusLabel.textContent = 'Fermee';
-                statusLabel.className = 'status-label fermee';
-            }
+            // Expression 12: {1,2}='O' - boutons Appro visibles si Ouverte
+            document.querySelectorAll('.session-only').forEach(btn => {
+                btn.disabled = !estOuverte;
+            });
 
-            // Session info (Visible Exp 8: session open)
-            const sessionInfo = document.getElementById('sessionInfo');
-            if (sessionOpen) {
-                sessionInfo.classList.remove('hidden');
-                document.getElementById('sessionUser').textContent = sessionState.utilisateur || '-';
-                document.getElementById('sessionDate').textContent = formatDate(sessionState.dateOuverture);
-                document.getElementById('sessionTime').textContent = formatTime(sessionState.heureOuverture);
-            } else {
-                sessionInfo.classList.add('hidden');
-            }
-
-            // Coffre label (Visible Exp 24)
-            document.getElementById('coffreLabel').classList.toggle('hidden', !sessionOpen);
-
-            // Right side operations (Visible Exp 12/13: session open)
-            document.getElementById('btnApproCaisse').classList.toggle('hidden', !sessionOpen);
-            document.getElementById('btnApproProduits').classList.toggle('hidden', !sessionOpen);
-            document.getElementById('btnRemiseCaisse').classList.toggle('hidden', !sessionOpen);
-            document.getElementById('btnHistoriques').classList.toggle('hidden', !sessionOpen);
-
-            // Consultation (Visible Exp 11: session closed)
-            document.getElementById('btnConsultation').classList.toggle('hidden', sessionOpen);
-
-            // Impression ticket (Visible Exp 17: has ticket)
-            document.getElementById('btnImpression').classList.toggle('hidden', !sessionState.hasTicket);
-
-            // Bottom buttons visibility (Visible Exp 10: not blocked)
-            document.getElementById('btnOuvrir').style.display = notBlocked ? '' : 'none';
-            document.getElementById('btnContinuer').style.display = notBlocked ? '' : 'none';
-            document.getElementById('btnFermer').style.display = notBlocked ? '' : 'none';
-
-            // Bottom buttons enabled (Exp 6/7)
-            document.getElementById('btnOuvrir').disabled = !sessionClosed;
-            document.getElementById('btnContinuer').disabled = !sessionOpen;
-            document.getElementById('btnFermer').disabled = !sessionOpen;
-
-            // Keep button text as "Continuer la session"
-            // (chrono is not displayed on button in Magic)
+            // Historiques visible si param[7]=true (conditionnel)
+            // Pour la demo, on le cache
         }
 
-        function formatDate(dateStr) {
-            if (!dateStr || dateStr.length !== 8 || dateStr === '00000000') return '##/##/####';
-            return `${dateStr.substring(6,8)}/${dateStr.substring(4,6)}/${dateStr.substring(0,4)}`;
+        // Actions des boutons - correspondent aux RaiseEvent de Prg_121
+
+        function regulTelecollecte() {
+            // InternalEventID 34 - Regularisation TPE
+            alert('Regularisation Telecollecte - A implementer');
         }
 
-        function formatTime(timeStr) {
-            if (!timeStr || timeStr.length < 4) return 'HH:MM:SS';
-            const p = timeStr.padStart(6, '0');
-            return `${p.substring(0,2)}:${p.substring(2,4)}:${p.substring(4,6)}`;
+        function telecollecteTPE() {
+            // InternalEventID 34 - Telecollecte TPE
+            alert('Telecollecte TPE - A implementer');
+        }
+
+        function visuSessions() {
+            // InternalEventID 228 - Visualisation sessions
+            window.location.href = 'sessions.html';
+        }
+
+        function consultation() {
+            // InternalEventID 227 - Consultation
+            window.location.href = 'sessions.html?mode=consultation';
+        }
+
+        function approCaisse() {
+            // InternalEventID 223 - Appro caisse
+            alert('Appro caisse - A implementer');
+        }
+
+        function approProduits() {
+            // InternalEventID 224 - Appro produits
+            alert('Appro produits - A implementer');
+        }
+
+        function remiseCaisse() {
+            // InternalEventID 225 - Remise en caisse
+            alert('Remise en caisse - A implementer');
+        }
+
+        function historiques() {
+            // InternalEventID 226 - Historiques
+            window.location.href = 'sessions.html?mode=historique';
+        }
+
+        function pointageAppRem() {
+            // InternalEventID 34 - Pointage
+            alert('Pointage Appro/Remise - A implementer');
+        }
+
+        function imprimerDernierTicket() {
+            // InternalEventID 221 - Impression dernier ticket
+            alert('Impression dernier ticket - A implementer');
+        }
+
+        function ouvrirSession() {
+            // RaiseEvent vers PublicObject obj=2 (sous-tache ouverture)
+            window.location.href = `ouverture-session.html?utilisateur=${CONTEXT.utilisateur}&terminal=${CONTEXT.terminal}`;
+        }
+
+        function continuerSession() {
+            // Expression 14: MlsTrans('Continuer la session')
+            if (CONTEXT.sessionActive) {
+                window.location.href = `menu-caisse.html?chrono=${CONTEXT.sessionActive.chrono}`;
+            }
+        }
+
+        function fermerSession() {
+            // InternalEventID 222 - Fermer la session
+            if (CONTEXT.sessionActive) {
+                window.location.href = `fermeture-session.html?utilisateur=${CONTEXT.utilisateur}&chrono=${CONTEXT.sessionActive.chrono}&terminal=${CONTEXT.terminal}`;
+            }
         }
 
         function quitter() {
-            if (confirm('Voulez-vous quitter?')) {
-                window.location.href = '/';
-            }
-        }
-
-        function navigateTo(page) {
-            // Pass session context via URL params
-            const params = new URLSearchParams({
-                societe: CONTEXT.societe,
-                utilisateur: CONTEXT.utilisateur,
-                terminal: CONTEXT.terminal,
-                chrono: sessionState.chrono || ''
-            });
-            window.location.href = page + '?' + params.toString();
-        }
-
-        function printTicket() {
-            if (!sessionState.chrono) {
-                alert('Aucune session active');
-                return;
-            }
-            fetch(`/api/ventes/print-ticket/${CONTEXT.societe}/${sessionState.chrono}`)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Ticket imprimé');
-                    } else {
-                        alert('Erreur: ' + (data.errorMessage || 'Echec impression'));
-                    }
-                })
-                .catch(() => alert('Erreur connexion'));
-        }
-
-        async function ouvrirSession() {
-            try {
-                // Format date comptable YYYYMMDD
-                const now = new Date();
-                const dateComptable = now.getFullYear().toString() +
-                    (now.getMonth() + 1).toString().padStart(2, '0') +
-                    now.getDate().toString().padStart(2, '0');
-
-                const response = await fetch('/api/sessions/ouvrir', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        utilisateur: CONTEXT.utilisateur,
-                        terminal: CONTEXT.terminal,
-                        dateComptable: dateComptable
-                    })
-                });
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
-                        await loadSessionState();
-                        updateUI();
-                    } else {
-                        alert('Erreur: ' + (result.errorMessage || 'Echec'));
-                    }
-                }
-            } catch (e) {
-                alert('Erreur connexion');
-            }
-        }
-
-        async function fermerSession() {
-            if (!confirm('Fermer la session?')) return;
-            try {
-                const response = await fetch('/api/sessions/fermer', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        utilisateur: CONTEXT.utilisateur,
-                        chrono: sessionState.chrono
-                    })
-                });
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
-                        sessionState.status = 'F';
-                        updateUI();
-                    } else {
-                        alert('Erreur: ' + (result.errorMessage || 'Echec'));
-                    }
-                }
-            } catch (e) {
-                alert('Erreur connexion');
-            }
-        }
-
-        // Modal management
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        // Load devises for select elements
-        async function loadDevises() {
-            try {
-                const response = await fetch(`/api/devises?societe=${CONTEXT.societe}`);
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success && result.data) {
-                        const options = result.data.map(d =>
-                            `<option value="${d.codeDevise}">${d.codeDevise} - ${d.libelle || ''}</option>`
-                        ).join('');
-                        ['approDevise', 'remiseDevise'].forEach(id => {
-                            document.getElementById(id).innerHTML = options;
-                        });
-                    }
-                }
-            } catch (e) {
-                console.error('Error loading devises:', e);
-            }
-        }
-
-        // Load articles for select
-        async function loadArticles() {
-            try {
-                const response = await fetch(`/api/articles?societe=${CONTEXT.societe}`);
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success && result.data) {
-                        const options = result.data.map(a =>
-                            `<option value="${a.codeArticle}">${a.codeArticle} - ${a.libelle || ''}</option>`
-                        ).join('');
-                        document.getElementById('produitArticle').innerHTML = options;
-                    }
-                }
-            } catch (e) {
-                console.error('Error loading articles:', e);
-            }
-        }
-
-        // Appro Caisse
-        async function openApproCaisse() {
-            await loadDevises();
-            document.getElementById('approMontant').value = '0.00';
-            document.getElementById('approCommentaire').value = '';
-            openModal('modalApproCaisse');
-        }
-
-        async function submitApproCaisse() {
-            const devise = document.getElementById('approDevise').value;
-            const montant = parseFloat(document.getElementById('approMontant').value);
-            const commentaire = document.getElementById('approCommentaire').value;
-
-            if (montant <= 0) {
-                alert('Montant invalide');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/coffre/approvisionner', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        chrono: sessionState.chrono,
-                        codeDevise: devise,
-                        montant: montant,
-                        commentaire: commentaire
-                    })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Approvisionnement enregistré');
-                    closeModal('modalApproCaisse');
-                } else {
-                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
-                }
-            } catch (e) {
-                alert('Erreur connexion');
-            }
-        }
-
-        // Appro Produits
-        async function openApproProduits() {
-            await loadArticles();
-            document.getElementById('produitQuantite').value = '1';
-            openModal('modalApproProduits');
-        }
-
-        async function submitApproProduits() {
-            const article = document.getElementById('produitArticle').value;
-            const quantite = parseInt(document.getElementById('produitQuantite').value);
-
-            if (quantite <= 0) {
-                alert('Quantité invalide');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/coffre/approvisionner-produits', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        chrono: sessionState.chrono,
-                        codeArticle: article,
-                        quantite: quantite
-                    })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Produits approvisionnés');
-                    closeModal('modalApproProduits');
-                } else {
-                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
-                }
-            } catch (e) {
-                alert('Erreur connexion');
-            }
-        }
-
-        // Remise Caisse
-        async function openRemiseCaisse() {
-            await loadDevises();
-            document.getElementById('remiseMontant').value = '0.00';
-            document.getElementById('remiseCommentaire').value = '';
-            openModal('modalRemiseCaisse');
-        }
-
-        async function submitRemiseCaisse() {
-            const devise = document.getElementById('remiseDevise').value;
-            const montant = parseFloat(document.getElementById('remiseMontant').value);
-            const commentaire = document.getElementById('remiseCommentaire').value;
-
-            if (montant <= 0) {
-                alert('Montant invalide');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/coffre/remettre', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        chrono: sessionState.chrono,
-                        codeDevise: devise,
-                        montant: montant,
-                        commentaire: commentaire
-                    })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Remise enregistrée');
-                    closeModal('modalRemiseCaisse');
-                } else {
-                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
-                }
-            } catch (e) {
-                alert('Erreur connexion');
-            }
-        }
-
-        // Régul TPE
-        function openRegulTpe() {
-            document.getElementById('regulMontant').value = '0.00';
-            openModal('modalRegulTpe');
-        }
-
-        async function submitRegulTpe() {
-            const montant = parseFloat(document.getElementById('regulMontant').value);
-            try {
-                const response = await fetch('/api/sessions/regulariser-tpe', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        chrono: sessionState.chrono,
-                        montantEcart: montant
-                    })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert('Régularisation enregistrée');
-                    closeModal('modalRegulTpe');
-                } else {
-                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
-                }
-            } catch (e) {
-                alert('Erreur connexion');
-            }
-        }
-
-        // Télécollecte
-        function openTelecollecte() {
-            document.getElementById('telecollecteStatus').textContent = 'En attente...';
-            openModal('modalTelecollecte');
-        }
-
-        async function submitTelecollecte() {
-            document.getElementById('telecollecteStatus').textContent = 'Télécollecte en cours...';
-            try {
-                const response = await fetch('/api/sessions/telecollecte', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        societe: CONTEXT.societe,
-                        chrono: sessionState.chrono
-                    })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    document.getElementById('telecollecteStatus').textContent = 'Télécollecte terminée avec succès';
-                } else {
-                    document.getElementById('telecollecteStatus').textContent = 'Erreur: ' + (result.errorMessage || 'Echec');
-                }
-            } catch (e) {
-                document.getElementById('telecollecteStatus').textContent = 'Erreur de connexion';
+            // InternalEventID 219 - Quitter
+            if (confirm('Voulez-vous vraiment quitter ?')) {
+                window.close();
             }
         }
     </script>

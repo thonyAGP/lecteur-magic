@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CA0143 - Ouverture session de caisse</title>
+    <style>
+        /* Style Windows classique - fidele a Magic Unipaas */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 1100px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
+            color: white;
+            padding: 3px 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
+
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Header info - village et date */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .village-name {
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .date-display {
+            font-size: 11px;
+        }
+
+        /* Titre principal */
+        .main-title {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000080;
+            margin: 8px 0 16px 0;
+        }
+
+        /* Grille de donnees - style tableau */
+        .data-grid {
+            border: 1px inset #808080;
+            background: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .grid-header {
+            display: grid;
+            grid-template-columns: 180px repeat(7, 1fr);
+            background: #d4d0c8;
+            border-bottom: 1px solid #808080;
+        }
+
+        .grid-header .col-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 4px 2px;
+            border-right: 1px solid #808080;
+            font-size: 11px;
+        }
+
+        .grid-header .col-header:last-child { border-right: none; }
+        .grid-header .col-header.label-col { text-align: left; padding-left: 8px; }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 180px repeat(7, 1fr);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .grid-row:last-child { border-bottom: none; }
+
+        .grid-cell {
+            padding: 3px 4px;
+            border-right: 1px solid #e0e0e0;
+            text-align: right;
+            font-size: 11px;
+        }
+
+        .grid-cell:last-child { border-right: none; }
+
+        .grid-cell.label-col {
+            text-align: left;
+            background: #f0f0f0;
+            font-weight: bold;
+            padding-left: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .grid-cell.label-col .row-letter {
+            color: #0000ff;
+            font-weight: bold;
+            width: 16px;
+        }
+
+        .grid-cell input {
+            width: 100%;
+            border: 1px inset #808080;
+            text-align: right;
+            padding: 2px 4px;
+            font-size: 11px;
+            font-family: inherit;
+        }
+
+        .grid-cell input:focus {
+            background: #ffffcc;
+            outline: none;
+        }
+
+        .grid-cell input:disabled {
+            background: #e8e8e8;
+            border: 1px solid #c0c0c0;
+            color: #000000;
+        }
+
+        .grid-cell.total-col {
+            background: #ffffcc;
+            font-weight: bold;
+        }
+
+        .grid-cell.ecart-positif { color: #008000; }
+        .grid-cell.ecart-negatif { color: #ff0000; font-weight: bold; }
+
+        /* Ligne separateur */
+        .grid-separator {
+            grid-column: 1 / -1;
+            height: 2px;
+            background: #808080;
+        }
+
+        /* Section statut a droite */
+        .status-text {
+            font-size: 10px;
+            color: #006600;
+            text-align: right;
+            padding: 2px 4px;
+        }
+
+        /* Zone commentaire ecart */
+        .ecart-section {
+            margin: 8px 0;
+            padding: 8px;
+            border: 1px inset #808080;
+            background: #f8f8f8;
+            display: none;
+        }
+
+        .ecart-section.visible { display: block; }
+
+        .ecart-section label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .ecart-section input {
+            width: 100%;
+            padding: 4px;
+            border: 1px inset #808080;
+        }
+
+        /* Barre d'actions du bas */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 1px solid #808080;
+        }
+
+        /* Bouton Magic style */
+        .action-btn {
+            height: 24px;
+            min-width: 120px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 16px;
+        }
+
+        .action-btn:active { border-style: inset; }
+        .action-btn:disabled { color: #808080; cursor: not-allowed; }
+        .action-btn:hover:not(:disabled) { background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%); }
+
+        .action-btn.primary {
+            background: linear-gradient(to bottom, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .action-btn.primary:hover:not(:disabled) {
+            background: linear-gradient(to bottom, #66BB6A 0%, #43A047 100%);
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-info { color: #0000ff; }
+    </style>
+</head>
+<body>
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>CA0143 - Ouverture session de caisse</span>
+            </div>
+            <div class="window-controls">
+                <button>_</button>
+                <button title="Maximiser">&#9633;</button>
+                <button onclick="abandonner()" title="Fermer">×</button>
+            </div>
+        </div>
+
+        <div class="window-content">
+            <!-- Header info -->
+            <div class="header-info">
+                <span class="village-name" id="villageName">Village: ---</span>
+                <span class="date-display" id="dateDisplay"></span>
+            </div>
+
+            <!-- Titre principal -->
+            <div class="main-title">Ouverture session de caisse</div>
+
+            <!-- Grille de donnees - structure exacte Prg_294 -->
+            <div class="data-grid">
+                <!-- En-tetes de colonnes (Y=64 dans Prg_294) -->
+                <div class="grid-header">
+                    <div class="col-header label-col"></div>
+                    <div class="col-header">Cash</div>
+                    <div class="col-header">Cartes</div>
+                    <div class="col-header">Cheques</div>
+                    <div class="col-header">Produits</div>
+                    <div class="col-header">TOTAL</div>
+                    <div class="col-header">OD</div>
+                    <div class="col-header">Devises</div>
+                </div>
+
+                <!-- Ligne A: Solde initial (Y=89) - lecture seule -->
+                <div class="grid-row" id="rowSoldeInitial">
+                    <div class="grid-cell label-col">
+                        <span class="row-letter">A</span>
+                        <span>Solde initial</span>
+                    </div>
+                    <div class="grid-cell"><input type="text" id="soldeInitialCash" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="soldeInitialCartes" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="soldeInitialCheques" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="soldeInitialProduits" disabled value="0,00"></div>
+                    <div class="grid-cell total-col"><input type="text" id="soldeInitialTotal" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="soldeInitialOD" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="soldeInitialDevises" disabled value="0"></div>
+                </div>
+
+                <!-- Ligne B: Appro caisse (Y=107) - saisie Cash uniquement -->
+                <div class="grid-row" id="rowApproCaisse">
+                    <div class="grid-cell label-col">
+                        <span class="row-letter">B</span>
+                        <span>Appro caisse</span>
+                    </div>
+                    <div class="grid-cell"><input type="text" id="approCaisseCash" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell total-col"><input type="text" id="approCaisseTotal" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" id="approCaisseDevises" disabled value="0"></div>
+                </div>
+
+                <!-- Ligne C: Appro produits (Y=125) - saisie Produits uniquement -->
+                <div class="grid-row" id="rowApproProduits">
+                    <div class="grid-cell label-col">
+                        <span class="row-letter">C</span>
+                        <span>Appro produits</span>
+                    </div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" id="approProduits" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell total-col"><input type="text" id="approProduitsTotal" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                    <div class="grid-cell"><input type="text" disabled value="" style="border:none;background:transparent;"></div>
+                </div>
+
+                <!-- Separateur -->
+                <div class="grid-separator"></div>
+
+                <!-- Ligne D: Caisse comptee (Y=155) - saisie tous les champs -->
+                <div class="grid-row" id="rowCaisseComptee">
+                    <div class="grid-cell label-col">
+                        <span class="row-letter">D</span>
+                        <span>Caisse comptee</span>
+                    </div>
+                    <div class="grid-cell"><input type="text" id="caisseCompteeCash" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell"><input type="text" id="caisseCompteeCartes" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell"><input type="text" id="caisseCompteeCheques" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell"><input type="text" id="caissCompteeProduits" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell total-col"><input type="text" id="caisseCompteeTotal" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="caisseCompteeOD" value="0,00" oninput="calculerTotaux()"></div>
+                    <div class="grid-cell"><input type="text" id="caisseCompteeDevises" disabled value="0"></div>
+                </div>
+
+                <!-- Ligne: Controle caisse PMS (Y=173) - calcule -->
+                <div class="grid-row" id="rowControlePMS">
+                    <div class="grid-cell label-col">
+                        <span class="row-letter"></span>
+                        <span>Controle caisse PMS</span>
+                    </div>
+                    <div class="grid-cell"><input type="text" id="controlePMSCash" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="controlePMSCartes" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="controlePMSCheques" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="controlePMSProduits" disabled value="0,00"></div>
+                    <div class="grid-cell total-col"><input type="text" id="controlePMSTotal" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="controlePMSOD" disabled value="0,00"></div>
+                    <div class="grid-cell"><input type="text" id="controlePMSDevises" disabled value="0"></div>
+                </div>
+
+                <!-- Ligne: Ecart - calcule avec couleur -->
+                <div class="grid-row" id="rowEcart">
+                    <div class="grid-cell label-col">
+                        <span class="row-letter"></span>
+                        <span>Ecart</span>
+                    </div>
+                    <div class="grid-cell" id="ecartCashCell"><input type="text" id="ecartCash" disabled value="0,00"></div>
+                    <div class="grid-cell" id="ecartCartesCell"><input type="text" id="ecartCartes" disabled value="0,00"></div>
+                    <div class="grid-cell" id="ecartChequesCell"><input type="text" id="ecartCheques" disabled value="0,00"></div>
+                    <div class="grid-cell" id="ecartProduitsCell"><input type="text" id="ecartProduits" disabled value="0,00"></div>
+                    <div class="grid-cell total-col" id="ecartTotalCell"><input type="text" id="ecartTotal" disabled value="0,00"></div>
+                    <div class="grid-cell" id="ecartODCell"><input type="text" id="ecartOD" disabled value="0,00"></div>
+                    <div class="grid-cell" id="ecartDevisesCell"><input type="text" id="ecartDevises" disabled value="0"></div>
+                </div>
+            </div>
+
+            <!-- Section commentaire ecart (visible si ecart) -->
+            <div class="ecart-section" id="ecartSection">
+                <label for="commentaireEcart">Commentaire ecart (obligatoire) :</label>
+                <input type="text" id="commentaireEcart" maxlength="30" placeholder="Justifiez l'ecart...">
+            </div>
+
+            <!-- Barre d'actions (Y=250 dans Prg_294) -->
+            <div class="action-bar">
+                <button class="action-btn" onclick="abandonner()">Abandon</button>
+                <div>
+                    <span id="statusText" class="status-text">Ouverture session</span>
+                </div>
+                <button class="action-btn primary" id="btnValider" onclick="valider()">Valider</button>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="progressInfo" class="progress-info">Etape 1/3 : Saisie des montants</span>
+            <span id="sessionInfo">Session: Nouvelle</span>
+        </div>
+    </div>
+
+    <script>
+        // Contexte depuis les parametres URL - correspond aux 14 params de Prg_294
+        const CONTEXT = {
+            societe: 'C',           // Param 1: societe
+            deviseLocale: 'EUR',    // Param 2: devise locale
+            nbDecimales: 2,         // Param 3: nbre decimales
+            masqueMontant: 'N## ### ### ###.##', // Param 4
+            codeVillage: '',        // Param 5
+            nomVillage: '',         // Param 6
+            masqueCumul: '',        // Param 7
+            uniBi: 'U',             // Param 8: Uni/Bi
+            villageTAI: 'Non',      // Param 9
+            dateComptable: null,    // Param 10
+            ouvertureValidee: false,// Param 11
+            chronoSession: 0,       // Param 12
+            terminalCoffre2: 0,     // Param 13
+            coffre2Ouvert: false,   // Param 14
+            utilisateur: '',
+            terminal: ''
+        };
+
+        // Donnees de session - correspond aux colonnes de Prg_294
+        const SESSION = {
+            soldeInitial: { cash: 0, monnaie: 0, produits: 0, cartes: 0, cheques: 0, od: 0, devises: 0 },
+            appro: { cash: 0, produits: 0, total: 0, devises: 0 },
+            comptee: { cash: 0, monnaie: 0, produits: 0, cartes: 0, cheques: 0, od: 0, total: 0, devises: 0 },
+            calculee: { cash: 0, monnaie: 0, produits: 0, cartes: 0, cheques: 0, od: 0, total: 0 },
+            ecart: { cash: 0, monnaie: 0, produits: 0, cartes: 0, cheques: 0, od: 0, total: 0, devises: 0 },
+            commentaireEcart: '',
+            existeEcart: false
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', async () => {
+            lireParametresURL();
+            afficherDate();
+            await chargerDonneesInitiales();
+            calculerTotaux();
+        });
+
+        // Lire les parametres URL
+        function lireParametresURL() {
+            const params = new URLSearchParams(window.location.search);
+            CONTEXT.utilisateur = params.get('utilisateur') || 'ANT';
+            CONTEXT.terminal = params.get('terminal') || '21';
+            CONTEXT.codeVillage = params.get('village') || 'CSK';
+        }
+
+        // Afficher la date courante (format Magic: WWW DD MMM YYYY)
+        function afficherDate() {
+            const now = new Date();
+            const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('dateDisplay').textContent = now.toLocaleDateString('fr-FR', options);
+        }
+
+        // Charger les donnees initiales depuis l'API
+        async function chargerDonneesInitiales() {
+            try {
+                // Charger les parametres
+                const respParams = await fetch('/api/parametres?societe=' + CONTEXT.societe);
+                if (respParams.ok) {
+                    const params = await respParams.json();
+                    if (params && params.length > 0) {
+                        CONTEXT.nomVillage = params[0].cle || 'Village';
+                        document.getElementById('villageName').textContent = CONTEXT.nomVillage;
+                    }
+                }
+
+                // Charger le solde initial depuis le coffre ou derniere session
+                const respCoffre = await fetch(`/api/coffre/solde?terminal=${CONTEXT.terminal}`);
+                if (respCoffre.ok) {
+                    const solde = await respCoffre.json();
+                    if (solde) {
+                        SESSION.soldeInitial = {
+                            cash: solde.cash || 0,
+                            monnaie: solde.monnaie || 0,
+                            produits: solde.produits || 0,
+                            cartes: solde.cartes || 0,
+                            cheques: solde.cheques || 0,
+                            od: solde.od || 0,
+                            devises: solde.devises || 0
+                        };
+                        afficherSoldeInitial();
+                    }
+                }
+            } catch (e) {
+                console.log('API non disponible, mode demo');
+                document.getElementById('villageName').textContent = 'Demo Village';
+            }
+        }
+
+        // Afficher le solde initial
+        function afficherSoldeInitial() {
+            document.getElementById('soldeInitialCash').value = formatMontant(SESSION.soldeInitial.cash);
+            document.getElementById('soldeInitialCartes').value = formatMontant(SESSION.soldeInitial.cartes);
+            document.getElementById('soldeInitialCheques').value = formatMontant(SESSION.soldeInitial.cheques);
+            document.getElementById('soldeInitialProduits').value = formatMontant(SESSION.soldeInitial.produits);
+            document.getElementById('soldeInitialOD').value = formatMontant(SESSION.soldeInitial.od);
+
+            const total = SESSION.soldeInitial.cash + SESSION.soldeInitial.cartes +
+                          SESSION.soldeInitial.cheques + SESSION.soldeInitial.produits + SESSION.soldeInitial.od;
+            document.getElementById('soldeInitialTotal').value = formatMontant(total);
+            document.getElementById('soldeInitialDevises').value = SESSION.soldeInitial.devises;
+        }
+
+        // Formater un montant
+        function formatMontant(val) {
+            return val.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Parser un montant depuis le champ
+        function parseMontant(str) {
+            if (!str) return 0;
+            return parseFloat(str.replace(/\s/g, '').replace(',', '.')) || 0;
+        }
+
+        // Calculer les totaux et ecarts - logique de Prg_294
+        function calculerTotaux() {
+            // Lire les valeurs saisies
+            SESSION.appro.cash = parseMontant(document.getElementById('approCaisseCash').value);
+            SESSION.appro.produits = parseMontant(document.getElementById('approProduits').value);
+
+            SESSION.comptee.cash = parseMontant(document.getElementById('caisseCompteeCash').value);
+            SESSION.comptee.cartes = parseMontant(document.getElementById('caisseCompteeCartes').value);
+            SESSION.comptee.cheques = parseMontant(document.getElementById('caisseCompteeCheques').value);
+            SESSION.comptee.produits = parseMontant(document.getElementById('caissCompteeProduits').value);
+            SESSION.comptee.od = parseMontant(document.getElementById('caisseCompteeOD').value);
+
+            // Calculer controle PMS = solde initial + appro
+            SESSION.calculee.cash = SESSION.soldeInitial.cash + SESSION.appro.cash;
+            SESSION.calculee.cartes = SESSION.soldeInitial.cartes;
+            SESSION.calculee.cheques = SESSION.soldeInitial.cheques;
+            SESSION.calculee.produits = SESSION.soldeInitial.produits + SESSION.appro.produits;
+            SESSION.calculee.od = SESSION.soldeInitial.od;
+
+            // Calculer ecarts = comptee - calculee (Prg_294: "Mont ecart = Mont calcule moins Mont compte")
+            SESSION.ecart.cash = SESSION.comptee.cash - SESSION.calculee.cash;
+            SESSION.ecart.cartes = SESSION.comptee.cartes - SESSION.calculee.cartes;
+            SESSION.ecart.cheques = SESSION.comptee.cheques - SESSION.calculee.cheques;
+            SESSION.ecart.produits = SESSION.comptee.produits - SESSION.calculee.produits;
+            SESSION.ecart.od = SESSION.comptee.od - SESSION.calculee.od;
+
+            // Calculer totaux
+            SESSION.appro.total = SESSION.appro.cash + SESSION.appro.produits;
+            SESSION.comptee.total = SESSION.comptee.cash + SESSION.comptee.cartes +
+                                    SESSION.comptee.cheques + SESSION.comptee.produits + SESSION.comptee.od;
+            SESSION.calculee.total = SESSION.calculee.cash + SESSION.calculee.cartes +
+                                     SESSION.calculee.cheques + SESSION.calculee.produits + SESSION.calculee.od;
+            SESSION.ecart.total = SESSION.ecart.cash + SESSION.ecart.cartes +
+                                  SESSION.ecart.cheques + SESSION.ecart.produits + SESSION.ecart.od;
+
+            // Afficher appro
+            document.getElementById('approCaisseTotal').value = formatMontant(SESSION.appro.cash);
+            document.getElementById('approProduitsTotal').value = formatMontant(SESSION.appro.produits);
+
+            // Afficher comptee total
+            document.getElementById('caisseCompteeTotal').value = formatMontant(SESSION.comptee.total);
+
+            // Afficher controle PMS
+            document.getElementById('controlePMSCash').value = formatMontant(SESSION.calculee.cash);
+            document.getElementById('controlePMSCartes').value = formatMontant(SESSION.calculee.cartes);
+            document.getElementById('controlePMSCheques').value = formatMontant(SESSION.calculee.cheques);
+            document.getElementById('controlePMSProduits').value = formatMontant(SESSION.calculee.produits);
+            document.getElementById('controlePMSOD').value = formatMontant(SESSION.calculee.od);
+            document.getElementById('controlePMSTotal').value = formatMontant(SESSION.calculee.total);
+
+            // Afficher ecarts avec couleur
+            afficherEcart('ecartCash', SESSION.ecart.cash);
+            afficherEcart('ecartCartes', SESSION.ecart.cartes);
+            afficherEcart('ecartCheques', SESSION.ecart.cheques);
+            afficherEcart('ecartProduits', SESSION.ecart.produits);
+            afficherEcart('ecartOD', SESSION.ecart.od);
+            afficherEcart('ecartTotal', SESSION.ecart.total);
+
+            // Verifier si ecart existe
+            SESSION.existeEcart = Math.abs(SESSION.ecart.total) > 0.01;
+            document.getElementById('ecartSection').classList.toggle('visible', SESSION.existeEcart);
+
+            // Mettre a jour le statut
+            if (SESSION.existeEcart) {
+                document.getElementById('statusText').textContent = 'Ecart detecte - Justification requise';
+                document.getElementById('statusText').style.color = '#ff0000';
+            } else {
+                document.getElementById('statusText').textContent = 'Pas d\'ecart';
+                document.getElementById('statusText').style.color = '#008000';
+            }
+        }
+
+        // Afficher un ecart avec couleur
+        function afficherEcart(fieldId, value) {
+            const field = document.getElementById(fieldId);
+            const cell = document.getElementById(fieldId + 'Cell');
+            field.value = formatMontant(value);
+
+            if (cell) {
+                cell.classList.remove('ecart-positif', 'ecart-negatif');
+                if (value > 0.01) cell.classList.add('ecart-positif');
+                else if (value < -0.01) cell.classList.add('ecart-negatif');
+            }
+        }
+
+        // Valider l'ouverture de session - InternalEventID 34 dans Prg_294
+        async function valider() {
+            // Verifier commentaire si ecart
+            if (SESSION.existeEcart) {
+                const commentaire = document.getElementById('commentaireEcart').value.trim();
+                if (!commentaire) {
+                    alert('Veuillez saisir un commentaire pour justifier l\'ecart.');
+                    document.getElementById('commentaireEcart').focus();
+                    return;
+                }
+                SESSION.commentaireEcart = commentaire;
+            }
+
+            // Preparer les donnees pour l'API
+            const data = {
+                utilisateur: CONTEXT.utilisateur,
+                terminal: parseInt(CONTEXT.terminal),
+                societe: CONTEXT.societe,
+                dateComptable: new Date().toISOString().split('T')[0].replace(/-/g, ''),
+                montants: {
+                    cash: SESSION.comptee.cash,
+                    cartes: SESSION.comptee.cartes,
+                    cheques: SESSION.comptee.cheques,
+                    produits: SESSION.comptee.produits,
+                    od: SESSION.comptee.od
+                },
+                appro: {
+                    cash: SESSION.appro.cash,
+                    produits: SESSION.appro.produits
+                },
+                ecart: SESSION.existeEcart ? {
+                    cash: SESSION.ecart.cash,
+                    cartes: SESSION.ecart.cartes,
+                    cheques: SESSION.ecart.cheques,
+                    produits: SESSION.ecart.produits,
+                    od: SESSION.ecart.od,
+                    total: SESSION.ecart.total
+                } : null,
+                commentaireEcart: SESSION.commentaireEcart || null
+            };
+
+            try {
+                const response = await fetch('/api/sessions/ouvrir', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Session ${result.chrono} ouverte avec succes !`);
+                    window.location.href = `menu-caisse.html?chrono=${result.chrono}`;
+                } else {
+                    const error = await response.json();
+                    alert('Erreur: ' + (error.message || 'Impossible d\'ouvrir la session'));
+                }
+            } catch (e) {
+                // Mode demo
+                alert('Mode demo: Session ouverte avec succes !');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Abandonner - InternalEventID 219 dans Prg_294
+        function abandonner() {
+            if (confirm('Voulez-vous vraiment abandonner l\'ouverture de session ?')) {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>

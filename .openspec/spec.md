@@ -83,7 +83,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 - [x] **ADH/Gestion Caisse** - API C# .NET 8 COMPLETE - Valide 2025-12-29
   - Solution: `migration/caisse/Caisse.sln`
   - 5 projets: Domain, Application, Infrastructure, Api, Shared
-  - **Interface graphique complete:** 13 ecrans SPA (HTML/CSS/JS)
+  - **Interface graphique complete:** 14 ecrans SPA (HTML/CSS/JS) - index corrige CA0142, ouverture-session CA0143
   - **~125 endpoints** couvrant tous les modules migres
   - **527 tests unitaires** (100% pass)
   - **Couverture:** 85.5% (9 progs vides exclus, 354 lignes desactivees ignorees)
@@ -101,20 +101,24 @@ Composant "Sessions_Reprises" - 30 programmes:
   - ChangementCompte (12 endpoints) - Menu, Separation, Fusion, Historique
   - Menus (5 endpoints) - MenuCaisse, MenuVentes, MenuChange, MenuDepot, MenuFactures
 
-  **Ecrans SPA (depuis Main > Prg_162):**
-  | Ecran | Programmes | Description |
-  |-------|------------|-------------|
-  | index.html | Prg_162 | Menu principal Gestion Caisse + modales coffre |
-  | sessions.html | Prg_77,80,236 | Liste sessions, Consultation, Historique |
-  | zooms.html | Prg_164-189 | Tables de reference (8 zooms) |
-  | telephone.html | Prg_202-220 | Lignes telephone (OPEN/CLOSE/STATS) |
-  | change.html | Prg_20-25 | Operations de change devises |
-  | ventes.html | Prg_229-250 | Gift Pass, Resort Credit, Historique |
-  | extrait.html | Prg_69-76 | Extrait de compte avec filtres |
-  | garanties.html | Prg_111-114 | Depots et cautions |
-  | easycheckout.html | Prg_53-67 | Workflow Easy Check-Out |
-  | factures.html | Prg_54,89-97 | Gestion facturation TVA |
-  | changement-compte.html | Prg_27-37 | Separation/Fusion comptes |
+  **Ecrans SPA (flux: Main→Prg_1→Prg_162→Prg_121):**
+  | Ecran | ID Magic | Programmes | Description |
+  |-------|----------|------------|-------------|
+  | index.html | **CA0142** | Prg_121 | Gestion de la caisse (ecran principal SDI) |
+  | ouverture-session.html | **CA0143** | Prg_294 | Ouverture session - grille comptage initial |
+  | sessions.html | - | Prg_77,80,236 | Liste sessions, Consultation, Historique |
+  | zooms.html | - | Prg_164-189 | Tables de reference (8 zooms) |
+  | telephone.html | - | Prg_202-220 | Lignes telephone (OPEN/CLOSE/STATS) |
+  | change.html | - | Prg_20-25 | Operations de change devises |
+  | ventes.html | - | Prg_229-250 | Gift Pass, Resort Credit, Historique |
+  | extrait.html | - | Prg_69-76 | Extrait de compte avec filtres |
+  | garanties.html | - | Prg_111-114 | Depots et cautions |
+  | easycheckout.html | - | Prg_53-67 | Workflow Easy Check-Out |
+  | factures.html | - | Prg_54,89-97 | Gestion facturation TVA |
+  | changement-compte.html | - | Prg_27-37 | Separation/Fusion comptes |
+
+  **Note flux ecrans:** Prg_162 ("Menu caisse GM") est un menu intermediaire sans form visible.
+  L'ecran principal visible est Prg_121 (CA0142) avec WindowType=2 (SDI).
 
 - [x] **ADH/Ventes - Prg_237 Solde Gift Pass** - Migre 2025-12-27
   - Endpoint: `GET /api/ventes/solde-giftpass/{societe}/{compte}/{filiation}`
@@ -307,6 +311,8 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 | Date | Decision | Contexte | Alternatives rejetees |
 |------|----------|----------|----------------------|
+| 2026-01-04 | **Correction tracage flux** | Prg_162 n'est PAS l'ecran visible - c'est un menu intermediaire (CallTask vers Prg_121). Ecran visible = CA0142 (Prg_121) avec WindowType=2 (SDI) | Considerer Prg_162 comme ecran principal (ERREUR) |
+| 2026-01-04 | Identifier ecrans par ID public | Format CA0XXX visible dans titre ecran correspond au Public Name dans ProgramHeaders.xml | Identifier par nom programme interne |
 | 2025-12-27 | Ecarts via Domain Service | Logique metier dans IEcartCalculator, testable | Calcul inline dans handler |
 | 2025-12-27 | Seuil alerte configurable | Parametre SeuilAlerte avec ForceClosureOnEcart | Seuil fixe en config |
 | 2025-12-27 | Clean Architecture + CQRS | Separation claire, testabilite | N-tier classique |
@@ -327,6 +333,11 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-04: **CORRECTION CRITIQUE: Tracage flux ecrans** - Erreur identifiee: Prg_162 considere a tort comme ecran visible alors que c'est un menu intermediaire. Flux reel: Main→Prg_1→Prg_162→Prg_121 (CA0142). Ecran principal = Prg_121 avec WindowType=2 (SDI)
+- 2026-01-04: **ouverture-session.html (CA0143)** - Ecran cree depuis analyse Prg_294. Grille 7 colonnes (Cash/Cartes/Cheques/Produits/TOTAL/OD/Devises), 6 lignes (Solde initial/Appro caisse/Appro produits/Caisse comptee/Controle PMS/Ecart). Boutons Abandon/Valider avec validation ecart
+- 2026-01-04: **index.html corrige (CA0142)** - Reconstruction fidele depuis Prg_121 avec tous les boutons (Ouvrir/Continuer/Fermer session, Appro, Regul Telecollecte, etc.) et zone info utilisateur/coffre/etat
+- 2026-01-04: **Skill enrichi: Menu intermediaire vs Ecran visible** - Regles ajoutees: WindowType=2=SDI visible, tracage multi-niveaux obligatoire, ne pas s'arreter au premier CallTask
+- 2026-01-04: **Skill: Flow Tracing & Window Types** - Documentation Window Types (Modal/SDI/MDI), flux d'execution Task Prefix→Suffix, methodologie tracage demarrage depuis MainProgram (Prg_1→Prg_162)
 - 2026-01-04: **Navigation SPA complete** - sessions.html (Prg_77/80/236), modales coffre (Prg_233/234/235/163/197), panel navigation 11 ecrans
 - 2026-01-04: **Skill enrichi: Detection code desactive** - ISEMPTY_TSK pour programmes vides, Disabled val="1" pour lignes, 9 progs vides + 354 lignes exclus
 - 2026-01-04: **Rapport couverture complet** - `.openspec/reports/COVERAGE_REPORT_2025-01-04.md`, 85.5% couverture, 12 ecrans SPA, ~125 endpoints
@@ -375,4 +386,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2025-12-31 12:00*
+*Derniere mise a jour: 2026-01-04 - Correction tracage flux ecrans CA0142/CA0143*
