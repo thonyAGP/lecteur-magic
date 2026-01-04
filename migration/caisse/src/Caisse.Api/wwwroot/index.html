@@ -609,19 +609,19 @@
             </div>
 
             <!-- Right side operation buttons (Visible Exp 12/13: session open) -->
-            <button class="magic-btn btn-appro-caisse hidden" id="btnApproCaisse">Appro caisse</button>
-            <button class="magic-btn btn-appro-produits hidden" id="btnApproProduits">Appro produits</button>
-            <button class="magic-btn btn-remise-caisse hidden" id="btnRemiseCaisse">Remise en caisse</button>
-            <button class="magic-btn btn-historiques hidden" id="btnHistoriques">Historiques</button>
+            <button class="magic-btn btn-appro-caisse hidden" id="btnApproCaisse" onclick="openApproCaisse()">Appro caisse</button>
+            <button class="magic-btn btn-appro-produits hidden" id="btnApproProduits" onclick="openApproProduits()">Appro produits</button>
+            <button class="magic-btn btn-remise-caisse hidden" id="btnRemiseCaisse" onclick="openRemiseCaisse()">Remise en caisse</button>
+            <button class="magic-btn btn-historiques hidden" id="btnHistoriques" onclick="navigateTo('extrait.html')">Historiques</button>
 
             <!-- Left side buttons -->
-            <button class="magic-btn btn-regul-tpe" id="btnRegulTpe">Régul. Télécollecte</button>
-            <button class="magic-btn btn-telecollecte-tpe" id="btnTelecollecteTpe">Telecollecte TPE</button>
-            <button class="magic-btn btn-visu-sessions" id="btnVisuSessions">Visu sessions</button>
+            <button class="magic-btn btn-regul-tpe" id="btnRegulTpe" onclick="openRegulTpe()">Régul. Télécollecte</button>
+            <button class="magic-btn btn-telecollecte-tpe" id="btnTelecollecteTpe" onclick="openTelecollecte()">Telecollecte TPE</button>
+            <button class="magic-btn btn-visu-sessions" id="btnVisuSessions" onclick="navigateTo('sessions.html')">Visu sessions</button>
 
             <!-- Middle buttons -->
-            <button class="magic-btn btn-consultation" id="btnConsultation">Consultation</button>
-            <button class="magic-btn btn-impression hidden" id="btnImpression">Impression du dernier ticket</button>
+            <button class="magic-btn btn-consultation" id="btnConsultation" onclick="navigateTo('sessions.html?mode=consult')">Consultation</button>
+            <button class="magic-btn btn-impression hidden" id="btnImpression" onclick="printTicket()">Impression du dernier ticket</button>
 
             <!-- Bottom bar decoration -->
             <div class="bottom-bar"></div>
@@ -637,6 +637,7 @@
     <!-- Module navigation panel -->
     <div class="modules-nav">
         <h3>Modules ADH</h3>
+        <a href="sessions.html">Sessions</a>
         <a href="zooms.html">Zooms</a>
         <a href="telephone.html">Telephone</a>
         <a href="change.html">Change</a>
@@ -646,6 +647,127 @@
         <a href="easycheckout.html">Easy Check-Out</a>
         <a href="factures.html">Factures</a>
         <a href="changement-compte.html">Changement Compte</a>
+    </div>
+
+    <!-- Modal: Appro Caisse -->
+    <div class="modal-overlay" id="modalApproCaisse">
+        <div class="modal-window">
+            <div class="modal-title-bar">
+                <span>Approvisionnement Caisse</span>
+                <button class="modal-close" onclick="closeModal('modalApproCaisse')">X</button>
+            </div>
+            <div class="modal-content">
+                <div class="form-row">
+                    <label>Devise:</label>
+                    <select id="approDevise" style="flex:1;"></select>
+                </div>
+                <div class="form-row">
+                    <label>Montant:</label>
+                    <input type="number" id="approMontant" step="0.01" value="0.00">
+                </div>
+                <div class="form-row">
+                    <label>Commentaire:</label>
+                    <input type="text" id="approCommentaire" maxlength="30">
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn" onclick="closeModal('modalApproCaisse')">Annuler</button>
+                    <button class="modal-btn primary" onclick="submitApproCaisse()">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Appro Produits -->
+    <div class="modal-overlay" id="modalApproProduits">
+        <div class="modal-window">
+            <div class="modal-title-bar">
+                <span>Approvisionnement Produits</span>
+                <button class="modal-close" onclick="closeModal('modalApproProduits')">X</button>
+            </div>
+            <div class="modal-content">
+                <div class="form-row">
+                    <label>Article:</label>
+                    <select id="produitArticle" style="flex:1;"></select>
+                </div>
+                <div class="form-row">
+                    <label>Quantité:</label>
+                    <input type="number" id="produitQuantite" value="1" min="1">
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn" onclick="closeModal('modalApproProduits')">Annuler</button>
+                    <button class="modal-btn primary" onclick="submitApproProduits()">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Remise Caisse -->
+    <div class="modal-overlay" id="modalRemiseCaisse">
+        <div class="modal-window">
+            <div class="modal-title-bar">
+                <span>Remise en Caisse</span>
+                <button class="modal-close" onclick="closeModal('modalRemiseCaisse')">X</button>
+            </div>
+            <div class="modal-content">
+                <div class="form-row">
+                    <label>Devise:</label>
+                    <select id="remiseDevise" style="flex:1;"></select>
+                </div>
+                <div class="form-row">
+                    <label>Montant:</label>
+                    <input type="number" id="remiseMontant" step="0.01" value="0.00">
+                </div>
+                <div class="form-row">
+                    <label>Commentaire:</label>
+                    <input type="text" id="remiseCommentaire" maxlength="30">
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn" onclick="closeModal('modalRemiseCaisse')">Annuler</button>
+                    <button class="modal-btn primary" onclick="submitRemiseCaisse()">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Régul TPE -->
+    <div class="modal-overlay" id="modalRegulTpe">
+        <div class="modal-window">
+            <div class="modal-title-bar">
+                <span>Régularisation Télécollecte</span>
+                <button class="modal-close" onclick="closeModal('modalRegulTpe')">X</button>
+            </div>
+            <div class="modal-content">
+                <p style="font-size:11px;margin-bottom:10px;">Régulariser les écarts de télécollecte TPE</p>
+                <div class="form-row">
+                    <label>Montant écart:</label>
+                    <input type="number" id="regulMontant" step="0.01" value="0.00">
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn" onclick="closeModal('modalRegulTpe')">Annuler</button>
+                    <button class="modal-btn primary" onclick="submitRegulTpe()">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Télécollecte -->
+    <div class="modal-overlay" id="modalTelecollecte">
+        <div class="modal-window">
+            <div class="modal-title-bar">
+                <span>Télécollecte TPE</span>
+                <button class="modal-close" onclick="closeModal('modalTelecollecte')">X</button>
+            </div>
+            <div class="modal-content">
+                <p style="font-size:11px;margin-bottom:10px;">Lancer la télécollecte des terminaux de paiement</p>
+                <div id="telecollecteStatus" style="padding:10px;background:#f0f0f0;border:1px solid #808080;font-size:10px;">
+                    En attente...
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn" onclick="closeModal('modalTelecollecte')">Fermer</button>
+                    <button class="modal-btn primary" onclick="submitTelecollecte()">Lancer</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="api-status" id="apiStatus">API: Connecting...</div>
@@ -798,14 +920,50 @@
             }
         }
 
+        function navigateTo(page) {
+            // Pass session context via URL params
+            const params = new URLSearchParams({
+                societe: CONTEXT.societe,
+                utilisateur: CONTEXT.utilisateur,
+                terminal: CONTEXT.terminal,
+                chrono: sessionState.chrono || ''
+            });
+            window.location.href = page + '?' + params.toString();
+        }
+
+        function printTicket() {
+            if (!sessionState.chrono) {
+                alert('Aucune session active');
+                return;
+            }
+            fetch(`/api/ventes/print-ticket/${CONTEXT.societe}/${sessionState.chrono}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Ticket imprimé');
+                    } else {
+                        alert('Erreur: ' + (data.errorMessage || 'Echec impression'));
+                    }
+                })
+                .catch(() => alert('Erreur connexion'));
+        }
+
         async function ouvrirSession() {
             try {
+                // Format date comptable YYYYMMDD
+                const now = new Date();
+                const dateComptable = now.getFullYear().toString() +
+                    (now.getMonth() + 1).toString().padStart(2, '0') +
+                    now.getDate().toString().padStart(2, '0');
+
                 const response = await fetch('/api/sessions/ouvrir', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         societe: CONTEXT.societe,
-                        utilisateur: CONTEXT.utilisateur
+                        utilisateur: CONTEXT.utilisateur,
+                        terminal: CONTEXT.terminal,
+                        dateComptable: dateComptable
                     })
                 });
                 if (response.ok) {
@@ -845,6 +1003,234 @@
                 }
             } catch (e) {
                 alert('Erreur connexion');
+            }
+        }
+
+        // Modal management
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Load devises for select elements
+        async function loadDevises() {
+            try {
+                const response = await fetch(`/api/devises?societe=${CONTEXT.societe}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        const options = result.data.map(d =>
+                            `<option value="${d.codeDevise}">${d.codeDevise} - ${d.libelle || ''}</option>`
+                        ).join('');
+                        ['approDevise', 'remiseDevise'].forEach(id => {
+                            document.getElementById(id).innerHTML = options;
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading devises:', e);
+            }
+        }
+
+        // Load articles for select
+        async function loadArticles() {
+            try {
+                const response = await fetch(`/api/articles?societe=${CONTEXT.societe}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        const options = result.data.map(a =>
+                            `<option value="${a.codeArticle}">${a.codeArticle} - ${a.libelle || ''}</option>`
+                        ).join('');
+                        document.getElementById('produitArticle').innerHTML = options;
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading articles:', e);
+            }
+        }
+
+        // Appro Caisse
+        async function openApproCaisse() {
+            await loadDevises();
+            document.getElementById('approMontant').value = '0.00';
+            document.getElementById('approCommentaire').value = '';
+            openModal('modalApproCaisse');
+        }
+
+        async function submitApproCaisse() {
+            const devise = document.getElementById('approDevise').value;
+            const montant = parseFloat(document.getElementById('approMontant').value);
+            const commentaire = document.getElementById('approCommentaire').value;
+
+            if (montant <= 0) {
+                alert('Montant invalide');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/coffre/approvisionner', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        chrono: sessionState.chrono,
+                        codeDevise: devise,
+                        montant: montant,
+                        commentaire: commentaire
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Approvisionnement enregistré');
+                    closeModal('modalApproCaisse');
+                } else {
+                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
+                }
+            } catch (e) {
+                alert('Erreur connexion');
+            }
+        }
+
+        // Appro Produits
+        async function openApproProduits() {
+            await loadArticles();
+            document.getElementById('produitQuantite').value = '1';
+            openModal('modalApproProduits');
+        }
+
+        async function submitApproProduits() {
+            const article = document.getElementById('produitArticle').value;
+            const quantite = parseInt(document.getElementById('produitQuantite').value);
+
+            if (quantite <= 0) {
+                alert('Quantité invalide');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/coffre/approvisionner-produits', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        chrono: sessionState.chrono,
+                        codeArticle: article,
+                        quantite: quantite
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Produits approvisionnés');
+                    closeModal('modalApproProduits');
+                } else {
+                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
+                }
+            } catch (e) {
+                alert('Erreur connexion');
+            }
+        }
+
+        // Remise Caisse
+        async function openRemiseCaisse() {
+            await loadDevises();
+            document.getElementById('remiseMontant').value = '0.00';
+            document.getElementById('remiseCommentaire').value = '';
+            openModal('modalRemiseCaisse');
+        }
+
+        async function submitRemiseCaisse() {
+            const devise = document.getElementById('remiseDevise').value;
+            const montant = parseFloat(document.getElementById('remiseMontant').value);
+            const commentaire = document.getElementById('remiseCommentaire').value;
+
+            if (montant <= 0) {
+                alert('Montant invalide');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/coffre/remettre', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        chrono: sessionState.chrono,
+                        codeDevise: devise,
+                        montant: montant,
+                        commentaire: commentaire
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Remise enregistrée');
+                    closeModal('modalRemiseCaisse');
+                } else {
+                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
+                }
+            } catch (e) {
+                alert('Erreur connexion');
+            }
+        }
+
+        // Régul TPE
+        function openRegulTpe() {
+            document.getElementById('regulMontant').value = '0.00';
+            openModal('modalRegulTpe');
+        }
+
+        async function submitRegulTpe() {
+            const montant = parseFloat(document.getElementById('regulMontant').value);
+            try {
+                const response = await fetch('/api/sessions/regulariser-tpe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        chrono: sessionState.chrono,
+                        montantEcart: montant
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Régularisation enregistrée');
+                    closeModal('modalRegulTpe');
+                } else {
+                    alert('Erreur: ' + (result.errorMessage || 'Echec'));
+                }
+            } catch (e) {
+                alert('Erreur connexion');
+            }
+        }
+
+        // Télécollecte
+        function openTelecollecte() {
+            document.getElementById('telecollecteStatus').textContent = 'En attente...';
+            openModal('modalTelecollecte');
+        }
+
+        async function submitTelecollecte() {
+            document.getElementById('telecollecteStatus').textContent = 'Télécollecte en cours...';
+            try {
+                const response = await fetch('/api/sessions/telecollecte', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        chrono: sessionState.chrono
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('telecollecteStatus').textContent = 'Télécollecte terminée avec succès';
+                } else {
+                    document.getElementById('telecollecteStatus').textContent = 'Erreur: ' + (result.errorMessage || 'Echec');
+                }
+            } catch (e) {
+                document.getElementById('telecollecteStatus').textContent = 'Erreur de connexion';
             }
         }
     </script>
