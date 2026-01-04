@@ -83,8 +83,8 @@ Composant "Sessions_Reprises" - 30 programmes:
 - [x] **ADH/Gestion Caisse** - API C# .NET 8 COMPLETE - Valide 2025-12-29
   - Solution: `migration/caisse/Caisse.sln`
   - 5 projets: Domain, Application, Infrastructure, Api, Shared
-  - **Interface graphique complete:** 15 ecrans SPA (HTML/CSS/JS)
-  - **~70 endpoints** couvrant tous les modules migres
+  - **Interface graphique complete:** 10 ecrans SPA (HTML/CSS/JS)
+  - **~73 endpoints** couvrant tous les modules migres
   - **527 tests unitaires** (100% pass)
   - Swagger: http://localhost:5287/swagger
   - Interface: http://localhost:5287/
@@ -93,12 +93,26 @@ Composant "Sessions_Reprises" - 30 programmes:
   - Sessions, Devises, Articles, Details, Coffre, Parametres
   - Ventes (Gift Pass, Resort Credit, Historique, PrintTicket)
   - Zooms (8 endpoints), Members, Solde, Extrait, Garantie
-  - Change (3 endpoints), Telephone, EasyCheckOut, Factures
+  - Change (3 endpoints), Telephone (3 endpoints), EasyCheckOut, Factures
   - Identification, EzCard (3 endpoints), Depot (2 endpoints)
   - Divers (5 endpoints) - Langue, Titre, AccesInfo, IntegriteDates, SessionTimestamp
   - Utilitaires (10 endpoints) - Init, Backup, Restore, Export, Import, Purge, Maintenance, PrintTicket, LogViewer, SystemInfo
   - ChangementCompte (12 endpoints) - Menu, Separation, Fusion, Historique
   - Menus (5 endpoints) - MenuCaisse, MenuVentes, MenuChange, MenuDepot, MenuFactures
+
+  **Ecrans SPA (depuis Main > Prg_162):**
+  | Ecran | Programmes | Description |
+  |-------|------------|-------------|
+  | index.html | Prg_162 | Menu principal Gestion Caisse |
+  | zooms.html | Prg_164-189 | Tables de reference (8 zooms) |
+  | telephone.html | Prg_202-220 | Lignes telephone (OPEN/CLOSE/STATS) |
+  | change.html | Prg_20-25 | Operations de change devises |
+  | ventes.html | Prg_229-250 | Gift Pass, Resort Credit, Historique |
+  | extrait.html | Prg_69-76 | Extrait de compte avec filtres |
+  | garanties.html | Prg_111-114 | Depots et cautions |
+  | easycheckout.html | Prg_53-67 | Workflow Easy Check-Out |
+  | factures.html | Prg_54,89-97 | Gestion facturation TVA |
+  | changement-compte.html | Prg_27-37 | Separation/Fusion comptes |
 
 - [x] **ADH/Ventes - Prg_237 Solde Gift Pass** - Migre 2025-12-27
   - Endpoint: `GET /api/ventes/solde-giftpass/{societe}/{compte}/{filiation}`
@@ -220,11 +234,12 @@ Composant "Sessions_Reprises" - 30 programmes:
 - [ ] Mise en production et tests finaux
 
 ### Terminees
+- [x] **Analyse Main/Prg_162 + 6 ecrans** (terminee: 2025-12-31) - Tracage flux CallTask, 3 gaps API combles, 6 ecrans SPA crees
 - [x] **Phase 11: Identification (2 endpoints)** (terminee: 2025-12-28) - Login + Session check, 327 tests total
 - [x] **Phase 12: EzCard (3 endpoints)** (terminee: 2025-12-28) - Cards lookup, deactivation, character validation
 - [x] **Phase 12: Divers (5 endpoints)** (terminee: 2025-12-28) - Langue, Titre, AccesInfo, IntegriteDates, SessionTimestamp
 - [x] **Phase 12: Depot (2 endpoints)** (terminee: 2025-12-28) - Deposit extract, withdrawal
-- [x] **Interface Graphique Complete** (terminee: 2025-12-28) - 15 ecrans SPA (HTML/CSS/JS), 458 tests total
+- [x] **Interface Graphique Complete** (terminee: 2025-12-28) - 10 ecrans SPA (HTML/CSS/JS), 458 tests total
 - [x] **Phase 10: Factures (2 endpoints)** (terminee: 2025-12-28) - Checkout + Creation, 310 tests total
 - [x] **Phase 9: EasyCheckOut (3 endpoints)** (terminee: 2025-12-28) - Solde + Edition + Extrait, 281 tests total
 - [x] **Phase 8: Telephone (2 endpoints)** (terminee: 2025-12-28) - Query + Command, 272 tests total
@@ -310,6 +325,9 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2025-12-31: **Analyse Main/Prg_162 complete** - Tracage flux CallTask, couverture API validee, 3 gaps combles (DetailAppels, MenuTelephone, ZoomServicesVillage)
+- 2025-12-31: **6 ecrans SPA crees** - ventes.html, extrait.html, garanties.html, easycheckout.html, factures.html, changement-compte.html
+- 2025-12-31: Navigation modules ajoutee a index.html - Panel fixe avec liens vers tous les ecrans
 - 2025-12-29: **MIGRATION ADH COMPLETE** - 527 tests unitaires (100% pass), ~70 endpoints, 18 modules migres, build Release operationnel
 - 2025-12-29: Fix validators Societe (MaxLength 2->10), correction tests Ventes orphelins, nettoyage fichiers agents
 - 2025-12-28: **Interface Graphique Complete** - 15 ecrans SPA (dashboard, sessions, ventes, EzCard, depot, etc.), 411 tests total
@@ -351,4 +369,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2025-12-29 10:00*
+*Derniere mise a jour: 2025-12-31 12:00*

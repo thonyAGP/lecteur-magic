@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telephone - Gestion Autocom</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --success-color: #107c10;
+            --warning-color: #ff8c00;
+            --danger-color: #d13438;
+            --bg-color: #f3f3f3;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #005a9e);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover { background: #005a9e; }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        .btn-success:hover { background: #0b5e0b; }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        .btn-danger:hover { background: #a52a2a; }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-open { background: #dff6dd; color: var(--success-color); }
+        .status-closed { background: #fde7e9; color: var(--danger-color); }
+        .status-blocked { background: #fff4ce; color: var(--warning-color); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #666;
+        }
+
+        tr:hover { background: #f5f5f5; }
+
+        .info-panel {
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-panel h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .info-row .label { color: #666; }
+        .info-row .value { font-weight: 600; }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Telephone - Gestion Autocom (Prg_202-220)</h1>
+        <div class="nav-links">
+            <a href="index.html">Caisse</a>
+            <a href="zooms.html">Zooms</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Recherche Ligne</h2>
+            <div class="form-group">
+                <label>Societe</label>
+                <input type="text" id="societe" value="CSK" maxlength="10">
+            </div>
+            <div class="form-group">
+                <label>Code GM</label>
+                <input type="number" id="codeGm" placeholder="Code GM">
+            </div>
+            <div class="form-group">
+                <label>Filiation</label>
+                <input type="number" id="filiation" value="0">
+            </div>
+            <div class="form-group">
+                <label>Code Autocom</label>
+                <input type="number" id="codeAutocom" placeholder="Code Autocom">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="rechercherLigne()">Rechercher</button>
+                <button class="btn btn-primary" onclick="rechercherDetailAppels()">Detail Appels</button>
+            </div>
+
+            <div id="ligneInfo" class="info-panel" style="margin-top: 20px; display: none;">
+                <h3>Information Ligne</h3>
+                <div class="info-row">
+                    <span class="label">Numero Poste:</span>
+                    <span class="value" id="infoNumPoste">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Numero Ligne:</span>
+                    <span class="value" id="infoNumLigne">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Code Autocom:</span>
+                    <span class="value" id="infoCodeAutocom">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Etat:</span>
+                    <span id="infoEtat">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Chambre:</span>
+                    <span class="value" id="infoChambre">-</span>
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 15px;">
+                <button class="btn btn-success" onclick="ouvrirLigne()">Ouvrir</button>
+                <button class="btn btn-danger" onclick="fermerLigne()">Fermer</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Detail des Appels (Prg_211)</h2>
+            <div id="detailAppelsInfo" style="display: none;">
+                <div class="info-panel">
+                    <div class="info-row">
+                        <span class="label">Client:</span>
+                        <span class="value" id="clientNom">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Village:</span>
+                        <span class="value" id="clientVillage">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Nombre d'appels:</span>
+                        <span class="value" id="nbAppels">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Montant Total:</span>
+                        <span class="value" id="totalMontant">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <table id="tableAppels">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Numero Appele</th>
+                        <th>Type</th>
+                        <th>Duree</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody id="appelsBody">
+                    <tr><td colspan="7" class="empty-state">Entrez un code autocom et cliquez sur "Detail Appels"</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        async function rechercherLigne() {
+            const societe = document.getElementById('societe').value;
+            const codeGm = document.getElementById('codeGm').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !codeGm) {
+                alert('Societe et Code GM requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/telephone/${societe}/${codeGm}/${filiation}`);
+                const data = await response.json();
+
+                if (data.found) {
+                    document.getElementById('ligneInfo').style.display = 'block';
+                    document.getElementById('infoNumPoste').textContent = data.numeroPoste || '-';
+                    document.getElementById('infoNumLigne').textContent = data.numeroLigne || '-';
+                    document.getElementById('infoCodeAutocom').textContent = data.codeAutocom || '-';
+                    document.getElementById('infoChambre').textContent = data.numChambre || '-';
+
+                    const etatEl = document.getElementById('infoEtat');
+                    const etat = data.etat;
+                    if (etat === 'O') {
+                        etatEl.innerHTML = '<span class="status-badge status-open">Ouvert</span>';
+                    } else if (etat === 'F') {
+                        etatEl.innerHTML = '<span class="status-badge status-closed">Ferme</span>';
+                    } else if (etat === 'B') {
+                        etatEl.innerHTML = '<span class="status-badge status-blocked">Bloque</span>';
+                    } else {
+                        etatEl.textContent = etat || '-';
+                    }
+
+                    // Set autocom for detail appels
+                    if (data.codeAutocom) {
+                        document.getElementById('codeAutocom').value = data.codeAutocom;
+                    }
+                } else {
+                    alert('Ligne non trouvee');
+                    document.getElementById('ligneInfo').style.display = 'none';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la recherche');
+            }
+        }
+
+        async function rechercherDetailAppels() {
+            const societe = document.getElementById('societe').value;
+            const codeAutocom = document.getElementById('codeAutocom').value;
+
+            if (!societe || !codeAutocom) {
+                alert('Societe et Code Autocom requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/telephone/detail-appels/${societe}/${codeAutocom}`);
+                const data = await response.json();
+
+                if (data.found) {
+                    document.getElementById('detailAppelsInfo').style.display = 'block';
+                    document.getElementById('clientNom').textContent =
+                        `${data.prenomClient || ''} ${data.nomClient || ''}`.trim() || '-';
+                    document.getElementById('clientVillage').textContent = data.nomVillage || '-';
+                    document.getElementById('nbAppels').textContent = data.nombreAppels;
+                    document.getElementById('totalMontant').textContent =
+                        data.totalMontant.toFixed(2) + ' EUR';
+
+                    const tbody = document.getElementById('appelsBody');
+                    if (data.appels && data.appels.length > 0) {
+                        tbody.innerHTML = data.appels.map(a => `
+                            <tr>
+                                <td>${formatDate(a.dateAppel)}</td>
+                                <td>${a.heure || '-'}</td>
+                                <td>${a.numeroAppele || '-'}</td>
+                                <td>${formatTypeAppel(a.typeAppel)}</td>
+                                <td>${formatDuree(a.dureeSecondes)}</td>
+                                <td>${a.montant.toFixed(2)}</td>
+                                <td>${formatStatut(a.statut)}</td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Aucun appel trouve</td></tr>';
+                    }
+                } else {
+                    alert('Aucun appel trouve pour ce code autocom');
+                    document.getElementById('detailAppelsInfo').style.display = 'none';
+                    document.getElementById('appelsBody').innerHTML =
+                        '<tr><td colspan="7" class="empty-state">Aucun appel trouve</td></tr>';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la recherche des appels');
+            }
+        }
+
+        async function ouvrirLigne() {
+            const societe = document.getElementById('societe').value;
+            const codeGm = document.getElementById('codeGm').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !codeGm) {
+                alert('Societe et Code GM requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/telephone/gerer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe,
+                        codeGm: parseInt(codeGm),
+                        filiation: parseInt(filiation || 0),
+                        action: 'OPEN',
+                        operateur: 'WEB'
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Ligne ouverte avec succes');
+                    rechercherLigne();
+                } else {
+                    alert(data.message || 'Erreur lors de l\'ouverture');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de l\'ouverture');
+            }
+        }
+
+        async function fermerLigne() {
+            const societe = document.getElementById('societe').value;
+            const codeGm = document.getElementById('codeGm').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !codeGm) {
+                alert('Societe et Code GM requis');
+                return;
+            }
+
+            if (!confirm('Confirmer la fermeture de la ligne?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/telephone/gerer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe,
+                        codeGm: parseInt(codeGm),
+                        filiation: parseInt(filiation || 0),
+                        action: 'CLOSE',
+                        operateur: 'WEB'
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Ligne fermee avec succes');
+                    rechercherLigne();
+                } else {
+                    alert(data.message || 'Erreur lors de la fermeture');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la fermeture');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        function formatDuree(seconds) {
+            if (!seconds) return '-';
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatTypeAppel(type) {
+            const types = { 'L': 'Local', 'N': 'National', 'I': 'International' };
+            return types[type] || type || '-';
+        }
+
+        function formatStatut(statut) {
+            if (statut === 'F') return '<span class="status-badge status-closed">Facture</span>';
+            if (statut === 'N') return '<span class="status-badge status-open">Non facture</span>';
+            return statut || '-';
+        }
+    </script>
+</body>
+</html>

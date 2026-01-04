@@ -633,6 +633,14 @@ try
 
     // modes-paiement endpoint removed - use moyens-reglement instead (same table)
 
+    zooms.MapGet("/services-village", async (string? societe, IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetServicesVillageQuery(societe));
+        return Results.Ok(result);
+    })
+    .WithName("GetServicesVillage")
+    .WithOpenApi();
+
     // ============ Members Endpoints ============
     var members = app.MapGroup("/api/members").WithTags("Members");
 
@@ -942,6 +950,19 @@ try
         return result.Success ? Results.Ok(result) : Results.BadRequest(result);
     })
     .WithName("InitPhoneLine")
+    .WithOpenApi();
+
+    telephone.MapGet("/detail-appels/{societe}/{codeAutocom}", async (
+        string societe,
+        int codeAutocom,
+        int? nbDecimales,
+        string? nomVillage,
+        IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetDetailAppelsTelephoneQuery(societe, codeAutocom, nbDecimales, nomVillage));
+        return result.Found ? Results.Ok(result) : Results.NotFound(result);
+    })
+    .WithName("GetDetailAppelsTelephone")
     .WithOpenApi();
 
     // ============ Factures Endpoints ============
@@ -1449,6 +1470,14 @@ try
         return Results.Ok(result);
     })
     .WithName("GetMenuCaisse")
+    .WithOpenApi();
+
+    menus.MapGet("/telephone", async (IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetMenuTelephoneQuery());
+        return Results.Ok(result);
+    })
+    .WithName("GetMenuTelephone")
     .WithOpenApi();
 
     app.Run();

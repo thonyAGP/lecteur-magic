@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prg_256 - Zoom moyen de règlement</title>
+    <style>
+        /*
+         * Conversion DLU → Pixels (calibré sur CA0142)
+         * Form: Width=363 DLU, Height=151 DLU
+         * Scale X = 0.62, Scale Y = 1.80
+         */
+        :root {
+            --scale-x: 0.62;
+            --scale-y: 1.80;
+            --form-width: 225px;   /* 363 × 0.62 */
+            --form-height: 272px;  /* 151 × 1.80 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .magic-window {
+            background-color: #dce6f4;
+            border: 2px outset #c0c0c0;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            width: var(--form-width);
+        }
+
+        /* Title bar */
+        .title-bar {
+            background: linear-gradient(to right, #0058a3, #3d9eff);
+            color: white;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            height: 20px;
+        }
+
+        .title-bar .title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+
+        .title-bar .icon {
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #4a9, #2a7);
+            border-radius: 2px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 1px;
+        }
+
+        .window-controls button {
+            width: 18px;
+            height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px;
+            cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-controls .close-btn { background: #ff6b6b; color: white; }
+
+        /* Window content */
+        .window-content {
+            position: relative;
+            height: var(--form-height);
+            overflow: hidden;
+        }
+
+        /* Table - liste de sélection (X=87, Y=7, W=190, H=94) */
+        .zoom-table {
+            position: absolute;
+            left: calc(87 * var(--scale-x) * 1px);
+            top: calc(7 * var(--scale-y) * 1px);
+            width: calc(190 * var(--scale-x) * 1px);
+            height: calc(94 * var(--scale-y) * 1px);
+            border: 1px solid #808080;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .zoom-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .zoom-table th {
+            background: #e0e0e0;
+            border-bottom: 1px solid #808080;
+            padding: 2px 4px;
+            text-align: center;
+            font-weight: normal;
+            height: calc(12 * var(--scale-y) * 1px);
+        }
+
+        .zoom-table td {
+            padding: 2px 4px;
+            text-align: center;
+            height: calc(13 * var(--scale-y) * 1px);
+            cursor: pointer;
+            border-bottom: 1px solid #a0a0a0;
+        }
+
+        .zoom-table tbody tr {
+            background: #e8e8e8;
+        }
+
+        .zoom-table tbody tr:nth-child(even) {
+            background: #d8d8d8;
+        }
+
+        .zoom-table tr:hover td {
+            background: #cce5ff;
+        }
+
+        .zoom-table tr.selected td {
+            background: #0078d4;
+            color: white;
+        }
+
+        /* Image loupe (X=19.375, Y=14.125, W=7.250, H=2.250) - Style: No Border */
+        .loupe-image {
+            position: absolute;
+            left: calc(152 * var(--scale-x) * 1px);
+            top: calc(106 * var(--scale-y) * 1px);
+            width: calc(58 * var(--scale-x) * 1px);
+            height: calc(18 * var(--scale-y) * 1px);
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loupe-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Bottom bar (Y=132, W=363, H=19) */
+        .bottom-bar {
+            position: absolute;
+            left: 0;
+            top: calc(132 * var(--scale-y) * 1px);
+            width: calc(363 * var(--scale-x) * 1px);
+            height: calc(19 * var(--scale-y) * 1px);
+            background: linear-gradient(to bottom, #e8e8e8, #d0d0d0);
+            border: 1px solid #a0a0a0;
+        }
+
+        /* Buttons - Windows 11 style */
+        .magic-btn {
+            position: absolute;
+            background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 10px;
+            text-align: center;
+            padding: 0 4px;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .magic-btn:hover {
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+            border-color: #0078d4;
+        }
+
+        .magic-btn:active {
+            background: linear-gradient(to bottom, #e0e0e0, #d0d0d0);
+        }
+
+        /* Bouton 1 - Sélection (X=6, Y=135, W=144, H=14) */
+        .btn-select {
+            left: calc(6 * var(--scale-x) * 1px);
+            top: calc(135 * var(--scale-y) * 1px);
+            width: calc(144 * var(--scale-x) * 1px);
+            height: calc(14 * var(--scale-y) * 1px);
+        }
+
+        /* Bouton 2 - Annuler (X=213, Y=135, W=144, H=14) */
+        .btn-cancel {
+            left: calc(213 * var(--scale-x) * 1px);
+            top: calc(135 * var(--scale-y) * 1px);
+            width: calc(144 * var(--scale-x) * 1px);
+            height: calc(14 * var(--scale-y) * 1px);
+        }
+
+        /* Info */
+        .info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 8px;
+            background: #333;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Zoom des modes de paiement</span>
+            </div>
+            <div class="window-controls">
+                <button class="min-btn">_</button>
+                <button class="max-btn">□</button>
+                <button class="close-btn">X</button>
+            </div>
+        </div>
+
+        <div class="window-content">
+            <!-- Table de sélection -->
+            <div class="zoom-table">
+                <table>
+                    <thead>
+                        <tr><th>Code</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selected"><td>CB</td></tr>
+                        <tr><td>CHQ</td></tr>
+                        <tr><td>ESP</td></tr>
+                        <tr><td>VIR</td></tr>
+                        <tr><td>TRA</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Image loupe - %club_images%loupe.bmp -->
+            <div class="loupe-image">
+                <img src="/magic-images/loupe.bmp" alt="🔍" onerror="this.textContent='🔍'; this.style.fontSize='16px';">
+            </div>
+
+            <!-- Barre bas -->
+            <div class="bottom-bar"></div>
+
+            <!-- Boutons -->
+            <button class="magic-btn btn-select">Sélectionner</button>
+            <button class="magic-btn btn-cancel">Annuler</button>
+        </div>
+    </div>
+
+    <div class="info">
+        Scale X: 0.62 | Scale Y: 1.80<br>
+        Form: 363×151 DLU → 225×272 px
+    </div>
+
+    <script>
+        // Sélection dans la table
+        document.querySelectorAll('.zoom-table tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                document.querySelectorAll('.zoom-table tbody tr').forEach(r => r.classList.remove('selected'));
+                row.classList.add('selected');
+            });
+            row.addEventListener('dblclick', () => {
+                alert('Sélectionné: ' + row.querySelector('td').textContent);
+            });
+        });
+
+        document.querySelector('.btn-select').addEventListener('click', () => {
+            const selected = document.querySelector('.zoom-table tr.selected td');
+            if (selected) {
+                alert('Sélectionné: ' + selected.textContent);
+            }
+        });
+
+        document.querySelector('.btn-cancel').addEventListener('click', () => {
+            window.close();
+        });
+    </script>
+</body>
+</html>

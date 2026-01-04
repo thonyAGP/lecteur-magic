@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrait de Compte</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --success-color: #107c10;
+            --warning-color: #ff8c00;
+            --danger-color: #d13438;
+            --bg-color: #f3f3f3;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1976d2;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 2px rgba(25,118,210,0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+        .btn-primary:hover { background: #0d47a1; }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover { background: #5a6268; }
+
+        .solde-box {
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .solde-box .label { font-size: 12px; opacity: 0.8; }
+        .solde-box .value { font-size: 28px; font-weight: bold; }
+        .solde-box .currency { font-size: 14px; opacity: 0.8; }
+
+        .client-info {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .client-info h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #1976d2;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .info-row .label { color: #666; }
+        .info-row .value { font-weight: 600; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #666;
+            position: sticky;
+            top: 0;
+        }
+
+        td.number {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+        }
+
+        td.credit { color: var(--success-color); }
+        td.debit { color: var(--danger-color); }
+
+        tr:hover { background: #f5f5f5; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .filter-section h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { background: #f0f0f0; }
+        .tab-btn.active {
+            background: #1976d2;
+            color: white;
+            border-color: #1976d2;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .export-buttons .btn {
+            flex: 1;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Extrait de Compte (Prg_69-76)</h1>
+        <div class="nav-links">
+            <a href="index.html">Caisse</a>
+            <a href="zooms.html">Zooms</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Recherche</h2>
+            <div class="form-group">
+                <label>Societe</label>
+                <input type="text" id="societe" value="CSK" maxlength="10">
+            </div>
+            <div class="form-group">
+                <label>Compte (Code GM)</label>
+                <input type="number" id="compte" placeholder="Code GM">
+            </div>
+            <div class="form-group">
+                <label>Filiation</label>
+                <input type="number" id="filiation" value="0">
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="setExtraitType('compte')">Compte</button>
+                <button class="tab-btn" onclick="setExtraitType('nom')">Nom</button>
+                <button class="tab-btn" onclick="setExtraitType('date')">Date</button>
+            </div>
+
+            <div id="filterNom" style="display: none;">
+                <div class="form-group">
+                    <label>Nom Client</label>
+                    <input type="text" id="nomClient" placeholder="Nom a rechercher">
+                </div>
+            </div>
+
+            <div id="filterDate" style="display: none;">
+                <div class="form-group">
+                    <label>Date Debut</label>
+                    <input type="date" id="dateDebut">
+                </div>
+                <div class="form-group">
+                    <label>Date Fin</label>
+                    <input type="date" id="dateFin">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="rechercherExtrait()">Rechercher</button>
+
+            <div id="clientInfo" class="client-info" style="margin-top: 15px; display: none;">
+                <h3>Information Client</h3>
+                <div class="info-row">
+                    <span class="label">Nom:</span>
+                    <span class="value" id="infoNom">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Village:</span>
+                    <span class="value" id="infoVillage">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Chambre:</span>
+                    <span class="value" id="infoChambre">-</span>
+                </div>
+            </div>
+
+            <div id="soldeBox" class="solde-box" style="display: none;">
+                <div class="label">Solde Actuel</div>
+                <div class="value" id="soldeValue">0.00</div>
+                <div class="currency">EUR</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Mouvements</h2>
+
+            <div class="filter-section">
+                <h3>Filtres</h3>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Service</label>
+                        <select id="filterService">
+                            <option value="">Tous les services</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Type</label>
+                        <select id="filterType">
+                            <option value="">Tous</option>
+                            <option value="C">Credits</option>
+                            <option value="D">Debits</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="tableMouvements">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Libelle</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            <th>Cumul</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mouvementsBody">
+                        <tr><td colspan="6" class="empty-state">Entrez les criteres et cliquez sur "Rechercher"</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="export-buttons">
+                <button class="btn btn-secondary" onclick="exportPDF()">Export PDF (Prg_73)</button>
+                <button class="btn btn-secondary" onclick="printExtrait()">Imprimer (Prg_76)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let extraitType = 'compte';
+        let allMouvements = [];
+
+        function setExtraitType(type) {
+            extraitType = type;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[onclick="setExtraitType('${type}')"]`).classList.add('active');
+
+            document.getElementById('filterNom').style.display = type === 'nom' ? 'block' : 'none';
+            document.getElementById('filterDate').style.display = type === 'date' ? 'block' : 'none';
+        }
+
+        async function rechercherExtrait() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !compte) {
+                alert('Societe et Compte requis');
+                return;
+            }
+
+            let url = `${API_BASE}/extrait/${societe}/${compte}/${filiation}`;
+
+            // Add query params based on type
+            const params = new URLSearchParams();
+            if (extraitType === 'nom') {
+                const nom = document.getElementById('nomClient').value;
+                if (nom) params.append('nom', nom);
+            } else if (extraitType === 'date') {
+                const dateDebut = document.getElementById('dateDebut').value;
+                const dateFin = document.getElementById('dateFin').value;
+                if (dateDebut) params.append('dateDebut', dateDebut);
+                if (dateFin) params.append('dateFin', dateFin);
+            }
+
+            if (params.toString()) url += '?' + params.toString();
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.found) {
+                    document.getElementById('clientInfo').style.display = 'block';
+                    document.getElementById('infoNom').textContent =
+                        `${data.prenomClient || ''} ${data.nomClient || ''}`.trim() || '-';
+                    document.getElementById('infoVillage').textContent = data.nomVillage || '-';
+                    document.getElementById('infoChambre').textContent = data.numChambre || '-';
+
+                    document.getElementById('soldeBox').style.display = 'block';
+                    document.getElementById('soldeValue').textContent = data.solde?.toFixed(2) || '0.00';
+
+                    allMouvements = data.mouvements || [];
+                    displayMouvements(allMouvements);
+
+                    // Load services for filter
+                    loadServicesFilter(allMouvements);
+                } else {
+                    alert('Aucun extrait trouve');
+                    document.getElementById('clientInfo').style.display = 'none';
+                    document.getElementById('soldeBox').style.display = 'none';
+                    document.getElementById('mouvementsBody').innerHTML =
+                        '<tr><td colspan="6" class="empty-state">Aucun mouvement trouve</td></tr>';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la recherche');
+            }
+        }
+
+        function displayMouvements(mouvements) {
+            const tbody = document.getElementById('mouvementsBody');
+
+            if (mouvements.length > 0) {
+                tbody.innerHTML = mouvements.map(m => {
+                    const isCredit = m.montant > 0;
+                    return `
+                        <tr>
+                            <td>${formatDate(m.dateOperation)}</td>
+                            <td>${m.codeService || '-'}</td>
+                            <td>${m.libelle || '-'}</td>
+                            <td class="number debit">${!isCredit ? Math.abs(m.montant).toFixed(2) : ''}</td>
+                            <td class="number credit">${isCredit ? m.montant.toFixed(2) : ''}</td>
+                            <td class="number">${m.cumul?.toFixed(2) || '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucun mouvement</td></tr>';
+            }
+        }
+
+        function loadServicesFilter(mouvements) {
+            const services = [...new Set(mouvements.map(m => m.codeService).filter(Boolean))];
+            const select = document.getElementById('filterService');
+            select.innerHTML = '<option value="">Tous les services</option>';
+            services.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s;
+                option.textContent = s;
+                select.appendChild(option);
+            });
+        }
+
+        // Filter handlers
+        document.getElementById('filterService').addEventListener('change', applyFilters);
+        document.getElementById('filterType').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const service = document.getElementById('filterService').value;
+            const type = document.getElementById('filterType').value;
+
+            let filtered = allMouvements;
+
+            if (service) {
+                filtered = filtered.filter(m => m.codeService === service);
+            }
+
+            if (type === 'C') {
+                filtered = filtered.filter(m => m.montant > 0);
+            } else if (type === 'D') {
+                filtered = filtered.filter(m => m.montant < 0);
+            }
+
+            displayMouvements(filtered);
+        }
+
+        async function exportPDF() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !compte) {
+                alert('Effectuez d\'abord une recherche');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/extrait/export-pdf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ societe, compte: parseInt(compte), filiation: parseInt(filiation) })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `extrait_${compte}_${filiation}.pdf`;
+                    a.click();
+                } else {
+                    alert('Erreur lors de l\'export PDF');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de l\'export');
+            }
+        }
+
+        function printExtrait() {
+            window.print();
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR');
+        }
+    </script>
+</body>
+</html>

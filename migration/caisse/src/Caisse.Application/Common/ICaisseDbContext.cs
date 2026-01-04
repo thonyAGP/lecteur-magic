@@ -57,6 +57,10 @@ public interface ICaisseDbContext
 
     // Tables Telephone - Phase 8
     DbSet<LigneTelephone> LignesTelephone { get; }
+    DbSet<AppelTelephone> AppelsTelephone { get; }
+
+    // Tables Zooms - Services Village (Prg_265)
+    DbSet<ServiceVillage> ServicesVillage { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

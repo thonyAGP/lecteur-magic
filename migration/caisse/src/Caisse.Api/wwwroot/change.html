@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change - Operations de Devises</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --success-color: #107c10;
+            --bg-color: #f3f3f3;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #107c10, #0b5e0b);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--success-color);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 2px rgba(16,124,16,0.2);
+        }
+
+        .form-group input[type="number"] {
+            text-align: right;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--success-color);
+            color: white;
+        }
+        .btn-primary:hover { background: #0b5e0b; }
+
+        .result-box {
+            background: #f8f9fa;
+            border: 2px solid var(--success-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .result-box .label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .result-box .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
+        .result-box .currency {
+            font-size: 16px;
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #666;
+        }
+
+        td.number {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+        }
+
+        tr:hover { background: #f5f5f5; }
+
+        .devise-locale {
+            background: linear-gradient(135deg, #107c10, #0b5e0b);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .devise-locale .label { font-size: 12px; opacity: 0.8; }
+        .devise-locale .value { font-size: 24px; font-weight: bold; }
+
+        .info-panel {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success-color);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Change - Operations de Devises (Prg_20-25)</h1>
+        <div class="nav-links">
+            <a href="index.html">Caisse</a>
+            <a href="zooms.html">Zooms</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Devise Locale (Prg_21)</h2>
+            <div class="form-group">
+                <label>Societe</label>
+                <input type="text" id="societe" value="CSK" maxlength="10">
+            </div>
+            <button class="btn btn-primary" onclick="getDeviseLocale()">Charger</button>
+
+            <div id="deviseLocaleResult" class="devise-locale" style="margin-top: 15px; display: none;">
+                <div class="label">Devise Locale</div>
+                <div class="value" id="deviseLocaleValue">-</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Calculateur Change (Prg_22)</h2>
+            <div class="form-group">
+                <label>Devise Source</label>
+                <select id="deviseSource">
+                    <option value="">Charger les devises...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Montant</label>
+                <input type="number" id="montant" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Type Operation</label>
+                <select id="typeOperation">
+                    <option value="ACHAT_UNI">Achat Unidirectionnel</option>
+                    <option value="ACHAT_BI">Achat Bidirectionnel</option>
+                    <option value="VENTE">Vente</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="calculerEquivalent()">Calculer</button>
+
+            <div id="resultatChange" class="result-box" style="display: none;">
+                <div class="label">Equivalent en devise locale</div>
+                <div class="value" id="montantEquivalent">0.00</div>
+                <div class="currency" id="currencyTarget">EUR</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Taux Actuels (Prg_25)</h2>
+            <button class="btn btn-primary" onclick="getTauxChange()" style="margin-bottom: 15px;">Charger Taux</button>
+
+            <div id="tauxInfo" class="info-panel" style="display: none;">
+                <strong>Date des taux:</strong> <span id="dateTaux">-</span>
+            </div>
+
+            <table id="tableTaux">
+                <thead>
+                    <tr>
+                        <th>Devise</th>
+                        <th>Libelle</th>
+                        <th>Taux Achat</th>
+                        <th>Taux Vente</th>
+                    </tr>
+                </thead>
+                <tbody id="tauxBody">
+                    <tr><td colspan="4" class="empty-state">Cliquez sur "Charger Taux"</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let deviseLocale = 'EUR';
+
+        async function getDeviseLocale() {
+            const societe = document.getElementById('societe').value;
+            if (!societe) {
+                alert('Societe requise');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/change/devise-locale/${societe}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    deviseLocale = data.codeDevise;
+                    document.getElementById('deviseLocaleResult').style.display = 'block';
+                    document.getElementById('deviseLocaleValue').textContent =
+                        `${data.codeDevise} - ${data.libelleDevise || ''}`;
+                    document.getElementById('currencyTarget').textContent = data.codeDevise;
+
+                    // Load devises for calculator
+                    loadDevises(societe);
+                } else {
+                    alert(data.message || 'Erreur');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors du chargement de la devise locale');
+            }
+        }
+
+        async function loadDevises(societe) {
+            try {
+                const response = await fetch(`${API_BASE}/zooms/devises/${societe}`);
+                const devises = await response.json();
+
+                const select = document.getElementById('deviseSource');
+                select.innerHTML = '<option value="">Selectionnez une devise</option>';
+                devises.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d.code;
+                    option.textContent = `${d.code} - ${d.libelle || ''}`;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function calculerEquivalent() {
+            const societe = document.getElementById('societe').value;
+            const deviseSource = document.getElementById('deviseSource').value;
+            const montant = parseFloat(document.getElementById('montant').value);
+            const typeOperation = document.getElementById('typeOperation').value;
+
+            if (!societe || !deviseSource || isNaN(montant)) {
+                alert('Tous les champs sont requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/change/calculer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe,
+                        deviseSource,
+                        deviseCible: deviseLocale,
+                        montant,
+                        typeOperation
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('resultatChange').style.display = 'block';
+                    document.getElementById('montantEquivalent').textContent =
+                        data.montantEquivalent.toFixed(2);
+                } else {
+                    alert(data.message || 'Erreur lors du calcul');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors du calcul');
+            }
+        }
+
+        async function getTauxChange() {
+            const societe = document.getElementById('societe').value;
+            if (!societe) {
+                alert('Societe requise');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/change/taux/${societe}`);
+                const data = await response.json();
+
+                if (data.success && data.taux) {
+                    document.getElementById('tauxInfo').style.display = 'block';
+                    document.getElementById('dateTaux').textContent =
+                        data.dateTaux ? new Date(data.dateTaux).toLocaleDateString('fr-FR') : '-';
+
+                    const tbody = document.getElementById('tauxBody');
+                    if (data.taux.length > 0) {
+                        tbody.innerHTML = data.taux.map(t => `
+                            <tr>
+                                <td><strong>${t.codeDevise}</strong></td>
+                                <td>${t.libelleDevise || '-'}</td>
+                                <td class="number">${t.tauxAchat?.toFixed(4) || '-'}</td>
+                                <td class="number">${t.tauxVente?.toFixed(4) || '-'}</td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Aucun taux configure</td></tr>';
+                    }
+                } else {
+                    alert(data.message || 'Erreur lors du chargement des taux');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors du chargement des taux');
+            }
+        }
+
+        // Auto-load on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            getDeviseLocale();
+        });
+    </script>
+</body>
+</html>

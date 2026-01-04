@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Check-Out</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --success-color: #107c10;
+            --warning-color: #ff8c00;
+            --danger-color: #d13438;
+            --bg-color: #f3f3f3;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #00897b, #004d40);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #00897b;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #00897b;
+            box-shadow: 0 0 0 2px rgba(0,137,123,0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #00897b;
+            color: white;
+        }
+        .btn-primary:hover { background: #004d40; }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        .btn-success:hover { background: #0b5e0b; }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+        .btn-warning:hover { background: #e65100; }
+
+        .solde-summary {
+            background: linear-gradient(135deg, #00897b, #004d40);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .solde-summary .title {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .solde-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .solde-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .solde-row .label { opacity: 0.8; }
+        .solde-row .value { font-weight: 600; font-size: 16px; }
+        .solde-row.total { font-size: 20px; }
+        .solde-row.total .value { font-size: 24px; }
+
+        .client-card {
+            background: #e0f2f1;
+            border-left: 4px solid #00897b;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .client-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #00897b;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .info-row .label { color: #666; }
+        .info-row .value { font-weight: 600; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #666;
+            position: sticky;
+            top: 0;
+        }
+
+        td.number {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+        }
+
+        td.credit { color: var(--success-color); }
+        td.debit { color: var(--danger-color); }
+
+        tr:hover { background: #f5f5f5; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover { color: #00897b; }
+        .tab.active {
+            color: #00897b;
+            border-bottom-color: #00897b;
+            font-weight: 600;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .status-indicator.ok {
+            background: #c8e6c9;
+            color: var(--success-color);
+        }
+
+        .status-indicator.warning {
+            background: #fff3e0;
+            color: var(--warning-color);
+        }
+
+        .status-indicator.error {
+            background: #ffcdd2;
+            color: var(--danger-color);
+        }
+
+        .status-indicator .icon { font-size: 24px; }
+        .status-indicator .text { font-weight: 600; }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-buttons .btn { margin-bottom: 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Easy Check-Out (Prg_53-67)</h1>
+        <div class="nav-links">
+            <a href="index.html">Caisse</a>
+            <a href="zooms.html">Zooms</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Recherche Client</h2>
+            <div class="form-group">
+                <label>Societe</label>
+                <input type="text" id="societe" value="CSK" maxlength="10">
+            </div>
+            <div class="form-group">
+                <label>Compte (Code GM)</label>
+                <input type="number" id="compte" placeholder="Code GM">
+            </div>
+            <div class="form-group">
+                <label>Filiation</label>
+                <input type="number" id="filiation" value="0">
+            </div>
+            <button class="btn btn-primary" onclick="chargerSolde()">Charger Solde (Prg_64)</button>
+
+            <div id="clientCard" class="client-card" style="margin-top: 20px; display: none;">
+                <h3>Information Client</h3>
+                <div class="info-row">
+                    <span class="label">Nom:</span>
+                    <span class="value" id="clientNom">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Village:</span>
+                    <span class="value" id="clientVillage">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Chambre:</span>
+                    <span class="value" id="clientChambre">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date Arrivee:</span>
+                    <span class="value" id="clientArrivee">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date Depart:</span>
+                    <span class="value" id="clientDepart">-</span>
+                </div>
+            </div>
+
+            <div id="soldeSummary" class="solde-summary" style="display: none;">
+                <div class="title">Resume du Solde</div>
+                <div class="solde-row">
+                    <span class="label">Consommations</span>
+                    <span class="value" id="totalConso">0.00</span>
+                </div>
+                <div class="solde-row">
+                    <span class="label">Paiements</span>
+                    <span class="value" id="totalPaiements">0.00</span>
+                </div>
+                <div class="solde-row">
+                    <span class="label">Garanties</span>
+                    <span class="value" id="totalGaranties">0.00</span>
+                </div>
+                <div class="solde-row total">
+                    <span class="label">Solde a Payer</span>
+                    <span class="value" id="soldeAPayer">0.00</span>
+                </div>
+            </div>
+
+            <div id="statusIndicator" style="display: none;"></div>
+
+            <div class="action-buttons">
+                <button class="btn btn-success" onclick="procederCheckout()">Check-Out</button>
+                <button class="btn btn-warning" onclick="editerExtrait()">Edition (Prg_65)</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('extrait')">Extrait (Prg_53)</button>
+                <button class="tab" onclick="showTab('services')">Par Service</button>
+                <button class="tab" onclick="showTab('garanties')">Garanties</button>
+            </div>
+
+            <div id="extrait" class="tab-content active">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Service</th>
+                                <th>Description</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="extraitBody">
+                            <tr><td colspan="5" class="empty-state">Chargez un compte pour voir l'extrait</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="services" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Libelle</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Solde</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesBody">
+                            <tr><td colspan="5" class="empty-state">Chargez un compte pour voir les services</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="garanties" class="tab-content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="garantiesBody">
+                            <tr><td colspan="5" class="empty-state">Chargez un compte pour voir les garanties</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentSolde = null;
+
+        async function chargerSolde() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !compte) {
+                alert('Societe et Compte requis');
+                return;
+            }
+
+            try {
+                // Call the Easy Check-Out solde endpoint
+                const response = await fetch(`${API_BASE}/easycheckout/solde`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe,
+                        compte: parseInt(compte),
+                        filiation: parseInt(filiation || 0)
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSolde = data;
+                    displayClientInfo(data);
+                    displaySoldeSummary(data);
+                    displayStatusIndicator(data);
+                    loadExtrait(societe, compte, filiation);
+                    loadGaranties(societe, compte, filiation);
+                } else {
+                    alert(data.message || 'Erreur lors du chargement du solde');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors du chargement du solde');
+            }
+        }
+
+        function displayClientInfo(data) {
+            document.getElementById('clientCard').style.display = 'block';
+            document.getElementById('clientNom').textContent =
+                `${data.prenomClient || ''} ${data.nomClient || ''}`.trim() || '-';
+            document.getElementById('clientVillage').textContent = data.nomVillage || '-';
+            document.getElementById('clientChambre').textContent = data.numChambre || '-';
+            document.getElementById('clientArrivee').textContent =
+                data.dateArrivee ? formatDate(data.dateArrivee) : '-';
+            document.getElementById('clientDepart').textContent =
+                data.dateDepart ? formatDate(data.dateDepart) : '-';
+        }
+
+        function displaySoldeSummary(data) {
+            document.getElementById('soldeSummary').style.display = 'block';
+            document.getElementById('totalConso').textContent = (data.totalDebit || 0).toFixed(2) + ' EUR';
+            document.getElementById('totalPaiements').textContent = (data.totalCredit || 0).toFixed(2) + ' EUR';
+            document.getElementById('totalGaranties').textContent = (data.totalGaranties || 0).toFixed(2) + ' EUR';
+
+            const solde = data.solde || 0;
+            const soldeEl = document.getElementById('soldeAPayer');
+            soldeEl.textContent = solde.toFixed(2) + ' EUR';
+            soldeEl.style.color = solde > 0 ? '#d13438' : '#107c10';
+        }
+
+        function displayStatusIndicator(data) {
+            const container = document.getElementById('statusIndicator');
+            container.style.display = 'block';
+
+            const solde = data.solde || 0;
+            const garanties = data.totalGaranties || 0;
+
+            if (solde <= 0) {
+                container.className = 'status-indicator ok';
+                container.innerHTML = '<span class="icon">✓</span><span class="text">Compte solde - Pret pour Check-Out</span>';
+            } else if (garanties >= solde) {
+                container.className = 'status-indicator warning';
+                container.innerHTML = '<span class="icon">⚠</span><span class="text">Solde debiteur couvert par garanties</span>';
+            } else {
+                container.className = 'status-indicator error';
+                container.innerHTML = '<span class="icon">✗</span><span class="text">Solde debiteur a regulariser: ' + solde.toFixed(2) + ' EUR</span>';
+            }
+        }
+
+        async function loadExtrait(societe, compte, filiation) {
+            try {
+                const response = await fetch(`${API_BASE}/easycheckout/extrait?societe=${societe}&compte=${compte}&filiation=${filiation}`);
+                const data = await response.json();
+
+                const tbody = document.getElementById('extraitBody');
+                if (data.found && data.mouvements && data.mouvements.length > 0) {
+                    tbody.innerHTML = data.mouvements.map(m => {
+                        const isCredit = m.montant > 0;
+                        return `
+                            <tr>
+                                <td>${formatDate(m.dateOperation)}</td>
+                                <td>${m.codeService || '-'}</td>
+                                <td>${m.libelle || '-'}</td>
+                                <td class="number debit">${!isCredit ? Math.abs(m.montant).toFixed(2) : ''}</td>
+                                <td class="number credit">${isCredit ? m.montant.toFixed(2) : ''}</td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    // Build services summary
+                    buildServicesSummary(data.mouvements);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun mouvement</td></tr>';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function buildServicesSummary(mouvements) {
+            const serviceMap = {};
+            mouvements.forEach(m => {
+                const service = m.codeService || 'DIVERS';
+                if (!serviceMap[service]) {
+                    serviceMap[service] = { libelle: m.libelleService || service, debit: 0, credit: 0 };
+                }
+                if (m.montant > 0) {
+                    serviceMap[service].credit += m.montant;
+                } else {
+                    serviceMap[service].debit += Math.abs(m.montant);
+                }
+            });
+
+            const tbody = document.getElementById('servicesBody');
+            const services = Object.entries(serviceMap);
+
+            if (services.length > 0) {
+                tbody.innerHTML = services.map(([code, data]) => {
+                    const solde = data.credit - data.debit;
+                    return `
+                        <tr>
+                            <td><strong>${code}</strong></td>
+                            <td>${data.libelle}</td>
+                            <td class="number debit">${data.debit.toFixed(2)}</td>
+                            <td class="number credit">${data.credit.toFixed(2)}</td>
+                            <td class="number" style="color: ${solde >= 0 ? '#107c10' : '#d13438'}">${solde.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun service</td></tr>';
+            }
+        }
+
+        async function loadGaranties(societe, compte, filiation) {
+            try {
+                const response = await fetch(`${API_BASE}/garantie/${societe}/${compte}/${filiation}`);
+                const data = await response.json();
+
+                const tbody = document.getElementById('garantiesBody');
+                if (data.found && data.garanties && data.garanties.length > 0) {
+                    tbody.innerHTML = data.garanties.map(g => `
+                        <tr>
+                            <td>${formatDate(g.dateDepot)}</td>
+                            <td>${g.typeDepot || '-'}</td>
+                            <td>${g.description || '-'}</td>
+                            <td class="number">${g.montant?.toFixed(2) || '-'}</td>
+                            <td>${g.statut || '-'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucune garantie</td></tr>';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function procederCheckout() {
+            if (!currentSolde) {
+                alert('Chargez d\'abord le solde du compte');
+                return;
+            }
+
+            const solde = currentSolde.solde || 0;
+            if (solde > 0) {
+                if (!confirm(`Le compte a un solde debiteur de ${solde.toFixed(2)} EUR. Continuer le check-out?`)) {
+                    return;
+                }
+            }
+
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/easycheckout/checkout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe,
+                        compte: parseInt(compte),
+                        filiation: parseInt(filiation || 0)
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Check-Out effectue avec succes!');
+                    chargerSolde();
+                } else {
+                    alert(data.message || 'Erreur lors du check-out');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors du check-out');
+            }
+        }
+
+        async function editerExtrait() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !compte) {
+                alert('Chargez d\'abord un compte');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/easycheckout/edition`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe,
+                        compte: parseInt(compte),
+                        filiation: parseInt(filiation || 0)
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `checkout_${compte}_${filiation}.pdf`;
+                    a.click();
+                } else {
+                    alert('Erreur lors de l\'edition');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de l\'edition');
+            }
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR');
+        }
+    </script>
+</body>
+</html>

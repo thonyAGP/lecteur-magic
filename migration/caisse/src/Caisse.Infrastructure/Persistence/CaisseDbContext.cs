@@ -60,6 +60,10 @@ public class CaisseDbContext : DbContext, ICaisseDbContext
 
     // Tables Telephone - Phase 8
     public DbSet<LigneTelephone> LignesTelephone => Set<LigneTelephone>();
+    public DbSet<AppelTelephone> AppelsTelephone => Set<AppelTelephone>();
+
+    // Tables Zooms - Services Village (Prg_265)
+    public DbSet<ServiceVillage> ServicesVillage => Set<ServiceVillage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

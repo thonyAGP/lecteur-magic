@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventes - Gift Pass & Resort Credit</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --success-color: #107c10;
+            --warning-color: #ff8c00;
+            --danger-color: #d13438;
+            --bg-color: #f3f3f3;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #7b1fa2, #512da8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #7b1fa2;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #7b1fa2;
+            box-shadow: 0 0 0 2px rgba(123,31,162,0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #7b1fa2;
+            color: white;
+        }
+        .btn-primary:hover { background: #512da8; }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        .btn-success:hover { background: #0b5e0b; }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .solde-box {
+            background: linear-gradient(135deg, #7b1fa2, #512da8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .solde-box .label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .solde-box .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .solde-box .currency {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: #f8f8f8;
+            font-weight: 600;
+            color: #666;
+        }
+
+        td.number {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+        }
+
+        tr:hover { background: #f5f5f5; }
+
+        .info-panel {
+            background: #f3e5f5;
+            border-left: 4px solid #7b1fa2;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .info-row .label { color: #666; }
+        .info-row .value { font-weight: 600; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover { color: #7b1fa2; }
+        .tab.active {
+            color: #7b1fa2;
+            border-bottom-color: #7b1fa2;
+            font-weight: 600;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-giftpass { background: #e1bee7; color: #7b1fa2; }
+        .badge-resortcredit { background: #c8e6c9; color: var(--success-color); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Ventes - Gift Pass & Resort Credit (Prg_229-250)</h1>
+        <div class="nav-links">
+            <a href="index.html">Caisse</a>
+            <a href="zooms.html">Zooms</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Recherche Compte</h2>
+            <div class="form-group">
+                <label>Societe</label>
+                <input type="text" id="societe" value="CSK" maxlength="10">
+            </div>
+            <div class="form-group">
+                <label>Compte (Code GM)</label>
+                <input type="number" id="compte" placeholder="Code GM">
+            </div>
+            <div class="form-group">
+                <label>Filiation</label>
+                <input type="number" id="filiation" value="0">
+            </div>
+            <button class="btn btn-primary" onclick="rechercherSoldes()">Rechercher Soldes</button>
+
+            <div id="soldesContainer" style="display: none; margin-top: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="solde-box" style="background: linear-gradient(135deg, #7b1fa2, #512da8);">
+                        <div class="label">Gift Pass (Prg_237)</div>
+                        <div class="value" id="soldeGiftPass">0.00</div>
+                        <div class="currency">EUR</div>
+                    </div>
+                    <div class="solde-box" style="background: linear-gradient(135deg, #107c10, #0b5e0b);">
+                        <div class="label">Resort Credit (Prg_250)</div>
+                        <div class="value" id="soldeResortCredit">0.00</div>
+                        <div class="currency">EUR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Solde Resort Credit par Service</h2>
+            <div class="form-group">
+                <label>Service</label>
+                <select id="serviceSelect">
+                    <option value="">Charger les services...</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="getSoldeParService()">Consulter Solde Service</button>
+
+            <div id="soldeServiceContainer" style="display: none; margin-top: 15px;">
+                <div class="info-panel">
+                    <div class="info-row">
+                        <span class="label">Service:</span>
+                        <span class="value" id="serviceNom">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Montant Attribue:</span>
+                        <span class="value" id="montantAttribue">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Montant Utilise:</span>
+                        <span class="value" id="montantUtilise">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Solde Disponible:</span>
+                        <span class="value" id="soldeDisponible" style="color: var(--success-color); font-size: 18px;">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card full-width">
+            <div class="tab-container">
+                <div class="tabs">
+                    <button class="tab active" onclick="showTab('historique')">Historique Ventes (Prg_238)</button>
+                    <button class="tab" onclick="showTab('print')">Impression Ticket (Prg_229)</button>
+                </div>
+            </div>
+
+            <div id="historique" class="tab-content active">
+                <button class="btn btn-primary" onclick="getHistorique()" style="margin-bottom: 15px;">Charger Historique</button>
+
+                <table id="tableHistorique">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historiqueBody">
+                        <tr><td colspan="6" class="empty-state">Cliquez sur "Charger Historique"</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="print" class="tab-content">
+                <div class="info-panel">
+                    <h3 style="margin-bottom: 10px;">Impression Ticket (Prg_229)</h3>
+                    <p style="font-size: 13px; color: #666;">
+                        Utilisez cette fonction pour reimprimer un ticket de vente ou imprimer un recapitulatif.
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Numero Transaction</label>
+                    <input type="text" id="numTransaction" placeholder="Numero de transaction">
+                </div>
+                <div class="form-group">
+                    <label>Type Impression</label>
+                    <select id="typeImpression">
+                        <option value="TICKET">Ticket Standard</option>
+                        <option value="DUPLICATA">Duplicata</option>
+                        <option value="RECAP">Recapitulatif</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="printTicket()">Imprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        async function rechercherSoldes() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !compte) {
+                alert('Societe et Compte requis');
+                return;
+            }
+
+            try {
+                // Fetch Gift Pass solde
+                const gpResponse = await fetch(`${API_BASE}/ventes/solde-giftpass/${societe}/${compte}/${filiation}`);
+                const gpData = await gpResponse.json();
+
+                // Fetch Resort Credit solde (service 0 for total)
+                const rcResponse = await fetch(`${API_BASE}/ventes/solde-resortcredit/${societe}/${compte}/${filiation}/0`);
+                const rcData = await rcResponse.json();
+
+                document.getElementById('soldesContainer').style.display = 'block';
+                document.getElementById('soldeGiftPass').textContent =
+                    gpData.found ? gpData.solde.toFixed(2) : '0.00';
+                document.getElementById('soldeResortCredit').textContent =
+                    rcData.found ? rcData.solde.toFixed(2) : '0.00';
+
+                // Load services for service selector
+                loadServices(societe);
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la recherche des soldes');
+            }
+        }
+
+        async function loadServices(societe) {
+            try {
+                const response = await fetch(`${API_BASE}/zooms/services-village?societe=${societe}`);
+                const services = await response.json();
+
+                const select = document.getElementById('serviceSelect');
+                select.innerHTML = '<option value="">Selectionnez un service</option>';
+                services.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.codeService;
+                    option.textContent = `${s.codeService} - ${s.libelleService || ''}`;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function getSoldeParService() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+            const service = document.getElementById('serviceSelect').value;
+
+            if (!societe || !compte || !service) {
+                alert('Societe, Compte et Service requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/ventes/solde-resortcredit/${societe}/${compte}/${filiation}/${service}`);
+                const data = await response.json();
+
+                document.getElementById('soldeServiceContainer').style.display = 'block';
+
+                if (data.found) {
+                    document.getElementById('serviceNom').textContent =
+                        `${data.codeService} - ${data.libelleService || ''}`;
+                    document.getElementById('montantAttribue').textContent =
+                        data.montantAttribue?.toFixed(2) + ' EUR' || '-';
+                    document.getElementById('montantUtilise').textContent =
+                        data.montantUtilise?.toFixed(2) + ' EUR' || '-';
+                    document.getElementById('soldeDisponible').textContent =
+                        data.solde.toFixed(2) + ' EUR';
+                } else {
+                    document.getElementById('serviceNom').textContent = service;
+                    document.getElementById('montantAttribue').textContent = '0.00 EUR';
+                    document.getElementById('montantUtilise').textContent = '0.00 EUR';
+                    document.getElementById('soldeDisponible').textContent = '0.00 EUR';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de la recherche du solde');
+            }
+        }
+
+        async function getHistorique() {
+            const societe = document.getElementById('societe').value;
+            const compte = document.getElementById('compte').value;
+            const filiation = document.getElementById('filiation').value;
+
+            if (!societe || !compte) {
+                alert('Societe et Compte requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/ventes/historique/${societe}/${compte}/${filiation}`);
+                const data = await response.json();
+
+                const tbody = document.getElementById('historiqueBody');
+                if (data.found && data.ventes && data.ventes.length > 0) {
+                    tbody.innerHTML = data.ventes.map(v => `
+                        <tr>
+                            <td>${formatDate(v.dateVente)}</td>
+                            <td><span class="badge ${v.type === 'GP' ? 'badge-giftpass' : 'badge-resortcredit'}">${v.type === 'GP' ? 'Gift Pass' : 'Resort Credit'}</span></td>
+                            <td>${v.service || '-'}</td>
+                            <td>${v.description || '-'}</td>
+                            <td class="number">${v.montant?.toFixed(2) || '-'}</td>
+                            <td>${v.statut || '-'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune vente trouvee</td></tr>';
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors du chargement de l\'historique');
+            }
+        }
+
+        async function printTicket() {
+            const numTransaction = document.getElementById('numTransaction').value;
+            const typeImpression = document.getElementById('typeImpression').value;
+
+            if (!numTransaction) {
+                alert('Numero de transaction requis');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/ventes/print-ticket`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        numeroTransaction: numTransaction,
+                        typeImpression
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Ticket envoye a l\'impression');
+                } else {
+                    alert(data.message || 'Erreur lors de l\'impression');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur lors de l\'impression');
+            }
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR');
+        }
+    </script>
+</body>
+</html>
