@@ -242,20 +242,54 @@ Task (MainProgram="Y/N")
 | 9 | Fit-to-MDI | S'adapte a l'espace MDI |
 | 10 | MDI Child (explicit) | Enfant MDI explicite |
 
-**Ordre d'execution des taches**
+**Ordre d'execution des taches (FONDAMENTAL)**
+
+Source: [Magic Software Knowledge Base](https://kb.magicsoftware.com/articles/bl_Reference/Record-Level-xpa)
+
 ```
-Task Prefix  → Initialisation (executee UNE fois au demarrage)
+Task Prefix   → UNE fois a l'initialisation
+   │
+   │  Le moteur Magic:
+   │  1. Ouvre les tables de la base
+   │  2. Initialise les variables virtuelles (Init expressions)
+   │  3. Cree le DataView (structure) avec Range/Locate
+   │  ⚠️ MAIS les RECORDS ne sont PAS encore lus!
    ↓
-Record Prefix → Avant chaque enregistrement
+┌─────────────────────────────────────────────────────┐
+│  BOUCLE RECORDS (autant de fois que la selection)  │
+│                                                     │
+│  1. Fetch record from data source                   │
+│  2. Execute data source links (Link Query)          │
+│  3. Evaluate End Task condition (si "Before")       │
+│       ↓                                             │
+│  Record Prefix  → "immediately after the record     │
+│                    is read from the data source"    │
+│       ↓                                             │
+│  Record Main    → Traitement principal/interaction  │
+│       ↓                                             │
+│  Record Suffix  → Apres commit des modifications    │
+└─────────────────────────────────────────────────────┘
    ↓
-Control Prefix → Avant chaque controle
-   ↓
-Control Suffix → Apres chaque controle
-   ↓
-Record Suffix → Apres chaque enregistrement
-   ↓
-Task Suffix  → Finalisation (executee UNE fois a la fin)
+Task Suffix   → UNE fois a la fin (APRES tous les records)
 ```
+
+**REGLE CRITIQUE : Disponibilite des donnees**
+
+| Section | Ce qui se passe | Donnees disponibles |
+|---------|-----------------|---------------------|
+| Task Prefix | Tables ouvertes, Virtuels initialises, DataView CREE | Parametres, variables globales. **PAS de colonnes record!** |
+| Record Prefix | Record LU depuis data source, Links executes | **Colonnes DataView disponibles** (Main Source + Link Query) |
+| Record Main | Interaction utilisateur | Colonnes DataView disponibles |
+| Record Suffix | Apres modifications commitees | Colonnes DataView disponibles |
+| Task Suffix | Tous records traites | Derniers resultats, totaux |
+
+**Consequences directes :**
+- Un `Update` dans **Task Prefix** ne peut PAS lire les colonnes du DataView - le record n'est pas encore lu!
+- Pour acceder a `montant` d'un Link Query, l'Update DOIT etre dans Record Prefix/Main/Suffix
+- Les expressions dans Task Prefix servent a l'**INITIALISATION** (valeurs par defaut avant la boucle)
+- Si vous voulez lire des donnees record, placez la logique dans Record Prefix ou Suffix
+
+**Erreur classique :** Mettre un Update avec une colonne DataView dans Task Prefix - la valeur sera toujours nulle ou par defaut!
 
 **Fonctions/Events et portee**
 - Une fonction ou event doit etre **declare dans la tache ou au-dessus** pour etre "trappee"
@@ -282,7 +316,221 @@ Task Suffix  → Finalisation (executee UNE fois a la fin)
 - `Counter(0)` : Compteur global
 - `Counter(1)` : Compteur de groupe
 - `Str(val, format)` : Formatage nombre
+
+**IMPORTANT : Update With et Expressions (ATTENTION!)**
+
+Dans une operation `Update`, le champ `With: X` fait reference a **Expression X**, PAS a la colonne X !
+
+```
+Ligne 2: Update Variable EU  With: 11  Default: 0
+                              │
+                              └─→ Expression 11 (PAS colonne 11!)
+```
+
+**Chaque tache a son propre panneau Expression Rules** avec des expressions numerotees localement :
+```
+Expression Rules: 22.16.1.1
+# | Expression
+1 | CA
+2 | EY
+3 | EZ-1
+...
+11| 0           ← C'est cette valeur qui sera assignee!
+```
+
+**Pour analyser un Update :**
+1. Noter le numero `With: X`
+2. Ouvrir le panneau "Expression Rules" de la MEME tache
+3. Trouver Expression X pour connaitre la valeur reelle
+4. Les expressions peuvent contenir : colonnes (CA, EY), litteraux (0, 'F'), formulas (IF(...))
+
+**Erreur frequente :** Confondre `With: 11` avec "colonne 11" du DataView.
+C'est TOUJOURS une reference a Expression 11 de la tache courante!
+
+**References de champs avec Generation {X,Y}**
+
+Source: [Task Functions (Magic xpa 3.x)](https://magicsoftware.my.salesforce-sites.com/PublicKnowledge/articles/bl_Reference/Task-Functions-xpa-3x)
+
+| Syntaxe | Signification |
+|---------|---------------|
+| {0,Y} | Champ Y dans la tache **courante** |
+| {1,Y} | Champ Y dans la tache **parente** (generation 1) |
+| {2,Y} | Champ Y dans la **grand-parente** (generation 2) |
+| {3,Y} | Champ Y dans l'**arriere-grand-parente** (generation 3) |
+
+**Exemple :**
+```
+IF(Trim({1,2})='COFFRE 2', Str({3,2},'3P0'), Trim({1,2}))
+         │                      │
+         └── Champ 2 du parent  └── Champ 2 de l'arriere-grand-parent
+```
+
+**Update avec Parent :**
+```xml
+<Update>
+  <Parent val="1"/>      <!-- Met a jour generation 1 = parent -->
+  <FieldID val="81"/>    <!-- Champ 81 du parent -->
+  <WithValue val="11"/>  <!-- Expression 11 locale -->
+</Update>
+```
+
+**Correspondance XML ↔ IDE (Expression IDs) - CONFIRMÉ**
+
+Les IDs d'expression dans le XML peuvent avoir des **trous** (ex: id=1,2,3,13).
+L'IDE Magic **RENUMÉROTE SÉQUENTIELLEMENT** pour l'affichage (1,2,3,4).
+
+**Exemple vérifié (Prg 22, Task 22.16.1.1.1):**
+| XML id | IDE # | Expression |
+|--------|-------|------------|
+| id="1" | 1 | EY |
+| id="2" | 2 | FC |
+| id="3" | 3 | 'F' |
+| id="13" | 4 | FP (montant_monnaie FF) |
+
+**Règle:** `WithValue val="4"` dans le XML fait référence à la **4ème expression dans l'ordre séquentiel de l'IDE**, pas à l'id XML!
+
+**Pour analyser un Update:**
+1. Compter les expressions dans l'ordre du XML (ignorer les IDs, compter la position)
+2. `WithValue val="N"` = N-ème expression dans cet ordre
+
+**Structure XML du DataView (FONDAMENTAL)**
+
+Le DataView est compose de plusieurs elements XML qui definissent les sources de donnees :
+
+**DATAVIEW_SRC - Source principale du DataView**
+```xml
+<DATAVIEW_SRC FlowIsn="57" Type="M">
+  <Condition val="N"/>
+  <Modifier val="B"/>      <!-- B=Browse -->
+  <Direction val="C"/>     <!-- C=Current (normale) -->
+</DATAVIEW_SRC>
+```
+| Attribut | Valeurs | Description |
+|----------|---------|-------------|
+| Type | M | Main Source (table principale) |
+| IDX | 1,2,3... | Numero d'index utilise |
+| Modifier | B=Browse | Type d'acces |
+
+**LNK - Link Query (jointures vers tables liees)**
+```xml
+<LNK Direction="A" EVL_CND="R" FlowIsn="67" Key="1" Mode="R" SortType="16" VIEW="8" VIEWS="3">
+  <DB comp="2" obj="66"/>      <!-- Table: composant 2, objet 66 -->
+  <Expanded val="1"/>
+  <Condition val="Y"/>
+</LNK>
+```
+| Attribut | Valeurs | Description |
+|----------|---------|-------------|
+| Direction | A=Ascending, D=Descending | Sens de lecture |
+| EVL_CND | R=Runtime | Evaluation de la condition |
+| Key | 1,2... | Numero de cle/index a utiliser |
+| Mode | **R=Read, W=Write** | **R=lecture seule, W=ecriture** |
+| VIEW | 1-N | Position dans la liste des vues |
+| VIEWS | N | Nombre total de vues |
+| DB comp/obj | | Reference a la table (comp=-1=local, comp=2=REF) |
+
+**Select - Colonnes du DataView**
+```xml
+<Select FieldID="7" FlowIsn="68" id="7">
+  <Column val="1"/>           <!-- Position dans la vue -->
+  <Type val="R"/>             <!-- R=Real (table), V=Virtual (variable) -->
+  <IsParameter val="N"/>      <!-- Y=Parametre, N=Non -->
+  <Locate MAX="1" MIN="1"/>   <!-- Segment de cle pour recherche -->
+</Select>
+```
+| Attribut | Valeurs | Description |
+|----------|---------|-------------|
+| Type | **V=Virtual** (variable locale), **R=Real** (colonne de table) | Source de la donnee |
+| IsParameter | Y/N | Est-ce un parametre d'entree |
+| Column | 1-N | Position de la colonne dans la vue |
+| Locate MAX/MIN | 1-N | **Segment de cle** (position dans l'index pour la recherche) |
+
+**BLOCK - Blocs conditionnels**
+```xml
+<BLOCK EndBlock="62" EndBlockSegment="62" FlowIsn="271" Type="I">
+  <Condition Exp="6"/>        <!-- Expression de condition -->
+</BLOCK>
+<!-- ... code si vrai ... -->
+<BLOCK EndBlock="68" EndBlockSegment="68" FlowIsn="201" Type="E">
+  <!-- ELSE -->
+</BLOCK>
+<!-- ... code sinon ... -->
+<EndBlock id="68"/>
+```
+| Type | Signification |
+|------|---------------|
+| I | IF - Debut de bloc conditionnel |
+| E | ELSE - Branche alternative |
+| EndBlock | ID de la ligne de fin de bloc |
+
+**Locate - Segments de cle pour recherche**
+
+Les segments `Locate MAX/MIN` definissent comment la valeur est utilisee dans l'index :
+- `MIN="1" MAX="1"` = Premier segment de la cle composee
+- `MIN="2" MAX="2"` = Deuxieme segment
+- `MIN="1" MAX="3"` = Segments 1 a 3 (recherche partielle)
+
+Exemple avec cle composee (Societe, Compte, Filiation) :
+```xml
+<Select FieldID="1"><Locate MAX="1" MIN="1"/></Select>  <!-- Societe -->
+<Select FieldID="2"><Locate MAX="2" MIN="2"/></Select>  <!-- Compte -->
+<Select FieldID="3"><Locate MAX="3" MIN="3"/></Select>  <!-- Filiation -->
+```
 </key_concepts>
+
+<variable_naming_convention>
+## Convention de Nommage des Variables dans la DataView
+
+Dans l'IDE Magic, les variables de la DataView sont nommees avec des lettres :
+
+| Plage | Positions | Calcul |
+|-------|-----------|--------|
+| A-Z | 1-26 | Position directe |
+| AA-AZ | 27-52 | 1*26 + (1-26) |
+| BA-BZ | 53-78 | 2*26 + (1-26) |
+| ... | ... | ... |
+| ZA-ZZ | 677-702 | 26*26 + (1-26) |
+| AAA-ZZZ | 703+ | 27*26 + ... |
+
+### Decoder un Nom de Variable (IDE → Position)
+
+**Formule pour 2 lettres (AA-ZZ) :**
+```
+Position = (premiere_lettre - A + 1) * 26 + (deuxieme_lettre - A + 1)
+```
+
+**Exemples :**
+- `DK` = (D=4)*26 + (K=11) = 104 + 11 = **115**
+- `EU` = (E=5)*26 + (U=21) = 130 + 21 = **151**
+- `AA` = (A=1)*26 + (A=1) = 26 + 1 = **27**
+
+### Tracer une Variable (XML → IDE)
+
+Pour identifier une variable dans le XML et son nom IDE :
+
+1. **Compter les Select** dans la DataView (Task Prefix + Record Main)
+2. L'ordre d'apparition = position dans la DataView
+3. Convertir la position en nom de variable
+
+**Exemple de trace :**
+```xml
+<!-- DataView de la tache -->
+<Select FieldID="1">...  <!-- Position 1 = A -->
+<Select FieldID="2">...  <!-- Position 2 = B -->
+...
+<Select FieldID="81">... <!-- Position 115 = DK (si 115eme Select) -->
+```
+
+### Correspondance XML ↔ IDE
+
+| XML | IDE | Description |
+|-----|-----|-------------|
+| `{0,4}` | Variable selon position du Field 4 | Champ de la tache courante |
+| `{1,2}` | Variable selon position du Field 2 | Champ de la tache parent |
+| `{2,5}` | Variable selon position du Field 5 | Champ de la tache grand-parent |
+
+**Note :** Le FieldID XML (ex: 81) n'est PAS la position dans la DataView. Il faut compter les Select pour trouver la position.
+</variable_naming_convention>
 
 <dead_code_detection>
 ## Detection du Code Desactive (OBLIGATOIRE)
@@ -352,6 +600,213 @@ grep -c "Disabled val=\"1\"" Prg_*.xml
 | ACTIVE | Code actif | Migrer normalement |
 | PARTIAL | Mix actif/desactive | Migrer uniquement l'actif |
 </dead_code_detection>
+
+<debugging_troubleshooting>
+## Debugging et Troubleshooting (Bonnes Pratiques)
+
+Cette section documente les techniques d'analyse de bugs dans les programmes Magic, basees sur des cas reels.
+
+### Expressions Non Referencees (Dead Expressions)
+
+**Probleme :** Une expression peut exister dans le XML mais n'etre JAMAIS utilisee.
+
+**Cas reel (VIL Prg_558) :**
+```xml
+<!-- Expression 38 existe mais n'est JAMAIS referencee -->
+<Expression id="38">
+  <ExpSyntax val="{0,4}&lt;>{0,81}"/>  <!-- FDR Initial <> FDR Previous -->
+</Expression>
+
+<!-- Les Updates utilisent Expression 32 au lieu de 38 -->
+<Update FlowIsn="329">
+  <FieldID val="78"/>
+  <WithValue val="32"/>   <!-- BUG! Devrait etre 38 -->
+</Update>
+```
+
+**Detection :**
+```bash
+# 1. Trouver toutes les expressions definies
+grep -o 'Expression id="[0-9]*"' Prg_XXX.xml | sort -u
+
+# 2. Verifier quelles expressions sont referencees
+grep -E 'WithValue val="|Condition Exp="' Prg_XXX.xml | grep -oP '\d+' | sort -u
+
+# 3. Comparer les deux listes - les expressions absentes sont du code mort
+```
+
+**Regle :** Toujours verifier qu'une expression est effectivement utilisee avant de conclure sur son role.
+
+### Fonction ExpCalc (Expression Calling Expression)
+
+**Syntaxe :** `ExpCalc('N'EXP)` appelle l'Expression N comme sous-expression.
+
+```xml
+<Expression id="32">
+  <!-- Somme de champs + resultat d'Expression 8 -->
+  <ExpSyntax val="{0,4}+ExpCalc('8'EXP)+{0,8}+{0,10}"/>
+</Expression>
+
+<Expression id="8">
+  <!-- Sous-calcul appele par Expression 32 -->
+  <ExpSyntax val="{0,3}*{0,7}"/>
+</Expression>
+```
+
+**Implications :**
+1. Tracer TOUTES les expressions appelees via ExpCalc
+2. Les expressions ne sont pas toujours utilisees directement
+3. L'ordre d'evaluation suit les appels ExpCalc imbriques
+
+### Elements Remark comme Indices
+
+**Les Remark sont des commentaires precieux** laisses par les developpeurs originaux :
+
+```xml
+<Remark>FDR Final lors de la derniere fermeture</Remark>
+<Select FieldID="81" FlowIsn="266" id="81">
+  <Column val="20"/>
+  <Type val="V"/>  <!-- Variable virtuelle -->
+</Select>
+```
+
+**Bonnes pratiques :**
+1. Lire TOUS les Remark avant d'analyser un bloc de code
+2. Le Remark decrit souvent l'INTENTION, pas l'implementation
+3. Comparer le Remark avec l'expression reellement utilisee peut reveler des bugs
+
+### Tracage WithValue (Methodologie)
+
+**Objectif :** Verifier que le champ utilise la BONNE expression.
+
+**Etapes :**
+1. Identifier le champ d'affichage (ex: Field 78 pour les etoiles)
+2. Trouver tous les Updates de ce champ
+3. Noter les WithValue references
+4. Lire les expressions correspondantes
+5. Comparer avec la regle metier attendue
+
+**Exemple de trace :**
+```
+Regle metier : Etoiles si FDR Initial <> FDR Previous
+
+Recherche:
+  → Field 78 = Variable pour stocker le flag etoiles
+  → Update FieldID="78" WithValue="32"
+  → Expression 32 = {0,4}+ExpCalc('8'EXP)+... (calcul complexe)
+  → Expression 38 = {0,4}<>{0,81} (comparaison simple)
+
+Conclusion : Expression 32 ne correspond PAS a la regle!
+             Expression 38 correspond EXACTEMENT mais n'est pas utilisee.
+             → BUG confirme: WithValue devrait etre 38
+```
+
+### Checklist Debugging Bug Metier
+
+| Etape | Action | Verification |
+|-------|--------|--------------|
+| 1 | Identifier la regle metier | Documentation ou Remark |
+| 2 | Trouver le champ d'affichage | FieldID dans les expressions d'affichage |
+| 3 | Tracer les Updates | grep FieldID="N" |
+| 4 | Lire les WithValue | Expression referencee |
+| 5 | Comparer a la regle | Match ou mismatch? |
+| 6 | Chercher alternatives | Expressions non referencees |
+| 7 | Confirmer le fix | WithValue correct identifie |
+
+### Pieges Courants
+
+| Piege | Description | Solution |
+|-------|-------------|----------|
+| Expression morte | Expression creee mais jamais connectee | Verifier WithValue/Condition |
+| Mauvaise renumérotation | IDE renumérote sequentiellement, XML garde les ID originaux | Tracer par ID XML, pas numero IDE |
+| ExpCalc masque | Expression utilisee indirectement via ExpCalc | Tracer toute la chaine |
+| Remark obsolete | Commentaire ne correspond plus au code | Se fier au code, pas au Remark |
+| BLOCK conditionnel | Code execute uniquement si condition vraie | Tracer le chemin d'execution |
+
+### Format de Communication des Corrections (OBLIGATOIRE)
+
+**Ne JAMAIS communiquer en termes XML** (lignes, id). Utiliser le format IDE Magic :
+
+**Format standard :**
+```
+Tâche XX.YY.Z.W ligne NN, remplacer expression AA (description_AA) par BB (description_BB)
+```
+
+**Exemple reel (bug VIL etoiles F.D.R.) :**
+```
+Tâche 22.16.1 ligne 14, remplacer expression 32 par 38 (v.FDR_Initial <> v.FDR_Previous)
+Tâche 22.16.1 ligne 18, remplacer expression 32 par 38 (v.FDR_Initial <> v.FDR_Previous)
+```
+
+**Elements du format :**
+| Element | Source | Exemple |
+|---------|--------|---------|
+| Tâche XX.YY.Z.W | Hierarchie dans l'IDE (titre de fenetre) | 22.16.1 |
+| ligne NN | Numero de ligne AFFICHE dans l'IDE (colonne gauche) | ligne 14 |
+| expression AA | Numero affiche dans colonne "With:" de l'IDE | expression 32 |
+| (description) | Resume lisible de l'expression | (v.FDR_Initial <> v.FDR_Previous) |
+
+**ATTENTION CRITIQUE - Expressions PROGRAMME vs TACHE :**
+
+| Niveau | Scope | Explication |
+|--------|-------|-------------|
+| Programme (Prg_XXX.xml) | Global | Expressions partagees par toutes les taches |
+| Tache (Task XX.YY.Z) | Local | Expressions PROPRES a cette tache, numerotation SEPAREE |
+
+**ERREUR FREQUENTE :** Lire Expression id="38" dans le XML programme et croire qu'elle existe dans la tache.
+CHAQUE TACHE a sa propre liste d'expressions avec sa propre numerotation !
+
+**Correspondance XML vs IDE :**
+| XML | IDE | Explication |
+|-----|-----|-------------|
+| FlowIsn="329" | ≠ ligne 329 | FlowIsn est un ID interne, PAS le numero de ligne |
+| Expression id="38" (programme) | ≠ Expression 38 (tache) | SCOPES DIFFERENTS ! |
+| LogicLine id="5" | ligne 5 ? | Verifier visuellement dans l'IDE |
+
+**MAPPING EXPRESSIONS - XML id vs Position IDE (CRITIQUE) :**
+
+L'IDE renumérote les expressions SÉQUENTIELLEMENT (1,2,3...) mais le XML conserve les ID originaux avec des TROUS.
+
+```xml
+<!-- Ordre dans le XML (section <Expressions>) -->
+<Expression id="1">...   <!-- IDE: Expression 1 -->
+<Expression id="2">...   <!-- IDE: Expression 2 -->
+<Expression id="3">...   <!-- IDE: Expression 3 -->
+<Expression id="4">...   <!-- IDE: Expression 4 -->
+<Expression id="30">...  <!-- IDE: Expression 5 (PAS 30!) -->
+<Expression id="6">...   <!-- IDE: Expression 6 -->
+<Expression id="7">...   <!-- IDE: Expression 7 -->
+<Expression id="35">...  <!-- IDE: Expression 8 (PAS 35!) -->
+...
+<Expression id="32">...  <!-- IDE: Expression 31 -->
+<Expression id="38">...  <!-- IDE: Expression 32 -->
+<Expression id="33">...  <!-- IDE: Expression 33 -->
+<Expression id="34">...  <!-- IDE: Expression 34 -->
+```
+
+**Methode de mapping :**
+1. Lire TOUTES les `<Expression>` dans l'ordre du XML
+2. Compter leur POSITION (1,2,3...) = numero IDE
+3. Noter l'attribut `id` = reference XML (WithValue, Condition)
+
+**Exemple reel (VIL bug etoiles) :**
+- `WithValue val="32"` dans XML = reference XML id="32"
+- XML id="32" = 31ème expression = IDE Expression 31
+- XML id="38" = 32ème expression = IDE Expression 32 = `DK<>EU` (correct!)
+
+**Vocabulaire pour les corrections :**
+| Action | Format | Exemple |
+|--------|--------|---------|
+| Utiliser existante | "utiliser expression XX (existante)" | utiliser expression 32 (existante) |
+| Modifier existante | "modifier expression XX pour [formule]" | modifier expression 32 pour DK<>DL |
+| Creer nouvelle | "creer expression XX : [formule]" | creer expression 35 : v.FDR_Init<>v.FDR_Prev |
+
+**Regles :**
+1. **TOUJOURS verifier dans l'IDE** la liste des expressions de la TACHE concernee
+2. **Ligne** = Numero AFFICHE dans la colonne de gauche de l'IDE
+3. **Expression** = Numero dans la fenetre "Expression Rules: XX.YY.Z"
+4. **Ne JAMAIS deduire** depuis le XML programme seul - ouvrir l'IDE !
+</debugging_troubleshooting>
 
 <success_criteria>
 - Fichiers XML Magic correctement parses sans erreur
@@ -533,3 +988,51 @@ grep -r "obj=\"[ID_APPELANT]\"" *.xml
 - Variables de session (utilisateur, terminal, societe)
 - Resultats de sous-taches precedentes
 </flow_driven_migration>
+
+<analysis_output_format>
+## Format de Sortie d'Analyse (OBLIGATOIRE)
+
+Lors d'une analyse de bug ou d'une recommandation de correction, utiliser le format Magic IDE.
+
+### Format Localisation Magic IDE
+```
+[Position Programme].[Tache].[SousTache].[SousSousTache] Ligne [N]
+```
+
+**Structure arborescente :**
+- Le premier chiffre = position du programme dans la liste (pas l'ID interne)
+- Chaque niveau suivant = position dans l'arborescence des taches
+- La ligne = numero de ligne dans le panneau Logic
+
+**Exemple :**
+```
+22.16.1.1 Ligne 2
+   │  │ │ │
+   │  │ │ └─ Update FDR Precedent (sous-sous-tache)
+   │  │ └─── Reception (sous-tache)
+   │  └───── Edition (tache)
+   └──────── Print recap sessions (programme position 22)
+```
+
+### Format Tableau de Corrections
+| Localisation | Ligne | Operation | Actuel | Correct |
+|--------------|-------|-----------|--------|---------|
+| 22.16.1.1 | 2 | Update | v.FDR = quand | v.FDR = montant |
+| 22.16.1 | 45 | Update | Expression 32 | Expression 38 |
+
+### Format Expression
+Toujours presenter DEUX versions :
+1. **Syntaxe Magic** : `{0,18} <> {0,81}`
+2. **Notation Lisible** : `v.total FDR Init <> v.FDR Final veille`
+
+### Tableau de Mapping Variables (si applicable)
+| Variable | Description | Source |
+|----------|-------------|--------|
+| v.total FDR Init | FDR Initial du jour | Calcule dans tache |
+| v.FDR Final veille | FDR Final de la veille | Sous-tache Update FDR |
+
+### IMPORTANT
+- **NE PAS** utiliser les numeros de ligne XML (17788, 18707...)
+- **NE PAS** utiliser les ID internes (Prg_558, ISN_2=56...)
+- **TOUJOURS** utiliser la notation arborescente Magic IDE
+</analysis_output_format>

@@ -693,57 +693,54 @@ Navigation_Width = Width_DLU / HorizontalFactor
 Navigation_Height = Height_DLU / VerticalFactor
 ```
 
-**Etape 2: Conversion Pixels**
+**Etape 2: Conversion Pixels (VALEURS CALIBREES)**
 ```
-Pixel_Width ≈ Navigation_Width × 4
-Pixel_Height ≈ Navigation_Height × 8
-
-Formule directe:
-Pixel_Width ≈ Width_DLU × 0.5
-Pixel_Height ≈ Height_DLU × 1.0
+Formule directe CALIBREE (validée visuellement 2026-01-05):
+Pixel_Width  = Width_DLU  × 0.65
+Pixel_Height = Height_DLU × 2.0
 ```
 
 **Exemple CA0142 (Gestion de la caisse):**
 ```
 XML: Width="939" Height="178" HorizontalFactor="8"
 
-Navigation: 939/8 = 117.375 × 22.25
+Formule calibrée (VALIDEE visuellement):
+  Scale X = 0.65 (calibré par comparaison runtime Magic)
+  Scale Y = 2.0  (calibré par comparaison runtime Magic)
 
-Formule calibrée (validée visuellement):
-  Scale X = 0.53 (ajusté après comparaison runtime)
-  Scale Y = 1.0
-
-Pixels: 939 × 0.53 ≈ 498px width
-        178 × 1.0 = 178px height (contenu)
+Pixels: 939 × 0.65 = 610px width
+        178 × 2.0  = 356px height
 ```
 
-### 13.3 Facteurs de Conversion par Element
+### 13.3 Facteurs de Conversion par Element (CALIBRES)
 
 | Type | Scale X | Scale Y | Notes |
 |------|---------|---------|-------|
-| Fenetre (Width/Height) | ×0.53 | ×1.0 | DLU → pixels (calibré) |
-| Controles (X/Y) | ×0.53 | ×1.0 | Position |
-| Texte (Width) | ×0.53 | - | Largeur champs |
-| Hauteur boutons | - | ×1.0 | Conserver DLU |
+| Fenetre (Width/Height) | ×0.65 | ×2.0 | DLU → pixels (CALIBRE) |
+| Controles (X/Y) | ×0.65 | ×2.0 | Position absolue |
+| Largeur controles | ×0.65 | - | Largeur champs/boutons |
+| Hauteur controles | - | ×2.0 | Hauteur boutons/champs |
 
-> **Note:** Le facteur 0.53 a été calibré par comparaison visuelle avec le runtime Magic.
-> Le facteur théorique (0.5) donne des résultats légèrement trop petits.
+> **IMPORTANT:** Ces facteurs (X=0.65, Y=2.0) ont été calibrés par comparaison visuelle
+> avec le runtime Magic en date du 2026-01-05 sur l'écran CA0142.
+> Les facteurs théoriques (0.5 et 1.0) donnent des résultats trop petits.
 
-### 13.4 CSS Variables Recommandees
+### 13.4 CSS Variables Recommandees (CALIBREES)
 
 ```css
 :root {
-    /* Facteur de conversion horizontal: DLU × 0.5 → pixels */
-    --scale-x: 0.5;
-    /* Facteur vertical: 1:1 avec DLU */
-    --scale-y: 1.0;
+    /* FACTEURS CALIBRES (validés 2026-01-05) */
+    --scale-x: 0.65;  /* Horizontal: DLU × 0.65 → pixels */
+    --scale-y: 2.0;   /* Vertical: DLU × 2.0 → pixels */
+
     /* Dimensions calculees pour CA0142 */
-    --form-width: 470px;   /* 939 × 0.5 */
-    --form-height: 178px;  /* 178 × 1.0 */
+    --form-width: 610px;   /* 939 × 0.65 */
+    --form-height: 356px;  /* 178 × 2.0 */
 }
 
 .magic-window {
     width: var(--form-width);
+    height: var(--form-height);
 }
 
 .control {
@@ -755,7 +752,7 @@ Pixels: 939 × 0.53 ≈ 498px width
 }
 ```
 
-### 13.3 Exemple Complet - Prg_121
+### 13.5 Exemple Complet - Prg_121 (CA0142)
 
 **XML Source (Prg_121.xml):**
 ```xml
@@ -784,25 +781,32 @@ Pixels: 939 × 0.53 ≈ 498px width
 </FormEntry>
 ```
 
-**HTML/CSS Converti:**
+**HTML/CSS Converti (avec facteurs calibrés):**
 ```html
 <style>
     :root {
-        --scale-x: 0.506;  /* 939 → 475px */
+        --scale-x: 0.65;   /* CALIBRE */
+        --scale-y: 2.0;    /* CALIBRE */
+    }
+
+    .magic-window {
+        width: 610px;      /* 939 × 0.65 */
+        height: 356px;     /* 178 × 2.0 */
     }
 
     #btnQuitter {
-        left: calc(7 * var(--scale-x));      /* 3.5px */
-        top: 154px;
-        width: calc(200 * var(--scale-x));   /* 101px */
-        height: 18px;
+        position: absolute;
+        left: 5px;         /* 7 × 0.65 = 4.55 ≈ 5px */
+        top: 308px;        /* 154 × 2.0 = 308px */
+        width: 130px;      /* 200 × 0.65 = 130px */
+        height: 36px;      /* 18 × 2.0 = 36px */
     }
 </style>
 
 <button id="btnQuitter" onclick="handleEvent(219)">Quitter</button>
 ```
 
-### 13.4 Mapping Controles → HTML
+### 13.6 Mapping Controles → HTML
 
 | Control Magic | Element HTML | Styles Speciaux |
 |---------------|--------------|-----------------|
@@ -907,5 +911,155 @@ const CONTEXT = {
 
 ---
 
-*Document mis a jour par Claude Code - 2025-12-30*
+---
+
+## 15. Style Windows 11 (Cible Migration)
+
+### 15.1 CSS Variables Base
+
+```css
+:root {
+    /* Conversion DLU -> Pixels (CALIBRES 2026-01-05) */
+    --scale-x: 0.65;
+    --scale-y: 2.0;
+
+    /* Couleurs Windows 11 */
+    --win11-bg: #f3f3f3;
+    --win11-window-bg: #ffffff;
+    --win11-border: #d1d1d1;
+    --win11-border-hover: #c1c1c1;
+    --win11-text: #1a1a1a;
+    --win11-text-disabled: #a0a0a0;
+    --win11-accent: #0078d4;
+    --win11-accent-hover: #006cbe;
+    --win11-accent-active: #005a9e;
+}
+```
+
+### 15.2 Fenetre Windows 11
+
+```css
+.magic-window {
+    background-color: var(--win11-window-bg);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.title-bar {
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+    color: var(--win11-text);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+```
+
+### 15.3 Boutons Windows 11
+
+```css
+/* Bouton standard */
+.magic-btn {
+    height: 28px;
+    border: 1px solid var(--win11-border);
+    border-radius: 4px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+    font-size: 12px;
+    font-family: 'Segoe UI', sans-serif;
+    cursor: pointer;
+    padding: 0 12px;
+    color: var(--win11-text);
+    transition: all 0.1s ease;
+}
+
+.magic-btn:hover:not(:disabled) {
+    background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
+    border-color: var(--win11-border-hover);
+}
+
+.magic-btn:active:not(:disabled) {
+    background: #e0e0e0;
+    transform: translateY(1px);
+}
+
+.magic-btn:disabled {
+    color: var(--win11-text-disabled);
+    cursor: not-allowed;
+    background: #f5f5f5;
+}
+
+/* Bouton action principal (accent) */
+.action-btn {
+    height: 32px;
+    border: 1px solid var(--win11-accent);
+    border-radius: 4px;
+    background: linear-gradient(180deg, #0078d4 0%, #006cbe 100%);
+    font-size: 12px;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0 16px;
+    color: white;
+    transition: all 0.1s ease;
+}
+
+.action-btn:hover:not(:disabled) {
+    background: linear-gradient(180deg, #006cbe 0%, #005a9e 100%);
+}
+
+/* Bouton secondaire */
+.action-btn.secondary {
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+    border-color: var(--win11-border);
+    color: var(--win11-text);
+}
+```
+
+### 15.4 Badges Etat
+
+```css
+.etat-badge {
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 11px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.etat-fermee { background: #fde7e7; color: #c42b1c; }
+.etat-ouverte { background: #dff6dd; color: #0f7b0f; }
+.etat-bloquee { background: #fff4ce; color: #9d5d00; }
+```
+
+### 15.5 Zone Info (Header)
+
+```css
+.info-zone {
+    background: linear-gradient(180deg, #fff9e6 0%, #fff4cc 100%);
+    border: 1px solid #e6d9a3;
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+```
+
+### 15.6 Status Bar
+
+```css
+.status-bar {
+    background: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
+    padding: 6px 12px;
+    font-size: 10px;
+    color: #666;
+}
+```
+
+---
+
+*Document mis a jour par Claude Code - 2026-01-05*
 *Source: Analyse des fichiers ADH avec formulaires GUI (Prg_121)*

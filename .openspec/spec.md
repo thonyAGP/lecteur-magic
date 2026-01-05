@@ -17,6 +17,7 @@ Agent Claude Code specialise pour l'analyse et la migration d'applications Magic
 | ADH | `D:\Data\Migration\XPA\PMS\ADH\Source\` | 350 | Adherents/Caisse | **Migre 85.5%** |
 | PBG | `D:\Data\Migration\XPA\PMS\PBG\Source\` | 394 | Planification/Batch (arrivees, logements) | Explore |
 | PVE | `D:\Data\Migration\XPA\PMS\PVE\Source\` | 448 | Point de Vente/POS (TPE, stocks, Mobile POS) | Explore |
+| VIL | `D:\Data\Migration\XPA\PMS\VIL\Source\` | ~600 | Village (editions, recapitulatifs, sessions PMS) | Bug analysé |
 
 ### Composants Partages (ECF)
 
@@ -311,6 +312,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 | Date | Decision | Contexte | Alternatives rejetees |
 |------|----------|----------|----------------------|
+| 2026-01-05 | **Facteurs DLU calibres X=0.65, Y=2.0** | Validation visuelle CA0142: 939×178 DLU → 610×356 px. Positions boutons fideles | X=0.5/Y=1.0 (trop petit), X=0.53/Y=1.0 (hauteur insuffisante) |
 | 2026-01-04 | **Correction tracage flux** | Prg_162 n'est PAS l'ecran visible - c'est un menu intermediaire (CallTask vers Prg_121). Ecran visible = CA0142 (Prg_121) avec WindowType=2 (SDI) | Considerer Prg_162 comme ecran principal (ERREUR) |
 | 2026-01-04 | Identifier ecrans par ID public | Format CA0XXX visible dans titre ecran correspond au Public Name dans ProgramHeaders.xml | Identifier par nom programme interne |
 | 2025-12-27 | Ecarts via Domain Service | Logique metier dans IEcartCalculator, testable | Calcul inline dans handler |
@@ -333,6 +335,11 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-05: **CALIBRATION DLU VALIDEE** - Facteurs de conversion DLU→Pixels calibrés et validés: X=0.65, Y=2.0 (CA0142: 939×178 DLU → 610×356 px). Skill mis à jour section 13 et 15
+- 2026-01-05: **Bug VIL ANALYSE COMPLETE** - Tache 22.16.1 Record Suffix conditionnel: lignes IDE 5 et 9, remplacer expression 31 par 32 (DK<>EU). Mapping XML id→IDE position documente
+- 2026-01-05: **Skill: Convention nommage variables** - Variables DataView A-Z, AA-ZZ, AAA-ZZZ. Formule: DK = 4*26+11 = 115
+- 2026-01-05: **Skill: Mapping expressions XML→IDE** - XML conserve id originaux avec trous, IDE renumérote séquentiellement. WithValue reference id XML, pas numero IDE
+- 2026-01-05: **Skill enrichi: Debugging/Troubleshooting** - Dead Expressions, ExpCalc function, Remark comme indices, methodologie tracage WithValue, checklist debugging
 - 2026-01-04: **CORRECTION CRITIQUE: Tracage flux ecrans** - Erreur identifiee: Prg_162 considere a tort comme ecran visible alors que c'est un menu intermediaire. Flux reel: Main→Prg_1→Prg_162→Prg_121 (CA0142). Ecran principal = Prg_121 avec WindowType=2 (SDI)
 - 2026-01-04: **ouverture-session.html (CA0143)** - Ecran cree depuis analyse Prg_294. Grille 7 colonnes (Cash/Cartes/Cheques/Produits/TOTAL/OD/Devises), 6 lignes (Solde initial/Appro caisse/Appro produits/Caisse comptee/Controle PMS/Ecart). Boutons Abandon/Valider avec validation ecart
 - 2026-01-04: **index.html corrige (CA0142)** - Reconstruction fidele depuis Prg_121 avec tous les boutons (Ouvrir/Continuer/Fermer session, Appro, Regul Telecollecte, etc.) et zone info utilisateur/coffre/etat

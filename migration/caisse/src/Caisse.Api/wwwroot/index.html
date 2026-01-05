@@ -5,161 +5,332 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CA0142 - Gestion de la caisse</title>
     <style>
-        /* Style Windows classique - fidele a Magic Unipaas */
+        /* Conversion DLU -> Pixels depuis Prg_121.xml */
+        /* Form: Width=939, Height=178 DLU */
+        /* Facteurs calibres: X=0.65, Y=2.0 */
+        :root {
+            --scale-x: 0.65;
+            --scale-y: 2.0;
+            --form-width: 610px;   /* 939 * 0.65 */
+            --form-height: 356px;  /* 178 * 2.0 */
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
-            font-size: 11px;
-            background-color: #808080;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 12px;
+            background-color: #f3f3f3;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* Fenetre Windows 11 */
         .magic-window {
-            background-color: #d4d0c8;
-            border: 2px outset #ffffff;
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
-            width: 960px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+            width: var(--form-width);
+            overflow: hidden;
         }
 
+        /* Barre de titre Windows 11 */
         .title-bar {
-            background: linear-gradient(to right, #0a246a, #a6caf0);
-            color: white;
-            padding: 3px 5px;
+            background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+            color: #1a1a1a;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .title-bar .title { display: flex; align-items: center; gap: 5px; }
-        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
-
-        .window-controls { display: flex; gap: 2px; }
-        .window-controls button {
-            width: 16px; height: 14px;
-            border: 1px outset #c0c0c0;
-            font-size: 9px; cursor: pointer;
-            background: #c0c0c0;
-        }
-
-        .window-content { padding: 8px; }
-
-        /* Zone info - CA0142 specifique */
-        .info-zone {
-            background: #ffffcc;
-            border: 1px inset #808080;
-            padding: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .info-left {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .info-user {
-            font-weight: bold;
+            font-weight: 600;
             font-size: 12px;
+            border-bottom: 1px solid #e5e5e5;
         }
 
-        .info-coffre {
-            color: #0000ff;
-            font-size: 11px;
-        }
-
-        .info-date {
-            font-size: 11px;
-        }
-
-        .info-right {
+        .title-bar .title {
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .title-bar .icon {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #0078d4, #00bcf2);
+            border-radius: 4px;
+        }
+
+        .window-controls { display: flex; gap: 8px; }
+        .window-controls button {
+            width: 12px;
+            height: 12px;
+            border: none;
+            border-radius: 50%;
+            font-size: 0;
+            cursor: pointer;
+        }
+        .window-controls .minimize { background: #ffbd2e; }
+        .window-controls .maximize { background: #28c940; }
+        .window-controls .close { background: #ff5f57; }
+        .window-controls button:hover { opacity: 0.8; }
+
+        /* Zone de contenu avec positionnement absolu */
+        .window-content {
+            position: relative;
+            height: var(--form-height);
+            background: #f0f0f0;
+        }
+
+        /* Bande du haut (Y=2, H=21) - fond gris */
+        .top-bar {
+            position: absolute;
+            left: 0;
+            top: 4px;    /* 2 * 2.0 */
+            width: 100%;
+            height: 42px; /* 21 * 2.0 */
+            background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+            border-bottom: 1px solid #c0c0c0;
+        }
+
+        /* Logo Orace (X=5, Y=4, W=59, H=18) */
+        .logo-orace {
+            position: absolute;
+            left: 3px;    /* 5 * 0.65 */
+            top: 8px;     /* 4 * 2.0 */
+            width: 38px;  /* 59 * 0.65 */
+            height: 36px; /* 18 * 2.0 */
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        /* Info utilisateur (dans la bande du haut) */
+        .info-user {
+            position: absolute;
+            left: 50px;
+            top: 14px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        /* Message coffre (X=7, Y=24) */
+        .info-coffre {
+            position: absolute;
+            left: 5px;    /* 7 * 0.65 */
+            top: 48px;    /* 24 * 2.0 */
+            width: 130px;
+            height: 24px;
+            font-size: 11px;
+            color: #0066cc;
+            text-align: center;
+        }
+
+        /* Image caisse (X=52, Y=39, W=111, H=40) */
+        .caisse-image {
+            position: absolute;
+            left: 34px;   /* 52 * 0.65 */
+            top: 78px;    /* 39 * 2.0 */
+            width: 72px;  /* 111 * 0.65 */
+            height: 80px; /* 40 * 2.0 */
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        /* Zone centrale info session (X=200-500, Y=40-120) */
+        .session-info-zone {
+            position: absolute;
+            left: 188px;  /* ~289 * 0.65 */
+            top: 80px;    /* 40 * 2.0 */
+            width: 220px;
+            text-align: center;
         }
 
         .etat-caisse {
             padding: 4px 12px;
-            font-weight: bold;
-            font-size: 12px;
-            border: 2px inset #808080;
-        }
-
-        .etat-fermee { background: #ff4444; color: white; }
-        .etat-ouverte { background: #44ff44; color: black; }
-        .etat-bloquee { background: #ffff44; color: black; }
-
-        /* Grille de boutons - layout exact CA0142 */
-        .button-grid {
-            display: grid;
-            grid-template-columns: 200px 1fr 200px 224px 200px;
-            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
             margin-bottom: 8px;
         }
+        .etat-fermee { background: #fde7e7; color: #c42b1c; }
+        .etat-ouverte { background: #dff6dd; color: #0f7b0f; }
+        .etat-bloquee { background: #fff4ce; color: #9d5d00; }
 
-        .button-column {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+        .session-details {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.6;
+        }
+        .session-details span { display: block; }
+
+        /* Date en haut a droite */
+        .info-date {
+            position: absolute;
+            right: 10px;
+            top: 6px;
+            font-size: 10px;
+            color: #666;
         }
 
-        /* Bouton Magic style */
+        /* Bouton standard Windows 11 */
         .magic-btn {
-            height: 22px;
-            border: 2px outset #d4d0c8;
-            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
-            font-size: 11px;
+            position: absolute;
+            height: 36px;  /* 18 * 2.0 */
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+            background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+            font-size: 12px;
+            font-family: 'Segoe UI', sans-serif;
             cursor: pointer;
-            padding: 0 8px;
-            text-align: left;
+            padding: 0 12px;
+            text-align: center;
+            color: #1a1a1a;
+            transition: all 0.1s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .magic-btn:active { border-style: inset; }
-        .magic-btn:disabled { color: #808080; cursor: not-allowed; }
-        .magic-btn:hover:not(:disabled) { background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%); }
-
-        /* Bouton action principal */
-        .action-btn {
-            height: 22px;
-            min-width: 200px;
-            border: 2px outset #d4d0c8;
-            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
-            font-size: 11px;
-            cursor: pointer;
-            padding: 0 16px;
+        .magic-btn:hover:not(:disabled) {
+            background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-color: #c1c1c1;
         }
-        .action-btn:active { border-style: inset; }
-        .action-btn:disabled { color: #808080; cursor: not-allowed; }
+        .magic-btn:active:not(:disabled) {
+            background: #e0e0e0;
+            transform: translateY(1px);
+        }
+        .magic-btn:disabled {
+            color: #a0a0a0;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
 
-        /* Barre d'actions du bas */
-        .action-bar {
-            display: flex;
-            gap: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #808080;
+        /* Boutons caches par defaut */
+        .session-only { display: none; }
+
+        /* Bande du bas (Y=151, H=24) */
+        .bottom-bar {
+            position: absolute;
+            left: 0;
+            top: 302px;   /* 151 * 2.0 */
+            width: 100%;
+            height: 54px; /* 27 * 2.0 */
+            background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+            border-top: 1px solid #c0c0c0;
+        }
+
+        /* ============================================
+           POSITIONS EXACTES DES BOUTONS (Prg_121.xml)
+           X * 0.65, Y * 2.0, W * 0.65
+           ============================================ */
+
+        /* Bouton 17 - Appro caisse: X=726, Y=26, W=200, H=18 (Visible Exp 12) */
+        #btnApproCaisse {
+            left: 472px;  /* 726 * 0.65 */
+            top: 52px;    /* 26 * 2.0 */
+            width: 130px; /* 200 * 0.65 */
+        }
+
+        /* Bouton 18 - Appro produits: X=726, Y=48, W=200, H=18 (Visible Exp 12) */
+        #btnApproProduits {
+            left: 472px;
+            top: 96px;    /* 48 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 19 - Remise en caisse: X=726, Y=70, W=200, H=18 (Visible Exp 12) */
+        #btnRemiseCaisse {
+            left: 472px;
+            top: 140px;   /* 70 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 30 - Regul. Telecollecte: X=7, Y=85, W=200, H=18 */
+        #btnRegulTelecollecte {
+            left: 5px;    /* 7 * 0.65 */
+            top: 170px;   /* 85 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 21 - Historiques: X=726, Y=92, W=200, H=18 (Visible Exp 13) */
+        #btnHistoriques {
+            left: 472px;
+            top: 184px;   /* 92 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 20 - Telecollecte TPE: X=7, Y=107, W=200, H=18 */
+        #btnTelecollecteTPE {
+            left: 5px;
+            top: 214px;   /* 107 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 22 - Visu sessions: X=7, Y=129, W=200, H=18 */
+        #btnVisuSessions {
+            left: 5px;
+            top: 258px;   /* 129 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 23 - Consultation: X=238, Y=129, W=200, H=18 (Visible Exp 11) */
+        #btnConsultation {
+            left: 155px;  /* 238 * 0.65 */
+            top: 258px;
+            width: 130px;
+        }
+
+        /* Bouton 26 - Quitter: X=7, Y=154, W=200, H=18 */
+        #btnQuitter {
+            left: 5px;
+            top: 308px;   /* 154 * 2.0 */
+            width: 130px;
+        }
+
+        /* Bouton 27 - Ouvrir la session: X=238, Y=154, W=200, H=18 (Visible Exp 10, Enabled Exp 6) */
+        #btnOuvrirSession {
+            left: 155px;
+            top: 308px;
+            width: 130px;
+        }
+
+        /* Bouton 28 - Continuer la session: X=469, Y=154, W=224, H=18 (Visible Exp 10, Enabled Exp 7) */
+        #btnContinuerSession {
+            left: 305px;  /* 469 * 0.65 */
+            top: 308px;
+            width: 146px; /* 224 * 0.65 */
+        }
+
+        /* Bouton 29 - Fermer la session: X=726, Y=154, W=200, H=18 (Visible Exp 10, Enabled Exp 7) */
+        #btnFermerSession {
+            left: 472px;
+            top: 308px;
+            width: 130px;
         }
 
         /* Status bar */
         .status-bar {
-            background: #d4d0c8;
-            border-top: 1px solid #808080;
-            padding: 2px 8px;
+            background: #f9f9f9;
+            border-top: 1px solid #e5e5e5;
+            padding: 4px 12px;
             font-size: 10px;
             display: flex;
             justify-content: space-between;
+            color: #666;
         }
 
-        .session-info { color: #006600; font-weight: bold; }
-
-        /* Spacer pour alignement vertical */
-        .spacer { flex: 1; }
+        .session-status { color: #0f7b0f; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -170,77 +341,71 @@
                 <span>CA0142 - Gestion de la caisse</span>
             </div>
             <div class="window-controls">
-                <button>_</button>
-                <button>□</button>
-                <button onclick="quitter()">×</button>
+                <button class="minimize" title="Reduire"></button>
+                <button class="maximize" title="Agrandir"></button>
+                <button class="close" onclick="quitter()" title="Fermer"></button>
             </div>
         </div>
 
         <div class="window-content">
-            <!-- Zone info - correspond a la capture CA0142 -->
-            <div class="info-zone">
-                <div class="info-left">
-                    <span class="info-user" id="infoUser">D S I O P (21)</span>
-                    <span class="info-coffre" id="infoCoffre">Le coffre 2 est ferme</span>
-                    <span class="info-date" id="infoDate"></span>
-                </div>
-                <div class="info-right">
-                    <span id="etatCaisse" class="etat-caisse etat-fermee">Fermee</span>
+            <!-- Bande du haut -->
+            <div class="top-bar"></div>
+
+            <!-- Logo -->
+            <div class="logo-orace">ORACE</div>
+
+            <!-- Info utilisateur -->
+            <span class="info-user" id="infoUser">ANT (21)</span>
+
+            <!-- Date -->
+            <span class="info-date" id="infoDate"></span>
+
+            <!-- Message coffre -->
+            <span class="info-coffre" id="infoCoffre">Le coffre 2 est ferme</span>
+
+            <!-- Image caisse -->
+            <div class="caisse-image">&#128179;</div>
+
+            <!-- Zone info session centrale -->
+            <div class="session-info-zone">
+                <span id="etatCaisse" class="etat-caisse etat-fermee">Fermee</span>
+                <div class="session-details" id="sessionDetails">
+                    <span id="sessionPar"></span>
+                    <span id="sessionLe"></span>
+                    <span id="sessionA"></span>
                 </div>
             </div>
 
-            <!-- Grille de boutons - positions exactes de Prg_121 -->
-            <div class="button-grid">
-                <!-- Colonne 1 (X=7) -->
-                <div class="button-column">
-                    <button class="magic-btn" id="btnRegulTelecollecte" onclick="regulTelecollecte()">Regul. Telecollecte</button>
-                    <button class="magic-btn" id="btnTelecollecteTPE" onclick="telecollecteTPE()">Telecollecte TPE</button>
-                    <button class="magic-btn" id="btnVisuSessions" onclick="visuSessions()">Visu sessions</button>
-                </div>
+            <!-- Boutons droite - CACHES si session fermee (Visible Exp 12) -->
+            <button class="magic-btn session-only" id="btnApproCaisse" onclick="approCaisse()">Appro caisse</button>
+            <button class="magic-btn session-only" id="btnApproProduits" onclick="approProduits()">Appro produits</button>
+            <button class="magic-btn session-only" id="btnRemiseCaisse" onclick="remiseCaisse()">Remise en caisse</button>
+            <button class="magic-btn session-only" id="btnHistoriques" onclick="historiques()">Historiques</button>
 
-                <!-- Colonne 2 (X=238) -->
-                <div class="button-column">
-                    <div class="spacer"></div>
-                    <button class="magic-btn" id="btnConsultation" onclick="consultation()">Consultation</button>
-                </div>
+            <!-- Boutons gauche - toujours visibles -->
+            <button class="magic-btn" id="btnRegulTelecollecte" onclick="regulTelecollecte()">Regul. Telecollecte</button>
+            <button class="magic-btn" id="btnTelecollecteTPE" onclick="telecollecteTPE()">Telecollecte TPE</button>
+            <button class="magic-btn" id="btnVisuSessions" onclick="visuSessions()">Visu sessions</button>
+            <button class="magic-btn" id="btnConsultation" onclick="consultation()">Consultation</button>
 
-                <!-- Colonne 3 (X=469-485) - centrale -->
-                <div class="button-column">
-                    <div class="spacer"></div>
-                    <button class="magic-btn" id="btnPointage" onclick="pointageAppRem()" style="display:none;">Pointage Appro/Remise</button>
-                    <button class="magic-btn" id="btnDernierTicket" onclick="imprimerDernierTicket()" style="display:none;">Impression du dernier ticket recapitulatif</button>
-                </div>
+            <!-- Bande du bas -->
+            <div class="bottom-bar"></div>
 
-                <!-- Colonne 4 (X=726) - droite -->
-                <div class="button-column">
-                    <button class="magic-btn session-only" id="btnApproCaisse" onclick="approCaisse()" disabled>Appro caisse</button>
-                    <button class="magic-btn session-only" id="btnApproProduits" onclick="approProduits()" disabled>Appro produits</button>
-                    <button class="magic-btn session-only" id="btnRemiseCaisse" onclick="remiseCaisse()" disabled>Remise en caisse</button>
-                    <button class="magic-btn" id="btnHistoriques" onclick="historiques()" style="display:none;">Historiques</button>
-                </div>
-
-                <!-- Colonne 5 vide pour alignement -->
-                <div class="button-column"></div>
-            </div>
-
-            <!-- Barre d'actions du bas - positions exactes -->
-            <div class="action-bar">
-                <button class="action-btn" onclick="quitter()">Quitter</button>
-                <button class="action-btn" id="btnOuvrirSession" onclick="ouvrirSession()">Ouvrir la session</button>
-                <button class="action-btn" id="btnContinuerSession" onclick="continuerSession()" disabled>Continuer la session</button>
-                <button class="action-btn" id="btnFermerSession" onclick="fermerSession()" disabled>Fermer la session</button>
-            </div>
+            <!-- Boutons du bas -->
+            <button class="magic-btn" id="btnQuitter" onclick="quitter()">Quitter</button>
+            <button class="magic-btn" id="btnOuvrirSession" onclick="ouvrirSession()">Ouvrir la session</button>
+            <button class="magic-btn" id="btnContinuerSession" onclick="continuerSession()" disabled>Continuer</button>
+            <button class="magic-btn" id="btnFermerSession" onclick="fermerSession()" disabled>Fermer la session</button>
         </div>
 
         <div class="status-bar">
-            <span id="statusSession" class="session-info">Session: Fermee</span>
-            <span id="statusUser">Utilisateur: -</span>
+            <span id="statusSession" class="session-status">Session: Fermee</span>
             <span id="statusTerminal">Terminal: -</span>
         </div>
     </div>
 
     <script>
-        // Contexte global - correspond aux parametres Prg_121
+        // Contexte global - Prg_121 parametres
         const CONTEXT = {
             societe: 'C',
             utilisateur: 'ANT',
@@ -259,23 +424,17 @@
             mettreAJourBoutons();
         });
 
-        // Afficher la date courante
         function afficherDate() {
             const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
             document.getElementById('infoDate').textContent = now.toLocaleDateString('fr-FR', options);
         }
 
-        // Afficher le contexte utilisateur
         function afficherContexte() {
-            // Format Magic: "D S I O P (21)" = code utilisateur (terminal)
-            document.getElementById('infoUser').textContent =
-                `${CONTEXT.utilisateur} (${CONTEXT.terminal})`;
-            document.getElementById('statusUser').textContent = `Utilisateur: ${CONTEXT.utilisateur}`;
+            document.getElementById('infoUser').textContent = `${CONTEXT.utilisateur} (${CONTEXT.terminal})`;
             document.getElementById('statusTerminal').textContent = `Terminal: ${CONTEXT.terminal}`;
         }
 
-        // Verifier l'etat du coffre 2 (sous-tache "Controle COFFRE2" de Prg_121)
         async function verifierCoffre2() {
             try {
                 const response = await fetch(`/api/coffre/etat?terminal=${CONTEXT.terminal}`);
@@ -284,14 +443,12 @@
                     CONTEXT.coffre2Ferme = data.coffre2Ferme !== false;
                 }
             } catch (e) {
-                console.log('Coffre API non disponible, mode demo');
+                console.log('Coffre API non disponible');
             }
-
             document.getElementById('infoCoffre').textContent =
                 CONTEXT.coffre2Ferme ? 'Le coffre 2 est ferme' : 'Le coffre 2 est ouvert';
         }
 
-        // Verifier session active
         async function verifierSession() {
             try {
                 const response = await fetch(`/api/sessions?utilisateur=${CONTEXT.utilisateur}&limit=10`);
@@ -300,22 +457,34 @@
                     const active = sessions.find(s => s.isActive || s.dateFinSession === '00000000');
                     if (active) {
                         CONTEXT.sessionActive = active;
-                        CONTEXT.etatCaisse = 'O'; // Ouverte
-                        document.getElementById('statusSession').textContent =
-                            `Session: Ouverte (${active.chrono})`;
+                        CONTEXT.etatCaisse = 'O';
+                        document.getElementById('statusSession').textContent = `Session: ${active.chrono}`;
+                        // Afficher details session
+                        document.getElementById('sessionPar').textContent = `par ${active.utilisateur || CONTEXT.utilisateur}`;
+                        document.getElementById('sessionLe').textContent = `le ${formatDate(active.dateDebutSession)}`;
+                        document.getElementById('sessionA').textContent = `a ${formatTime(active.heureDebutSession)}`;
                     } else {
-                        CONTEXT.etatCaisse = 'F'; // Fermee
+                        CONTEXT.etatCaisse = 'F';
                         document.getElementById('statusSession').textContent = 'Session: Fermee';
                     }
                 }
             } catch (e) {
-                document.getElementById('statusSession').textContent = 'Session: Erreur connexion';
+                document.getElementById('statusSession').textContent = 'Session: -';
             }
-
             mettreAJourEtat();
         }
 
-        // Mettre a jour l'affichage de l'etat
+        function formatDate(dateStr) {
+            if (!dateStr || dateStr === '00000000') return '-';
+            // Format YYYYMMDD -> DD/MM/YYYY
+            return `${dateStr.slice(6,8)}/${dateStr.slice(4,6)}/${dateStr.slice(0,4)}`;
+        }
+
+        function formatTime(timeStr) {
+            if (!timeStr) return '-';
+            return timeStr;
+        }
+
         function mettreAJourEtat() {
             const etatEl = document.getElementById('etatCaisse');
             etatEl.classList.remove('etat-fermee', 'etat-ouverte', 'etat-bloquee');
@@ -335,101 +504,69 @@
             }
         }
 
-        // Mettre a jour les boutons selon l'etat - logique exacte de Prg_121
+        // Exp 6: Ouvrir actif si Fermee
+        // Exp 7: Continuer/Fermer actifs si Ouverte
+        // Exp 10: Visible si != Bloque
+        // Exp 11: Consultation visible si != Ouverte
+        // Exp 12: Appro/Remise/Historiques visibles si Ouverte
         function mettreAJourBoutons() {
             const estFermee = CONTEXT.etatCaisse === 'F';
             const estOuverte = CONTEXT.etatCaisse === 'O';
             const estBloquee = CONTEXT.etatCaisse === 'B';
 
-            // Expression 6: {0,3}=MlsTrans('Fermee') - bouton Ouvrir actif si Fermee
+            // Exp 6: Bouton Ouvrir actif seulement si Fermee
             document.getElementById('btnOuvrirSession').disabled = !estFermee;
 
-            // Expression 7: {0,3}=MlsTrans('Ouverte') - boutons Continuer/Fermer actifs si Ouverte
+            // Exp 7: Boutons Continuer/Fermer actifs seulement si Ouverte
             document.getElementById('btnContinuerSession').disabled = !estOuverte;
             document.getElementById('btnFermerSession').disabled = !estOuverte;
 
-            // Expression 12: {1,2}='O' - boutons Appro visibles si Ouverte
-            document.querySelectorAll('.session-only').forEach(btn => {
-                btn.disabled = !estOuverte;
+            // Exp 10: Masquer si Bloque
+            if (estBloquee) {
+                document.getElementById('btnOuvrirSession').style.display = 'none';
+                document.getElementById('btnContinuerSession').style.display = 'none';
+                document.getElementById('btnFermerSession').style.display = 'none';
+            }
+
+            // Exp 11: Consultation visible si != Ouverte
+            document.getElementById('btnConsultation').style.display = estOuverte ? 'none' : 'block';
+
+            // Exp 12: Boutons session VISIBLES seulement si Ouverte
+            document.querySelectorAll('.session-only').forEach(el => {
+                el.style.display = estOuverte ? 'block' : 'none';
             });
 
-            // Historiques visible si param[7]=true (conditionnel)
-            // Pour la demo, on le cache
+            // Details session visibles seulement si Ouverte (Exp 8)
+            document.getElementById('sessionDetails').style.display = estOuverte ? 'block' : 'none';
         }
 
-        // Actions des boutons - correspondent aux RaiseEvent de Prg_121
-
-        function regulTelecollecte() {
-            // InternalEventID 34 - Regularisation TPE
-            alert('Regularisation Telecollecte - A implementer');
-        }
-
-        function telecollecteTPE() {
-            // InternalEventID 34 - Telecollecte TPE
-            alert('Telecollecte TPE - A implementer');
-        }
-
-        function visuSessions() {
-            // InternalEventID 228 - Visualisation sessions
-            window.location.href = 'sessions.html';
-        }
-
-        function consultation() {
-            // InternalEventID 227 - Consultation
-            window.location.href = 'sessions.html?mode=consultation';
-        }
-
-        function approCaisse() {
-            // InternalEventID 223 - Appro caisse
-            alert('Appro caisse - A implementer');
-        }
-
-        function approProduits() {
-            // InternalEventID 224 - Appro produits
-            alert('Appro produits - A implementer');
-        }
-
-        function remiseCaisse() {
-            // InternalEventID 225 - Remise en caisse
-            alert('Remise en caisse - A implementer');
-        }
-
-        function historiques() {
-            // InternalEventID 226 - Historiques
-            window.location.href = 'sessions.html?mode=historique';
-        }
-
-        function pointageAppRem() {
-            // InternalEventID 34 - Pointage
-            alert('Pointage Appro/Remise - A implementer');
-        }
-
-        function imprimerDernierTicket() {
-            // InternalEventID 221 - Impression dernier ticket
-            alert('Impression dernier ticket - A implementer');
-        }
+        // Actions des boutons
+        function regulTelecollecte() { alert('Regularisation Telecollecte - A implementer'); }
+        function telecollecteTPE() { alert('Telecollecte TPE - A implementer'); }
+        function visuSessions() { window.location.href = 'sessions.html'; }
+        function consultation() { window.location.href = 'sessions.html?mode=consultation'; }
+        function approCaisse() { alert('Appro caisse - A implementer'); }
+        function approProduits() { alert('Appro produits - A implementer'); }
+        function remiseCaisse() { alert('Remise en caisse - A implementer'); }
+        function historiques() { window.location.href = 'sessions.html?mode=historique'; }
 
         function ouvrirSession() {
-            // RaiseEvent vers PublicObject obj=2 (sous-tache ouverture)
             window.location.href = `ouverture-session.html?utilisateur=${CONTEXT.utilisateur}&terminal=${CONTEXT.terminal}`;
         }
 
         function continuerSession() {
-            // Expression 14: MlsTrans('Continuer la session')
             if (CONTEXT.sessionActive) {
                 window.location.href = `menu-caisse.html?chrono=${CONTEXT.sessionActive.chrono}`;
             }
         }
 
         function fermerSession() {
-            // InternalEventID 222 - Fermer la session
             if (CONTEXT.sessionActive) {
                 window.location.href = `fermeture-session.html?utilisateur=${CONTEXT.utilisateur}&chrono=${CONTEXT.sessionActive.chrono}&terminal=${CONTEXT.terminal}`;
             }
         }
 
         function quitter() {
-            // InternalEventID 219 - Quitter
             if (confirm('Voulez-vous vraiment quitter ?')) {
                 window.close();
             }
