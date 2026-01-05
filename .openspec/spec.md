@@ -335,6 +335,9 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-05: **Session 7: CallTask Advanced** - Wait disponible SEULEMENT pour Raise Event (pas Call SubTask/Program). Task ID = numero local (pas ISN_2). Skill enrichi avec tableau proprietes
+- 2026-01-05: **Session 6: Settings Repositories** - Font Repository unifie (#1-23 Application, #24-151 Internal, #152+ Studio). Color Repository valide. Nouvelle section settings_repositories dans skill
+- 2026-01-05: **Outil magic-ide-position cree** - Slash command pour convertir references XML en positions IDE. Format: PROJET IDE Nom: Description
 - 2026-01-05: **CALIBRATION DLU VALIDEE** - Facteurs de conversion DLU→Pixels calibrés et validés: X=0.65, Y=2.0 (CA0142: 939×178 DLU → 610×356 px). Skill mis à jour section 13 et 15
 - 2026-01-05: **Bug VIL ANALYSE COMPLETE** - Tache 22.16.1 Record Suffix conditionnel: lignes IDE 5 et 9, remplacer expression 31 par 32 (DK<>EU). Mapping XML id→IDE position documente
 - 2026-01-05: **Skill: Convention nommage variables** - Variables DataView A-Z, AA-ZZ, AAA-ZZZ. Formule: DK = 4*26+11 = 115

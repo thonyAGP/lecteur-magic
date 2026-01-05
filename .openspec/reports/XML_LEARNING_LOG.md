@@ -4,10 +4,125 @@
 
 ---
 
+## Session 7: CallTask Advanced
+
+**Date** : 2026-01-05
+**Statut** : ✅ Terminé
+
+### Cas 7.1: Call SubTask vs Call Program vs Raise Event
+
+**Statut** : ✅ Validé
+
+**Question** : Quelles propriétés sont disponibles pour chaque type d'opération Call ?
+
+**Programme testé** : ADH 121.6 Nom : Pilotage
+
+**Réponse validée (screenshots IDE) :**
+
+**Propriétés par type d'opération :**
+| Propriété | Call SubTask | Call Program | Raise Event |
+|-----------|--------------|--------------|-------------|
+| Condition | ✓ | ✓ | ✓ |
+| Task ID | ✓ | - | - |
+| Program ID | - | ✓ | - |
+| Event | - | - | ✓ |
+| Arguments | ✓ | ✓ | ✓ |
+| Result | - | ✓ | - |
+| Returned Con | - | ✓ | - |
+| **Wait** | **-** | **-** | **✓** |
+| Retain focus | ✓ | ✓ | - |
+| Lock | ✓ | ✓ | - |
+| Sync data | ✓ | ✓ | - |
+
+**Règle importante - Wait :**
+| Opération | Wait | Comportement |
+|-----------|------|--------------|
+| Call SubTask | Non disponible | Toujours synchrone |
+| Call Program | Non disponible | Toujours synchrone |
+| Raise Event | Oui/No | Peut être asynchrone |
+
+**Task ID vs ISN_2 :**
+- `Task ID` dans Call SubTask = numéro **local** dans le parent (1, 2, 3...)
+- Ce n'est PAS le ISN_2 global
+- Exemple : Task ID 1 dans 121.6 = "Existe histo" (première sous-tâche de Pilotage)
+
+**Mise à jour skill** : Section CallTask enrichie avec propriétés par type
+
+---
+
+## Session 6: Settings (Fonts/Colors)
+
+**Date** : 2026-01-05
+**Statut** : ✅ Terminé
+
+### Cas 6.1: Font Repository
+
+**Statut** : ✅ Validé
+
+**Question** : Comment les numéros de Font dans le XML correspondent-ils au Font Repository ?
+
+**Réponse validée (screenshots IDE) :**
+
+**Structure du Font Repository :**
+| Onglet | Plage # | Usage |
+|--------|---------|-------|
+| Application | 1-~23 | Fonts projet personnalisées |
+| Internal | 24-~151 | Fonts runtime (dialogs, boutons) |
+| Studio | 152+ | Fonts IDE (HTML, headers) |
+
+**Fonts validées depuis le XML :**
+| XML val | Tab | Name | Font | Style | Size |
+|---------|-----|------|------|-------|------|
+| 8 | Application | Unused | MS Sans Serif | | 8 |
+| 11 | Application | Unused | Arial | | 8 |
+| 33 | Internal | Fixed Size Font | Arial | | 10 |
+| 131 | Internal | User Defined Font | MS Sans Serif | B | 8 |
+| 132 | Internal | User Defined Font | MS Sans Serif | BI | 8 |
+| 167 | Studio | Small Font | Small Fonts | | 6 |
+
+**Style codes :**
+| Style | Signification |
+|-------|---------------|
+| (vide) | Regular |
+| B | Bold |
+| I | Italic |
+| BI | Bold Italic |
+
+**Règle validée** : `Font val="N"` → Entrée #N dans le repository unifié (tous onglets confondus)
+
+**Fichier source** : `C:\Migration\XPA\Env\PMS\fnt_std_XPA.fre`
+
+### Cas 6.2: Color Repository
+
+**Statut** : ✅ Validé
+
+**Question** : Comment les numéros de Color dans le XML correspondent-ils au Color Repository ?
+
+**Réponse validée (screenshot IDE) :**
+
+| # | Name | Usage |
+|---|------|-------|
+| 1 | Window's Default | Fond fenêtre |
+| 2 | Control's Default | Fond contrôles |
+| 3 | Default Free Text | Texte libre |
+| 4 | Default Help Window | Aide |
+| 5 | Default 3D Effect | Effet 3D |
+| 6 | Default Print Form Color | Impression |
+| 7 | Default Hyperlink | Liens |
+| 8+ | Réservé | Non utilisé |
+
+**Règle validée** : `Color val="N"` → Entrée #N dans Settings > Colors
+
+**Fichier source** : `C:\Migration\XPA\Env\PMS\clr_std_XPA.fre`
+
+**Mise à jour skill** : Section Settings enrichie avec Font/Color repository mapping
+
+---
+
 ## Session 5: Événements
 
 **Date** : 2026-01-05
-**Statut** : 🔄 En cours
+**Statut** : ✅ Terminé
 
 ### Cas 5.1: User Actions / Handlers / RaiseEvent
 
@@ -420,4 +535,6 @@ VarSet ('ET'VAR,VarCurr ('EN'VAR+Counter (0)))
 | IO/Export | 3 | 3 | 0 |
 | GUI | 2 | 2 | 0 |
 | Events | 1 | 1 | 0 |
-| **Total** | **13** | **13** | **0** |
+| Settings | 2 | 2 | 0 |
+| CallTask | 1 | 1 | 0 |
+| **Total** | **16** | **16** | **0** |

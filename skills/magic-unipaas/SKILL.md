@@ -327,10 +327,38 @@ Dans l'IDE Magic, les evenements utilisateur sont affiches comme :
 </LogicUnit>
 ```
 
+**Call SubTask vs Call Program vs Raise Event :**
+
+| Operation | Wait disponible | Comportement |
+|-----------|-----------------|--------------|
+| **Call SubTask** | ❌ Non | **Toujours synchrone** - attend la fin de la sous-tache |
+| **Call Program** | ❌ Non | **Toujours synchrone** - attend la fin du programme |
+| **Raise Event** | ✅ Oui/No | **Peut etre asynchrone** - Wait=Yes attend, Wait=No continue |
+
+**Proprietes par type d'operation :**
+
+| Propriete | Call SubTask | Call Program | Raise Event |
+|-----------|-------------|--------------|-------------|
+| Condition | ✅ | ✅ | ✅ |
+| Task ID | ✅ (local) | ❌ | ❌ |
+| Program ID | ❌ | ✅ | ❌ |
+| Event ID | ❌ | ❌ | ✅ |
+| Arguments | ✅ | ✅ | ✅ |
+| Result | ✅ | ❌ | ❌ |
+| Retain focus | ✅ | ✅ | ❌ |
+| Lock | ❌ | ✅ | ❌ |
+| Sync data | ✅ | ✅ | ❌ |
+| **Wait** | ❌ | ❌ | ✅ |
+
+**Important - Task ID dans Call SubTask :**
+- Le Task ID est un numero **LOCAL** dans la tache parente (1, 2, 3...)
+- Ce n'est **PAS** le ISN_2 global du fichier XML
+- Exemple : Call SubTask avec Task ID=2 → 2eme sous-tache directe
+
 **RaiseEvent (Declenchement d'evenement) :**
 - Un handler peut declencher un autre evenement via `Raise Event`
 - Permet le chainage d'evenements (ex: Raise Event User Action 4 → declenche fermeture)
-- Attribut `Wait` : Yes = attend la fin du handler, No = asynchrone
+- Attribut `Wait` : Yes = attend la fin du handler, No = asynchrone (execution continue)
 
 **Composants Partages**
 - REF.ecf : composant de reference contenant les tables partagees
@@ -1285,3 +1313,71 @@ Toujours presenter DEUX versions :
 - **NE PAS** utiliser les ID internes (Prg_558, ISN_2=56...)
 - **TOUJOURS** utiliser la notation arborescente Magic IDE
 </analysis_output_format>
+
+<settings_repositories>
+## Settings Repositories (Fonts/Colors) - Valide Session 6
+
+Les attributs `Font` et `Color` dans le XML referent les repositories Settings globaux.
+
+### Font Repository
+
+**Fichier source** : `C:\Migration\XPA\Env\PMS\fnt_std_XPA.fre`
+
+**Structure :**
+| Onglet | Plage # | Usage |
+|--------|---------|-------|
+| Application | 1-~23 | Fonts projet personnalisees |
+| Internal | 24-~151 | Fonts runtime (dialogs, boutons) |
+| Studio | 152+ | Fonts IDE (HTML, headers) |
+
+**Mapping XML → IDE :**
+```xml
+<Control>
+  <Font val="131"/>   <!-- → Settings > Fonts > #131 -->
+</Control>
+```
+
+**Exemples valides :**
+| XML val | Onglet | Name | Font | Style | Size |
+|---------|--------|------|------|-------|------|
+| 8 | Application | Unused | MS Sans Serif | | 8 |
+| 33 | Internal | Fixed Size Font | Arial | | 10 |
+| 131 | Internal | User Defined Font | MS Sans Serif | B | 8 |
+| 167 | Studio | Small Font | Small Fonts | | 6 |
+
+**Style codes :**
+| Style IDE | Signification |
+|-----------|---------------|
+| (vide) | Regular |
+| B | Bold |
+| I | Italic |
+| BI | Bold Italic |
+
+### Color Repository
+
+**Fichier source** : `C:\Migration\XPA\Env\PMS\clr_std_XPA.fre`
+
+**Mapping XML → IDE :**
+```xml
+<Control>
+  <Color val="1"/>   <!-- → Settings > Colors > #1 -->
+</Control>
+```
+
+**Couleurs standard :**
+| # | Name | Usage |
+|---|------|-------|
+| 1 | Window's Default | Fond fenetre |
+| 2 | Control's Default | Fond controles |
+| 3 | Default Free Text | Texte libre |
+| 4 | Default Help Window | Aide |
+| 5 | Default 3D Effect | Effet 3D |
+| 6 | Default Print Form Color | Impression |
+| 7 | Default Hyperlink | Liens |
+
+### Regles
+
+1. **Numerotation globale** : Les numeros sont uniques a travers tous les onglets (Application + Internal + Studio)
+2. **Pas de gaps** : La numerotation est continue
+3. **Reference directe** : `Font val="N"` ou `Color val="N"` → Entree #N dans le repository correspondant
+</settings_repositories>
