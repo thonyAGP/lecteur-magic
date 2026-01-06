@@ -70,6 +70,50 @@ XX.XX.X Nom : [nom de la tache] Ligne : XX
 - Etre clair pour L'UTILISATEUR, pas pour l'agent
 </mandatory_communication>
 
+<mcp_tools_obligatoire>
+## OUTILS MCP MAGIC INTERPRETER (OBLIGATOIRE)
+
+**TOUJOURS utiliser les outils MCP pour les tâches déterministes :**
+
+| Tâche | Outil MCP | Exemple |
+|-------|-----------|---------|
+| Position IDE programme/tâche | `magic_get_position` | `magic_get_position(project="ADH", programId=121, isn2=7)` |
+| Arborescence tâches | `magic_get_tree` | `magic_get_tree(project="ADH", programId=121)` |
+| DataView (Main/Links/Range) | `magic_get_dataview` | `magic_get_dataview(project="ADH", programId=121, isn2=1)` |
+| Contenu expression | `magic_get_expression` | `magic_get_expression(project="ADH", programId=121, expressionId=5)` |
+| Logique (opérations) | `magic_get_logic` | `magic_get_logic(project="ADH", programId=121, isn2=7)` |
+
+### POURQUOI OBLIGATOIRE ?
+
+```
+SANS MCP : Claude lit XML → interprète → ERREUR 30% des cas
+AVEC MCP : Claude appelle outil → résultat déterministe → 0% erreur
+```
+
+### QUAND UTILISER ?
+
+| Situation | Action |
+|-----------|--------|
+| "Quelle est la position IDE de..." | → `magic_get_position` |
+| "Montre l'arbre des tâches" | → `magic_get_tree` |
+| "Quelle table utilise..." | → `magic_get_dataview` |
+| "Que contient l'expression #X" | → `magic_get_expression` |
+| "Quelles opérations dans la tâche..." | → `magic_get_logic` |
+
+### PROJETS DISPONIBLES
+
+| Projet | Programmes | Statut |
+|--------|------------|--------|
+| PBP | 419 | ✅ Indexé |
+| REF | 900 | ✅ Indexé |
+| VIL | 222 | ✅ Indexé |
+| PBG | 394 | ✅ Indexé |
+| PVE | 448 | ✅ Indexé |
+| ADH | - | ⚠️ XML invalide (à corriger) |
+
+**RÈGLE D'OR : Ne JAMAIS calculer manuellement ce qu'un outil MCP peut fournir.**
+</mcp_tools_obligatoire>
+
 <critical_rule_xml_to_ide>
 ## RÈGLE CRITIQUE : Identification Programme IDE
 
