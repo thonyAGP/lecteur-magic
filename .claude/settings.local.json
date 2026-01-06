@@ -3,7 +3,37 @@
     "allow": [
       "Bash(dotnet test:*)",
       "Bash(taskkill:*)",
-      "Bash(cmd /c \"taskkill /IM Caisse.Api.exe /F\")"
+      "Bash(cmd /c \"taskkill /IM Caisse.Api.exe /F\")",
+      "Bash(findstr:*)",
+      "Bash(dir:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(grep:*)",
+      "Bash(paste:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(done)",
+      "Bash(dotnet build:*)",
+      "Bash(cmd /c \"del /F /Q \"\"D:\\\\Projects\\\\Lecteur Magic\\\\migration\\\\caisse\\\\src\\\\Caisse.Api\\\\bin\\\\Debug\\\\net8.0\\\\Caisse.Api.exe\"\"\")",
+      "Bash(dotnet run)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(tasklist:*)",
+      "Bash(cmd /c \"taskkill /F /IM dotnet.exe\")",
+      "Bash(dotnet run:*)",
+      "WebSearch",
+      "WebFetch(domain:kb.magicsoftware.com)",
+      "WebFetch(domain:magicsoftware.my.salesforce-sites.com)",
+      "WebFetch(domain:www.magicsoftware.com)",
+      "Bash(cat:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet restore:*)"
     ]
+  },
+  "mcpServers": {
+    "magic-interpreter": {
+      "command": "dotnet",
+      "args": ["run", "--project", "D:\\Projects\\Lecteur Magic\\tools\\MagicMcp\\MagicMcp.csproj"],
+      "env": {
+        "MAGIC_PROJECTS_PATH": "D:\\Data\\Migration\\XPA\\PMS"
+      }
+    }
   }
 }
