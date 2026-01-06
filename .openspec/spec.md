@@ -335,6 +335,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-06: **MCP Server Magic Interpreter** - Serveur MCP C# .NET 8 pour parsing XML deterministe. 5 outils: magic_get_position, magic_get_tree, magic_get_dataview, magic_get_expression, magic_get_logic. 2383 programmes indexes (PBP, REF, VIL, PBG, PVE). Config dans .claude/settings.local.json
 - 2026-01-05: **Session 7: CallTask Advanced** - Wait disponible SEULEMENT pour Raise Event (pas Call SubTask/Program). Task ID = numero local (pas ISN_2). Skill enrichi avec tableau proprietes
 - 2026-01-05: **Session 6: Settings Repositories** - Font Repository unifie (#1-23 Application, #24-151 Internal, #152+ Studio). Color Repository valide. Nouvelle section settings_repositories dans skill
 - 2026-01-05: **Outil magic-ide-position cree** - Slash command pour convertir references XML en positions IDE. Format: PROJET IDE Nom: Description
