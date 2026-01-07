@@ -3,436 +3,513 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factures - Gestion Facturation</title>
+    <title>Factures - Gestion Facturation - Prg_54</title>
     <style>
-        :root {
-            --primary-color: #0078d4;
-            --success-color: #107c10;
-            --warning-color: #ff8c00;
-            --danger-color: #d13438;
-            --bg-color: #f3f3f3;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-        }
-
+        /* Style Windows classique - fidèle à Magic Unipaas */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             padding: 20px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #5c6bc0, #3949ab);
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 1100px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
             color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: bold;
+            font-size: 11px;
         }
 
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 15px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
 
-        .container {
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Layout deux colonnes */
+        .layout-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
+        /* Fieldset style */
+        fieldset {
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #d4d0c8;
         }
 
-        .card.full-width {
-            grid-column: 1 / -1;
+        legend {
+            background: #0a246a;
+            color: white;
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 10px;
         }
 
-        .card h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #5c6bc0;
-        }
-
+        /* Formulaire */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
         .form-group label {
             display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #666;
+            font-weight: bold;
+            margin-bottom: 2px;
         }
 
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 14px;
+            padding: 2px 4px;
+            border: 1px inset #808080;
+            font-size: 11px;
+            background: white;
         }
 
         .form-group textarea {
             resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #5c6bc0;
-            box-shadow: 0 0 0 2px rgba(92,107,192,0.2);
+            min-height: 60px;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 8px;
         }
 
+        /* Boutons */
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
+            min-width: 90px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
             cursor: pointer;
-            transition: all 0.2s;
+            padding: 0 8px;
         }
-
-        .btn-primary {
-            background: #5c6bc0;
-            color: white;
-        }
-        .btn-primary:hover { background: #3949ab; }
+        .btn:active { border-style: inset; }
+        .btn:disabled { color: #808080; cursor: not-allowed; }
 
         .btn-success {
-            background: var(--success-color);
+            background: linear-gradient(to bottom, #90EE90 0%, #228B22 100%);
             color: white;
         }
-        .btn-success:hover { background: #0b5e0b; }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-secondary:hover { background: #5a6268; }
 
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background: #f8f8f8;
-            font-weight: 600;
-            color: #666;
-        }
-
-        td.number {
-            text-align: right;
-            font-family: 'Consolas', monospace;
-        }
-
-        tr:hover { background: #f5f5f5; }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
+        /* Info panel */
         .info-panel {
-            background: #e8eaf6;
-            border-left: 4px solid #5c6bc0;
-            padding: 15px;
-            margin-bottom: 15px;
+            background: #ffffcc;
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 13px;
+            margin-bottom: 4px;
+            font-size: 10px;
         }
 
         .info-row .label { color: #666; }
-        .info-row .value { font-weight: 600; }
+        .info-row .value { font-weight: bold; }
 
+        /* Badges */
         .badge {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
         }
 
-        .badge-pending { background: #fff3e0; color: var(--warning-color); }
-        .badge-paid { background: #c8e6c9; color: var(--success-color); }
-        .badge-cancelled { background: #ffcdd2; color: var(--danger-color); }
+        .badge-pending { background: #ffffcc; color: #cc6600; }
+        .badge-paid { background: #90EE90; color: #006600; }
+        .badge-cancelled { background: #ffcccc; color: #cc0000; }
 
+        /* Totaux box */
         .totals-box {
-            background: linear-gradient(135deg, #5c6bc0, #3949ab);
+            background: #000080;
             color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 15px;
+            padding: 12px;
+            border: 2px outset #0000aa;
         }
 
         .totals-box .row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
         }
 
         .totals-box .row:last-child {
             border-bottom: none;
-            font-size: 20px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .totals-box .label { opacity: 0.8; }
 
+        /* Ligne facture */
         .ligne-facture {
-            background: #f8f8f8;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            background: #f0f0f0;
+            padding: 8px;
+            border: 1px inset #808080;
+            margin-bottom: 4px;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr auto;
-            gap: 10px;
+            grid-template-columns: 2fr 1fr 80px 1fr auto;
+            gap: 8px;
             align-items: center;
         }
 
         .ligne-facture input, .ligne-facture select {
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            padding: 2px 4px;
+            border: 1px inset #808080;
+            font-size: 11px;
         }
 
         .ligne-facture .remove-btn {
-            background: var(--danger-color);
+            width: 22px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #ff6b6b 0%, #cc0000 100%);
             color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         #lignesContainer {
-            max-height: 300px;
+            max-height: 200px;
             overflow-y: auto;
+            border: 1px inset #808080;
+            padding: 4px;
+            background: #d4d0c8;
+        }
+
+        /* Grille de données */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-grid th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
+        }
+
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
+        }
+
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .data-grid tbody tr:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid td {
+            padding: 3px 8px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Section pleine largeur */
+        .full-width-section {
+            border: 1px inset #808080;
+            padding: 8px;
+            background: #d4d0c8;
+        }
+
+        .full-width-section h3 {
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: #0a246a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-bar .message { color: #006600; }
+        .status-bar .error { color: red; }
+
+        /* Navigation */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .nav-link:hover { color: #ff0000; }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Factures - Gestion Facturation (Prg_54, 89-97)</h1>
-        <div class="nav-links">
-            <a href="index.html">Caisse</a>
-            <a href="zooms.html">Zooms</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <h2>Factures Check-Out (Prg_54)</h2>
-            <div class="form-group">
-                <label>Societe</label>
-                <input type="text" id="societe" value="CSK" maxlength="10">
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Factures - Gestion Facturation - Prg_54, 89-97</span>
             </div>
-            <div class="form-group">
-                <label>Compte (Code GM)</label>
-                <input type="number" id="compte" placeholder="Code GM">
-            </div>
-            <div class="form-group">
-                <label>Filiation</label>
-                <input type="number" id="filiation" value="0">
-            </div>
-            <button class="btn btn-primary" onclick="getFacturesCheckOut()">Rechercher Factures</button>
-
-            <div id="clientInfo" class="info-panel" style="margin-top: 20px; display: none;">
-                <div class="info-row">
-                    <span class="label">Client:</span>
-                    <span class="value" id="clientNom">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Village:</span>
-                    <span class="value" id="clientVillage">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Nb Factures:</span>
-                    <span class="value" id="nbFactures">-</span>
-                </div>
-            </div>
-
-            <table id="tableFactures" style="margin-top: 15px;">
-                <thead>
-                    <tr>
-                        <th>Numero</th>
-                        <th>Date</th>
-                        <th>Montant HT</th>
-                        <th>TVA</th>
-                        <th>Total TTC</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody id="facturesBody">
-                    <tr><td colspan="6" class="empty-state">Recherchez un compte</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="card">
-            <h2>Creer Facture (Prg_97)</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Date Facture</label>
-                    <input type="date" id="dateFacture">
-                </div>
-                <div class="form-group">
-                    <label>Numero Facture</label>
-                    <input type="text" id="numeroFacture" placeholder="Auto-genere si vide">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Lignes de Facture</label>
-            </div>
-
-            <div id="lignesContainer">
-                <div class="ligne-facture" data-index="0">
-                    <input type="text" placeholder="Description" class="ligne-desc">
-                    <input type="number" step="0.01" placeholder="Montant HT" class="ligne-montant" onchange="calculerTotaux()">
-                    <select class="ligne-tva" onchange="calculerTotaux()">
-                        <option value="0">0%</option>
-                        <option value="5.5">5.5%</option>
-                        <option value="10">10%</option>
-                        <option value="20" selected>20%</option>
-                    </select>
-                    <input type="text" placeholder="Total TTC" class="ligne-ttc" readonly>
-                    <button class="remove-btn" onclick="removeLigne(this)">X</button>
-                </div>
-            </div>
-
-            <button class="btn btn-secondary" onclick="addLigne()" style="margin-top: 10px;">+ Ajouter Ligne</button>
-
-            <div class="form-group" style="margin-top: 15px;">
-                <label>Observations</label>
-                <textarea id="observations" placeholder="Observations facture..."></textarea>
-            </div>
-
-            <div class="totals-box">
-                <div class="row">
-                    <span class="label">Total HT</span>
-                    <span id="totalHT">0.00 EUR</span>
-                </div>
-                <div class="row">
-                    <span class="label">Total TVA</span>
-                    <span id="totalTVA">0.00 EUR</span>
-                </div>
-                <div class="row">
-                    <span class="label">Total TTC</span>
-                    <span id="totalTTC">0.00 EUR</span>
-                </div>
-            </div>
-
-            <div class="btn-group" style="margin-top: 15px;">
-                <button class="btn btn-success" onclick="creerFacture()">Creer Facture</button>
-                <button class="btn btn-secondary" onclick="previsualiser()">Previsualiser</button>
+            <div class="window-controls">
+                <button>_</button>
+                <button>□</button>
+                <button onclick="window.location='index.html'">×</button>
             </div>
         </div>
 
-        <div class="card full-width">
-            <h2>Saisie Facture TVA (Prg_97)</h2>
-            <div class="info-panel">
-                <p style="font-size: 13px; color: #666;">
-                    Ce module permet de saisir une facture avec calcul automatique de la TVA selon les taux en vigueur.
-                    Les factures sont liees au compte client et peuvent etre imprimees ou exportees.
-                </p>
+        <div class="window-content">
+            <div class="layout-container">
+                <!-- Panneau gauche - Recherche -->
+                <fieldset>
+                    <legend>Factures Check-Out (Prg_54)</legend>
+                    <div class="form-group">
+                        <label>Societe</label>
+                        <input type="text" id="societe" value="CSK" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Compte (Code GM)</label>
+                        <input type="number" id="compte" placeholder="Code GM">
+                    </div>
+                    <div class="form-group">
+                        <label>Filiation</label>
+                        <input type="number" id="filiation" value="0">
+                    </div>
+                    <button class="btn" onclick="getFacturesCheckOut()">Rechercher Factures</button>
+
+                    <div id="clientInfo" class="info-panel" style="margin-top: 8px; display: none;">
+                        <div class="info-row">
+                            <span class="label">Client:</span>
+                            <span class="value" id="clientNom">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Village:</span>
+                            <span class="value" id="clientVillage">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Nb Factures:</span>
+                            <span class="value" id="nbFactures">-</span>
+                        </div>
+                    </div>
+
+                    <div class="data-grid" style="margin-top: 8px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Numero</th>
+                                    <th>Date</th>
+                                    <th>HT</th>
+                                    <th>TVA</th>
+                                    <th>TTC</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="facturesBody">
+                                <tr><td colspan="6" class="empty-state">Recherchez un compte</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 12px;">
+                        <span class="nav-link" onclick="window.location='index.html'">&larr; Retour Menu</span>
+                    </div>
+                </fieldset>
+
+                <!-- Panneau droit - Creation -->
+                <fieldset>
+                    <legend>Creer Facture (Prg_97)</legend>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date Facture</label>
+                            <input type="date" id="dateFacture">
+                        </div>
+                        <div class="form-group">
+                            <label>Numero Facture</label>
+                            <input type="text" id="numeroFacture" placeholder="Auto-genere si vide">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lignes de Facture</label>
+                    </div>
+
+                    <div id="lignesContainer">
+                        <div class="ligne-facture" data-index="0">
+                            <input type="text" placeholder="Description" class="ligne-desc">
+                            <input type="number" step="0.01" placeholder="Montant HT" class="ligne-montant" onchange="calculerTotaux()">
+                            <select class="ligne-tva" onchange="calculerTotaux()">
+                                <option value="0">0%</option>
+                                <option value="5.5">5.5%</option>
+                                <option value="10">10%</option>
+                                <option value="20" selected>20%</option>
+                            </select>
+                            <input type="text" placeholder="TTC" class="ligne-ttc" readonly>
+                            <button class="remove-btn" onclick="removeLigne(this)">X</button>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="addLigne()" style="margin-top: 8px;">+ Ajouter Ligne</button>
+
+                    <div class="form-group" style="margin-top: 8px;">
+                        <label>Observations</label>
+                        <textarea id="observations" placeholder="Observations facture..."></textarea>
+                    </div>
+
+                    <div class="totals-box">
+                        <div class="row">
+                            <span class="label">Total HT</span>
+                            <span id="totalHT">0.00 EUR</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Total TVA</span>
+                            <span id="totalTVA">0.00 EUR</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Total TTC</span>
+                            <span id="totalTTC">0.00 EUR</span>
+                        </div>
+                    </div>
+
+                    <div class="btn-group" style="margin-top: 8px;">
+                        <button class="btn btn-success" onclick="creerFacture()">Creer Facture</button>
+                        <button class="btn" onclick="previsualiser()">Previsualiser</button>
+                    </div>
+                </fieldset>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                <div>
-                    <h3 style="font-size: 14px; margin-bottom: 10px;">Taux TVA Disponibles</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Taux</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tauxTvaBody">
-                            <tr><td>01</td><td>20%</td><td>Taux normal</td></tr>
-                            <tr><td>02</td><td>10%</td><td>Taux reduit</td></tr>
-                            <tr><td>03</td><td>5.5%</td><td>Taux super reduit</td></tr>
-                            <tr><td>04</td><td>0%</td><td>Exonere</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Section TVA -->
+            <div class="full-width-section">
+                <h3>Saisie Facture TVA (Prg_97)</h3>
+                <div class="stats-grid">
+                    <div>
+                        <strong>Taux TVA Disponibles</strong>
+                        <div class="data-grid" style="margin-top: 4px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Taux</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>01</td><td>20%</td><td>Taux normal</td></tr>
+                                    <tr><td>02</td><td>10%</td><td>Taux reduit</td></tr>
+                                    <tr><td>03</td><td>5.5%</td><td>Taux super reduit</td></tr>
+                                    <tr><td>04</td><td>0%</td><td>Exonere</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-                <div>
-                    <h3 style="font-size: 14px; margin-bottom: 10px;">Statistiques</h3>
-                    <div class="info-panel">
-                        <div class="info-row">
-                            <span class="label">Factures Jour:</span>
-                            <span class="value" id="facturesJour">-</span>
+                    <div>
+                        <strong>Statistiques</strong>
+                        <div class="info-panel" style="margin-top: 4px;">
+                            <div class="info-row">
+                                <span class="label">Factures Jour:</span>
+                                <span class="value" id="facturesJour">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">CA Jour:</span>
+                                <span class="value" id="caJour">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Factures Mois:</span>
+                                <span class="value" id="facturesMois">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">CA Mois:</span>
+                                <span class="value" id="caMois">-</span>
+                            </div>
                         </div>
-                        <div class="info-row">
-                            <span class="label">CA Jour:</span>
-                            <span class="value" id="caJour">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Factures Mois:</span>
-                            <span class="value" id="facturesMois">-</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">CA Mois:</span>
-                            <span class="value" id="caMois">-</span>
+                    </div>
+
+                    <div>
+                        <strong>Actions Rapides</strong>
+                        <div style="margin-top: 4px;">
+                            <button class="btn" style="width: 100%; margin-bottom: 4px;" onclick="loadStats()">Rafraichir Stats</button>
+                            <button class="btn" style="width: 100%; margin-bottom: 4px;" onclick="exportFactures()">Export Factures</button>
+                            <button class="btn" style="width: 100%;" onclick="journalTva()">Journal TVA</button>
                         </div>
                     </div>
                 </div>
-
-                <div>
-                    <h3 style="font-size: 14px; margin-bottom: 10px;">Actions Rapides</h3>
-                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="loadStats()">Rafraichir Stats</button>
-                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;" onclick="exportFactures()">Export Factures</button>
-                    <button class="btn btn-secondary" style="width: 100%;" onclick="journalTva()">Journal TVA</button>
-                </div>
             </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="statusMessage" class="message">Pret</span>
+            <span id="facturesCount">0 facture(s)</span>
         </div>
     </div>
 
@@ -454,6 +531,7 @@
             }
 
             try {
+                document.getElementById('statusMessage').textContent = 'Recherche...';
                 const response = await fetch(`${API_BASE}/factures/checkout/${societe}/${compte}/${filiation}`);
                 const data = await response.json();
 
@@ -465,14 +543,17 @@
                     document.getElementById('nbFactures').textContent = data.factures?.length || 0;
 
                     displayFactures(data.factures || []);
+                    document.getElementById('statusMessage').textContent = 'Factures chargees';
                 } else {
                     document.getElementById('clientInfo').style.display = 'none';
                     document.getElementById('facturesBody').innerHTML =
                         '<tr><td colspan="6" class="empty-state">Aucune facture trouvee</td></tr>';
+                    document.getElementById('statusMessage').textContent = 'Aucune facture';
                 }
             } catch (err) {
                 console.error(err);
-                alert('Erreur lors de la recherche');
+                document.getElementById('statusMessage').textContent = 'Erreur recherche';
+                document.getElementById('statusMessage').className = 'error';
             }
         }
 
@@ -490,8 +571,10 @@
                         <td><span class="badge ${getStatusClass(f.statut)}">${f.statut || '-'}</span></td>
                     </tr>
                 `).join('');
+                document.getElementById('facturesCount').textContent = `${factures.length} facture(s)`;
             } else {
                 tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune facture</td></tr>';
+                document.getElementById('facturesCount').textContent = '0 facture(s)';
             }
         }
 
@@ -517,7 +600,7 @@
                     <option value="10">10%</option>
                     <option value="20" selected>20%</option>
                 </select>
-                <input type="text" placeholder="Total TTC" class="ligne-ttc" readonly>
+                <input type="text" placeholder="TTC" class="ligne-ttc" readonly>
                 <button class="remove-btn" onclick="removeLigne(this)">X</button>
             `;
             container.appendChild(ligne);
@@ -582,6 +665,7 @@
             }
 
             try {
+                document.getElementById('statusMessage').textContent = 'Creation...';
                 const response = await fetch(`${API_BASE}/factures/creer`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -601,12 +685,15 @@
                     alert(`Facture ${data.numeroFacture} creee avec succes!`);
                     getFacturesCheckOut();
                     resetForm();
+                    document.getElementById('statusMessage').textContent = 'Facture creee';
                 } else {
                     alert(data.message || 'Erreur lors de la creation');
+                    document.getElementById('statusMessage').textContent = 'Erreur';
                 }
             } catch (err) {
                 console.error(err);
-                alert('Erreur lors de la creation');
+                document.getElementById('statusMessage').textContent = 'Erreur creation';
+                document.getElementById('statusMessage').className = 'error';
             }
         }
 
@@ -623,7 +710,7 @@
                         <option value="10">10%</option>
                         <option value="20" selected>20%</option>
                     </select>
-                    <input type="text" placeholder="Total TTC" class="ligne-ttc" readonly>
+                    <input type="text" placeholder="TTC" class="ligne-ttc" readonly>
                     <button class="remove-btn" onclick="removeLigne(this)">X</button>
                 </div>
             `;
@@ -637,7 +724,6 @@
         }
 
         async function loadStats() {
-            // Stats would be loaded from API
             document.getElementById('facturesJour').textContent = '12';
             document.getElementById('caJour').textContent = '3,450.00 EUR';
             document.getElementById('facturesMois').textContent = '287';

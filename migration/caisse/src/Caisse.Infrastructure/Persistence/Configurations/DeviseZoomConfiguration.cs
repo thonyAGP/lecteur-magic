@@ -15,7 +15,7 @@ public class DeviseZoomConfiguration : IEntityTypeConfiguration<DeviseZoom>
         builder.Property(e => e.CodeEnCours).HasColumnName("dev_code_en_cours").HasMaxLength(2);
         builder.Property(e => e.CodeDevise).HasColumnName("dev_code_devise").HasMaxLength(6);
         builder.Property(e => e.Numero).HasColumnName("dev_numero");
-        builder.Property(e => e.Taux).HasColumnName("dev_taux").HasPrecision(14, 3);
+        builder.Property(e => e.Taux).HasColumnName("dev_taux").HasColumnType("float");
         builder.Property(e => e.Libelle).HasColumnName("dev_libelle").HasMaxLength(40);
     }
 }

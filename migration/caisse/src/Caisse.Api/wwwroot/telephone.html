@@ -3,317 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telephone - Gestion Autocom</title>
+    <title>Telephone - Gestion Autocom - Prg_202</title>
     <style>
-        :root {
-            --primary-color: #0078d4;
-            --success-color: #107c10;
-            --warning-color: #ff8c00;
-            --danger-color: #d13438;
-            --bg-color: #f3f3f3;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-        }
-
+        /* Style Windows classique - fidèle à Magic Unipaas */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             padding: 20px;
         }
 
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #005a9e);
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 950px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
             color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: bold;
+            font-size: 11px;
         }
 
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 15px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
 
-        .container {
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Layout deux colonnes */
+        .layout-container {
             display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: 280px 1fr;
+            gap: 8px;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
+        /* Fieldset style */
+        fieldset {
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #d4d0c8;
         }
 
-        .card h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
+        legend {
+            background: #0a246a;
+            color: white;
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 10px;
         }
 
+        /* Formulaire */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
         .form-group label {
             display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #666;
+            font-weight: bold;
+            margin-bottom: 2px;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 14px;
+            padding: 2px 4px;
+            border: 1px inset #808080;
+            font-size: 11px;
+            background: white;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(0,120,212,0.2);
-        }
-
+        /* Boutons */
         .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
+            min-width: 80px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
             cursor: pointer;
-            transition: all 0.2s;
+            padding: 0 8px;
         }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-        .btn-primary:hover { background: #005a9e; }
+        .btn:active { border-style: inset; }
+        .btn:disabled { color: #808080; cursor: not-allowed; }
 
         .btn-success {
-            background: var(--success-color);
+            background: linear-gradient(to bottom, #90EE90 0%, #228B22 100%);
             color: white;
         }
-        .btn-success:hover { background: #0b5e0b; }
 
         .btn-danger {
-            background: var(--danger-color);
+            background: linear-gradient(to bottom, #ff6b6b 0%, #cc0000 100%);
             color: white;
         }
-        .btn-danger:hover { background: #a52a2a; }
 
         .btn-group {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-open { background: #dff6dd; color: var(--success-color); }
-        .status-closed { background: #fde7e9; color: var(--danger-color); }
-        .status-blocked { background: #fff4ce; color: var(--warning-color); }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background: #f8f8f8;
-            font-weight: 600;
-            color: #666;
-        }
-
-        tr:hover { background: #f5f5f5; }
-
+        /* Info panel */
         .info-panel {
-            background: #f8f9fa;
-            border-left: 4px solid var(--primary-color);
-            padding: 15px;
-            margin-bottom: 15px;
+            background: #ffffcc;
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-top: 8px;
         }
 
         .info-panel h3 {
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            color: #0a246a;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 13px;
+            margin-bottom: 4px;
+            font-size: 10px;
         }
 
         .info-row .label { color: #666; }
-        .info-row .value { font-weight: 600; }
+        .info-row .value { font-weight: bold; }
 
-        .loading {
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-open { background: #90EE90; color: #006600; }
+        .status-closed { background: #ffcccc; color: #cc0000; }
+        .status-blocked { background: #ffffcc; color: #cc6600; }
+
+        /* Grille de données */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-grid th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
+        }
+
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
+        }
+
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .data-grid tbody tr:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid td {
+            padding: 3px 8px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .data-grid td.center {
+            text-align: center;
+        }
+
+        /* Container scrollable */
+        .grid-container {
+            height: 350px;
+            overflow-y: auto;
+            border: 1px inset #808080;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-bar .message { color: #006600; }
+        .status-bar .error { color: red; }
+
+        /* Navigation */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .nav-link:hover { color: #ff0000; }
+
+        .empty-state {
             text-align: center;
             padding: 20px;
             color: #666;
         }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Telephone - Gestion Autocom (Prg_202-220)</h1>
-        <div class="nav-links">
-            <a href="index.html">Caisse</a>
-            <a href="zooms.html">Zooms</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <h2>Recherche Ligne</h2>
-            <div class="form-group">
-                <label>Societe</label>
-                <input type="text" id="societe" value="CSK" maxlength="10">
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Telephone - Gestion Autocom - Prg_202</span>
             </div>
-            <div class="form-group">
-                <label>Code GM</label>
-                <input type="number" id="codeGm" placeholder="Code GM">
-            </div>
-            <div class="form-group">
-                <label>Filiation</label>
-                <input type="number" id="filiation" value="0">
-            </div>
-            <div class="form-group">
-                <label>Code Autocom</label>
-                <input type="number" id="codeAutocom" placeholder="Code Autocom">
-            </div>
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="rechercherLigne()">Rechercher</button>
-                <button class="btn btn-primary" onclick="rechercherDetailAppels()">Detail Appels</button>
-            </div>
-
-            <div id="ligneInfo" class="info-panel" style="margin-top: 20px; display: none;">
-                <h3>Information Ligne</h3>
-                <div class="info-row">
-                    <span class="label">Numero Poste:</span>
-                    <span class="value" id="infoNumPoste">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Numero Ligne:</span>
-                    <span class="value" id="infoNumLigne">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Code Autocom:</span>
-                    <span class="value" id="infoCodeAutocom">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Etat:</span>
-                    <span id="infoEtat">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Chambre:</span>
-                    <span class="value" id="infoChambre">-</span>
-                </div>
-            </div>
-
-            <div class="btn-group" style="margin-top: 15px;">
-                <button class="btn btn-success" onclick="ouvrirLigne()">Ouvrir</button>
-                <button class="btn btn-danger" onclick="fermerLigne()">Fermer</button>
+            <div class="window-controls">
+                <button>_</button>
+                <button>□</button>
+                <button onclick="window.location='index.html'">×</button>
             </div>
         </div>
 
-        <div class="card">
-            <h2>Detail des Appels (Prg_211)</h2>
-            <div id="detailAppelsInfo" style="display: none;">
-                <div class="info-panel">
-                    <div class="info-row">
-                        <span class="label">Client:</span>
-                        <span class="value" id="clientNom">-</span>
+        <div class="window-content">
+            <div class="layout-container">
+                <!-- Panneau gauche - Recherche -->
+                <div>
+                    <fieldset>
+                        <legend>Recherche Ligne</legend>
+                        <div class="form-group">
+                            <label>Societe</label>
+                            <input type="text" id="societe" value="CSK" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Code GM</label>
+                            <input type="number" id="codeGm" placeholder="Code GM">
+                        </div>
+                        <div class="form-group">
+                            <label>Filiation</label>
+                            <input type="number" id="filiation" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Code Autocom</label>
+                            <input type="number" id="codeAutocom" placeholder="Code Autocom">
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn" onclick="rechercherLigne()">Rechercher</button>
+                            <button class="btn" onclick="rechercherDetailAppels()">Detail Appels</button>
+                        </div>
+                    </fieldset>
+
+                    <div id="ligneInfo" class="info-panel" style="display: none;">
+                        <h3>Information Ligne</h3>
+                        <div class="info-row">
+                            <span class="label">Numero Poste:</span>
+                            <span class="value" id="infoNumPoste">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Numero Ligne:</span>
+                            <span class="value" id="infoNumLigne">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Code Autocom:</span>
+                            <span class="value" id="infoCodeAutocom">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Etat:</span>
+                            <span id="infoEtat">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Chambre:</span>
+                            <span class="value" id="infoChambre">-</span>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="label">Village:</span>
-                        <span class="value" id="clientVillage">-</span>
+
+                    <div class="btn-group" style="margin-top: 8px;">
+                        <button class="btn btn-success" onclick="ouvrirLigne()">Ouvrir</button>
+                        <button class="btn btn-danger" onclick="fermerLigne()">Fermer</button>
                     </div>
-                    <div class="info-row">
-                        <span class="label">Nombre d'appels:</span>
-                        <span class="value" id="nbAppels">-</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">Montant Total:</span>
-                        <span class="value" id="totalMontant">-</span>
+
+                    <div style="margin-top: 12px;">
+                        <span class="nav-link" onclick="window.location='index.html'">&larr; Retour Menu</span>
                     </div>
                 </div>
-            </div>
 
-            <table id="tableAppels">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Heure</th>
-                        <th>Numero Appele</th>
-                        <th>Type</th>
-                        <th>Duree</th>
-                        <th>Montant</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody id="appelsBody">
-                    <tr><td colspan="7" class="empty-state">Entrez un code autocom et cliquez sur "Detail Appels"</td></tr>
-                </tbody>
-            </table>
+                <!-- Panneau droit - Detail Appels -->
+                <div>
+                    <fieldset>
+                        <legend>Detail des Appels - Prg_211</legend>
+
+                        <div id="detailAppelsInfo" style="display: none;">
+                            <div class="info-panel" style="margin-bottom: 8px;">
+                                <div class="info-row">
+                                    <span class="label">Client:</span>
+                                    <span class="value" id="clientNom">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Village:</span>
+                                    <span class="value" id="clientVillage">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Nombre d'appels:</span>
+                                    <span class="value" id="nbAppels">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="label">Montant Total:</span>
+                                    <span class="value" id="totalMontant">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-container">
+                            <div class="data-grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px">Date</th>
+                                            <th style="width:60px">Heure</th>
+                                            <th style="width:120px">Numero Appele</th>
+                                            <th style="width:60px">Type</th>
+                                            <th style="width:60px">Duree</th>
+                                            <th style="width:80px">Montant</th>
+                                            <th style="width:60px">Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appelsBody">
+                                        <tr><td colspan="7" class="empty-state">Entrez un code autocom et cliquez sur "Detail Appels"</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span id="statusMessage" class="message">Pret</span>
+            <span id="appelsCount">0 appel(s)</span>
         </div>
     </div>
 
     <script>
         const API_BASE = '/api';
+        const societe = localStorage.getItem('societe') || 'C';
 
         async function rechercherLigne() {
-            const societe = document.getElementById('societe').value;
+            const societeVal = document.getElementById('societe').value;
             const codeGm = document.getElementById('codeGm').value;
             const filiation = document.getElementById('filiation').value;
 
-            if (!societe || !codeGm) {
+            if (!societeVal || !codeGm) {
                 alert('Societe et Code GM requis');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/telephone/${societe}/${codeGm}/${filiation}`);
+                document.getElementById('statusMessage').textContent = 'Recherche...';
+                const response = await fetch(`${API_BASE}/telephone/${societeVal}/${codeGm}/${filiation}`);
                 const data = await response.json();
 
                 if (data.found) {
@@ -335,31 +418,34 @@
                         etatEl.textContent = etat || '-';
                     }
 
-                    // Set autocom for detail appels
                     if (data.codeAutocom) {
                         document.getElementById('codeAutocom').value = data.codeAutocom;
                     }
+                    document.getElementById('statusMessage').textContent = 'Ligne trouvee';
                 } else {
                     alert('Ligne non trouvee');
                     document.getElementById('ligneInfo').style.display = 'none';
+                    document.getElementById('statusMessage').textContent = 'Non trouve';
                 }
             } catch (err) {
                 console.error(err);
-                alert('Erreur lors de la recherche');
+                document.getElementById('statusMessage').textContent = 'Erreur recherche';
+                document.getElementById('statusMessage').className = 'error';
             }
         }
 
         async function rechercherDetailAppels() {
-            const societe = document.getElementById('societe').value;
+            const societeVal = document.getElementById('societe').value;
             const codeAutocom = document.getElementById('codeAutocom').value;
 
-            if (!societe || !codeAutocom) {
+            if (!societeVal || !codeAutocom) {
                 alert('Societe et Code Autocom requis');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/telephone/detail-appels/${societe}/${codeAutocom}`);
+                document.getElementById('statusMessage').textContent = 'Chargement appels...';
+                const response = await fetch(`${API_BASE}/telephone/detail-appels/${societeVal}/${codeAutocom}`);
                 const data = await response.json();
 
                 if (data.found) {
@@ -375,36 +461,41 @@
                     if (data.appels && data.appels.length > 0) {
                         tbody.innerHTML = data.appels.map(a => `
                             <tr>
-                                <td>${formatDate(a.dateAppel)}</td>
-                                <td>${a.heure || '-'}</td>
+                                <td class="center">${formatDate(a.dateAppel)}</td>
+                                <td class="center">${a.heure || '-'}</td>
                                 <td>${a.numeroAppele || '-'}</td>
-                                <td>${formatTypeAppel(a.typeAppel)}</td>
-                                <td>${formatDuree(a.dureeSecondes)}</td>
-                                <td>${a.montant.toFixed(2)}</td>
-                                <td>${formatStatut(a.statut)}</td>
+                                <td class="center">${formatTypeAppel(a.typeAppel)}</td>
+                                <td class="center">${formatDuree(a.dureeSecondes)}</td>
+                                <td class="number">${a.montant.toFixed(2)}</td>
+                                <td class="center">${formatStatut(a.statut)}</td>
                             </tr>
                         `).join('');
+                        document.getElementById('appelsCount').textContent = `${data.appels.length} appel(s)`;
                     } else {
                         tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Aucun appel trouve</td></tr>';
+                        document.getElementById('appelsCount').textContent = '0 appel(s)';
                     }
+                    document.getElementById('statusMessage').textContent = 'Appels charges';
                 } else {
                     alert('Aucun appel trouve pour ce code autocom');
                     document.getElementById('detailAppelsInfo').style.display = 'none';
                     document.getElementById('appelsBody').innerHTML =
                         '<tr><td colspan="7" class="empty-state">Aucun appel trouve</td></tr>';
+                    document.getElementById('statusMessage').textContent = 'Aucun appel';
                 }
             } catch (err) {
                 console.error(err);
-                alert('Erreur lors de la recherche des appels');
+                document.getElementById('statusMessage').textContent = 'Erreur chargement';
+                document.getElementById('statusMessage').className = 'error';
             }
         }
 
         async function ouvrirLigne() {
-            const societe = document.getElementById('societe').value;
+            const societeVal = document.getElementById('societe').value;
             const codeGm = document.getElementById('codeGm').value;
             const filiation = document.getElementById('filiation').value;
 
-            if (!societe || !codeGm) {
+            if (!societeVal || !codeGm) {
                 alert('Societe et Code GM requis');
                 return;
             }
@@ -414,7 +505,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        societe,
+                        societe: societeVal,
                         codeGm: parseInt(codeGm),
                         filiation: parseInt(filiation || 0),
                         action: 'OPEN',
@@ -436,11 +527,11 @@
         }
 
         async function fermerLigne() {
-            const societe = document.getElementById('societe').value;
+            const societeVal = document.getElementById('societe').value;
             const codeGm = document.getElementById('codeGm').value;
             const filiation = document.getElementById('filiation').value;
 
-            if (!societe || !codeGm) {
+            if (!societeVal || !codeGm) {
                 alert('Societe et Code GM requis');
                 return;
             }
@@ -452,7 +543,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        societe,
+                        societe: societeVal,
                         codeGm: parseInt(codeGm),
                         filiation: parseInt(filiation || 0),
                         action: 'CLOSE',
@@ -487,13 +578,13 @@
         }
 
         function formatTypeAppel(type) {
-            const types = { 'L': 'Local', 'N': 'National', 'I': 'International' };
+            const types = { 'L': 'Local', 'N': 'National', 'I': 'Internat.' };
             return types[type] || type || '-';
         }
 
         function formatStatut(statut) {
-            if (statut === 'F') return '<span class="status-badge status-closed">Facture</span>';
-            if (statut === 'N') return '<span class="status-badge status-open">Non facture</span>';
+            if (statut === 'F') return '<span class="status-badge status-closed">Fact.</span>';
+            if (statut === 'N') return '<span class="status-badge status-open">Non fact.</span>';
             return statut || '-';
         }
     </script>

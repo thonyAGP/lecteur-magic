@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fermeture Caisse - Prg_131</title>
+    <style>
+        /* Style Windows classique - fidele a Magic Unipaas */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 800px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #800000, #cc6666);
+            color: white;
+            padding: 3px 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #c44; border-radius: 2px; }
+
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Info bar */
+        .info-bar {
+            background: #ffcccc;
+            border: 1px solid #cc0000;
+            padding: 4px 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+        }
+
+        .info-bar .label { color: #666; }
+        .info-bar .value { font-weight: bold; color: #cc0000; }
+
+        /* Fieldsets */
+        fieldset {
+            border: 1px solid #808080;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        fieldset legend {
+            background: #0a246a;
+            color: white;
+            padding: 2px 8px;
+            font-weight: bold;
+        }
+
+        /* Summary section */
+        .summary-section {
+            background: #ffffcc;
+            border: 2px solid #cc9900;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .summary-section h3 {
+            color: #996600;
+            font-size: 11px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #cc9900;
+            padding-bottom: 4px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 8px;
+            background: white;
+            border: 1px solid #808080;
+        }
+
+        .summary-item .value {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .summary-item .label {
+            font-size: 9px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Data grid */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid th {
+            padding: 3px 6px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
+        }
+
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
+        }
+
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .data-grid td {
+            padding: 2px 6px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .data-grid input {
+            width: 100%;
+            padding: 1px 4px;
+            border: 1px inset #808080;
+            text-align: right;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .data-grid tfoot tr {
+            background: #c0c0c0;
+            font-weight: bold;
+        }
+
+        /* Ecart styling */
+        .ecart-positive { color: #006600; font-weight: bold; }
+        .ecart-negative { color: #cc0000; font-weight: bold; }
+        .ecart-zero { color: #666; }
+
+        /* Ecart warning */
+        .ecart-warning {
+            background: #ffcccc;
+            border: 2px solid #cc0000;
+            padding: 8px;
+            margin-bottom: 8px;
+            display: none;
+        }
+
+        .ecart-warning.visible { display: block; }
+
+        .ecart-warning h3 {
+            color: #cc0000;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .ecart-warning input {
+            width: 100%;
+            padding: 3px 6px;
+            border: 1px inset #808080;
+            margin-top: 8px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Buttons */
+        .button-bar {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            padding-top: 8px;
+            margin-top: 8px;
+            border-top: 1px solid #808080;
+        }
+
+        .action-btn {
+            min-width: 90px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+        .action-btn:active { border-style: inset; }
+        .action-btn:disabled { color: #808080; cursor: not-allowed; }
+
+        .action-btn.danger {
+            background: linear-gradient(to bottom, #ff6666 0%, #cc0000 100%);
+            color: white;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #000000;
+            color: #00ff00;
+            padding: 3px 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            margin-top: 8px;
+        }
+
+        .status-bar.error { color: #ff0000; }
+        .status-bar.warning { color: #ffff00; }
+
+        /* Navigation */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .nav-link:hover { color: #ff0000; }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Fermeture Caisse - Prg_131</span>
+            </div>
+            <div class="window-controls">
+                <button>_</button>
+                <button>[]</button>
+                <button onclick="window.location='index.html'">X</button>
+            </div>
+        </div>
+
+        <div class="window-content">
+            <span class="nav-link" onclick="window.location='index.html'">&larr; Retour Menu Caisse</span>
+
+            <div class="info-bar" style="margin-top: 8px;">
+                <div><span class="label">Session:</span> <span class="value" id="infoChrono">-</span></div>
+                <div><span class="label">Utilisateur:</span> <span class="value" id="infoUser">-</span></div>
+                <div><span class="label">Ouverte le:</span> <span class="value" id="infoDateOuv">-</span></div>
+                <div><span class="label">Duree:</span> <span class="value" id="infoDuree">-</span></div>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary-section">
+                <h3>Resume Session</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="value" id="summaryAttendu">0.00</div>
+                        <div class="label">Montant Attendu</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value" id="summaryCompte">0.00</div>
+                        <div class="label">Montant Compte</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value ecart-zero" id="summaryEcart">0.00</div>
+                        <div class="label">Ecart</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devise table -->
+            <fieldset>
+                <legend>Comptage par Devise</legend>
+                <div class="data-grid">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">Devise</th>
+                                <th>Libelle</th>
+                                <th style="width:100px;">Attendu</th>
+                                <th style="width:100px;">Compte</th>
+                                <th style="width:100px;">Ecart</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devisesBody">
+                            <tr><td colspan="5" class="empty-state">Chargement...</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">TOTAL</td>
+                                <td class="number" id="totalAttendu">0.00</td>
+                                <td class="number" id="totalCompte">0.00</td>
+                                <td class="number" id="totalEcart">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </fieldset>
+
+            <!-- Ecart warning -->
+            <div class="ecart-warning" id="ecartWarning">
+                <h3>Attention: Ecart detecte!</h3>
+                <p style="font-size:10px;">Un ecart a ete detecte entre les montants attendus et comptes.
+                   Vous devez fournir un commentaire pour justifier cet ecart.</p>
+                <input type="text" id="commentaireEcart" maxlength="30" placeholder="Commentaire ecart obligatoire (max 30 car.)">
+                <div class="checkbox-row">
+                    <input type="checkbox" id="forceClose">
+                    <label for="forceClose">Forcer la fermeture malgre l'ecart</label>
+                </div>
+            </div>
+
+            <div class="button-bar">
+                <button class="action-btn" onclick="printTicket()">Imprimer Ticket</button>
+                <button class="action-btn" onclick="window.location='index.html'">Annuler</button>
+                <button class="action-btn danger" id="btnFermer" onclick="validerFermeture()">Fermer Session</button>
+            </div>
+
+            <div class="status-bar" id="statusBar">Pret</div>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const CONTEXT = {
+            societe: params.get('societe') || 'C',
+            utilisateur: params.get('utilisateur') || 'DSIOP',
+            terminal: params.get('terminal') || '21',
+            chrono: params.get('chrono') || ''
+        };
+
+        let sessionData = null;
+        let devises = [];
+        let expectedAmounts = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!CONTEXT.chrono) {
+                setStatus('Erreur: Pas de session active', 'error');
+                return;
+            }
+            await loadSessionData();
+            await loadDevises();
+            await loadExpectedAmounts();
+        });
+
+        async function loadSessionData() {
+            setStatus('Chargement session...');
+            try {
+                const response = await fetch(`/api/sessions/${CONTEXT.chrono}?societe=${CONTEXT.societe}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        sessionData = result.data;
+                        updateSessionInfo();
+                    }
+                }
+            } catch (e) {
+                setStatus('Erreur chargement session', 'error');
+            }
+        }
+
+        function updateSessionInfo() {
+            document.getElementById('infoChrono').textContent = sessionData.chrono || '-';
+            document.getElementById('infoUser').textContent = sessionData.utilisateur || '-';
+
+            if (sessionData.dateDebutSession) {
+                const dateStr = sessionData.dateDebutSession;
+                if (dateStr.length === 8) {
+                    document.getElementById('infoDateOuv').textContent =
+                        `${dateStr.substring(6,8)}/${dateStr.substring(4,6)}/${dateStr.substring(0,4)}`;
+                }
+            }
+
+            if (sessionData.heureDebutSession) {
+                const startTime = sessionData.heureDebutSession.padStart(6, '0');
+                const now = new Date();
+                const currentTime = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                const startSeconds = parseInt(startTime.substring(0,2)) * 3600 +
+                                    parseInt(startTime.substring(2,4)) * 60 +
+                                    parseInt(startTime.substring(4,6));
+                const duration = currentTime - startSeconds;
+                const hours = Math.floor(duration / 3600);
+                const minutes = Math.floor((duration % 3600) / 60);
+                document.getElementById('infoDuree').textContent = `${hours}h ${minutes}min`;
+            }
+        }
+
+        async function loadDevises() {
+            try {
+                const response = await fetch(`/api/zooms/devises/${CONTEXT.societe}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        devises = result.data;
+                    } else if (Array.isArray(result)) {
+                        devises = result;
+                    } else {
+                        devises = [{ codeDevise: 'EUR', libelle: 'Euro' }];
+                    }
+                } else {
+                    devises = [{ codeDevise: 'EUR', libelle: 'Euro' }];
+                }
+            } catch (e) {
+                devises = [{ codeDevise: 'EUR', libelle: 'Euro' }];
+            }
+        }
+
+        async function loadExpectedAmounts() {
+            setStatus('Calcul montants attendus...');
+            try {
+                const response = await fetch(`/api/sessions/${CONTEXT.chrono}/details?societe=${CONTEXT.societe}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.data) {
+                        expectedAmounts = {};
+                        result.data.forEach(d => {
+                            expectedAmounts[d.codeDevise] = d.montantAttendu || 0;
+                        });
+                    }
+                }
+            } catch (e) {
+                // If no details, use zeros
+            }
+
+            renderDevisesTable();
+            setStatus('Pret pour fermeture');
+        }
+
+        function renderDevisesTable() {
+            const tbody = document.getElementById('devisesBody');
+            tbody.innerHTML = devises.map(d => {
+                const attendu = expectedAmounts[d.codeDevise] || 0;
+                return `
+                    <tr>
+                        <td>${d.codeDevise}</td>
+                        <td>${d.libelle || '-'}</td>
+                        <td class="number" data-devise="${d.codeDevise}" data-type="attendu">${attendu.toFixed(2)}</td>
+                        <td>
+                            <input type="number" step="0.01" value="0.00"
+                                   data-devise="${d.codeDevise}" data-type="compte"
+                                   onchange="calculateEcarts()">
+                        </td>
+                        <td class="number ecart-cell" data-devise="${d.codeDevise}">${(-attendu).toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            calculateEcarts();
+        }
+
+        function calculateEcarts() {
+            let totalAttendu = 0;
+            let totalCompte = 0;
+
+            devises.forEach(d => {
+                const attendu = expectedAmounts[d.codeDevise] || 0;
+                const compteInput = document.querySelector(`input[data-devise="${d.codeDevise}"][data-type="compte"]`);
+                const ecartCell = document.querySelector(`.ecart-cell[data-devise="${d.codeDevise}"]`);
+
+                const compte = parseFloat(compteInput?.value) || 0;
+                const ecart = compte - attendu;
+
+                if (ecartCell) {
+                    ecartCell.textContent = ecart.toFixed(2);
+                    ecartCell.className = 'number ecart-cell ' +
+                        (ecart > 0 ? 'ecart-positive' : ecart < 0 ? 'ecart-negative' : 'ecart-zero');
+                }
+
+                totalAttendu += attendu;
+                totalCompte += compte;
+            });
+
+            const totalEcart = totalCompte - totalAttendu;
+
+            document.getElementById('totalAttendu').textContent = totalAttendu.toFixed(2);
+            document.getElementById('totalCompte').textContent = totalCompte.toFixed(2);
+            document.getElementById('totalEcart').textContent = totalEcart.toFixed(2);
+            document.getElementById('totalEcart').className = 'number ' +
+                (totalEcart > 0 ? 'ecart-positive' : totalEcart < 0 ? 'ecart-negative' : 'ecart-zero');
+
+            // Update summary
+            document.getElementById('summaryAttendu').textContent = totalAttendu.toFixed(2);
+            document.getElementById('summaryCompte').textContent = totalCompte.toFixed(2);
+            document.getElementById('summaryEcart').textContent = totalEcart.toFixed(2);
+            document.getElementById('summaryEcart').className = 'value ' +
+                (totalEcart > 0 ? 'ecart-positive' : totalEcart < 0 ? 'ecart-negative' : 'ecart-zero');
+
+            // Show/hide ecart warning
+            const warningDiv = document.getElementById('ecartWarning');
+            if (Math.abs(totalEcart) > 0.01) {
+                warningDiv.classList.add('visible');
+            } else {
+                warningDiv.classList.remove('visible');
+            }
+        }
+
+        async function printTicket() {
+            setStatus('Impression ticket...');
+            try {
+                const response = await fetch(`/api/ventes/print-ticket/${CONTEXT.societe}/${CONTEXT.chrono}`);
+                const result = await response.json();
+                if (result.success) {
+                    setStatus('Ticket imprime');
+                } else {
+                    setStatus('Erreur impression', 'error');
+                }
+            } catch (e) {
+                setStatus('Erreur connexion', 'error');
+            }
+        }
+
+        async function validerFermeture() {
+            const totalEcart = parseFloat(document.getElementById('summaryEcart').textContent) || 0;
+            const hasEcart = Math.abs(totalEcart) > 0.01;
+            const forceClose = document.getElementById('forceClose').checked;
+            const commentaire = document.getElementById('commentaireEcart').value;
+
+            if (hasEcart && !forceClose) {
+                alert('Vous devez cocher "Forcer la fermeture" pour fermer avec un ecart.');
+                return;
+            }
+
+            if (hasEcart && !commentaire.trim()) {
+                alert('Un commentaire est obligatoire pour justifier l\'ecart.');
+                document.getElementById('commentaireEcart').focus();
+                return;
+            }
+
+            if (!confirm('Confirmer la fermeture de la session?')) return;
+
+            setStatus('Fermeture en cours...');
+
+            const detailsDevises = [];
+            devises.forEach(d => {
+                const compteInput = document.querySelector(`input[data-devise="${d.codeDevise}"][data-type="compte"]`);
+                const compte = parseFloat(compteInput?.value) || 0;
+                if (compte > 0 || (expectedAmounts[d.codeDevise] || 0) > 0) {
+                    detailsDevises.push({
+                        codeDevise: d.codeDevise,
+                        montantCompte: compte,
+                        montantAttendu: expectedAmounts[d.codeDevise] || 0
+                    });
+                }
+            });
+
+            try {
+                const response = await fetch('/api/sessions/fermer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        societe: CONTEXT.societe,
+                        chrono: CONTEXT.chrono,
+                        utilisateur: CONTEXT.utilisateur,
+                        forceClosureOnEcart: forceClose,
+                        commentaireEcart: commentaire,
+                        detailsDevises: detailsDevises
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    setStatus('Session fermee avec succes!');
+                    alert('Session fermee!');
+                    window.location.href = 'index.html';
+                } else {
+                    setStatus('Erreur: ' + (result.errorMessage || 'Echec fermeture'), 'error');
+                }
+            } catch (e) {
+                setStatus('Erreur connexion API', 'error');
+            }
+        }
+
+        function setStatus(msg, type = '') {
+            const bar = document.getElementById('statusBar');
+            bar.textContent = msg;
+            bar.className = 'status-bar ' + type;
+        }
+    </script>
+</body>
+</html>

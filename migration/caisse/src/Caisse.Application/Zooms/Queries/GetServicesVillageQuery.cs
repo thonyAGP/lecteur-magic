@@ -7,19 +7,13 @@ namespace Caisse.Application.Zooms.Queries;
 /// <summary>
 /// Query for Prg_265: Zoom Services Village
 /// Retrieves available services at the village/resort
-/// Table: caisse_ref_simp_service01 (services village)
+/// Table: caisse_ref_simp_service (services simplifiés)
 /// </summary>
-public record GetServicesVillageQuery(
-    string? Societe = null
-) : IRequest<List<ServiceVillageDto>>;
+public record GetServicesVillageQuery : IRequest<List<ServiceVillageDto>>;
 
 public record ServiceVillageDto(
     string CodeService,
-    string LibelleService,
-    string? CodeActivite,
-    string? LibelleActivite,
-    bool EstActif,
-    int? OrdreAffichage);
+    int SousImputation);
 
 public class GetServicesVillageQueryHandler : IRequestHandler<GetServicesVillageQuery, List<ServiceVillageDto>>
 {
@@ -34,25 +28,12 @@ public class GetServicesVillageQueryHandler : IRequestHandler<GetServicesVillage
         GetServicesVillageQuery request,
         CancellationToken cancellationToken)
     {
-        // Query services from caisse_ref_simp_service01 table
-        var query = _context.ServicesVillage.AsQueryable();
-
-        if (!string.IsNullOrEmpty(request.Societe))
-        {
-            query = query.Where(s => s.Societe == request.Societe);
-        }
-
-        var services = await query
-            .Where(s => s.EstActif)
-            .OrderBy(s => s.OrdreAffichage)
-            .ThenBy(s => s.LibelleService)
+        var services = await _context.ServicesVillage
+            .OrderBy(s => s.SousImputation)
+            .ThenBy(s => s.CodeService)
             .Select(s => new ServiceVillageDto(
                 s.CodeService,
-                s.LibelleService ?? "",
-                s.CodeActivite,
-                s.LibelleActivite,
-                s.EstActif,
-                s.OrdreAffichage))
+                s.SousImputation))
             .ToListAsync(cancellationToken);
 
         return services;

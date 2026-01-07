@@ -16,6 +16,6 @@ public class MoyenReglementConfiguration : IEntityTypeConfiguration<MoyenRegleme
         builder.Property(e => e.TypeOperation).HasColumnName("mor_type_operation").HasMaxLength(2);
         builder.Property(e => e.Mop).HasColumnName("mor_mop").HasMaxLength(8);
         builder.Property(e => e.Accepte).HasColumnName("mor_accepte").HasMaxLength(2);
-        builder.Property(e => e.TauxDeChange).HasColumnName("mor_taux_de_change").HasPrecision(15, 6);
+        builder.Property(e => e.TauxDeChange).HasColumnName("mor_taux_de_change");
     }
 }

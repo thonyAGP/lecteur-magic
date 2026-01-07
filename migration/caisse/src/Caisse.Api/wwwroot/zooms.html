@@ -3,293 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zooms - Migration Magic</title>
+    <title>Zooms Référentiels - CA0164</title>
     <style>
+        /* Style Windows classique - fidèle à Magic Unipaas */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: #e0e0e0;
-        }
-        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
-        header {
+        body {
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 950px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
+            color: white;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: bold;
+            font-size: 11px;
         }
-        h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(90deg, #00d9ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
+
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
         }
-        .back-link {
-            color: #888;
-            text-decoration: none;
+
+        .window-content { padding: 8px; }
+
+        /* Toolbar */
+        .toolbar {
+            background: #d4d0c8;
+            border: 1px inset #808080;
+            padding: 4px 8px;
+            margin-bottom: 8px;
             display: flex;
+            gap: 8px;
             align-items: center;
-            gap: 0.5rem;
+            flex-wrap: wrap;
         }
-        .back-link:hover { color: #00d9ff; }
+
+        .toolbar label {
+            font-weight: bold;
+        }
+
+        .toolbar input, .toolbar select {
+            border: 1px inset #808080;
+            padding: 2px 4px;
+            font-size: 11px;
+            background: white;
+        }
+
+        .toolbar-btn {
+            min-width: 70px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+        .toolbar-btn:active { border-style: inset; }
 
         /* Tabs */
-        .tabs {
+        .tab-bar {
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #808080;
+            margin-bottom: 8px;
             flex-wrap: wrap;
         }
-        .tab {
-            padding: 0.75rem 1.5rem;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
+
+        .tab-btn {
+            padding: 4px 10px;
+            border: 1px outset #d4d0c8;
+            border-bottom: none;
+            background: #c0c0c0;
+            font-size: 10px;
             cursor: pointer;
-            transition: all 0.3s;
-            color: #888;
-            font-size: 0.9rem;
+            margin-right: 2px;
+            margin-bottom: -1px;
         }
-        .tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .tab.active {
-            background: linear-gradient(90deg, #00d9ff, #00ff88);
-            color: #000;
+
+        .tab-btn.active {
+            background: #d4d0c8;
+            border-bottom: 1px solid #d4d0c8;
             font-weight: bold;
-            border-color: transparent;
         }
 
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        .form-group label {
-            color: #888;
-            font-size: 0.8rem;
-        }
-        .form-group input, .form-group select {
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            font-size: 0.95rem;
-            min-width: 150px;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #00d9ff;
-        }
-        button {
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            border: none;
-            background: linear-gradient(90deg, #00d9ff, #00ff88);
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:hover { transform: scale(1.02); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        /* Data Grid */
-        .grid-container {
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-        }
-        .grid-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .grid-title { color: #00ff88; font-weight: 600; }
-        .grid-count { color: #888; font-size: 0.9rem; }
-
-        .grid-search {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            width: 250px;
+        .tab-btn:hover:not(.active) {
+            background: #d0d0d0;
         }
 
-        table {
+        /* Data grid */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 11px;
         }
-        th {
-            text-align: left;
-            padding: 0.75rem 1rem;
-            background: rgba(0,0,0,0.2);
-            color: #00d9ff;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
             position: sticky;
             top: 0;
         }
-        td {
-            padding: 0.6rem 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9rem;
-        }
-        tr:hover { background: rgba(255,255,255,0.05); }
-        tr.selected { background: rgba(0,217,255,0.2); }
 
-        .table-wrapper {
-            max-height: 500px;
+        .data-grid th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
+            cursor: pointer;
+        }
+
+        .data-grid th:hover {
+            background: #1a347a;
+        }
+
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
+        }
+
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .data-grid tbody tr:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid tbody tr.selected {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid td {
+            padding: 3px 8px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .grid-container {
+            height: 400px;
             overflow-y: auto;
-        }
-        .table-wrapper::-webkit-scrollbar { width: 8px; }
-        .table-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        .table-wrapper::-webkit-scrollbar-thumb { background: #00d9ff; border-radius: 4px; }
-
-        /* Status */
-        .status {
-            padding: 1rem 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #888;
-            font-size: 0.85rem;
-        }
-        .status .selected-info { color: #00ff88; }
-
-        /* Loading */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-            color: #888;
-        }
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #00d9ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 1rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Empty state */
-        .empty {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
+            border: 1px inset #808080;
         }
 
-        /* Error */
-        .error {
-            background: rgba(255,68,68,0.2);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        /* Tag badges */
+        /* Badges */
         .badge {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid;
         }
-        .badge-yes { background: #00ff88; color: #000; }
-        .badge-no { background: #ff4444; color: #fff; }
+
+        .badge-oui {
+            background: #90ee90;
+            color: #006600;
+            border-color: #006600;
+        }
+
+        .badge-non {
+            background: #ffcccc;
+            color: #cc0000;
+            border-color: #cc0000;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-bar .message { color: #006600; }
+        .status-bar .error { color: red; }
+
+        /* Search */
+        .search-box {
+            border: 1px inset #808080;
+            padding: 2px 4px;
+            font-size: 11px;
+            background: white;
+            width: 200px;
+        }
+
+        /* Nav link */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .nav-link:hover { color: #ff0000; }
+
+        /* Button bar */
+        .button-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #808080;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🔍 Zooms - Référentiels</h1>
-            <a href="/" class="back-link">← Retour Dashboard</a>
-        </header>
-
-        <div class="tabs">
-            <div class="tab active" data-tab="devises">Devises</div>
-            <div class="tab" data-tab="moyens-reglement">Moyens Règlement</div>
-            <div class="tab" data-tab="garanties">Garanties</div>
-            <div class="tab" data-tab="depots-objets">Dépôts Objets</div>
-            <div class="tab" data-tab="depots-devises">Dépôts Devises</div>
-            <div class="tab" data-tab="pays">Pays</div>
-            <div class="tab" data-tab="types-taux-change">Types Taux Change</div>
-            <div class="tab" data-tab="tables">Tables Référence</div>
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Zooms Référentiels - Prg_164-189</span>
+            </div>
+            <div class="window-controls">
+                <button>_</button>
+                <button>□</button>
+                <button onclick="window.location='index.html'">×</button>
+            </div>
         </div>
 
-        <div class="controls">
-            <div class="form-group">
-                <label>Société</label>
-                <input type="text" id="societe" value="C" maxlength="2" style="width: 80px;">
+        <div class="window-content">
+            <!-- Onglets -->
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="devises">Devises</button>
+                <button class="tab-btn" data-tab="moyens-reglement">Moyens Règlement</button>
+                <button class="tab-btn" data-tab="garanties">Garanties</button>
+                <button class="tab-btn" data-tab="depots-objets">Dépôts Objets</button>
+                <button class="tab-btn" data-tab="depots-devises">Dépôts Devises</button>
+                <button class="tab-btn" data-tab="pays">Pays</button>
+                <button class="tab-btn" data-tab="types-taux-change">Types Taux</button>
+                <button class="tab-btn" data-tab="tables">Tables</button>
             </div>
-            <div class="form-group" id="tableNameGroup" style="display: none;">
-                <label>Nom Table</label>
-                <select id="nomTable">
-                    <option value="M_SER">Services (M_SER)</option>
-                    <option value="M_ART">Articles (M_ART)</option>
-                    <option value="M_OPE">Opérateurs (M_OPE)</option>
-                    <option value="M_CAI">Caisses (M_CAI)</option>
-                </select>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <label>Société:</label>
+                <input type="text" id="societe" value="C" maxlength="2" style="width:40px;">
+
+                <div id="tableNameGroup" style="display:none;">
+                    <label>Table:</label>
+                    <select id="nomTable">
+                        <option value="M_SER">Services (M_SER)</option>
+                        <option value="M_ART">Articles (M_ART)</option>
+                        <option value="M_OPE">Opérateurs (M_OPE)</option>
+                        <option value="M_CAI">Caisses (M_CAI)</option>
+                    </select>
+                </div>
+
+                <button class="toolbar-btn" onclick="charger()">Charger</button>
+
+                <div style="flex:1;"></div>
+
+                <label>Recherche:</label>
+                <input type="text" id="searchInput" class="search-box" placeholder="Filtrer..." oninput="filtrer()">
             </div>
-            <button onclick="loadData()">Charger</button>
+
+            <!-- Grille -->
+            <div class="grid-container">
+                <div class="data-grid">
+                    <table>
+                        <thead id="tableHead">
+                            <tr>
+                                <th>Société</th>
+                                <th>Code</th>
+                                <th>Libellé</th>
+                                <th>Taux</th>
+                                <th>Numéro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:40px;">
+                                    Sélectionnez un onglet et cliquez sur Charger
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="button-bar">
+                <span id="selectedInfo"></span>
+                <span class="nav-link" onclick="window.location='index.html'">← Retour Menu</span>
+            </div>
         </div>
 
-        <div id="error" class="error" style="display: none;"></div>
-
-        <div class="grid-container">
-            <div class="grid-header">
-                <span class="grid-title" id="gridTitle">Devises</span>
-                <input type="text" class="grid-search" id="searchInput" placeholder="Rechercher..." oninput="filterTable()">
-                <span class="grid-count" id="gridCount">0 éléments</span>
-            </div>
-
-            <div id="loading" class="loading" style="display: none;">
-                <div class="spinner"></div>
-                <span>Chargement...</span>
-            </div>
-
-            <div id="empty" class="empty" style="display: none;">
-                Aucune donnée. Cliquez sur "Charger" pour récupérer les données.
-            </div>
-
-            <div class="table-wrapper" id="tableWrapper" style="display: none;">
-                <table>
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-
-            <div class="status">
-                <span id="statusText">Prêt</span>
-                <span class="selected-info" id="selectedInfo"></span>
-            </div>
+        <div class="status-bar">
+            <span id="statusMessage" class="message">Prêt</span>
+            <span id="recordCount">0 élément(s)</span>
         </div>
     </div>
 
@@ -299,7 +333,10 @@
         let currentData = [];
         let selectedRow = null;
 
-        // Tab configuration
+        const societe = localStorage.getItem('societe') || 'C';
+        document.getElementById('societe').value = societe;
+
+        // Configuration des onglets
         const tabConfig = {
             'devises': {
                 title: 'Devises',
@@ -360,101 +397,90 @@
             }
         };
 
-        // Tab click handlers
-        document.querySelectorAll('.tab').forEach(tab => {
+        // Gestion des onglets
+        document.querySelectorAll('.tab-btn').forEach(tab => {
             tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 currentTab = tab.dataset.tab;
 
                 const config = tabConfig[currentTab];
-                document.getElementById('gridTitle').textContent = config.title;
-                document.getElementById('tableNameGroup').style.display = config.needsTableName ? 'flex' : 'none';
+                document.getElementById('tableNameGroup').style.display = config.needsTableName ? 'inline-block' : 'none';
 
-                // Clear data
+                // Mettre à jour les headers
+                updateHeaders();
+
+                // Vider les données
                 currentData = [];
                 renderTable();
-                document.getElementById('empty').style.display = 'block';
-                document.getElementById('tableWrapper').style.display = 'none';
             });
         });
 
-        async function loadData() {
-            const societe = document.getElementById('societe').value.trim();
+        function updateHeaders() {
+            const config = tabConfig[currentTab];
+            const thead = document.getElementById('tableHead');
+            thead.innerHTML = '<tr>' + config.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
+        }
+
+        async function charger() {
+            const soc = document.getElementById('societe').value.trim();
             const nomTable = document.getElementById('nomTable').value;
             const config = tabConfig[currentTab];
 
-            if (config.needsSociete && !societe) {
-                showError('Veuillez entrer une société');
+            if (config.needsSociete && !soc) {
+                alert('Entrez une société');
                 return;
             }
 
-            showLoading(true);
-            hideError();
-
             try {
+                document.getElementById('statusMessage').textContent = 'Chargement...';
+                document.getElementById('statusMessage').className = 'message';
+
                 const url = config.needsTableName
-                    ? config.endpoint(societe, nomTable)
-                    : config.endpoint(societe);
+                    ? config.endpoint(soc, nomTable)
+                    : config.endpoint(soc);
 
                 const response = await fetch(API_BASE + url);
 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
 
                 currentData = await response.json();
                 renderTable();
-                document.getElementById('statusText').textContent = `Chargé à ${new Date().toLocaleTimeString()}`;
+
+                document.getElementById('statusMessage').textContent = `Chargé à ${new Date().toLocaleTimeString()}`;
+                document.getElementById('recordCount').textContent = `${currentData.length} élément(s)`;
             } catch (error) {
-                showError(`Erreur: ${error.message}`);
+                document.getElementById('statusMessage').textContent = error.message;
+                document.getElementById('statusMessage').className = 'error';
                 currentData = [];
                 renderTable();
-            } finally {
-                showLoading(false);
             }
         }
 
         function renderTable() {
             const config = tabConfig[currentTab];
-            const thead = document.getElementById('tableHead');
             const tbody = document.getElementById('tableBody');
-            const wrapper = document.getElementById('tableWrapper');
-            const empty = document.getElementById('empty');
-            const count = document.getElementById('gridCount');
 
-            // Headers
-            thead.innerHTML = '<tr>' + config.headers.map(h => `<th>${h}</th>`).join('') + '</tr>';
-
-            // Body
             if (currentData.length === 0) {
-                tbody.innerHTML = '';
-                wrapper.style.display = 'none';
-                empty.style.display = 'block';
-                count.textContent = '0 éléments';
+                tbody.innerHTML = `<tr><td colspan="${config.columns.length}" style="text-align:center; padding:40px;">Aucune donnée</td></tr>`;
                 return;
             }
-
-            empty.style.display = 'none';
-            wrapper.style.display = 'block';
 
             tbody.innerHTML = currentData.map((row, idx) => {
                 const cells = config.columns.map(col => {
                     let val = row[col];
-                    if (val === true) return '<span class="badge badge-yes">Oui</span>';
-                    if (val === false) return '<span class="badge badge-no">Non</span>';
-                    if (val === 'O') return '<span class="badge badge-yes">O</span>';
-                    if (val === 'N') return '<span class="badge badge-no">N</span>';
-                    if (typeof val === 'number') return val.toLocaleString('fr-FR');
-                    return val ?? '';
+                    if (val === true || val === 'O') return '<span class="badge badge-oui">Oui</span>';
+                    if (val === false || val === 'N') return '<span class="badge badge-non">Non</span>';
+                    if (typeof val === 'number') return `<span style="font-family:'Courier New',monospace;">${val.toLocaleString('fr-FR')}</span>`;
+                    return val ?? '-';
                 }).join('</td><td>');
                 return `<tr data-idx="${idx}" onclick="selectRow(this)"><td>${cells}</td></tr>`;
             }).join('');
-
-            count.textContent = `${currentData.length} élément${currentData.length > 1 ? 's' : ''}`;
         }
 
-        function filterTable() {
+        function filtrer() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const rows = document.querySelectorAll('#tableBody tr');
             let visible = 0;
@@ -466,7 +492,7 @@
                 if (show) visible++;
             });
 
-            document.getElementById('gridCount').textContent = `${visible} / ${currentData.length} éléments`;
+            document.getElementById('recordCount').textContent = `${visible} / ${currentData.length} élément(s)`;
         }
 
         function selectRow(tr) {
@@ -475,31 +501,12 @@
             selectedRow = currentData[parseInt(tr.dataset.idx)];
 
             const config = tabConfig[currentTab];
-            const key = config.columns[1]; // Usually the code column
-            document.getElementById('selectedInfo').textContent =
-                `Sélectionné: ${selectedRow[key] || selectedRow[config.columns[0]]}`;
+            const key = config.columns[1];
+            document.getElementById('selectedInfo').textContent = `Sélectionné: ${selectedRow[key] || selectedRow[config.columns[0]]}`;
         }
 
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-            if (show) {
-                document.getElementById('tableWrapper').style.display = 'none';
-                document.getElementById('empty').style.display = 'none';
-            }
-        }
-
-        function showError(msg) {
-            const el = document.getElementById('error');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
-
-        function hideError() {
-            document.getElementById('error').style.display = 'none';
-        }
-
-        // Initial state
-        document.getElementById('empty').style.display = 'block';
+        // Initialisation
+        updateHeaders();
     </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ public class DeviseReferenceConfiguration : IEntityTypeConfiguration<DeviseRefer
 
         builder.Property(e => e.CodeDevise).HasColumnName("code_devise").HasMaxLength(4);
         builder.Property(e => e.Libelle).HasColumnName("libelle").HasMaxLength(50);
-        builder.Property(e => e.NombreDeDecimales).HasColumnName("nombre_decimales");
+        builder.Property(e => e.NombreDeDecimales).HasColumnName("nombre_de_decimales");
         builder.Property(e => e.Taux).HasColumnName("taux");
     }
 }

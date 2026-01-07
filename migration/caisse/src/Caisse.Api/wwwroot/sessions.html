@@ -3,842 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sessions Caisse - Migration Magic</title>
+    <title>Affichage Sessions - CA0142</title>
     <style>
+        /* Style Windows classique - fidèle à Magic Unipaas */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
             min-height: 100vh;
-            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
 
-        header {
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 900px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
+            color: white;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(90deg, #00d9ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .back-link {
-            color: #888;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .back-link:hover { color: #00d9ff; }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .tab {
-            padding: 0.75rem 1.5rem;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: #888;
-            font-size: 0.9rem;
-        }
-        .tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .tab.active {
-            background: linear-gradient(90deg, #00d9ff, #00ff88);
-            color: #000;
             font-weight: bold;
-            border-color: transparent;
+            font-size: 11px;
         }
 
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        .form-group label {
-            color: #888;
-            font-size: 0.8rem;
-        }
-        .form-group input, .form-group select {
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            font-size: 0.95rem;
-            min-width: 150px;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #00d9ff;
-        }
-        button {
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            border: none;
-            background: linear-gradient(90deg, #00d9ff, #00ff88);
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:hover { transform: scale(1.02); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        button.secondary {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        button.secondary:hover { background: rgba(255,255,255,0.2); }
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
 
-        /* Data Grid */
-        .grid-container {
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
         }
-        .grid-header {
+
+        .window-content { padding: 8px; }
+
+        /* Toolbar */
+        .toolbar {
+            background: #d4d0c8;
+            border: 1px inset #808080;
+            padding: 4px;
+            margin-bottom: 8px;
             display: flex;
-            justify-content: space-between;
+            gap: 8px;
             align-items: center;
-            padding: 1rem 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .grid-title { color: #00ff88; font-weight: 600; }
-        .grid-count { color: #888; font-size: 0.9rem; }
-
-        .grid-search {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            width: 250px;
         }
 
-        table {
+        .toolbar-btn {
+            min-width: 80px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 8px;
+        }
+        .toolbar-btn:active { border-style: inset; }
+        .toolbar-btn:disabled { color: #808080; cursor: not-allowed; }
+
+        .toolbar-sep {
+            width: 1px;
+            height: 20px;
+            background: #808080;
+            margin: 0 4px;
+        }
+
+        .toolbar label { font-weight: bold; margin-left: 16px; }
+        .toolbar input, .toolbar select {
+            border: 1px inset #808080;
+            padding: 2px 4px;
+            font-size: 11px;
+            background: white;
+        }
+
+        /* Tableau des sessions */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 11px;
         }
-        th {
-            text-align: left;
-            padding: 0.75rem 1rem;
-            background: rgba(0,0,0,0.2);
-            color: #00d9ff;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
             position: sticky;
             top: 0;
         }
-        td {
-            padding: 0.6rem 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9rem;
-        }
-        tr:hover { background: rgba(255,255,255,0.05); }
-        tr.selected { background: rgba(0,217,255,0.2); }
-        tr { cursor: pointer; }
 
-        .table-wrapper {
-            max-height: 400px;
-            overflow-y: auto;
+        .data-grid th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
         }
-        .table-wrapper::-webkit-scrollbar { width: 8px; }
-        .table-wrapper::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        .table-wrapper::-webkit-scrollbar-thumb { background: #00d9ff; border-radius: 4px; }
 
-        /* Status badges */
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
         }
-        .badge-open { background: #00ff88; color: #000; }
-        .badge-closed { background: #888; color: #fff; }
-        .badge-ecart { background: #ff4444; color: #fff; }
-        .badge-ok { background: #00ff88; color: #000; }
 
-        /* Session Details Panel */
-        .details-panel {
-            margin-top: 1.5rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
         }
-        .details-header {
-            padding: 1rem 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .details-header h3 {
-            color: #00ff88;
-            font-size: 1.1rem;
-        }
-        .details-content {
-            padding: 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-        .detail-card {
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 1rem;
-        }
-        .detail-card h4 {
-            color: #00d9ff;
-            font-size: 0.85rem;
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-        }
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.4rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .detail-row:last-child { border-bottom: none; }
-        .detail-label { color: #888; }
-        .detail-value { color: #fff; font-weight: 500; }
-        .detail-value.positive { color: #00ff88; }
-        .detail-value.negative { color: #ff4444; }
 
-        /* Historique tab */
-        .histo-card {
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+        .data-grid tbody tr:hover {
+            background: #0a246a;
+            color: white;
         }
-        .histo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .histo-date { color: #00d9ff; font-weight: 600; }
-        .histo-chrono { color: #888; font-size: 0.85rem; }
 
-        /* Loading */
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem;
-            color: #888;
+        .data-grid tbody tr.selected {
+            background: #0a246a;
+            color: white;
         }
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #00d9ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 1rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Empty state */
-        .empty {
+        .data-grid td {
+            padding: 3px 8px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .data-grid td.center {
             text-align: center;
-            padding: 3rem;
-            color: #666;
         }
 
-        /* Error */
-        .error {
-            background: rgba(255,68,68,0.2);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
+        /* États */
+        .etat-O { color: #006600; font-weight: bold; }
+        .etat-F { color: #000066; }
+        .etat-A { color: #cc0000; }
+
+        /* Container scrollable */
+        .grid-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px inset #808080;
         }
+
+        /* Boutons du bas */
+        .button-bar {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 8px;
+            margin-top: 8px;
+            border-top: 1px solid #808080;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            min-width: 100px;
+            height: 24px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0 12px;
+        }
+        .action-btn:active { border-style: inset; }
+        .action-btn:disabled { color: #808080; cursor: not-allowed; }
 
         /* Status bar */
-        .status {
-            padding: 1rem 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.1);
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            color: #888;
-            font-size: 0.85rem;
         }
-        .status .selected-info { color: #00ff88; }
+
+        .status-bar .message { color: #006600; }
+        .status-bar .error { color: red; }
+
+        /* Navigation */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .nav-link:hover { color: #ff0000; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📊 Sessions Caisse</h1>
-            <a href="/" class="back-link">← Retour Dashboard</a>
-        </header>
-
-        <div class="tabs">
-            <div class="tab active" data-tab="liste">Liste Sessions (Prg_77)</div>
-            <div class="tab" data-tab="historique">Historique (Prg_236)</div>
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Affichage Sessions - Prg_119</span>
+            </div>
+            <div class="window-controls">
+                <button>_</button>
+                <button>□</button>
+                <button onclick="window.location='index.html'">×</button>
+            </div>
         </div>
 
-        <div class="controls">
-            <div class="form-group">
-                <label>Société</label>
-                <input type="text" id="societe" value="C" maxlength="10" style="width: 100px;">
+        <div class="window-content">
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <button class="toolbar-btn" onclick="chargerSessions()">Actualiser</button>
+                <button class="toolbar-btn" onclick="ouvrirSession()" id="btnOuvrir" disabled>Ouvrir</button>
+                <button class="toolbar-btn" onclick="fermerSession()" id="btnFermer" disabled>Fermer</button>
+                <div class="toolbar-sep"></div>
+                <label>Filtre:</label>
+                <select id="filtreEtat" onchange="chargerSessions()">
+                    <option value="">Toutes</option>
+                    <option value="O">Ouvertes</option>
+                    <option value="F">Fermées</option>
+                </select>
+                <label>Date:</label>
+                <input type="date" id="filtreDate" onchange="chargerSessions()">
             </div>
-            <div class="form-group" id="dateDebutGroup">
-                <label>Date Début</label>
-                <input type="date" id="dateDebut">
-            </div>
-            <div class="form-group" id="dateFinGroup">
-                <label>Date Fin</label>
-                <input type="date" id="dateFin">
-            </div>
-            <div class="form-group" id="caisseGroup">
-                <label>Caisse</label>
-                <input type="text" id="caisse" placeholder="Toutes" style="width: 100px;">
-            </div>
-            <button onclick="loadData()">Charger</button>
-            <button class="secondary" onclick="resetFilters()">Réinitialiser</button>
-        </div>
 
-        <div id="error" class="error" style="display: none;"></div>
-
-        <!-- Liste Tab -->
-        <div id="tabListe">
+            <!-- Grille de données -->
             <div class="grid-container">
-                <div class="grid-header">
-                    <span class="grid-title" id="gridTitle">Sessions</span>
-                    <input type="text" class="grid-search" id="searchInput" placeholder="Rechercher..." oninput="filterTable()">
-                    <span class="grid-count" id="gridCount">0 sessions</span>
-                </div>
-
-                <div id="loading" class="loading" style="display: none;">
-                    <div class="spinner"></div>
-                    <span>Chargement...</span>
-                </div>
-
-                <div id="empty" class="empty">
-                    Cliquez sur "Charger" pour afficher les sessions.
-                </div>
-
-                <div class="table-wrapper" id="tableWrapper" style="display: none;">
+                <div class="data-grid">
                     <table>
                         <thead>
                             <tr>
-                                <th>Chrono</th>
-                                <th>Date Ouverture</th>
-                                <th>Caisse</th>
-                                <th>Opérateur</th>
-                                <th>Statut</th>
-                                <th>Date Fermeture</th>
-                                <th>Écart</th>
+                                <th style="width:60px">N° Sess.</th>
+                                <th style="width:100px">Utilisateur</th>
+                                <th style="width:60px">Terminal</th>
+                                <th style="width:80px">Date Ouv.</th>
+                                <th style="width:60px">Heure</th>
+                                <th style="width:80px">Date Ferm.</th>
+                                <th style="width:60px">Heure</th>
+                                <th style="width:50px">État</th>
+                                <th style="width:100px">Total Init.</th>
+                                <th style="width:100px">Total Final</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody"></tbody>
+                        <tbody id="sessionsBody">
+                            <tr>
+                                <td colspan="10" style="text-align:center; padding:20px;">
+                                    Chargement...
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
-                </div>
-
-                <div class="status">
-                    <span id="statusText">Prêt</span>
-                    <span class="selected-info" id="selectedInfo"></span>
                 </div>
             </div>
 
-            <!-- Details Panel (Prg_80) -->
-            <div class="details-panel" id="detailsPanel" style="display: none;">
-                <div class="details-header">
-                    <h3>Consultation Session (Prg_80)</h3>
-                    <button class="secondary" onclick="closeDetails()">Fermer</button>
+            <!-- Boutons d'action -->
+            <div class="button-bar">
+                <div class="button-group">
+                    <button class="action-btn" onclick="consulterSession()" id="btnConsulter" disabled>Consulter</button>
+                    <button class="action-btn" onclick="historiqueSession()" id="btnHistorique" disabled>Historique</button>
+                    <button class="action-btn" onclick="imprimerSession()" id="btnImprimer" disabled>Imprimer</button>
                 </div>
-                <div class="details-content" id="detailsContent">
-                    <!-- Filled dynamically -->
+                <div class="button-group">
+                    <span class="nav-link" onclick="window.location='index.html'">← Retour Menu</span>
                 </div>
             </div>
         </div>
 
-        <!-- Historique Tab -->
-        <div id="tabHistorique" style="display: none;">
-            <div class="grid-container">
-                <div class="grid-header">
-                    <span class="grid-title">Historique Sessions</span>
-                    <span class="grid-count" id="histoCount">0 sessions</span>
-                </div>
-
-                <div id="histoLoading" class="loading" style="display: none;">
-                    <div class="spinner"></div>
-                    <span>Chargement historique...</span>
-                </div>
-
-                <div id="histoEmpty" class="empty">
-                    Cliquez sur "Charger" pour afficher l'historique.
-                </div>
-
-                <div id="histoContent" style="padding: 1rem; display: none;"></div>
-            </div>
+        <div class="status-bar">
+            <span id="statusMessage" class="message">Prêt</span>
+            <span id="sessionCount">0 session(s)</span>
         </div>
     </div>
 
     <script>
         const API_BASE = '';
-        let currentTab = 'liste';
-        let sessionsData = [];
+        let sessions = [];
         let selectedSession = null;
+        const societe = localStorage.getItem('societe') || 'C';
+        const utilisateur = localStorage.getItem('utilisateur') || 'ADMIN';
 
-        // Initialize dates
+        // Charger les sessions au démarrage
         document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date();
-            const monthAgo = new Date(today);
-            monthAgo.setMonth(monthAgo.getMonth() - 1);
-
-            document.getElementById('dateFin').valueAsDate = today;
-            document.getElementById('dateDebut').valueAsDate = monthAgo;
+            chargerSessions();
         });
 
-        // Tab click handlers
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                currentTab = tab.dataset.tab;
-
-                document.getElementById('tabListe').style.display = currentTab === 'liste' ? 'block' : 'none';
-                document.getElementById('tabHistorique').style.display = currentTab === 'historique' ? 'block' : 'none';
-
-                // Clear data on tab switch
-                sessionsData = [];
-                if (currentTab === 'liste') {
-                    renderTable();
-                }
-            });
-        });
-
-        async function loadData() {
-            if (currentTab === 'liste') {
-                await loadSessions();
-            } else {
-                await loadHistorique();
-            }
-        }
-
-        async function loadSessions() {
-            const societe = document.getElementById('societe').value.trim();
-            const dateDebut = document.getElementById('dateDebut').value;
-            const dateFin = document.getElementById('dateFin').value;
-            const caisse = document.getElementById('caisse').value.trim();
-
-            if (!societe) {
-                showError('Veuillez entrer une société');
-                return;
-            }
-
-            showLoading(true);
-            hideError();
+        async function chargerSessions() {
+            const filtreEtat = document.getElementById('filtreEtat').value;
+            const filtreDate = document.getElementById('filtreDate').value;
 
             try {
-                let url = `/api/sessions/liste?societe=${encodeURIComponent(societe)}`;
-                if (dateDebut) url += `&dateDebut=${dateDebut}`;
-                if (dateFin) url += `&dateFin=${dateFin}`;
-                if (caisse) url += `&caisse=${encodeURIComponent(caisse)}`;
+                document.getElementById('statusMessage').textContent = 'Chargement...';
+                document.getElementById('statusMessage').className = 'message';
 
-                const response = await fetch(API_BASE + url);
+                let url = `${API_BASE}/api/sessions?societe=${societe}`;
+                if (utilisateur) url += `&utilisateur=${utilisateur}`;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Erreur chargement sessions');
+
+                sessions = await response.json();
+
+                // Filtrer côté client
+                let filtered = sessions;
+                if (filtreEtat) {
+                    filtered = filtered.filter(s => s.etat === filtreEtat);
+                }
+                if (filtreDate) {
+                    const date = new Date(filtreDate);
+                    filtered = filtered.filter(s => {
+                        const sessionDate = new Date(s.dateOuverture);
+                        return sessionDate.toDateString() === date.toDateString();
+                    });
                 }
 
-                sessionsData = await response.json();
-                renderTable();
-                document.getElementById('statusText').textContent = `Chargé à ${new Date().toLocaleTimeString()}`;
+                afficherSessions(filtered);
+                document.getElementById('statusMessage').textContent = 'Chargement terminé';
+                document.getElementById('sessionCount').textContent = `${filtered.length} session(s)`;
+
             } catch (error) {
-                showError(`Erreur: ${error.message}`);
-                sessionsData = [];
-                renderTable();
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function loadHistorique() {
-            const societe = document.getElementById('societe').value.trim();
-
-            if (!societe) {
-                showError('Veuillez entrer une société');
-                return;
-            }
-
-            document.getElementById('histoLoading').style.display = 'flex';
-            document.getElementById('histoEmpty').style.display = 'none';
-            document.getElementById('histoContent').style.display = 'none';
-            hideError();
-
-            try {
-                const response = await fetch(`${API_BASE}/api/sessions/historique?societe=${encodeURIComponent(societe)}`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                renderHistorique(data);
-            } catch (error) {
-                showError(`Erreur: ${error.message}`);
-            } finally {
-                document.getElementById('histoLoading').style.display = 'none';
-            }
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            const wrapper = document.getElementById('tableWrapper');
-            const empty = document.getElementById('empty');
-            const count = document.getElementById('gridCount');
-
-            if (sessionsData.length === 0) {
-                tbody.innerHTML = '';
-                wrapper.style.display = 'none';
-                empty.style.display = 'block';
-                count.textContent = '0 sessions';
-                return;
-            }
-
-            empty.style.display = 'none';
-            wrapper.style.display = 'block';
-
-            tbody.innerHTML = sessionsData.map((session, idx) => {
-                const isOpen = !session.dateFermeture;
-                const hasEcart = session.ecart && Math.abs(session.ecart) > 0.01;
-
-                return `
-                    <tr data-idx="${idx}" onclick="selectSession(this, ${session.chrono})">
-                        <td><strong>${session.chrono}</strong></td>
-                        <td>${formatDate(session.dateOuverture)}</td>
-                        <td>${session.caisse || '-'}</td>
-                        <td>${session.operateur || '-'}</td>
-                        <td>
-                            <span class="badge ${isOpen ? 'badge-open' : 'badge-closed'}">
-                                ${isOpen ? 'Ouverte' : 'Fermée'}
-                            </span>
-                        </td>
-                        <td>${session.dateFermeture ? formatDate(session.dateFermeture) : '-'}</td>
-                        <td>
-                            ${hasEcart
-                                ? `<span class="badge badge-ecart">${formatMontant(session.ecart)}</span>`
-                                : '<span class="badge badge-ok">OK</span>'
-                            }
-                        </td>
-                    </tr>
+                document.getElementById('statusMessage').textContent = error.message;
+                document.getElementById('statusMessage').className = 'error';
+                document.getElementById('sessionsBody').innerHTML = `
+                    <tr><td colspan="10" style="text-align:center; color:red;">
+                        Erreur: ${error.message}
+                    </td></tr>
                 `;
-            }).join('');
-
-            count.textContent = `${sessionsData.length} session${sessionsData.length > 1 ? 's' : ''}`;
+            }
         }
 
-        function renderHistorique(data) {
-            const content = document.getElementById('histoContent');
-            const count = document.getElementById('histoCount');
+        function afficherSessions(data) {
+            const tbody = document.getElementById('sessionsBody');
 
-            if (!data || data.length === 0) {
-                document.getElementById('histoEmpty').style.display = 'block';
-                content.style.display = 'none';
-                count.textContent = '0 sessions';
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="10" style="text-align:center; padding:20px;">
+                        Aucune session trouvée
+                    </td></tr>
+                `;
                 return;
             }
 
-            content.style.display = 'block';
-            count.textContent = `${data.length} session${data.length > 1 ? 's' : ''}`;
-
-            content.innerHTML = data.map(session => `
-                <div class="histo-card">
-                    <div class="histo-header">
-                        <span class="histo-date">${formatDate(session.dateOuverture)}</span>
-                        <span class="histo-chrono">Chrono: ${session.chrono}</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 0.5rem;">
-                        <div>
-                            <div style="color: #888; font-size: 0.8rem;">Caisse</div>
-                            <div>${session.caisse || '-'}</div>
-                        </div>
-                        <div>
-                            <div style="color: #888; font-size: 0.8rem;">Opérateur</div>
-                            <div>${session.operateur || '-'}</div>
-                        </div>
-                        <div>
-                            <div style="color: #888; font-size: 0.8rem;">Écart</div>
-                            <div class="${session.ecart > 0 ? 'positive' : session.ecart < 0 ? 'negative' : ''}">
-                                ${formatMontant(session.ecart || 0)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            tbody.innerHTML = data.map((s, idx) => `
+                <tr onclick="selectSession(${idx})" ondblclick="consulterSession()" data-idx="${idx}">
+                    <td class="number">${s.numeroSession || s.id || '-'}</td>
+                    <td>${s.utilisateur || '-'}</td>
+                    <td class="center">${s.terminal || '-'}</td>
+                    <td class="center">${formatDate(s.dateOuverture)}</td>
+                    <td class="center">${formatTime(s.heureOuverture)}</td>
+                    <td class="center">${formatDate(s.dateFermeture)}</td>
+                    <td class="center">${formatTime(s.heureFermeture)}</td>
+                    <td class="center etat-${s.etat}">${getEtatLabel(s.etat)}</td>
+                    <td class="number">${formatMontant(s.montantInitial || s.totalInitial)}</td>
+                    <td class="number">${formatMontant(s.montantFinal || s.totalFinal)}</td>
+                </tr>
             `).join('');
         }
 
-        async function selectSession(tr, chrono) {
-            document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('selected'));
-            tr.classList.add('selected');
-
-            const societe = document.getElementById('societe').value.trim();
-            document.getElementById('selectedInfo').textContent = `Session ${chrono} sélectionnée`;
-
-            // Load session details (Prg_80)
-            await loadSessionDetails(societe, chrono);
-        }
-
-        async function loadSessionDetails(societe, chrono) {
-            const panel = document.getElementById('detailsPanel');
-            const content = document.getElementById('detailsContent');
-
-            panel.style.display = 'block';
-            content.innerHTML = '<div class="loading"><div class="spinner"></div><span>Chargement détails...</span></div>';
-
-            try {
-                const response = await fetch(`${API_BASE}/api/sessions/${chrono}?societe=${encodeURIComponent(societe)}`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const session = await response.json();
-                selectedSession = session;
-                renderDetails(session);
-            } catch (error) {
-                content.innerHTML = `<div class="error">Erreur chargement: ${error.message}</div>`;
-            }
-        }
-
-        function renderDetails(session) {
-            const content = document.getElementById('detailsContent');
-
-            content.innerHTML = `
-                <!-- Info générale -->
-                <div class="detail-card">
-                    <h4>Informations Générales</h4>
-                    <div class="detail-row">
-                        <span class="detail-label">Chrono</span>
-                        <span class="detail-value">${session.chrono}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Société</span>
-                        <span class="detail-value">${session.societe}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Caisse</span>
-                        <span class="detail-value">${session.caisse || '-'}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Opérateur</span>
-                        <span class="detail-value">${session.operateur || '-'}</span>
-                    </div>
-                </div>
-
-                <!-- Dates -->
-                <div class="detail-card">
-                    <h4>Dates</h4>
-                    <div class="detail-row">
-                        <span class="detail-label">Ouverture</span>
-                        <span class="detail-value">${formatDateTime(session.dateOuverture)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Fermeture</span>
-                        <span class="detail-value">${session.dateFermeture ? formatDateTime(session.dateFermeture) : 'En cours'}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Durée</span>
-                        <span class="detail-value">${calculateDuration(session.dateOuverture, session.dateFermeture)}</span>
-                    </div>
-                </div>
-
-                <!-- Montants -->
-                <div class="detail-card">
-                    <h4>Montants</h4>
-                    <div class="detail-row">
-                        <span class="detail-label">Fond de caisse</span>
-                        <span class="detail-value">${formatMontant(session.fondCaisse || 0)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Total encaissé</span>
-                        <span class="detail-value positive">${formatMontant(session.totalEncaisse || 0)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Total décaissé</span>
-                        <span class="detail-value negative">${formatMontant(session.totalDecaisse || 0)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Solde attendu</span>
-                        <span class="detail-value">${formatMontant(session.soldeAttendu || 0)}</span>
-                    </div>
-                </div>
-
-                <!-- Écart -->
-                <div class="detail-card">
-                    <h4>Clôture</h4>
-                    <div class="detail-row">
-                        <span class="detail-label">Solde compté</span>
-                        <span class="detail-value">${formatMontant(session.soldeCompte || 0)}</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Écart</span>
-                        <span class="detail-value ${(session.ecart || 0) > 0 ? 'positive' : (session.ecart || 0) < 0 ? 'negative' : ''}">
-                            ${formatMontant(session.ecart || 0)}
-                        </span>
-                    </div>
-                    ${session.commentaireEcart ? `
-                    <div class="detail-row">
-                        <span class="detail-label">Commentaire</span>
-                        <span class="detail-value">${session.commentaireEcart}</span>
-                    </div>
-                    ` : ''}
-                </div>
-
-                <!-- Détails par devise (si disponible) -->
-                ${session.details && session.details.length > 0 ? `
-                <div class="detail-card" style="grid-column: span 2;">
-                    <h4>Détails par Devise</h4>
-                    <table style="width: 100%; margin-top: 0.5rem;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 0.5rem;">Devise</th>
-                                <th style="padding: 0.5rem; text-align: right;">Attendu</th>
-                                <th style="padding: 0.5rem; text-align: right;">Compté</th>
-                                <th style="padding: 0.5rem; text-align: right;">Écart</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${session.details.map(d => `
-                            <tr>
-                                <td style="padding: 0.5rem;">${d.codeDevise}</td>
-                                <td style="padding: 0.5rem; text-align: right;">${formatMontant(d.montantAttendu || 0)}</td>
-                                <td style="padding: 0.5rem; text-align: right;">${formatMontant(d.montantCompte || 0)}</td>
-                                <td style="padding: 0.5rem; text-align: right;" class="${(d.ecart || 0) !== 0 ? 'negative' : ''}">
-                                    ${formatMontant(d.ecart || 0)}
-                                </td>
-                            </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                ` : ''}
-            `;
-        }
-
-        function closeDetails() {
-            document.getElementById('detailsPanel').style.display = 'none';
-            selectedSession = null;
-        }
-
-        function filterTable() {
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-            let visible = 0;
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const show = text.includes(search);
-                row.style.display = show ? '' : 'none';
-                if (show) visible++;
+        function selectSession(idx) {
+            // Désélectionner l'ancienne
+            document.querySelectorAll('.data-grid tbody tr').forEach(tr => {
+                tr.classList.remove('selected');
             });
 
-            document.getElementById('gridCount').textContent = `${visible} / ${sessionsData.length} sessions`;
-        }
+            // Sélectionner la nouvelle
+            const row = document.querySelector(`tr[data-idx="${idx}"]`);
+            if (row) {
+                row.classList.add('selected');
+                selectedSession = sessions[idx];
 
-        function resetFilters() {
-            const today = new Date();
-            const monthAgo = new Date(today);
-            monthAgo.setMonth(monthAgo.getMonth() - 1);
-
-            document.getElementById('dateFin').valueAsDate = today;
-            document.getElementById('dateDebut').valueAsDate = monthAgo;
-            document.getElementById('caisse').value = '';
-            document.getElementById('searchInput').value = '';
-
-            sessionsData = [];
-            renderTable();
-            closeDetails();
-        }
-
-        function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-            if (show) {
-                document.getElementById('tableWrapper').style.display = 'none';
-                document.getElementById('empty').style.display = 'none';
+                // Activer les boutons selon l'état
+                document.getElementById('btnConsulter').disabled = false;
+                document.getElementById('btnHistorique').disabled = false;
+                document.getElementById('btnImprimer').disabled = false;
+                document.getElementById('btnOuvrir').disabled = selectedSession.etat !== 'F';
+                document.getElementById('btnFermer').disabled = selectedSession.etat !== 'O';
             }
         }
 
-        function showError(msg) {
-            const el = document.getElementById('error');
-            el.textContent = msg;
-            el.style.display = 'block';
+        function consulterSession() {
+            if (!selectedSession) return;
+            // Rediriger vers la page de consultation
+            localStorage.setItem('sessionId', selectedSession.id || selectedSession.numeroSession);
+            window.location = 'ouverture-session.html?mode=consulter';
         }
 
-        function hideError() {
-            document.getElementById('error').style.display = 'none';
+        function historiqueSession() {
+            if (!selectedSession) return;
+            alert('Historique de la session ' + (selectedSession.numeroSession || selectedSession.id));
         }
 
-        // Formatting helpers
+        function imprimerSession() {
+            if (!selectedSession) return;
+            alert('Impression de la session ' + (selectedSession.numeroSession || selectedSession.id));
+        }
+
+        function ouvrirSession() {
+            window.location = 'ouverture-session.html?mode=ouvrir';
+        }
+
+        function fermerSession() {
+            if (!selectedSession) return;
+            localStorage.setItem('sessionId', selectedSession.id || selectedSession.numeroSession);
+            window.location = 'fermeture-session.html';
+        }
+
+        // Helpers
         function formatDate(dateStr) {
             if (!dateStr) return '-';
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('fr-FR');
+            const d = new Date(dateStr);
+            if (isNaN(d)) return '-';
+            return d.toLocaleDateString('fr-FR');
         }
 
-        function formatDateTime(dateStr) {
-            if (!dateStr) return '-';
-            const date = new Date(dateStr);
-            return date.toLocaleString('fr-FR');
-        }
-
-        function formatMontant(val) {
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'EUR'
-            }).format(val || 0);
-        }
-
-        function calculateDuration(start, end) {
-            if (!start) return '-';
-            const startDate = new Date(start);
-            const endDate = end ? new Date(end) : new Date();
-
-            const diff = endDate - startDate;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-            if (hours > 24) {
-                const days = Math.floor(hours / 24);
-                return `${days}j ${hours % 24}h`;
+        function formatTime(timeStr) {
+            if (!timeStr) return '-';
+            if (typeof timeStr === 'string' && timeStr.includes(':')) {
+                return timeStr.substring(0, 5);
             }
-            return `${hours}h ${minutes}min`;
+            return '-';
+        }
+
+        function formatMontant(montant) {
+            if (montant === null || montant === undefined) return '-';
+            return new Intl.NumberFormat('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(montant);
+        }
+
+        function getEtatLabel(etat) {
+            switch(etat) {
+                case 'O': return 'Ouv.';
+                case 'F': return 'Ferm.';
+                case 'A': return 'Ann.';
+                default: return etat || '-';
+            }
         }
     </script>
 </body>

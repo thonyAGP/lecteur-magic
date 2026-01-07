@@ -3,150 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Check-Out</title>
+    <title>Easy Check-Out - Prg_53</title>
     <style>
-        :root {
-            --primary-color: #0078d4;
-            --success-color: #107c10;
-            --warning-color: #ff8c00;
-            --danger-color: #d13438;
-            --bg-color: #f3f3f3;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-        }
-
+        /* Style Windows classique - fidèle à Magic Unipaas */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             padding: 20px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #00897b, #004d40);
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 1050px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
             color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: bold;
+            font-size: 11px;
         }
 
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header .nav-links a {
-            color: white;
-            text-decoration: none;
-            margin-left: 15px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #4a9; border-radius: 2px; }
 
-        .container {
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Layout deux colonnes */
+        .layout-container {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
+            grid-template-columns: 300px 1fr;
+            gap: 8px;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
+        /* Fieldset style */
+        fieldset {
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #d4d0c8;
         }
 
-        .card.full-width {
-            grid-column: 1 / -1;
+        legend {
+            background: #0a246a;
+            color: white;
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 10px;
         }
 
-        .card h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #00897b;
-        }
-
+        /* Formulaire */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
         .form-group label {
             display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #666;
+            font-weight: bold;
+            margin-bottom: 2px;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 14px;
+            padding: 2px 4px;
+            border: 1px inset #808080;
+            font-size: 11px;
+            background: white;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #00897b;
-            box-shadow: 0 0 0 2px rgba(0,137,123,0.2);
-        }
-
+        /* Boutons */
         .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
+            min-width: 100px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
             cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            margin-bottom: 10px;
+            padding: 0 8px;
+            margin-bottom: 8px;
         }
-
-        .btn-primary {
-            background: #00897b;
-            color: white;
-        }
-        .btn-primary:hover { background: #004d40; }
+        .btn:active { border-style: inset; }
+        .btn:disabled { color: #808080; cursor: not-allowed; }
 
         .btn-success {
-            background: var(--success-color);
+            background: linear-gradient(to bottom, #90EE90 0%, #228B22 100%);
             color: white;
         }
-        .btn-success:hover { background: #0b5e0b; }
 
         .btn-warning {
-            background: var(--warning-color);
-            color: white;
-        }
-        .btn-warning:hover { background: #e65100; }
-
-        .solde-summary {
-            background: linear-gradient(135deg, #00897b, #004d40);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            background: linear-gradient(to bottom, #ffcc00 0%, #cc9900 100%);
+            color: black;
         }
 
-        .solde-summary .title {
-            font-size: 14px;
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .action-buttons .btn { margin-bottom: 0; }
+
+        /* Info client */
+        .client-info {
+            background: #ffffcc;
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .client-info h3 {
+            font-size: 11px;
+            margin-bottom: 8px;
+            color: #0a246a;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .info-row .label { color: #666; }
+        .info-row .value { font-weight: bold; }
+
+        /* Solde box */
+        .solde-box {
+            background: #006600;
+            color: white;
+            padding: 12px;
+            border: 2px outset #004400;
+            margin-bottom: 8px;
+        }
+
+        .solde-box .title {
+            font-size: 10px;
             opacity: 0.8;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .solde-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
         }
 
         .solde-row:last-child {
@@ -156,280 +178,325 @@
         }
 
         .solde-row .label { opacity: 0.8; }
-        .solde-row .value { font-weight: 600; font-size: 16px; }
-        .solde-row.total { font-size: 20px; }
-        .solde-row.total .value { font-size: 24px; }
+        .solde-row .value { font-weight: bold; font-size: 12px; }
+        .solde-row.total { font-size: 14px; }
+        .solde-row.total .value { font-size: 18px; }
 
-        .client-card {
-            background: #e0f2f1;
-            border-left: 4px solid #00897b;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .client-card h3 {
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #00897b;
-        }
-
-        .info-row {
+        /* Status indicator */
+        .status-indicator {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 13px;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-weight: bold;
         }
 
-        .info-row .label { color: #666; }
-        .info-row .value { font-weight: 600; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
+        .status-indicator.ok {
+            background: #90EE90;
+            color: #006600;
+            border: 1px inset #228B22;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+        .status-indicator.warning {
+            background: #ffff99;
+            color: #cc6600;
+            border: 1px inset #cc9900;
         }
 
-        th {
-            background: #f8f8f8;
-            font-weight: 600;
-            color: #666;
-            position: sticky;
-            top: 0;
+        .status-indicator.error {
+            background: #ffcccc;
+            color: #cc0000;
+            border: 1px inset #cc0000;
         }
 
-        td.number {
-            text-align: right;
-            font-family: 'Consolas', monospace;
-        }
+        .status-indicator .icon { font-size: 16px; }
 
-        td.credit { color: var(--success-color); }
-        td.debit { color: var(--danger-color); }
-
-        tr:hover { background: #f5f5f5; }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .table-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
+        /* Tabs */
         .tabs {
             display: flex;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 15px;
+            border-bottom: 1px solid #808080;
+            margin-bottom: 8px;
         }
 
         .tab {
-            padding: 10px 20px;
+            padding: 4px 12px;
+            background: #c0c0c0;
+            border: 1px solid #808080;
+            border-bottom: none;
             cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 14px;
-            color: #666;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
+            font-size: 10px;
+            margin-right: 2px;
         }
 
-        .tab:hover { color: #00897b; }
+        .tab:hover { background: #d4d0c8; }
         .tab.active {
-            color: #00897b;
-            border-bottom-color: #00897b;
-            font-weight: 600;
+            background: #d4d0c8;
+            border-bottom: 1px solid #d4d0c8;
+            margin-bottom: -1px;
+            font-weight: bold;
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .status-indicator {
+        /* Grille de données */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-grid th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
+        }
+
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
+        }
+
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .data-grid tbody tr:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid td {
+            padding: 3px 8px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .data-grid td.credit { color: #006600; }
+        .data-grid td.debit { color: #cc0000; }
+
+        /* Container scrollable */
+        .grid-container {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px inset #808080;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
             display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            justify-content: space-between;
         }
 
-        .status-indicator.ok {
-            background: #c8e6c9;
-            color: var(--success-color);
+        .status-bar .message { color: #006600; }
+        .status-bar .error { color: red; }
+
+        /* Navigation */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
         }
+        .nav-link:hover { color: #ff0000; }
 
-        .status-indicator.warning {
-            background: #fff3e0;
-            color: var(--warning-color);
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
-
-        .status-indicator.error {
-            background: #ffcdd2;
-            color: var(--danger-color);
-        }
-
-        .status-indicator .icon { font-size: 24px; }
-        .status-indicator .text { font-weight: 600; }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .action-buttons .btn { margin-bottom: 0; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Easy Check-Out (Prg_53-67)</h1>
-        <div class="nav-links">
-            <a href="index.html">Caisse</a>
-            <a href="zooms.html">Zooms</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <h2>Recherche Client</h2>
-            <div class="form-group">
-                <label>Societe</label>
-                <input type="text" id="societe" value="CSK" maxlength="10">
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Easy Check-Out - Prg_53-67</span>
             </div>
-            <div class="form-group">
-                <label>Compte (Code GM)</label>
-                <input type="number" id="compte" placeholder="Code GM">
-            </div>
-            <div class="form-group">
-                <label>Filiation</label>
-                <input type="number" id="filiation" value="0">
-            </div>
-            <button class="btn btn-primary" onclick="chargerSolde()">Charger Solde (Prg_64)</button>
-
-            <div id="clientCard" class="client-card" style="margin-top: 20px; display: none;">
-                <h3>Information Client</h3>
-                <div class="info-row">
-                    <span class="label">Nom:</span>
-                    <span class="value" id="clientNom">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Village:</span>
-                    <span class="value" id="clientVillage">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Chambre:</span>
-                    <span class="value" id="clientChambre">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Date Arrivee:</span>
-                    <span class="value" id="clientArrivee">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Date Depart:</span>
-                    <span class="value" id="clientDepart">-</span>
-                </div>
-            </div>
-
-            <div id="soldeSummary" class="solde-summary" style="display: none;">
-                <div class="title">Resume du Solde</div>
-                <div class="solde-row">
-                    <span class="label">Consommations</span>
-                    <span class="value" id="totalConso">0.00</span>
-                </div>
-                <div class="solde-row">
-                    <span class="label">Paiements</span>
-                    <span class="value" id="totalPaiements">0.00</span>
-                </div>
-                <div class="solde-row">
-                    <span class="label">Garanties</span>
-                    <span class="value" id="totalGaranties">0.00</span>
-                </div>
-                <div class="solde-row total">
-                    <span class="label">Solde a Payer</span>
-                    <span class="value" id="soldeAPayer">0.00</span>
-                </div>
-            </div>
-
-            <div id="statusIndicator" style="display: none;"></div>
-
-            <div class="action-buttons">
-                <button class="btn btn-success" onclick="procederCheckout()">Check-Out</button>
-                <button class="btn btn-warning" onclick="editerExtrait()">Edition (Prg_65)</button>
+            <div class="window-controls">
+                <button>_</button>
+                <button>□</button>
+                <button onclick="window.location='index.html'">×</button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="tabs">
-                <button class="tab active" onclick="showTab('extrait')">Extrait (Prg_53)</button>
-                <button class="tab" onclick="showTab('services')">Par Service</button>
-                <button class="tab" onclick="showTab('garanties')">Garanties</button>
-            </div>
+        <div class="window-content">
+            <div class="layout-container">
+                <!-- Panneau gauche - Recherche -->
+                <div>
+                    <fieldset>
+                        <legend>Recherche Client</legend>
+                        <div class="form-group">
+                            <label>Societe</label>
+                            <input type="text" id="societe" value="CSK" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Compte (Code GM)</label>
+                            <input type="number" id="compte" placeholder="Code GM">
+                        </div>
+                        <div class="form-group">
+                            <label>Filiation</label>
+                            <input type="number" id="filiation" value="0">
+                        </div>
+                        <button class="btn" onclick="chargerSolde()">Charger Solde (Prg_64)</button>
+                    </fieldset>
 
-            <div id="extrait" class="tab-content active">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Service</th>
-                                <th>Description</th>
-                                <th>Debit</th>
-                                <th>Credit</th>
-                            </tr>
-                        </thead>
-                        <tbody id="extraitBody">
-                            <tr><td colspan="5" class="empty-state">Chargez un compte pour voir l'extrait</td></tr>
-                        </tbody>
-                    </table>
+                    <div id="clientCard" class="client-info" style="display: none;">
+                        <h3>Information Client</h3>
+                        <div class="info-row">
+                            <span class="label">Nom:</span>
+                            <span class="value" id="clientNom">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Village:</span>
+                            <span class="value" id="clientVillage">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Chambre:</span>
+                            <span class="value" id="clientChambre">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Date Arrivee:</span>
+                            <span class="value" id="clientArrivee">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Date Depart:</span>
+                            <span class="value" id="clientDepart">-</span>
+                        </div>
+                    </div>
+
+                    <div id="soldeSummary" class="solde-box" style="display: none;">
+                        <div class="title">Resume du Solde</div>
+                        <div class="solde-row">
+                            <span class="label">Consommations</span>
+                            <span class="value" id="totalConso">0.00</span>
+                        </div>
+                        <div class="solde-row">
+                            <span class="label">Paiements</span>
+                            <span class="value" id="totalPaiements">0.00</span>
+                        </div>
+                        <div class="solde-row">
+                            <span class="label">Garanties</span>
+                            <span class="value" id="totalGaranties">0.00</span>
+                        </div>
+                        <div class="solde-row total">
+                            <span class="label">Solde a Payer</span>
+                            <span class="value" id="soldeAPayer">0.00</span>
+                        </div>
+                    </div>
+
+                    <div id="statusIndicator" style="display: none;"></div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="procederCheckout()">Check-Out</button>
+                        <button class="btn btn-warning" onclick="editerExtrait()">Edition (Prg_65)</button>
+                    </div>
+
+                    <div style="margin-top: 12px;">
+                        <span class="nav-link" onclick="window.location='index.html'">&larr; Retour Menu</span>
+                    </div>
+                </div>
+
+                <!-- Panneau droit - Details -->
+                <div>
+                    <div class="tabs">
+                        <button class="tab active" onclick="showTab('extrait')">Extrait (Prg_53)</button>
+                        <button class="tab" onclick="showTab('services')">Par Service</button>
+                        <button class="tab" onclick="showTab('garanties')">Garanties</button>
+                    </div>
+
+                    <div id="extrait" class="tab-content active">
+                        <div class="grid-container">
+                            <div class="data-grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px">Date</th>
+                                            <th style="width:60px">Service</th>
+                                            <th>Description</th>
+                                            <th style="width:80px">Debit</th>
+                                            <th style="width:80px">Credit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="extraitBody">
+                                        <tr><td colspan="5" class="empty-state">Chargez un compte pour voir l'extrait</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="services" class="tab-content">
+                        <div class="grid-container">
+                            <div class="data-grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:60px">Service</th>
+                                            <th>Libelle</th>
+                                            <th style="width:80px">Debit</th>
+                                            <th style="width:80px">Credit</th>
+                                            <th style="width:80px">Solde</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="servicesBody">
+                                        <tr><td colspan="5" class="empty-state">Chargez un compte pour voir les services</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="garanties" class="tab-content">
+                        <div class="grid-container">
+                            <div class="data-grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px">Date</th>
+                                            <th style="width:80px">Type</th>
+                                            <th>Description</th>
+                                            <th style="width:80px">Montant</th>
+                                            <th style="width:60px">Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="garantiesBody">
+                                        <tr><td colspan="5" class="empty-state">Chargez un compte pour voir les garanties</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div id="services" class="tab-content">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Service</th>
-                                <th>Libelle</th>
-                                <th>Debit</th>
-                                <th>Credit</th>
-                                <th>Solde</th>
-                            </tr>
-                        </thead>
-                        <tbody id="servicesBody">
-                            <tr><td colspan="5" class="empty-state">Chargez un compte pour voir les services</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="garanties" class="tab-content">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Montant</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody id="garantiesBody">
-                            <tr><td colspan="5" class="empty-state">Chargez un compte pour voir les garanties</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="status-bar">
+            <span id="statusMessage" class="message">Pret</span>
+            <span id="mouvementsCount">0 mouvement(s)</span>
         </div>
     </div>
 
@@ -448,7 +515,7 @@
             }
 
             try {
-                // Call the Easy Check-Out solde endpoint
+                document.getElementById('statusMessage').textContent = 'Chargement...';
                 const response = await fetch(`${API_BASE}/easycheckout/solde`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -467,12 +534,16 @@
                     displayStatusIndicator(data);
                     loadExtrait(societe, compte, filiation);
                     loadGaranties(societe, compte, filiation);
+                    document.getElementById('statusMessage').textContent = 'Donnees chargees';
                 } else {
                     alert(data.message || 'Erreur lors du chargement du solde');
+                    document.getElementById('statusMessage').textContent = 'Erreur';
+                    document.getElementById('statusMessage').className = 'error';
                 }
             } catch (err) {
                 console.error(err);
-                alert('Erreur lors du chargement du solde');
+                document.getElementById('statusMessage').textContent = 'Erreur connexion';
+                document.getElementById('statusMessage').className = 'error';
             }
         }
 
@@ -497,7 +568,6 @@
             const solde = data.solde || 0;
             const soldeEl = document.getElementById('soldeAPayer');
             soldeEl.textContent = solde.toFixed(2) + ' EUR';
-            soldeEl.style.color = solde > 0 ? '#d13438' : '#107c10';
         }
 
         function displayStatusIndicator(data) {
@@ -509,13 +579,13 @@
 
             if (solde <= 0) {
                 container.className = 'status-indicator ok';
-                container.innerHTML = '<span class="icon">✓</span><span class="text">Compte solde - Pret pour Check-Out</span>';
+                container.innerHTML = '<span class="icon">OK</span><span>Compte solde - Pret pour Check-Out</span>';
             } else if (garanties >= solde) {
                 container.className = 'status-indicator warning';
-                container.innerHTML = '<span class="icon">⚠</span><span class="text">Solde debiteur couvert par garanties</span>';
+                container.innerHTML = '<span class="icon">!</span><span>Solde debiteur couvert par garanties</span>';
             } else {
                 container.className = 'status-indicator error';
-                container.innerHTML = '<span class="icon">✗</span><span class="text">Solde debiteur a regulariser: ' + solde.toFixed(2) + ' EUR</span>';
+                container.innerHTML = '<span class="icon">X</span><span>Solde debiteur a regulariser: ' + solde.toFixed(2) + ' EUR</span>';
             }
         }
 
@@ -538,8 +608,7 @@
                             </tr>
                         `;
                     }).join('');
-
-                    // Build services summary
+                    document.getElementById('mouvementsCount').textContent = `${data.mouvements.length} mouvement(s)`;
                     buildServicesSummary(data.mouvements);
                 } else {
                     tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun mouvement</td></tr>';
@@ -575,7 +644,7 @@
                             <td>${data.libelle}</td>
                             <td class="number debit">${data.debit.toFixed(2)}</td>
                             <td class="number credit">${data.credit.toFixed(2)}</td>
-                            <td class="number" style="color: ${solde >= 0 ? '#107c10' : '#d13438'}">${solde.toFixed(2)}</td>
+                            <td class="number" style="color: ${solde >= 0 ? '#006600' : '#cc0000'}">${solde.toFixed(2)}</td>
                         </tr>
                     `;
                 }).join('');
@@ -626,6 +695,7 @@
             const filiation = document.getElementById('filiation').value;
 
             try {
+                document.getElementById('statusMessage').textContent = 'Check-out en cours...';
                 const response = await fetch(`${API_BASE}/easycheckout/checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -660,6 +730,7 @@
             }
 
             try {
+                document.getElementById('statusMessage').textContent = 'Edition en cours...';
                 const response = await fetch(`${API_BASE}/easycheckout/edition`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -677,6 +748,7 @@
                     a.href = url;
                     a.download = `checkout_${compte}_${filiation}.pdf`;
                     a.click();
+                    document.getElementById('statusMessage').textContent = 'Edition terminee';
                 } else {
                     alert('Erreur lors de l\'edition');
                 }

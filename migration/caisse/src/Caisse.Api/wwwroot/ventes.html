@@ -3,509 +3,594 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ventes - Gift Pass & Resort Credit</title>
+    <title>Ventes Gift Pass & Resort Credit - CA0237</title>
     <style>
-        :root {
-            --primary-color: #0078d4;
-            --success-color: #107c10;
-            --warning-color: #ff8c00;
-            --danger-color: #d13438;
-            --bg-color: #f3f3f3;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-        }
-
+        /* Style Windows classique - fidèle à Magic Unipaas */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 11px;
+            background-color: #808080;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             padding: 20px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #7b1fa2, #512da8);
+        .magic-window {
+            background-color: #d4d0c8;
+            border: 2px outset #ffffff;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            width: 900px;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #0a246a, #a6caf0);
             color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 3px 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: bold;
+            font-size: 11px;
         }
 
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header .nav-links a {
+        .title-bar .title { display: flex; align-items: center; gap: 5px; }
+        .title-bar .icon { width: 16px; height: 16px; background: #9932cc; border-radius: 2px; }
+
+        .window-controls { display: flex; gap: 2px; }
+        .window-controls button {
+            width: 16px; height: 14px;
+            border: 1px outset #c0c0c0;
+            font-size: 9px; cursor: pointer;
+            background: #c0c0c0;
+        }
+
+        .window-content { padding: 8px; }
+
+        /* Fieldset Magic */
+        .magic-fieldset {
+            border: 1px inset #808080;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #d4d0c8;
+        }
+
+        .magic-fieldset legend {
+            background: #0a246a;
             color: white;
-            text-decoration: none;
-            margin-left: 15px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-        .header .nav-links a:hover { background: rgba(255,255,255,0.2); }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-
-        .card.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .card h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #7b1fa2;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #666;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #7b1fa2;
-            box-shadow: 0 0 0 2px rgba(123,31,162,0.2);
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #7b1fa2;
-            color: white;
-        }
-        .btn-primary:hover { background: #512da8; }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-        .btn-success:hover { background: #0b5e0b; }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .solde-box {
-            background: linear-gradient(135deg, #7b1fa2, #512da8);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .solde-box .label {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-
-        .solde-box .value {
-            font-size: 32px;
+            padding: 2px 8px;
             font-weight: bold;
         }
 
-        .solde-box .currency {
-            font-size: 16px;
-            opacity: 0.8;
+        /* Form layout */
+        .form-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+            align-items: center;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background: #f8f8f8;
-            font-weight: 600;
-            color: #666;
-        }
-
-        td.number {
+        .form-row label {
+            min-width: 80px;
             text-align: right;
-            font-family: 'Consolas', monospace;
+            font-weight: bold;
         }
 
-        tr:hover { background: #f5f5f5; }
-
-        .info-panel {
-            background: #f3e5f5;
-            border-left: 4px solid #7b1fa2;
-            padding: 15px;
-            margin-bottom: 15px;
+        .form-row input, .form-row select {
+            border: 1px inset #808080;
+            padding: 2px 4px;
+            font-size: 11px;
+            background: white;
         }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 13px;
-        }
-
-        .info-row .label { color: #666; }
-        .info-row .value { font-weight: 600; }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .tab-container {
-            margin-bottom: 20px;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .tab {
-            padding: 10px 20px;
+        /* Buttons */
+        .magic-btn {
+            min-width: 80px;
+            height: 22px;
+            border: 2px outset #d4d0c8;
+            background: linear-gradient(to bottom, #e8e8e8 0%, #c8c8c8 100%);
+            font-size: 11px;
             cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 14px;
-            color: #666;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
+            padding: 0 8px;
+        }
+        .magic-btn:active { border-style: inset; }
+        .magic-btn:disabled { color: #808080; cursor: not-allowed; }
+
+        /* Tabs */
+        .tab-bar {
+            display: flex;
+            border-bottom: 1px solid #808080;
+            margin-bottom: 8px;
         }
 
-        .tab:hover { color: #7b1fa2; }
-        .tab.active {
-            color: #7b1fa2;
-            border-bottom-color: #7b1fa2;
-            font-weight: 600;
+        .tab-btn {
+            padding: 4px 12px;
+            border: 1px outset #d4d0c8;
+            border-bottom: none;
+            background: #c0c0c0;
+            font-size: 11px;
+            cursor: pointer;
+            margin-right: 2px;
+        }
+
+        .tab-btn.active {
+            background: #d4d0c8;
+            border-bottom: 1px solid #d4d0c8;
+            margin-bottom: -1px;
+            font-weight: bold;
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
+        /* Solde boxes */
+        .solde-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .badge-giftpass { background: #e1bee7; color: #7b1fa2; }
-        .badge-resortcredit { background: #c8e6c9; color: var(--success-color); }
+        .solde-box {
+            flex: 1;
+            border: 2px groove #808080;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .solde-box.giftpass {
+            background: linear-gradient(to bottom, #e6e0f8 0%, #d8cef0 100%);
+        }
+
+        .solde-box.resortcredit {
+            background: linear-gradient(to bottom, #e0f8e0 0%, #c8f0c8 100%);
+        }
+
+        .solde-box .label {
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+
+        .solde-box .value {
+            font-size: 18px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .solde-box.giftpass .label { color: #660066; }
+        .solde-box.giftpass .value { color: #9932cc; }
+        .solde-box.resortcredit .label { color: #006600; }
+        .solde-box.resortcredit .value { color: #228b22; }
+
+        /* Data grid */
+        .data-grid {
+            border: 1px inset #808080;
+            background: white;
+            width: 100%;
+        }
+
+        .data-grid table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .data-grid thead {
+            background: #0a246a;
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-grid th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border-right: 1px solid #a6caf0;
+        }
+
+        .data-grid tbody tr {
+            border-bottom: 1px solid #d4d0c8;
+        }
+
+        .data-grid tbody tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .data-grid tbody tr:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .data-grid td {
+            padding: 3px 8px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .data-grid td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .data-grid td.center { text-align: center; }
+
+        .grid-container {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px inset #808080;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid;
+        }
+
+        .badge-gp {
+            background: #e6e0f8;
+            color: #660066;
+            border-color: #660066;
+        }
+
+        .badge-rc {
+            background: #e0f8e0;
+            color: #006600;
+            border-color: #006600;
+        }
+
+        /* Info panel */
+        .info-panel {
+            border: 1px inset #808080;
+            background: #f0e6f8;
+            padding: 6px;
+            margin-bottom: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 4px;
+        }
+
+        .info-row .label { font-weight: bold; min-width: 100px; }
+        .info-row .value { color: #000066; }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 8px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #d4d0c8;
+            border-top: 1px solid #808080;
+            padding: 2px 8px;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-bar .message { color: #006600; }
+        .status-bar .error { color: red; }
+
+        /* Nav link */
+        .nav-link {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .nav-link:hover { color: #ff0000; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Ventes - Gift Pass & Resort Credit (Prg_229-250)</h1>
-        <div class="nav-links">
-            <a href="index.html">Caisse</a>
-            <a href="zooms.html">Zooms</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="card">
-            <h2>Recherche Compte</h2>
-            <div class="form-group">
-                <label>Societe</label>
-                <input type="text" id="societe" value="CSK" maxlength="10">
+    <div class="magic-window">
+        <div class="title-bar">
+            <div class="title">
+                <div class="icon"></div>
+                <span>Ventes Gift Pass & Resort Credit - Prg_229-250</span>
             </div>
-            <div class="form-group">
-                <label>Compte (Code GM)</label>
-                <input type="number" id="compte" placeholder="Code GM">
-            </div>
-            <div class="form-group">
-                <label>Filiation</label>
-                <input type="number" id="filiation" value="0">
-            </div>
-            <button class="btn btn-primary" onclick="rechercherSoldes()">Rechercher Soldes</button>
-
-            <div id="soldesContainer" style="display: none; margin-top: 20px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="solde-box" style="background: linear-gradient(135deg, #7b1fa2, #512da8);">
-                        <div class="label">Gift Pass (Prg_237)</div>
-                        <div class="value" id="soldeGiftPass">0.00</div>
-                        <div class="currency">EUR</div>
-                    </div>
-                    <div class="solde-box" style="background: linear-gradient(135deg, #107c10, #0b5e0b);">
-                        <div class="label">Resort Credit (Prg_250)</div>
-                        <div class="value" id="soldeResortCredit">0.00</div>
-                        <div class="currency">EUR</div>
-                    </div>
-                </div>
+            <div class="window-controls">
+                <button>_</button>
+                <button>□</button>
+                <button onclick="window.location='index.html'">×</button>
             </div>
         </div>
 
-        <div class="card">
-            <h2>Solde Resort Credit par Service</h2>
-            <div class="form-group">
-                <label>Service</label>
-                <select id="serviceSelect">
-                    <option value="">Charger les services...</option>
-                </select>
-            </div>
-            <button class="btn btn-success" onclick="getSoldeParService()">Consulter Solde Service</button>
+        <div class="window-content">
+            <div class="main-layout">
+                <!-- Panel gauche: Recherche -->
+                <div>
+                    <fieldset class="magic-fieldset">
+                        <legend>Recherche Compte</legend>
+                        <div class="form-row">
+                            <label>Société:</label>
+                            <input type="text" id="societe" value="CSK" maxlength="10" style="width:60px;">
+                        </div>
+                        <div class="form-row">
+                            <label>Compte:</label>
+                            <input type="number" id="compte" placeholder="Code GM" style="width:100px;">
+                        </div>
+                        <div class="form-row">
+                            <label>Filiation:</label>
+                            <input type="number" id="filiation" value="0" style="width:60px;">
+                        </div>
+                        <div style="text-align:center; margin-top:8px;">
+                            <button class="magic-btn" onclick="rechercherSoldes()">Rechercher</button>
+                        </div>
+                    </fieldset>
 
-            <div id="soldeServiceContainer" style="display: none; margin-top: 15px;">
-                <div class="info-panel">
-                    <div class="info-row">
-                        <span class="label">Service:</span>
-                        <span class="value" id="serviceNom">-</span>
+                    <div id="soldesContainer" style="display:none;">
+                        <div class="solde-container">
+                            <div class="solde-box giftpass">
+                                <div class="label">GIFT PASS</div>
+                                <div class="value" id="soldeGP">0.00</div>
+                            </div>
+                        </div>
+                        <div class="solde-container">
+                            <div class="solde-box resortcredit">
+                                <div class="label">RESORT CREDIT</div>
+                                <div class="value" id="soldeRC">0.00</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="label">Montant Attribue:</span>
-                        <span class="value" id="montantAttribue">-</span>
+
+                    <fieldset class="magic-fieldset" id="servicePanel" style="display:none;">
+                        <legend>Solde par Service</legend>
+                        <div class="form-row">
+                            <label>Service:</label>
+                            <select id="serviceSelect" style="width:120px;"></select>
+                        </div>
+                        <div style="text-align:center; margin-top:8px;">
+                            <button class="magic-btn" onclick="getSoldeService()">Consulter</button>
+                        </div>
+
+                        <div id="soldeServiceInfo" class="info-panel" style="display:none; margin-top:8px;">
+                            <div class="info-row">
+                                <span class="label">Attribué:</span>
+                                <span class="value" id="montantAttribue">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Utilisé:</span>
+                                <span class="value" id="montantUtilise">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Disponible:</span>
+                                <span class="value" id="soldeDisponible" style="font-size:14px; color:#006600;">-</span>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Panel droit: Onglets -->
+                <div>
+                    <div class="tab-bar">
+                        <button class="tab-btn active" onclick="showTab('historique')">Historique (Prg_238)</button>
+                        <button class="tab-btn" onclick="showTab('impression')">Impression (Prg_229)</button>
                     </div>
-                    <div class="info-row">
-                        <span class="label">Montant Utilise:</span>
-                        <span class="value" id="montantUtilise">-</span>
+
+                    <div id="historique" class="tab-content active">
+                        <div style="margin-bottom:8px;">
+                            <button class="magic-btn" onclick="chargerHistorique()">Charger Historique</button>
+                        </div>
+
+                        <div class="grid-container">
+                            <div class="data-grid">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px">Date</th>
+                                            <th style="width:60px">Type</th>
+                                            <th style="width:60px">Service</th>
+                                            <th>Description</th>
+                                            <th style="width:90px">Montant</th>
+                                            <th style="width:60px">Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historiqueBody">
+                                        <tr>
+                                            <td colspan="6" style="text-align:center; padding:20px;">
+                                                Cliquez sur Charger Historique
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="label">Solde Disponible:</span>
-                        <span class="value" id="soldeDisponible" style="color: var(--success-color); font-size: 18px;">-</span>
+
+                    <div id="impression" class="tab-content">
+                        <fieldset class="magic-fieldset">
+                            <legend>Réimpression Ticket - Prg_229</legend>
+                            <div class="form-row">
+                                <label>N° Transaction:</label>
+                                <input type="text" id="numTransaction" style="width:150px;">
+                            </div>
+                            <div class="form-row">
+                                <label>Type:</label>
+                                <select id="typeImpression" style="width:150px;">
+                                    <option value="TICKET">Ticket Standard</option>
+                                    <option value="DUPLICATA">Duplicata</option>
+                                    <option value="RECAP">Récapitulatif</option>
+                                </select>
+                            </div>
+                            <div style="text-align:center; margin-top:8px;">
+                                <button class="magic-btn" onclick="imprimer()">Imprimer</button>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                <span class="nav-link" onclick="window.location='index.html'">← Retour Menu</span>
             </div>
         </div>
 
-        <div class="card full-width">
-            <div class="tab-container">
-                <div class="tabs">
-                    <button class="tab active" onclick="showTab('historique')">Historique Ventes (Prg_238)</button>
-                    <button class="tab" onclick="showTab('print')">Impression Ticket (Prg_229)</button>
-                </div>
-            </div>
-
-            <div id="historique" class="tab-content active">
-                <button class="btn btn-primary" onclick="getHistorique()" style="margin-bottom: 15px;">Charger Historique</button>
-
-                <table id="tableHistorique">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Service</th>
-                            <th>Description</th>
-                            <th>Montant</th>
-                            <th>Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historiqueBody">
-                        <tr><td colspan="6" class="empty-state">Cliquez sur "Charger Historique"</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="print" class="tab-content">
-                <div class="info-panel">
-                    <h3 style="margin-bottom: 10px;">Impression Ticket (Prg_229)</h3>
-                    <p style="font-size: 13px; color: #666;">
-                        Utilisez cette fonction pour reimprimer un ticket de vente ou imprimer un recapitulatif.
-                    </p>
-                </div>
-
-                <div class="form-group">
-                    <label>Numero Transaction</label>
-                    <input type="text" id="numTransaction" placeholder="Numero de transaction">
-                </div>
-                <div class="form-group">
-                    <label>Type Impression</label>
-                    <select id="typeImpression">
-                        <option value="TICKET">Ticket Standard</option>
-                        <option value="DUPLICATA">Duplicata</option>
-                        <option value="RECAP">Recapitulatif</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="printTicket()">Imprimer</button>
-            </div>
+        <div class="status-bar">
+            <span id="statusMessage" class="message">Prêt</span>
+            <span id="recordCount"></span>
         </div>
     </div>
 
     <script>
-        const API_BASE = '/api';
+        const API_BASE = '';
+        const societe = localStorage.getItem('societe') || 'CSK';
+
+        document.getElementById('societe').value = societe;
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
 
         async function rechercherSoldes() {
-            const societe = document.getElementById('societe').value;
+            const soc = document.getElementById('societe').value;
             const compte = document.getElementById('compte').value;
             const filiation = document.getElementById('filiation').value;
 
-            if (!societe || !compte) {
-                alert('Societe et Compte requis');
+            if (!soc || !compte) {
+                alert('Société et Compte requis');
                 return;
             }
 
             try {
-                // Fetch Gift Pass solde
-                const gpResponse = await fetch(`${API_BASE}/ventes/solde-giftpass/${societe}/${compte}/${filiation}`);
-                const gpData = await gpResponse.json();
+                document.getElementById('statusMessage').textContent = 'Recherche...';
 
-                // Fetch Resort Credit solde (service 0 for total)
-                const rcResponse = await fetch(`${API_BASE}/ventes/solde-resortcredit/${societe}/${compte}/${filiation}/0`);
-                const rcData = await rcResponse.json();
+                // Gift Pass
+                const gpResp = await fetch(`${API_BASE}/api/ventes/solde-giftpass/${soc}/${compte}/${filiation}`);
+                const gpData = await gpResp.json();
+
+                // Resort Credit (global)
+                const rcResp = await fetch(`${API_BASE}/api/ventes/solde-resortcredit/${soc}/${compte}/${filiation}/0`);
+                const rcData = await rcResp.json();
 
                 document.getElementById('soldesContainer').style.display = 'block';
-                document.getElementById('soldeGiftPass').textContent =
-                    gpData.found ? gpData.solde.toFixed(2) : '0.00';
-                document.getElementById('soldeResortCredit').textContent =
-                    rcData.found ? rcData.solde.toFixed(2) : '0.00';
+                document.getElementById('soldeGP').textContent = formatMontant(gpData.found ? gpData.solde : 0);
+                document.getElementById('soldeRC').textContent = formatMontant(rcData.found ? rcData.solde : 0);
 
-                // Load services for service selector
-                loadServices(societe);
-            } catch (err) {
-                console.error(err);
-                alert('Erreur lors de la recherche des soldes');
+                // Charger services
+                await chargerServices(soc);
+                document.getElementById('servicePanel').style.display = 'block';
+
+                document.getElementById('statusMessage').textContent = 'Soldes chargés';
+            } catch (error) {
+                document.getElementById('statusMessage').textContent = error.message;
+                document.getElementById('statusMessage').className = 'error';
             }
         }
 
-        async function loadServices(societe) {
+        async function chargerServices(soc) {
             try {
-                const response = await fetch(`${API_BASE}/zooms/services-village?societe=${societe}`);
-                const services = await response.json();
+                const resp = await fetch(`${API_BASE}/api/zooms/services-village/${soc}`);
+                if (!resp.ok) return;
 
+                const services = await resp.json();
                 const select = document.getElementById('serviceSelect');
-                select.innerHTML = '<option value="">Selectionnez un service</option>';
+                select.innerHTML = '<option value="">Sélectionnez</option>';
+
                 services.forEach(s => {
-                    const option = document.createElement('option');
-                    option.value = s.codeService;
-                    option.textContent = `${s.codeService} - ${s.libelleService || ''}`;
-                    select.appendChild(option);
+                    const opt = document.createElement('option');
+                    opt.value = s.codeService;
+                    opt.textContent = `${s.codeService} - ${s.libelleService || ''}`;
+                    select.appendChild(opt);
                 });
             } catch (err) {
                 console.error(err);
             }
         }
 
-        async function getSoldeParService() {
-            const societe = document.getElementById('societe').value;
+        async function getSoldeService() {
+            const soc = document.getElementById('societe').value;
             const compte = document.getElementById('compte').value;
             const filiation = document.getElementById('filiation').value;
             const service = document.getElementById('serviceSelect').value;
 
-            if (!societe || !compte || !service) {
-                alert('Societe, Compte et Service requis');
+            if (!service) {
+                alert('Sélectionnez un service');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/ventes/solde-resortcredit/${societe}/${compte}/${filiation}/${service}`);
-                const data = await response.json();
+                const resp = await fetch(`${API_BASE}/api/ventes/solde-resortcredit/${soc}/${compte}/${filiation}/${service}`);
+                const data = await resp.json();
 
-                document.getElementById('soldeServiceContainer').style.display = 'block';
+                document.getElementById('soldeServiceInfo').style.display = 'block';
 
                 if (data.found) {
-                    document.getElementById('serviceNom').textContent =
-                        `${data.codeService} - ${data.libelleService || ''}`;
-                    document.getElementById('montantAttribue').textContent =
-                        data.montantAttribue?.toFixed(2) + ' EUR' || '-';
-                    document.getElementById('montantUtilise').textContent =
-                        data.montantUtilise?.toFixed(2) + ' EUR' || '-';
-                    document.getElementById('soldeDisponible').textContent =
-                        data.solde.toFixed(2) + ' EUR';
+                    document.getElementById('montantAttribue').textContent = formatMontant(data.montantAttribue);
+                    document.getElementById('montantUtilise').textContent = formatMontant(data.montantUtilise);
+                    document.getElementById('soldeDisponible').textContent = formatMontant(data.solde);
                 } else {
-                    document.getElementById('serviceNom').textContent = service;
-                    document.getElementById('montantAttribue').textContent = '0.00 EUR';
-                    document.getElementById('montantUtilise').textContent = '0.00 EUR';
-                    document.getElementById('soldeDisponible').textContent = '0.00 EUR';
+                    document.getElementById('montantAttribue').textContent = '0.00';
+                    document.getElementById('montantUtilise').textContent = '0.00';
+                    document.getElementById('soldeDisponible').textContent = '0.00';
                 }
             } catch (err) {
-                console.error(err);
-                alert('Erreur lors de la recherche du solde');
+                alert('Erreur: ' + err.message);
             }
         }
 
-        async function getHistorique() {
-            const societe = document.getElementById('societe').value;
+        async function chargerHistorique() {
+            const soc = document.getElementById('societe').value;
             const compte = document.getElementById('compte').value;
             const filiation = document.getElementById('filiation').value;
 
-            if (!societe || !compte) {
-                alert('Societe et Compte requis');
+            if (!soc || !compte) {
+                alert('Recherchez d\'abord un compte');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/ventes/historique/${societe}/${compte}/${filiation}`);
-                const data = await response.json();
+                const resp = await fetch(`${API_BASE}/api/ventes/historique/${soc}/${compte}/${filiation}`);
+                const data = await resp.json();
 
                 const tbody = document.getElementById('historiqueBody');
+
                 if (data.found && data.ventes && data.ventes.length > 0) {
                     tbody.innerHTML = data.ventes.map(v => `
                         <tr>
                             <td>${formatDate(v.dateVente)}</td>
-                            <td><span class="badge ${v.type === 'GP' ? 'badge-giftpass' : 'badge-resortcredit'}">${v.type === 'GP' ? 'Gift Pass' : 'Resort Credit'}</span></td>
-                            <td>${v.service || '-'}</td>
+                            <td class="center"><span class="badge ${v.type === 'GP' ? 'badge-gp' : 'badge-rc'}">${v.type === 'GP' ? 'GP' : 'RC'}</span></td>
+                            <td class="center">${v.service || '-'}</td>
                             <td>${v.description || '-'}</td>
-                            <td class="number">${v.montant?.toFixed(2) || '-'}</td>
-                            <td>${v.statut || '-'}</td>
+                            <td class="number">${formatMontant(v.montant)}</td>
+                            <td class="center">${v.statut || '-'}</td>
                         </tr>
                     `).join('');
+
+                    document.getElementById('recordCount').textContent = `${data.ventes.length} vente(s)`;
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Aucune vente trouvee</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Aucune vente</td></tr>';
+                    document.getElementById('recordCount').textContent = '0 vente(s)';
                 }
             } catch (err) {
-                console.error(err);
-                alert('Erreur lors du chargement de l\'historique');
+                alert('Erreur: ' + err.message);
             }
         }
 
-        async function printTicket() {
+        async function imprimer() {
             const numTransaction = document.getElementById('numTransaction').value;
             const typeImpression = document.getElementById('typeImpression').value;
 
             if (!numTransaction) {
-                alert('Numero de transaction requis');
+                alert('Numéro de transaction requis');
                 return;
             }
 
             try {
-                const response = await fetch(`${API_BASE}/ventes/print-ticket`, {
+                const resp = await fetch(`${API_BASE}/api/ventes/print-ticket`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -513,31 +598,31 @@
                         typeImpression
                     })
                 });
-                const data = await response.json();
+                const data = await resp.json();
 
                 if (data.success) {
-                    alert('Ticket envoye a l\'impression');
+                    alert('Ticket envoyé à l\'impression');
                 } else {
-                    alert(data.message || 'Erreur lors de l\'impression');
+                    alert(data.message || 'Erreur impression');
                 }
             } catch (err) {
-                console.error(err);
-                alert('Erreur lors de l\'impression');
+                alert('Erreur: ' + err.message);
             }
-        }
-
-        function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
         }
 
         function formatDate(dateStr) {
             if (!dateStr) return '-';
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('fr-FR');
+            const d = new Date(dateStr);
+            if (isNaN(d)) return '-';
+            return d.toLocaleDateString('fr-FR');
+        }
+
+        function formatMontant(val) {
+            if (val === null || val === undefined) return '0.00';
+            return new Intl.NumberFormat('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(val);
         }
     </script>
 </body>

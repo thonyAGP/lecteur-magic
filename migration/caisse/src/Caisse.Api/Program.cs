@@ -633,9 +633,9 @@ try
 
     // modes-paiement endpoint removed - use moyens-reglement instead (same table)
 
-    zooms.MapGet("/services-village", async (string? societe, IMediator mediator) =>
+    zooms.MapGet("/services-village", async (IMediator mediator) =>
     {
-        var result = await mediator.Send(new GetServicesVillageQuery(societe));
+        var result = await mediator.Send(new GetServicesVillageQuery());
         return Results.Ok(result);
     })
     .WithName("GetServicesVillage")
