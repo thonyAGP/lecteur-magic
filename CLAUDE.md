@@ -64,6 +64,35 @@ Ce projet utilise le skill `magic-unipaas` pour toutes les operations d'analyse 
 - Exports de donnees
 - Editions/Etats
 
+## Workflow Tickets Jira
+
+### Analyse de bugs - Bonnes pratiques
+
+Lors de l'analyse d'un ticket Jira, toujours documenter :
+
+1. **Tables suspectes** : Nom complet + champs concernés
+2. **Fichiers d'import** : Nom des fichiers attendus (TXT, CSV, etc.)
+3. **Données requises** : Base de données village + date précise
+
+### Format de demande de données
+
+À la fin de chaque analyse, être proactif et demander :
+```
+DONNÉES REQUISES POUR COMPLÉTER L'ANALYSE :
+- Base de données : Village [NOM] à la date [JJ/MM/AAAA]
+- Fichier(s) : [nom_fichier.ext] (import NA, export, etc.)
+- Table(s) à extraire : [nom_table] (champs: x, y, z)
+```
+
+### Structure rapport d'analyse
+
+Chaque rapport dans `.openspec/reports/` doit contenir :
+- Symptôme observé
+- Flux de données tracé
+- Tables/champs suspects (avec noms SQL exacts)
+- Hypothèses classées par probabilité
+- **Section "DONNÉES REQUISES"** en fin de rapport
+
 ## Standards de Code
 
 - **TypeScript** : Types stricts, Decimal.js pour numeriques

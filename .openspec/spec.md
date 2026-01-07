@@ -321,6 +321,52 @@ Composant "Sessions_Reprises" - 30 programmes:
 | 2025-12-27 | EF Core 8 + Minimal API | Stack moderne .NET 8 | Dapper seul, Controllers |
 | 2025-12-22 | SQL Server comme cible MECANO | Base existante CSK0912 | PostgreSQL (pas de base dispo) |
 | 2025-12-24 | Priorite ADH/Gestion Caisse | Module le plus critique (41 progs) | Ventes, Telephone |
+| 2026-01-07 | Interface gestion tickets Jira | CLI interactif au demarrage + KB SQLite pour capitalisation | Interface web (trop complexe), fichiers MD seuls (pas de recherche) |
+
+## Gestion Tickets Jira
+
+### Structure
+
+```
+.openspec/tickets/
+├── index.json              # Cache tickets actifs (sync Jira)
+├── patterns.sqlite         # Knowledge Base (resolutions capitalisees)
+└── {ISSUE-KEY}/
+    ├── analysis.md         # Analyse technique
+    ├── notes.md            # Notes de travail
+    ├── resolution.md       # Solution finale
+    └── attachments/        # Pieces jointes
+```
+
+### Commandes disponibles
+
+| Commande | Description |
+|----------|-------------|
+| `/ticket` | Menu principal - liste tickets actifs |
+| `/ticket-new {KEY}` | Initialise analyse d'un nouveau ticket |
+| `/ticket-learn {KEY}` | Capitalise resolution dans KB |
+| `/ticket-search {query}` | Recherche patterns similaires |
+
+### Projets Jira suivis
+
+| Projet | Description | Prefixe |
+|--------|-------------|---------|
+| CMDS | Support PMS (incidents, questions) | CMDS-XXXXXX |
+| PMS | Bugfix/Release (corrections, evolutions) | PMS-XXXXX |
+
+### Workflow
+
+1. **Demarrage session** → Menu CLI automatique (hook SessionStart)
+2. **Selection ticket** ou `/ticket-new CMDS-XXXXX`
+3. **Analyse** avec outils MCP Magic
+4. **Resolution** documentee dans `resolution.md`
+5. **Capitalisation** via `/ticket-learn` → KB SQLite
+
+### Tickets actifs
+
+| Ticket | Statut | Domaine | Description |
+|--------|--------|---------|-------------|
+| CMDS-174321 | EN COURS | dates | Bug date arrivee PB027 (+1 mois) |
 
 ## Bases de donnees
 
@@ -335,6 +381,10 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-07: **Interface Gestion Tickets Jira** - Menu CLI au demarrage (hook SessionStart), 4 commandes (/ticket, /ticket-new, /ticket-learn, /ticket-search), KB SQLite pour capitalisation, structure .openspec/tickets/{KEY}/. Migration CMDS-174321 vers nouvelle structure. 5 scripts PS securises (.env credentials)
+- 2026-01-07: **CMDS-174321 Analyse approfondie** - Tracage flux PB027 (Prg_62→Prg_63). Decouverte: terminal affiche date correcte (25DEC), GUI affiche erreur (25/01). Bug dans affichage GUI, pas import. Tables requises: cafil014_dat, table temp planning. Attente base VPHUKET
+- 2026-01-06: **Analyse CMDS-174321 + MCP Global Index** - Bug date arrivee (NA=25/12/2025, PMS=25/01/2026). Hypothese: inversion DD/MM vs MM/DD. 4 nouveaux outils MCP: magic_find_program, magic_list_programs, magic_index_stats, magic_get_dependencies. Rapport `.openspec/reports/CMDS-174321_ANALYSIS.md`
+- 2026-01-06: **Documentation SADT projet ADH** - Analyse structuree complete. 9 modules fonctionnels, ~350 programmes, 27 dossiers, 20 tables. Rapport `.openspec/reports/ADH_SADT_DOCUMENTATION.md`
 - 2026-01-06: **MCP Server Magic Interpreter** - Serveur MCP C# .NET 8 pour parsing XML deterministe. 5 outils: magic_get_position, magic_get_tree, magic_get_dataview, magic_get_expression, magic_get_logic. 2383 programmes indexes (PBP, REF, VIL, PBG, PVE). Config dans .claude/settings.local.json
 - 2026-01-05: **Session 7: CallTask Advanced** - Wait disponible SEULEMENT pour Raise Event (pas Call SubTask/Program). Task ID = numero local (pas ISN_2). Skill enrichi avec tableau proprietes
 - 2026-01-05: **Session 6: Settings Repositories** - Font Repository unifie (#1-23 Application, #24-151 Internal, #152+ Studio). Color Repository valide. Nouvelle section settings_repositories dans skill
@@ -397,4 +447,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2026-01-04 - Correction tracage flux ecrans CA0142/CA0143*
+*Derniere mise a jour: 2026-01-06 - Documentation SADT projet ADH*

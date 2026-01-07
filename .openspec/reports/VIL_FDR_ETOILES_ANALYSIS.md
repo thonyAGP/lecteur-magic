@@ -3,7 +3,7 @@
 **Date**: 2026-01-05
 **Projet**: VIL (Village)
 **Demande**: Vérifier la logique des 2 étoiles (**) sur la colonne F.D.R. INITIAL de l'édition RECAPITULATIF SESSIONS PMS
-**Statut**: **BUG CONFIRME - CORRECTION IDENTIFIEE**
+**Statut**: **CODE CORRECT - ANALYSE INITIALE ERRONÉE**
 
 ---
 
@@ -13,180 +13,105 @@
 
 ---
 
-## 2. BUG IDENTIFIÉ
+## 2. ANALYSE CORRIGÉE (après validation screenshots)
 
-### Expression correcte (NON UTILISÉE)
+### Ce que montre l'IDE Magic (screenshots 2025-01-05)
 
+**Panneau Logic - Task 22.16.1:**
 ```
-Expression 38 = {0,4}<>{0,81}
-```
-
-- **Field 4** = FDR Initial (colonne table)
-- **Field 81** = "FDR Final lors de la dernière fermeture" (variable virtuelle)
-- **Comparaison** : FDR Initial ≠ FDR Previous
-
-**Cette expression correspond EXACTEMENT à la règle métier, mais elle N'EST JAMAIS UTILISÉE !**
-
-### Expression utilisée (INCORRECTE)
-
-```
-Expression 32 = {0,4}+ExpCalc('8'EXP)+{0,8}+{0,10}+{0,11}+{0,12}+{0,13}<>{0,5}
+Ligne  | Type    | Variable                  | With
+-------|---------|---------------------------|------
+14     | Update  | v.Ecart F.D.R. COFFRE2   | 32
+18     | Update  | v.Ecart F.D.R. RECEPTION | 32
 ```
 
-- Fait une **somme** de plusieurs champs (4, 8, 10, 11, 12, 13 + ExpCalc)
-- Compare avec Field 5
-- **NE correspond PAS** à la règle métier simple
-
-### Où est le bug
-
-```xml
-<!-- Ligne 17787-17788 : Update Field 78 (étoiles COFFRE 1) -->
-<Update FlowIsn="329">
-  <FieldID val="78"/>
-  <WithValue val="32"/>    <!-- DEVRAIT ÊTRE 38 ! -->
-</Update>
-
-<!-- Ligne 17832-17833 : Update Field 79 (étoiles COFFRE 2) -->
-<Update FlowIsn="330">
-  <FieldID val="79"/>
-  <WithValue val="32"/>    <!-- DEVRAIT ÊTRE 38 ! -->
-</Update>
+**Panneau Expression Rules - Task 22.16.1:**
 ```
+#  | Expression
+---|------------------------------------------
+31 | DK+ExpCalc('10'EXP)+DO+DQ+DR+DS+DT<>DL   ← Somme complexe (NON utilisée)
+32 | DK<>EU                                   ← FDR Initial <> FDR Previous (UTILISÉE!)
+```
+
+### Conclusion
+
+**Le code EST CORRECT.** Les Updates utilisent `With: 32` qui référence Expression 32 = `DK<>EU`, qui est EXACTEMENT la formule correspondant à la règle métier.
 
 ---
 
-## 3. Analyse Complete du Bug
+## 3. Erreur d'analyse initiale
 
-### Mapping Expressions XML → IDE
+### Ce que j'avais mal compris
 
-En comptant les 34 expressions dans l'ordre du XML (id=1,2,3,4,30,6,7,35,36,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,32,38,33,34):
+J'ai fait une erreur fondamentale sur le mapping `WithValue` :
 
-| Position IDE | XML id | Contenu | Role |
-|--------------|--------|---------|------|
-| 31 | 32 | `{0,4}+ExpCalc('8'EXP)+{0,8}+{0,10}+{0,11}+{0,12}+{0,13}<>{0,5}` | Somme complexe (INCORRECTE) |
-| **32** | 38 | `{0,4}<>{0,81}` = **DK<>EU** | Comparaison FDR (CORRECTE) |
+| Hypothèse initiale (FAUSSE) | Réalité (VALIDÉE) |
+|----------------------------|-------------------|
+| `WithValue val="32"` référence XML id="32" | `WithValue val="32"` référence **IDE Expression #32** |
+| XML id="32" = Expression 31 dans IDE | Le numéro 32 EST le numéro IDE affiché |
 
-### Identification des Variables
+### Pourquoi l'erreur
 
-Lecture du XML (Select statements) :
-- **Field 4** = fdr_ouverture (FDR Initial) → variable **DK** dans la DataView
-- **Field 81** = v.FDR fermeture de la veille → variable **EU** dans la DataView
-- **Field 78** = v.Ecart F.D.R. COFFRE2 (booleen pour afficher **)
-- **Field 79** = v.Ecart F.D.R. RECEPTION (booleen pour afficher **)
+1. J'ai supposé que `WithValue` dans le XML faisait référence à l'attribut `id` des expressions XML
+2. En réalité, le numéro dans `WithValue` correspond au numéro **AFFICHÉ dans l'IDE**
+3. L'IDE renumérote séquentiellement mais `WithValue` utilise cette numérotation IDE
 
-### Le Probleme
+### Impact de l'erreur
 
-Les Updates (lignes XML 17787 et 17832) utilisent `WithValue="32"` qui reference l'**ID XML 32**, pas le numero IDE.
+Mon rapport initial concluait à un bug alors que le code fonctionne correctement :
+- J'ai dit "Expression 32 incorrecte" → FAUX, c'est Expression 31 qui est la somme complexe
+- J'ai dit "changer vers 38" → INUTILE, le code utilise déjà 32 (DK<>EU)
 
-| Update | Champ | Expression utilisee | Devrait etre |
-|--------|-------|---------------------|--------------|
-| Ligne XML 17787 | 78 (v.Ecart COFFRE2) | XML id=32 → IDE 31 (somme) | XML id=38 → IDE 32 (DK<>EU) |
-| Ligne XML 17832 | 79 (v.Ecart RECEPTION) | XML id=32 → IDE 31 (somme) | XML id=38 → IDE 32 (DK<>EU) |
+---
 
-### Correction a Appliquer
+## 4. Mapping confirmé
 
-**Tache 22.16.1, Record Suffix conditionnel (LogicUnit id="6", condition sur Expression 89) :**
+### Variables DataView
+
+| Variable IDE | Description | Rôle |
+|--------------|-------------|------|
+| DK | fdr_ouverture | FDR Initial du jour |
+| EU | v.FDR fermeture de la veille | FDR Final de la session précédente |
+
+### Formule correcte
 
 ```
-Ligne IDE 5 : Update v.Ecart F.D.R. COFFRE2
-             → remplacer expression 31 par expression 32 (DK<>EU)
-
-Ligne IDE 9 : Update v.Ecart F.D.R. RECEPTION
-             → remplacer expression 31 par expression 32 (DK<>EU)
+DK <> EU
+= fdr_ouverture <> v.FDR_fermeture_veille
+= FDR Initial ≠ FDR Previous
 ```
 
-### Pourquoi le Bug Existait
-
-L'expression IDE 32 (XML id=38) implementait correctement la regle metier `{0,4}<>{0,81}` (FDR Initial <> FDR Veille), mais les Updates referençaient l'expression IDE 31 (XML id=32) qui fait une somme complexe sans rapport avec la regle metier.
-
-C'est un cas classique de **code mort** : l'expression correcte existait mais n'etait jamais utilisee
+Cette formule correspond **exactement** à la règle métier demandée.
 
 ---
 
-## 4. Impact
+## 5. Leçons apprises (Skill mis à jour)
 
-| Champ | Rôle | Utilisé dans |
-|-------|------|--------------|
-| Field 78 | Écart F.D.R. pour COFFRE 1 | Expression 35 (affiche **) |
-| Field 79 | Écart F.D.R. pour COFFRE 2 | Expression 36 (affiche **) |
+| Leçon | Détail |
+|-------|--------|
+| **WithValue = numéro IDE** | `WithValue val="N"` référence Expression #N dans l'IDE, PAS l'id XML |
+| **Toujours vérifier dans l'IDE** | Les screenshots IDE sont la source de vérité |
+| **XML id ≠ numéro IDE** | Le XML garde les id originaux avec trous, l'IDE renumérote |
+| **FlowIsn ≠ ligne IDE** | FlowIsn est un ID interne, pas le numéro de ligne |
 
-Les expressions d'affichage :
-```
-Expression 35 = Trim(Str({0,4},{2,4})&IF({0,78},'**',''))
-Expression 36 = Trim(Str({0,4},{2,4})&IF({0,79},'**',''))
-```
+### Mise à jour du Skill
 
----
-
-## 5. Vérification dans l'IDE Magic
-
-**AVANT de corriger**, vérifier dans l'IDE :
-
-1. Ouvrir Programme 22 > Tâche "Comptage Reception" (ou tâche parent)
-2. Aller au Record Suffix
-3. Trouver les deux Updates des champs 78 et 79
-4. Confirmer qu'ils utilisent Expression 32
-5. Modifier pour utiliser Expression 38 (qui devrait être numérotée différemment dans l'IDE)
-
-**Note sur la numérotation IDE** : L'IDE renumérote séquentiellement. Expression id="38" dans le XML pourrait avoir un numéro différent dans l'IDE.
+Ces apprentissages ont été intégrés dans `skills/magic-unipaas/SKILL.md` :
+- Section "MAPPING EXPRESSIONS - XML id vs Position IDE" corrigée
+- Section "Numérotation des Lignes IDE" ajoutée
+- Documentation officielle Magic Software référencée
 
 ---
 
-## 6. Contexte technique
+## 6. Aucune action requise
 
-### Tâche concernée
+Le code fonctionne correctement. Les Updates aux lignes 14 et 18 utilisent Expression 32 (`DK<>EU`) qui implémente correctement la règle métier.
 
-- Programme: 22 (Prg_558.xml)
-- Tâche: ISN_2="19" ("Reception") et sous-tâche de comptage
-- Table source: comp="2" obj="594" (REF)
-
-### Définition Field 81
-
-```xml
-<!-- Ligne 17565-17570 -->
-<Remark>FDR Final lors de la dernière fermeture</Remark>
-<Select FieldID="81" FlowIsn="266" id="81">
-  <Column val="20"/>
-  <Type val="V"/>  <!-- Variable virtuelle -->
-</Select>
-```
-
-### Mise à jour Field 81
-
-Le Field 81 est mis à jour via CallTask vers obj="56" ("Update FDR Précédent") qui récupère le FDR Final de la session précédente.
+Si les étoiles ne s'affichent pas, le problème est ailleurs :
+- Variable EU (FDR veille) non alimentée ?
+- Condition d'exécution du Record Suffix non remplie ?
+- Autre logique en amont ?
 
 ---
 
-## 7. Leçons apprises (Skill)
-
-1. **Code mort** : Les expressions peuvent exister sans être utilisées
-2. **Vérifier les WithValue** : Toujours tracer quelle expression est réellement utilisée
-3. **Expression vs Règle métier** : Comparer l'expression utilisée avec la règle métier attendue
-4. **Indices dans le XML** : Le nom de la variable ("FDR Final lors de la dernière fermeture") donne un indice fort
-
----
-
-## 8. Conclusion
-
-**Bug confirmé** : Les Updates des champs 78/79 utilisent l'expression IDE 31 (somme complexe) au lieu de l'expression IDE 32 (DK<>EU = comparaison FDR).
-
-### Action requise dans l'IDE Magic
-
-**Tache 22.16.1, Record Suffix conditionnel :**
-
-| Ligne IDE | Action |
-|-----------|--------|
-| 5 | Changer expression de 31 vers **32** (DK<>EU = fdr_ouverture <> v.FDR fermeture de la veille) |
-| 9 | Changer expression de 31 vers **32** (DK<>EU = fdr_ouverture <> v.FDR fermeture de la veille) |
-
-### Verification apres correction
-
-Les expressions 35 et 36 (affichage) utilisent correctement les champs 78 et 79 :
-- Expression 35 : `Trim(Str({0,4},{2,4})&IF({0,78},'**',''))` → affiche ** si Field 78 = true
-- Expression 36 : `Trim(Str({0,4},{2,4})&IF({0,79},'**',''))` → affiche ** si Field 79 = true
-
-Une fois la correction appliquee, les ** apparaitront quand FDR Initial ≠ FDR Veille.
-
----
-
-*Rapport mis à jour le 2026-01-05 - Analyse complete XML confirmee*
+*Rapport corrigé le 2026-01-05 - Validation par screenshots IDE*

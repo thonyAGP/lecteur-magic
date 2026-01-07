@@ -3,3 +3,32 @@ obj/
 *.user
 .vs/
 *.suo
+
+# Build artifacts
+build-output/
+publish/
+
+# Temp files
+*.TXT.tmp
+DSIOPtmp*
+
+# Windows reserved names (created by error)
+nul
+
+# Local settings
+.claude/settings.local.json
+
+# Credentials
+.env
+
+# Jira local data
+.jira-attachments/
+
+# Temp directories
+migration/caisse/temp_out2/
+
+# Knowledge Base (local SQLite)
+.openspec/tickets/patterns.sqlite
+
+# Node (if not used)
+node_modules/
