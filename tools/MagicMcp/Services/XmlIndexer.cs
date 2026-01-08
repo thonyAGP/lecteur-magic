@@ -252,73 +252,250 @@ public class XmlIndexer
             dataView = dataView with { Links = links };
         }
 
+        // Parse Columns
+        var columns = ParseColumns(dvElement.Element("Resource")?.Element("Columns"));
+        if (columns.Count > 0)
+        {
+            dataView = dataView with { Columns = columns };
+        }
+
         return dataView;
+    }
+
+    private List<MagicColumn> ParseColumns(XElement? columnsElement)
+    {
+        var columns = new List<MagicColumn>();
+        if (columnsElement == null) return columns;
+
+        var columnElements = columnsElement.Elements("Column").ToList();
+        for (int i = 0; i < columnElements.Count; i++)
+        {
+            var colElement = columnElements[i];
+            var idAttr = colElement.Attribute("id");
+            var nameAttr = colElement.Attribute("name");
+
+            if (idAttr == null || !int.TryParse(idAttr.Value, out int xmlId)) continue;
+
+            // Get data type from Model element
+            var modelElement = colElement.Descendants("Model").FirstOrDefault();
+            var dataType = ParseFieldType(modelElement?.Attribute("attr_obj")?.Value);
+
+            // Get picture
+            var pictureElement = colElement.Descendants("Picture").FirstOrDefault();
+            var picture = pictureElement?.Attribute("valUnicode")?.Value
+                       ?? pictureElement?.Attribute("val")?.Value;
+
+            // Get definition (2=Virtual, 1=Real, 3=Parameter)
+            var defElement = colElement.Descendants("Definition").FirstOrDefault();
+            var defVal = defElement?.Attribute("val")?.Value;
+            var definition = defVal switch
+            {
+                "1" => "R",  // Real
+                "2" => "V",  // Virtual
+                "3" => "P",  // Parameter
+                _ => "V"
+            };
+
+            // Get source info for Real columns
+            int? sourceColumnNumber = null;
+            var initElement = colElement.Descendants("Init").FirstOrDefault();
+            if (initElement != null)
+            {
+                var srcColAttr = initElement.Attribute("SrcFldIdx");
+                if (srcColAttr != null && int.TryParse(srcColAttr.Value, out int srcCol))
+                {
+                    sourceColumnNumber = srcCol;
+                }
+            }
+
+            // Get locate expression
+            int? locateExprId = null;
+            var locateElement = colElement.Descendants("Locate").FirstOrDefault();
+            if (locateElement != null)
+            {
+                var locValAttr = locateElement.Attribute("val");
+                if (locValAttr != null && int.TryParse(locValAttr.Value, out int locId))
+                {
+                    locateExprId = locId;
+                }
+            }
+
+            columns.Add(new MagicColumn
+            {
+                LineNumber = i + 1,  // 1-based line number
+                XmlId = xmlId,
+                Variable = MagicColumn.IndexToVariable(i),
+                Name = nameAttr?.Value ?? $"Col_{xmlId}",
+                DataType = dataType,
+                Picture = picture,
+                Definition = definition,
+                SourceColumnNumber = sourceColumnNumber,
+                LocateExpressionId = locateExprId
+            });
+        }
+
+        return columns;
+    }
+
+    private static string ParseFieldType(string? attrObj)
+    {
+        return attrObj switch
+        {
+            "FIELD_ALPHA" => "Alpha",
+            "FIELD_NUMERIC" => "Numeric",
+            "FIELD_DATE" => "Date",
+            "FIELD_TIME" => "Time",
+            "FIELD_LOGICAL" => "Logical",
+            "FIELD_BLOB" => "Blob",
+            "FIELD_MEMO" => "Memo",
+            "FIELD_UNICODE" => "Unicode",
+            _ => "Unknown"
+        };
     }
 
     private List<MagicLogicLine> ParseLogicLines(XElement taskElement)
     {
         var lines = new List<MagicLogicLine>();
+        int lineNum = 1;  // Continuous numbering across all handlers
 
-        // Task Prefix
-        var prefixElement = taskElement.Element("TaskDefinition")?.Element("TaskLogicUnitsTable")?.Element("TaskPrefix");
-        if (prefixElement != null)
+        var logicTable = taskElement.Element("TaskDefinition")?.Element("TaskLogicUnitsTable");
+        if (logicTable == null) return lines;
+
+        // Order of handlers in IDE: Task Prefix, Record Prefix, Record Main, Record Suffix, Task Suffix, then Handlers
+        var handlerOrder = new[]
         {
-            lines.AddRange(ParseLogicUnit(prefixElement, "Prefix"));
+            ("TaskPrefix", "TP"),
+            ("RecordPrefix", "RP"),
+            ("RecordMain", "RM"),
+            ("RecordSuffix", "RS"),
+            ("TaskSuffix", "TS")
+        };
+
+        foreach (var (elementName, handlerType) in handlerOrder)
+        {
+            var handlerElement = logicTable.Element(elementName);
+            if (handlerElement != null)
+            {
+                lineNum = ParseLogicUnit(handlerElement, handlerType, lines, lineNum);
+            }
         }
 
-        // Record Prefix
-        var recordPrefixElement = taskElement.Element("TaskDefinition")?.Element("TaskLogicUnitsTable")?.Element("RecordPrefix");
-        if (recordPrefixElement != null)
+        // Parse additional handlers (events)
+        foreach (var handler in logicTable.Elements("LogicUnit"))
         {
-            lines.AddRange(ParseLogicUnit(recordPrefixElement, "RecordPrefix"));
-        }
-
-        // Record Suffix
-        var recordSuffixElement = taskElement.Element("TaskDefinition")?.Element("TaskLogicUnitsTable")?.Element("RecordSuffix");
-        if (recordSuffixElement != null)
-        {
-            lines.AddRange(ParseLogicUnit(recordSuffixElement, "RecordSuffix"));
-        }
-
-        // Task Suffix
-        var suffixElement = taskElement.Element("TaskDefinition")?.Element("TaskLogicUnitsTable")?.Element("TaskSuffix");
-        if (suffixElement != null)
-        {
-            lines.AddRange(ParseLogicUnit(suffixElement, "Suffix"));
+            var handlerName = handler.Attribute("Name")?.Value ?? "H";
+            lineNum = ParseLogicUnit(handler, handlerName, lines, lineNum);
         }
 
         return lines;
     }
 
-    private List<MagicLogicLine> ParseLogicUnit(XElement unitElement, string unitType)
+    private int ParseLogicUnit(XElement unitElement, string handlerType, List<MagicLogicLine> lines, int startLineNum)
     {
-        var lines = new List<MagicLogicLine>();
-        var operations = unitElement.Descendants().Where(e => e.Name.LocalName.EndsWith("Operation"));
+        var lineNum = startLineNum;
+        var logicLines = unitElement.Elements("LogicLine");
 
-        int lineNum = 1;
-        foreach (var op in operations)
+        foreach (var logicLine in logicLines)
         {
-            var isDisabled = op.Attribute("Disabled")?.Value == "1";
-            var condition = op.Attribute("Condition")?.Value;
+            // Get the first child element (the operation)
+            var operation = logicLine.Elements().FirstOrDefault();
+            if (operation == null) continue;
 
-            var parameters = new Dictionary<string, string>();
-            foreach (var attr in op.Attributes())
+            var opName = operation.Name.LocalName;
+            var isDisabled = operation.Attribute("Disabled")?.Value == "1";
+
+            // Build parameters dictionary
+            var parameters = new Dictionary<string, string>
             {
-                if (attr.Name != "Disabled" && attr.Name != "Condition")
+                ["Handler"] = handlerType
+            };
+
+            foreach (var attr in operation.Attributes())
+            {
+                if (attr.Name.LocalName != "Disabled")
                     parameters[attr.Name.LocalName] = attr.Value;
+            }
+
+            // Extract specific operation details
+            var condition = operation.Element("Condition")?.Attribute("val")?.Value;
+            if (condition == null && operation.Attribute("Condition") != null)
+            {
+                condition = operation.Attribute("Condition")?.Value;
+            }
+
+            // Add call target info for Call operations
+            if (opName == "Call")
+            {
+                var callDb = operation.Element("DB");
+                if (callDb != null)
+                {
+                    parameters["TargetComp"] = callDb.Attribute("comp")?.Value ?? "";
+                    parameters["TargetPrg"] = callDb.Attribute("obj")?.Value ?? "";
+                }
+            }
+
+            // Add link table info for LNK operations
+            if (opName == "LNK")
+            {
+                var linkDb = operation.Element("DB");
+                if (linkDb != null)
+                {
+                    parameters["TableComp"] = linkDb.Attribute("comp")?.Value ?? "";
+                    parameters["TableId"] = linkDb.Attribute("obj")?.Value ?? "";
+                }
+            }
+
+            // Add verify message for Verify operations
+            if (opName == "Verify")
+            {
+                var msgElement = operation.Element("Message");
+                if (msgElement != null)
+                {
+                    parameters["MessageExpr"] = msgElement.Attribute("val")?.Value ?? "";
+                }
+                var returnElement = operation.Element("Return");
+                if (returnElement != null)
+                {
+                    parameters["ReturnVar"] = returnElement.Attribute("FieldID")?.Value ?? "";
+                }
             }
 
             lines.Add(new MagicLogicLine
             {
                 LineNumber = lineNum++,
-                Operation = op.Name.LocalName.Replace("Operation", ""),
+                Operation = MapOperationName(opName),
                 Condition = condition,
                 IsDisabled = isDisabled,
                 Parameters = parameters
             });
         }
 
-        return lines;
+        return lineNum;
+    }
+
+    private static string MapOperationName(string xmlName)
+    {
+        return xmlName switch
+        {
+            "DATAVIEW_SRC" => "Data View Source",
+            "Select" => "Select",
+            "Update" => "Update",
+            "Call" => "Call Task",
+            "LNK" => "Link",
+            "END_LINK" => "End Link",
+            "Remark" => "Remark",
+            "Block" => "Block",
+            "EndBlock" => "End Block",
+            "Verify" => "Verify",
+            "Evaluate" => "Evaluate",
+            "Raise" => "Raise Event",
+            "Action" => "Action",
+            "Input" => "Input",
+            "Output" => "Output",
+            "Form" => "Form",
+            "Browse" => "Browse",
+            _ => xmlName
+        };
     }
 
     private void ParseExpressions(XDocument doc, MagicProgram program)
