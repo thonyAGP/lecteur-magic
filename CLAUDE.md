@@ -37,6 +37,10 @@ Ce projet utilise le skill `magic-unipaas` pour toutes les operations d'analyse 
 | `/magic-analyze <prg_id>` | Analyse un programme |
 | `/magic-tables` | Liste les tables |
 | `/magic-migrate <prg_id>` | Migre vers langage cible |
+| `/magic-line <projet> <tâche> <ligne>` | Affiche Data View ET Logic pour une ligne |
+| `/magic-ide-position <projet> <prg>` | Convertit références XML en positions IDE |
+| `/magic-expr <id>` | Décode une expression Magic |
+| `/magic-search <query>` | Recherche dans les programmes |
 
 ## Methodologie
 
