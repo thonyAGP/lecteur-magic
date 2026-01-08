@@ -34,7 +34,7 @@
 
     /* Sidebar */
     .sidebar {
-      width: 300px;
+      width: 320px;
       background: var(--bg-secondary);
       border-right: 1px solid var(--border);
       display: flex;
@@ -107,7 +107,6 @@
     .nav-item {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 8px 16px;
       color: var(--text-secondary);
       text-decoration: none;
@@ -115,6 +114,7 @@
       cursor: pointer;
       transition: all 0.15s;
       border-left: 2px solid transparent;
+      position: relative;
     }
 
     .nav-item:hover {
@@ -128,7 +128,42 @@
       border-left-color: var(--accent);
     }
 
-    .nav-item .title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-item .title {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .nav-item .actions {
+      display: none;
+      gap: 4px;
+      margin-left: 8px;
+    }
+
+    .nav-item:hover .actions { display: flex; }
+
+    .nav-item .action-btn {
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-item .action-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .nav-item .action-btn.archive:hover { background: var(--warning); }
+    .nav-item .action-btn.unarchive:hover { background: var(--success); }
 
     .badge {
       font-size: 9px;
@@ -139,15 +174,68 @@
       font-weight: 600;
       margin-left: 8px;
       flex-shrink: 0;
+      cursor: pointer;
     }
+
+    .badge:hover { filter: brightness(1.2); }
 
     .badge.resolved { background: var(--success); color: #000; }
     .badge.dev { background: var(--warning); color: #000; }
     .badge.spec { background: var(--purple); color: #fff; }
     .badge.progress { background: var(--accent); color: #000; }
+    .badge.rejected { background: var(--danger); color: #fff; }
 
     .archives-section { opacity: 0.7; }
     .archives-section .nav-item { font-size: 12px; padding: 6px 16px; }
+
+    /* Status dropdown */
+    .status-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px;
+      z-index: 100;
+      min-width: 120px;
+    }
+
+    .status-dropdown.show { display: block; }
+
+    .status-option {
+      display: block;
+      padding: 6px 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .status-option:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    /* Save indicator */
+    .save-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--success);
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .save-indicator.show { display: flex; align-items: center; gap: 8px; }
+    .save-indicator.error { background: var(--danger); color: #fff; }
 
     /* Main Content */
     .main {
@@ -162,172 +250,42 @@
     }
 
     /* Typography */
-    .content h1 {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .content h2 {
-      font-size: 22px;
-      font-weight: 600;
-      margin: 32px 0 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .content h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 24px 0 12px;
-      color: var(--text-primary);
-    }
-
-    .content h4 {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 20px 0 8px;
-      color: var(--text-secondary);
-    }
-
-    .content p {
-      margin: 12px 0;
-      line-height: 1.7;
-      color: var(--text-secondary);
-    }
-
+    .content h1 { font-size: 28px; font-weight: 600; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .content h2 { font-size: 22px; font-weight: 600; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .content h3 { font-size: 18px; font-weight: 600; margin: 24px 0 12px; color: var(--text-primary); }
+    .content h4 { font-size: 15px; font-weight: 600; margin: 20px 0 8px; color: var(--text-secondary); }
+    .content p { margin: 12px 0; line-height: 1.7; color: var(--text-secondary); }
     .content strong { color: var(--text-primary); }
-
-    .content a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
+    .content a { color: var(--accent); text-decoration: none; }
     .content a:hover { text-decoration: underline; }
-
-    .content ul, .content ol {
-      margin: 12px 0;
-      padding-left: 24px;
-      color: var(--text-secondary);
-    }
-
-    .content li {
-      margin: 6px 0;
-      line-height: 1.6;
-    }
-
-    .content hr {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 32px 0;
-    }
+    .content ul, .content ol { margin: 12px 0; padding-left: 24px; color: var(--text-secondary); }
+    .content li { margin: 6px 0; line-height: 1.6; }
+    .content hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
 
     /* Tables */
-    .content table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 16px 0;
-      font-size: 13px;
-    }
-
-    .content th {
-      background: var(--bg-tertiary);
-      font-weight: 600;
-      text-align: left;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      white-space: nowrap;
-    }
-
-    .content td {
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      vertical-align: top;
-    }
-
+    .content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+    .content th { background: var(--bg-tertiary); font-weight: 600; text-align: left; padding: 10px 12px; border: 1px solid var(--border); color: var(--text-primary); white-space: nowrap; }
+    .content td { padding: 10px 12px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
     .content tr:hover td { background: var(--bg-secondary); }
     .content td:first-child { color: var(--text-primary); font-weight: 500; }
 
     /* Code */
-    .content code {
-      font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
-      font-size: 12px;
-      background: var(--bg-tertiary);
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: var(--accent);
-    }
-
-    .content pre {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 16px;
-      overflow-x: auto;
-      margin: 16px 0;
-    }
-
-    .content pre code {
-      background: none;
-      padding: 0;
-      color: var(--text-secondary);
-      font-size: 13px;
-      line-height: 1.5;
-    }
+    .content code { font-family: 'SF Mono', 'Consolas', 'Monaco', monospace; font-size: 12px; background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+    .content pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    .content pre code { background: none; padding: 0; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
 
     /* Blockquote */
-    .content blockquote {
-      border-left: 3px solid var(--accent);
-      padding-left: 16px;
-      margin: 16px 0;
-      color: var(--text-secondary);
-      font-style: italic;
-    }
+    .content blockquote { border-left: 3px solid var(--accent); padding-left: 16px; margin: 16px 0; color: var(--text-secondary); font-style: italic; }
 
     /* Welcome */
-    .welcome {
-      text-align: center;
-      padding: 64px 32px;
-    }
-
-    .welcome h2 {
-      border: none;
-      color: var(--text-primary);
-    }
-
-    .welcome p {
-      max-width: 400px;
-      margin: 12px auto;
-    }
-
-    .welcome .tip {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 16px;
-      margin-top: 24px;
-      font-size: 12px;
-      text-align: left;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .welcome .tip code {
-      display: block;
-      margin-top: 8px;
-    }
+    .welcome { text-align: center; padding: 64px 32px; }
+    .welcome h2 { border: none; color: var(--text-primary); }
+    .welcome p { max-width: 400px; margin: 12px auto; }
+    .welcome .tip { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-top: 24px; font-size: 12px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
+    .welcome .tip code { display: block; margin-top: 8px; }
 
     /* Loading */
-    .loading {
-      text-align: center;
-      padding: 48px;
-      color: var(--text-secondary);
-    }
+    .loading { text-align: center; padding: 48px; color: var(--text-secondary); }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -335,25 +293,9 @@
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
 
-    /* File tabs for ticket views */
-    .file-tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .file-tab {
-      padding: 6px 12px;
-      font-size: 12px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 4px 4px 0 0;
-      cursor: pointer;
-      color: var(--text-secondary);
-    }
-
+    /* File tabs */
+    .file-tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .file-tab { padding: 6px 12px; font-size: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px 4px 0 0; cursor: pointer; color: var(--text-secondary); }
     .file-tab:hover { color: var(--text-primary); }
     .file-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
   </style>
@@ -373,32 +315,44 @@
         <h2>OpenSpec Viewer</h2>
         <p>Selectionnez un document dans la barre laterale.</p>
         <div class="tip">
-          <strong>Lancement rapide:</strong>
-          <code>start-viewer.bat</code>
+          <strong>Gestion tickets:</strong> Survolez un ticket pour voir les boutons d'action.
+          <br><br>
+          <strong>Changer statut:</strong> Cliquez sur le badge de statut.
         </div>
       </div>
     </div>
   </main>
 
+  <div class="save-indicator" id="saveIndicator">
+    <span id="saveText">Sauvegarde...</span>
+  </div>
+
   <script>
     const content = document.getElementById('content');
     const navigation = document.getElementById('navigation');
     const lastUpdatedEl = document.getElementById('lastUpdated');
+    const saveIndicator = document.getElementById('saveIndicator');
+    const saveText = document.getElementById('saveText');
     let indexData = null;
+    let hasChanges = false;
 
     marked.setOptions({ breaks: true, gfm: true });
 
-    // Load index and build navigation
+    const STATUSES = [
+      { id: 'progress', label: 'En cours', color: 'accent' },
+      { id: 'spec', label: 'Specification', color: 'purple' },
+      { id: 'dev', label: 'Developpement', color: 'warning' },
+      { id: 'resolved', label: 'Resolu', color: 'success' },
+      { id: 'rejected', label: 'Rejete/KO', color: 'danger' }
+    ];
+
     async function init() {
       try {
-        const response = await fetch('index.json');
+        const response = await fetch('index.json?t=' + Date.now());
         indexData = await response.json();
         buildNavigation();
+        updateLastUpdated();
 
-        const date = new Date(indexData.lastUpdated);
-        lastUpdatedEl.textContent = `Maj: ${date.toLocaleDateString('fr-FR')}`;
-
-        // Load from hash
         if (window.location.hash) {
           const file = decodeURIComponent(window.location.hash.slice(1));
           loadFile(file);
@@ -409,66 +363,171 @@
       }
     }
 
+    function updateLastUpdated() {
+      const date = new Date(indexData.lastUpdated);
+      lastUpdatedEl.textContent = `Maj: ${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
+    }
+
     function buildNavigation() {
       let html = '';
 
-      // Principal
       const principal = indexData.reports.filter(r => r.category === 'principal');
       html += buildSection('Principal', principal.map(r => ({ title: r.title, file: r.file })));
 
-      // Reports
       const reports = indexData.reports.filter(r => r.category === 'reports');
       html += buildSection('Rapports', reports.map(r => ({ title: r.title, file: r.file })));
 
-      // Active tickets
-      html += buildSection('Tickets en cours', indexData.tickets.active.map(t => ({
-        title: t.id + ' - ' + t.title,
-        file: t.file,
-        badge: t.status
-      })));
-
-      // Archived tickets
-      html += buildSection('Archives', indexData.tickets.archived.map(t => ({
-        title: t.id + ' - ' + t.title,
-        file: t.file,
-        badge: t.status,
-        date: t.resolvedDate
-      })), true);
+      html += buildTicketSection('Tickets en cours', indexData.tickets.active, false);
+      html += buildTicketSection('Archives', indexData.tickets.archived, true);
 
       navigation.innerHTML = html;
 
-      // Event listeners
+      // Section collapse
       document.querySelectorAll('.nav-section-title').forEach(title => {
-        title.addEventListener('click', () => {
+        title.addEventListener('click', (e) => {
+          if (e.target.closest('.action-btn')) return;
           title.parentElement.classList.toggle('collapsed');
         });
       });
 
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
+      // Nav items
+      document.querySelectorAll('.nav-item[data-file]').forEach(item => {
+        item.addEventListener('click', (e) => {
+          if (e.target.closest('.action-btn') || e.target.closest('.badge') || e.target.closest('.status-dropdown')) return;
           const file = item.dataset.file;
           loadFile(file);
           setActiveNav(file);
           window.location.hash = encodeURIComponent(file);
         });
       });
+
+      // Close dropdowns on outside click
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.badge') && !e.target.closest('.status-dropdown')) {
+          document.querySelectorAll('.status-dropdown.show').forEach(d => d.classList.remove('show'));
+        }
+      });
     }
 
-    function buildSection(title, items, isArchive = false) {
-      const archiveClass = isArchive ? 'archives-section collapsed' : '';
-      let html = `<nav class="nav-section ${archiveClass}">
+    function buildSection(title, items) {
+      let html = `<nav class="nav-section">
         <div class="nav-section-title">${title} <span style="font-weight:normal;opacity:0.5">(${items.length})</span></div>
         <div class="nav-items">`;
-
       items.forEach(item => {
-        const badgeHtml = item.badge ? `<span class="badge ${item.badge}">${item.badge}</span>` : '';
-        html += `<a class="nav-item" data-file="${item.file}">
-          <span class="title">${item.title}</span>${badgeHtml}
+        html += `<a class="nav-item" data-file="${item.file}"><span class="title">${item.title}</span></a>`;
+      });
+      html += '</div></nav>';
+      return html;
+    }
+
+    function buildTicketSection(title, tickets, isArchive) {
+      const archiveClass = isArchive ? 'archives-section collapsed' : '';
+      let html = `<nav class="nav-section ${archiveClass}">
+        <div class="nav-section-title">${title} <span style="font-weight:normal;opacity:0.5">(${tickets.length})</span></div>
+        <div class="nav-items">`;
+
+      tickets.forEach(t => {
+        const actionBtn = isArchive
+          ? `<button class="action-btn unarchive" onclick="unarchiveTicket('${t.id}')" title="Desarchiver">↩</button>`
+          : `<button class="action-btn archive" onclick="archiveTicket('${t.id}')" title="Archiver">📥</button>`;
+
+        html += `<a class="nav-item" data-file="${t.file}" data-ticket-id="${t.id}">
+          <span class="title">${t.id}</span>
+          <span class="badge ${t.status}" onclick="toggleStatusDropdown(event, '${t.id}')">${t.status}</span>
+          <div class="actions">${actionBtn}</div>
+          <div class="status-dropdown" id="dropdown-${t.id}">
+            ${STATUSES.map(s => `<div class="status-option" onclick="changeStatus('${t.id}', '${s.id}')">${s.label}</div>`).join('')}
+          </div>
         </a>`;
       });
 
       html += '</div></nav>';
       return html;
+    }
+
+    function toggleStatusDropdown(e, ticketId) {
+      e.stopPropagation();
+      const dropdown = document.getElementById('dropdown-' + ticketId);
+      document.querySelectorAll('.status-dropdown.show').forEach(d => {
+        if (d !== dropdown) d.classList.remove('show');
+      });
+      dropdown.classList.toggle('show');
+    }
+
+    function changeStatus(ticketId, newStatus) {
+      let ticket = indexData.tickets.active.find(t => t.id === ticketId);
+      if (!ticket) ticket = indexData.tickets.archived.find(t => t.id === ticketId);
+      if (ticket) {
+        ticket.status = newStatus;
+        saveIndex();
+      }
+      document.querySelectorAll('.status-dropdown.show').forEach(d => d.classList.remove('show'));
+    }
+
+    function archiveTicket(ticketId) {
+      const idx = indexData.tickets.active.findIndex(t => t.id === ticketId);
+      if (idx === -1) return;
+
+      const ticket = indexData.tickets.active.splice(idx, 1)[0];
+      ticket.resolvedDate = new Date().toISOString().split('T')[0];
+      indexData.tickets.archived.unshift(ticket);
+
+      saveIndex();
+    }
+
+    function unarchiveTicket(ticketId) {
+      const idx = indexData.tickets.archived.findIndex(t => t.id === ticketId);
+      if (idx === -1) return;
+
+      const ticket = indexData.tickets.archived.splice(idx, 1)[0];
+      delete ticket.resolvedDate;
+      ticket.status = 'progress';
+      indexData.tickets.active.push(ticket);
+
+      saveIndex();
+    }
+
+    async function saveIndex() {
+      indexData.lastUpdated = new Date().toISOString();
+
+      saveIndicator.classList.remove('error');
+      saveIndicator.classList.add('show');
+      saveText.textContent = 'Sauvegarde...';
+
+      try {
+        // Try to save via PUT (works with some servers)
+        const response = await fetch('index.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(indexData, null, 2)
+        });
+
+        if (!response.ok) throw new Error('PUT not supported');
+
+        saveText.textContent = '✓ Sauvegarde!';
+        setTimeout(() => {
+          saveIndicator.classList.remove('show');
+          buildNavigation();
+          updateLastUpdated();
+        }, 1500);
+      } catch (err) {
+        // Fallback: download file
+        const blob = new Blob([JSON.stringify(indexData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'index.json';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        saveText.textContent = '↓ Fichier telecharge - remplacez index.json';
+        saveIndicator.classList.add('error');
+        setTimeout(() => {
+          saveIndicator.classList.remove('show');
+          buildNavigation();
+          updateLastUpdated();
+        }, 3000);
+      }
     }
 
     function setActiveNav(file) {
@@ -480,7 +539,6 @@
     async function loadFile(path) {
       content.innerHTML = '<div class="loading">Chargement...</div>';
 
-      // For tickets, show tabs for different files
       const isTicket = path.includes('tickets/');
       let tabsHtml = '';
 
@@ -500,21 +558,21 @@
       }
 
       try {
-        const response = await fetch(path);
+        const response = await fetch(path + '?t=' + Date.now());
         if (!response.ok) throw new Error('Fichier non trouve');
         const text = await response.text();
         content.innerHTML = tabsHtml + marked.parse(text);
       } catch (err) {
-        content.innerHTML = tabsHtml + `<div class="welcome">
-          <h2>Fichier non trouve</h2>
-          <p>${path}</p>
-        </div>`;
+        content.innerHTML = tabsHtml + `<div class="welcome"><h2>Fichier non trouve</h2><p>${path}</p></div>`;
       }
     }
 
-    // Make functions globally available for onclick
     window.loadFile = loadFile;
     window.setActiveNav = setActiveNav;
+    window.archiveTicket = archiveTicket;
+    window.unarchiveTicket = unarchiveTicket;
+    window.changeStatus = changeStatus;
+    window.toggleStatusDropdown = toggleStatusDropdown;
 
     init();
   </script>
