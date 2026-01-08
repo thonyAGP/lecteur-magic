@@ -542,80 +542,59 @@
       dropdown.classList.toggle('show');
     }
 
-    function changeStatus(ticketId, newStatus) {
-      let ticket = indexData.tickets.active.find(t => t.id === ticketId);
-      if (!ticket) ticket = indexData.tickets.archived.find(t => t.id === ticketId);
-      if (ticket) {
-        ticket.status = newStatus;
-        ticket.lastAnalysis = new Date().toISOString().split('T')[0];
-        saveIndex();
-      }
+    async function changeStatus(ticketId, newStatus) {
       document.querySelectorAll('.status-dropdown.show').forEach(d => d.classList.remove('show'));
+      await callApi('change-status', ticketId, newStatus);
     }
 
-    function archiveTicket(ticketId) {
-      const idx = indexData.tickets.active.findIndex(t => t.id === ticketId);
-      if (idx === -1) return;
-
-      const ticket = indexData.tickets.active.splice(idx, 1)[0];
-      ticket.resolvedDate = new Date().toISOString().split('T')[0];
-      ticket.lastAnalysis = new Date().toISOString().split('T')[0];
-      indexData.tickets.archived.unshift(ticket);
-
-      saveIndex();
+    async function archiveTicket(ticketId) {
+      await callApi('archive', ticketId);
     }
 
-    function unarchiveTicket(ticketId) {
-      const idx = indexData.tickets.archived.findIndex(t => t.id === ticketId);
-      if (idx === -1) return;
-
-      const ticket = indexData.tickets.archived.splice(idx, 1)[0];
-      delete ticket.resolvedDate;
-      ticket.status = 'progress';
-      ticket.lastAnalysis = new Date().toISOString().split('T')[0];
-      indexData.tickets.active.push(ticket);
-
-      saveIndex();
+    async function unarchiveTicket(ticketId) {
+      await callApi('unarchive', ticketId);
     }
 
-    async function saveIndex() {
-      indexData.lastUpdated = new Date().toISOString();
-
+    async function callApi(action, ticketId, newStatus = null) {
       saveIndicator.classList.remove('error');
       saveIndicator.classList.add('show');
       saveText.textContent = 'Sauvegarde...';
 
       try {
-        const response = await fetch('index.json', {
-          method: 'PUT',
+        const body = { action, ticketId };
+        if (newStatus) body.newStatus = newStatus;
+
+        const response = await fetch('/api/update-ticket', {
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(indexData, null, 2)
+          body: JSON.stringify(body)
         });
 
-        if (!response.ok) throw new Error('PUT not supported');
+        const result = await response.json();
 
-        saveText.textContent = '✓ Sauvegarde!';
-        setTimeout(() => {
+        if (!response.ok) {
+          throw new Error(result.error || 'Erreur API');
+        }
+
+        saveText.textContent = '✓ Sauvegarde! Actualisation dans 30s...';
+
+        // Refresh data after a short delay (Vercel redeploys)
+        setTimeout(async () => {
           saveIndicator.classList.remove('show');
+          // Reload the index
+          const newIndex = await fetch('index.json?t=' + Date.now());
+          indexData = await newIndex.json();
           buildNavigation();
           updateLastUpdated();
-        }, 1500);
-      } catch (err) {
-        const blob = new Blob([JSON.stringify(indexData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'index.json';
-        a.click();
-        URL.revokeObjectURL(url);
+        }, 2000);
 
-        saveText.textContent = '↓ Telecharge - remplacez index.json';
+      } catch (err) {
+        console.error('API Error:', err);
+        saveText.textContent = '✗ Erreur: ' + err.message;
         saveIndicator.classList.add('error');
         setTimeout(() => {
           saveIndicator.classList.remove('show');
-          buildNavigation();
-          updateLastUpdated();
-        }, 3000);
+        }, 4000);
       }
     }
 
