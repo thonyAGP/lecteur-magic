@@ -18,6 +18,12 @@
             "status": "local-only",
             "key": "CMDS-176521",
             "summary": "Prix remise affiche incorrect dans POS"
+        },
+        {
+            "hasLocalData": true,
+            "status": "en-cours",
+            "key": "PMS-1446",
+            "summary": "Location materiel ski courts sejours"
         }
     ],
     "tickets": []
