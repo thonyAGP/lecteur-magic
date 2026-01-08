@@ -1,12 +1,13 @@
 namespace MagicMcp.Models;
 
 /// <summary>
-/// Represents a Magic DataView (Main Source, Links, Range, Locate)
+/// Represents a Magic DataView (Main Source, Links, Range, Locate, Columns)
 /// </summary>
 public record MagicDataView
 {
     public MagicMainSource? MainSource { get; init; }
     public List<MagicLink> Links { get; init; } = new();
+    public List<MagicColumn> Columns { get; init; } = new();
     public MagicRange? Range { get; init; }
     public MagicLocate? Locate { get; init; }
 }

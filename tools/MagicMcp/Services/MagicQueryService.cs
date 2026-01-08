@@ -193,4 +193,174 @@ public class MagicQueryService
 
         return sb.ToString();
     }
+
+    /// <summary>
+    /// Get both DataView column AND Logic operation for a specific line number.
+    /// Line numbers are independent in each tab.
+    /// </summary>
+    public string GetLine(string projectName, string taskPosition, int lineNumber)
+    {
+        // Parse task position (e.g., "69.3" -> program 69, task with IdePosition "69.3")
+        var parts = taskPosition.Split('.');
+        if (parts.Length == 0 || !int.TryParse(parts[0], out int prgIdePosition))
+            return $"ERROR: Invalid task position format '{taskPosition}'. Expected format: 69 or 69.3";
+
+        // Find program by IDE position
+        var project = _cache.GetProject(projectName);
+        if (project == null)
+            return $"ERROR: Project {projectName} not found";
+
+        var program = project.Programs.Values.FirstOrDefault(p => p.IdePosition == prgIdePosition);
+        if (program == null)
+            return $"ERROR: No program found at IDE position {prgIdePosition} in project {projectName}";
+
+        // Find task by IDE position
+        MagicTask? task;
+        if (parts.Length == 1)
+        {
+            // Root task (ISN_2 = 1)
+            task = program.Tasks.Values.FirstOrDefault(t => t.IdePosition == taskPosition);
+            if (task == null)
+                task = program.Tasks.GetValueOrDefault(1);
+        }
+        else
+        {
+            // Subtask
+            task = program.Tasks.Values.FirstOrDefault(t => t.IdePosition == taskPosition);
+        }
+
+        if (task == null)
+            return $"ERROR: Task {taskPosition} not found in program {program.Id}";
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"## Tâche {projectName.ToUpper()} IDE {taskPosition} - Ligne {lineNumber}");
+        sb.AppendLine();
+
+        // DATA VIEW (Columns)
+        sb.AppendLine("### DATA VIEW (Colonnes)");
+        sb.AppendLine();
+
+        if (task.DataView?.Columns != null && task.DataView.Columns.Count > 0)
+        {
+            var column = task.DataView.Columns.FirstOrDefault(c => c.LineNumber == lineNumber);
+            if (column != null)
+            {
+                sb.AppendLine("| Ligne | Variable | Nom | Type | Définition | Locate |");
+                sb.AppendLine("|-------|----------|-----|------|------------|--------|");
+
+                var locateInfo = column.LocateExpressionId.HasValue
+                    ? $"Expr {column.LocateExpressionId}"
+                    : "-";
+                var defType = column.Definition switch
+                {
+                    "R" => "Real",
+                    "V" => "Virtual",
+                    "P" => "Parameter",
+                    _ => column.Definition
+                };
+
+                sb.AppendLine($"| {column.LineNumber} | **{column.Variable}** | {column.Name} | {column.DataType} | {defType} | {locateInfo} |");
+
+                // Show expression content if available
+                if (column.LocateExpressionId.HasValue)
+                {
+                    var expr = _cache.GetExpression(projectName, program.Id, column.LocateExpressionId.Value);
+                    if (expr != null)
+                    {
+                        sb.AppendLine();
+                        sb.AppendLine($"**Expression {expr.Id}:** `{expr.Content}`");
+                    }
+                }
+            }
+            else
+            {
+                sb.AppendLine($"*Ligne {lineNumber} non trouvée dans Data View (max: {task.DataView.Columns.Count})*");
+            }
+        }
+        else
+        {
+            sb.AppendLine("*Aucune colonne Data View*");
+        }
+
+        sb.AppendLine();
+
+        // LOGIC (Operations)
+        sb.AppendLine("### LOGIC (Opérations)");
+        sb.AppendLine();
+
+        if (task.LogicLines.Count > 0)
+        {
+            var logicLine = task.LogicLines.FirstOrDefault(l => l.LineNumber == lineNumber);
+            if (logicLine != null)
+            {
+                sb.AppendLine("| Ligne | Opération | Handler | Détails |");
+                sb.AppendLine("|-------|-----------|---------|---------|");
+
+                var handler = logicLine.Parameters.GetValueOrDefault("Handler", "-");
+                var details = FormatLogicDetails(logicLine, projectName, program.Id);
+
+                sb.AppendLine($"| {logicLine.LineNumber} | **{logicLine.Operation}** | {handler} | {details} |");
+
+                // Show all parameters
+                if (logicLine.Parameters.Count > 1)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("**Paramètres:**");
+                    foreach (var param in logicLine.Parameters.Where(p => p.Key != "Handler"))
+                    {
+                        sb.AppendLine($"- {param.Key}: {param.Value}");
+                    }
+                }
+            }
+            else
+            {
+                sb.AppendLine($"*Ligne {lineNumber} non trouvée dans Logic (max: {task.LogicLines.Count})*");
+            }
+        }
+        else
+        {
+            sb.AppendLine("*Aucune ligne Logic*");
+        }
+
+        return sb.ToString();
+    }
+
+    private string FormatLogicDetails(MagicLogicLine line, string projectName, int programId)
+    {
+        switch (line.Operation)
+        {
+            case "Call Task":
+                var targetPrg = line.Parameters.GetValueOrDefault("TargetPrg", "?");
+                var targetComp = line.Parameters.GetValueOrDefault("TargetComp", "");
+                // Try to get program name
+                if (int.TryParse(targetPrg, out int prgId))
+                {
+                    var target = _cache.GetProgram(projectName, prgId);
+                    if (target != null)
+                        return $"{projectName.ToUpper()} IDE {target.IdePosition} - {target.Name}";
+                }
+                return $"Comp {targetComp} Prg {targetPrg}";
+
+            case "Link":
+                var tableId = line.Parameters.GetValueOrDefault("TableId", "?");
+                return $"Table n°{tableId}";
+
+            case "Verify":
+                var msgExpr = line.Parameters.GetValueOrDefault("MessageExpr", "");
+                var returnVar = line.Parameters.GetValueOrDefault("ReturnVar", "");
+                if (!string.IsNullOrEmpty(returnVar))
+                {
+                    return $"Retour → Variable index {returnVar}";
+                }
+                return msgExpr;
+
+            case "Select":
+            case "Update":
+                var fieldId = line.Parameters.GetValueOrDefault("FieldID", "?");
+                return $"Variable index {fieldId}";
+
+            default:
+                return line.Condition ?? "-";
+        }
+    }
 }
