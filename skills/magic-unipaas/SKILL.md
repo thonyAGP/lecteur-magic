@@ -1129,6 +1129,66 @@ L'Update avec `With: 32` dans l'IDE utilise **Expression 32** = `DK<>EU`, qui ES
 4. **Ne JAMAIS deduire** depuis le XML programme seul - ouvrir l'IDE !
 </debugging_troubleshooting>
 
+<chunked_analysis>
+## Analyse par Tronçons (Fichiers Volumineux)
+
+**Problème :** Les fichiers Prg_XXX.xml peuvent dépasser 256KB (limite de lecture), parfois jusqu'à 500KB+.
+
+**Solution :** Découper l'analyse en tronçons séquentiels.
+
+### Stratégie de découpage
+
+| Tronçon | Lignes | Contenu | Objectif |
+|---------|--------|---------|----------|
+| 1 | 1-150 | Header, DB, Columns | Paramètres, tables |
+| 2 | 150-350 | Information, Range | Index, filtres |
+| 3 | Variable | TaskLogic | Logique métier |
+| 4 | Variable | Expressions | Formules |
+| 5+ | Variable | Sous-tâches | Tâches imbriquées |
+
+### Commandes de découpage
+
+```bash
+# Tronçon 1 : Header et structure
+Read file_path=Prg_XXX.xml offset=1 limit=150
+
+# Tronçon 2 : Recherche ciblée CallTask
+Grep pattern="CallTask|CallProg" path=Prg_XXX.xml
+
+# Tronçon 3 : Sous-tâches
+Grep pattern="Header Description=.*ISN_2" path=Prg_XXX.xml
+
+# Tronçon 4 : Expressions
+Read file_path=Prg_XXX.xml offset=<ligne_expressions> limit=200
+```
+
+### Workflow recommandé
+
+1. **Évaluer la taille** : `dir Prg_XXX.xml` → Si > 100KB, découper
+2. **Cartographier** : Grep pour Header/ISN_2 (nombre de sous-tâches)
+3. **Analyser par priorité** :
+   - D'abord : Structure principale (tronçon 1)
+   - Ensuite : CallTask (dépendances)
+   - Puis : Sous-tâches clés
+4. **Consolider** : Synthèse dans analysis.md
+
+### Exemple réel : Prg_69 (466KB, 12 sous-tâches)
+
+```
+Tronçon 1 (lignes 1-150) → Paramètres identifiés (12)
+Tronçon 2 (Grep CallTask) → 40 appels externes
+Tronçon 3 (Grep ISN_2) → 12 sous-tâches listées
+Tronçon 4 (lignes 8590-8900) → Sous-tâche 6 "Choix Edition"
+```
+
+### Règles
+
+- **JAMAIS** tenter de lire un fichier > 256KB en une fois
+- **TOUJOURS** commencer par cartographier avec Grep
+- **PRIORISER** les sections pertinentes au ticket/problème
+- **DOCUMENTER** les tronçons analysés dans analysis.md
+</chunked_analysis>
+
 <success_criteria>
 - Fichiers XML Magic correctement parses sans erreur
 - Arborescence des programmes reconstruite fidelement

@@ -366,7 +366,8 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 | Ticket | Statut | Domaine | Description |
 |--------|--------|---------|-------------|
-| CMDS-174321 | EN COURS | dates | Bug date arrivee PB027 (+1 mois) |
+| PMS-1373 | **SPEC COMPLETE** | Extrait | Masquer annulations (+/-) dans extrait compte - Branche feature/PMS-1373 |
+| CMDS-174321 | **RÉSOLU** | dates | Bug date arrivee PB027 (+1 mois) - Cause: données corrompues en base |
 
 ## Bases de donnees
 
@@ -381,6 +382,9 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-08: **PMS-1373 Spécification COMPLETE** - Découverte champ `cte_flag_annulation` existant (valeurs Normal/Annulation/X-annule). Solution simplifiée: filtre WHERE au lieu de matching +/-. Spec implementation.md créée. Branche feature/PMS-1373-masquer-annulations. Sources synchronisées GitHub (thonyAGP/PMS-Magic-Sources)
+- 2026-01-07: **CMDS-174321 RÉSOLU - Analyse fichiers NA** - PREUVES: fichiers source NA (RV.HST) contiennent dates CORRECTES (251225=25/12/25) pour tous les SEEDSMAN. Le BUG est dans l'IMPORT PMS (PBG Prg_315), pas dans les données NA. Hypothèse: inversion MM/DD lors conversion date pour filiation 004 uniquement. SQL correction fourni
+- 2026-01-07: **PMS-1373 Analyse Prg_69 EXTRAIT_COMPTE** - Structure complete (466KB, 12 sous-taches). Flux edition identifie (Choix_action → Prg_70/71/72/73/76). Point d'injection: sous-tache 5 "scroll sur compte". Skill enrichi: section "Analyse par Troncons" pour fichiers volumineux
 - 2026-01-07: **Interface Gestion Tickets Jira** - Menu CLI au demarrage (hook SessionStart), 4 commandes (/ticket, /ticket-new, /ticket-learn, /ticket-search), KB SQLite pour capitalisation, structure .openspec/tickets/{KEY}/. Migration CMDS-174321 vers nouvelle structure. 5 scripts PS securises (.env credentials)
 - 2026-01-07: **CMDS-174321 Analyse approfondie** - Tracage flux PB027 (Prg_62→Prg_63). Decouverte: terminal affiche date correcte (25DEC), GUI affiche erreur (25/01). Bug dans affichage GUI, pas import. Tables requises: cafil014_dat, table temp planning. Attente base VPHUKET
 - 2026-01-06: **Analyse CMDS-174321 + MCP Global Index** - Bug date arrivee (NA=25/12/2025, PMS=25/01/2026). Hypothese: inversion DD/MM vs MM/DD. 4 nouveaux outils MCP: magic_find_program, magic_list_programs, magic_index_stats, magic_get_dependencies. Rapport `.openspec/reports/CMDS-174321_ANALYSIS.md`

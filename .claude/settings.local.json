@@ -24,13 +24,26 @@
       "WebFetch(domain:www.magicsoftware.com)",
       "Bash(cat:*)",
       "Bash(dotnet new:*)",
-      "Bash(dotnet restore:*)"
+      "Bash(dotnet restore:*)",
+      "Bash(ls:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"D:\\\\Projects\\\\Lecteur Magic\\\\.claude\\\\scripts\\\\jira-fetch.ps1\":*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"D:\\\\Projects\\\\Lecteur Magic\\\\.claude\\\\scripts\\\\jira-download-attachments.ps1\":*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"D:\\\\Projects\\\\Lecteur Magic\\\\.claude\\\\scripts\\\\jira-list-active.ps1\":*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"D:\\\\Projects\\\\Lecteur Magic\\\\.claude\\\\scripts\\\\jira-cache-sync.ps1\":*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"D:\\\\Projects\\\\Lecteur Magic\\\\.claude\\\\scripts\\\\ticket-menu.ps1\":*)",
+      "mcp__magic-interpreter__magic_get_tree",
+      "Bash(find:*)",
+      "Bash(powershell:*)"
     ]
   },
   "mcpServers": {
     "magic-interpreter": {
       "command": "dotnet",
-      "args": ["run", "--project", "D:\\Projects\\Lecteur Magic\\tools\\MagicMcp\\MagicMcp.csproj"],
+      "args": [
+        "run",
+        "--project",
+        "D:\\Projects\\Lecteur Magic\\tools\\MagicMcp\\MagicMcp.csproj"
+      ],
       "env": {
         "MAGIC_PROJECTS_PATH": "D:\\Data\\Migration\\XPA\\PMS"
       }

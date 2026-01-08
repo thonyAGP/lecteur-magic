@@ -184,16 +184,134 @@ Possibilites :
 
 ---
 
-## Conclusion
+## RÉSOLUTION FINALE (2026-01-07)
 
-**Cause probable:** Incompatibilite de type/format entre le stockage de la date (table temporaire) et l'affichage GUI.
+### Cause identifiée : DONNÉES CORROMPUES EN BASE
 
-Le terminal lit et affiche la donnee correctement car il utilise un format different (DDMMM).
-Le GUI convertit mal la date car il y a un decalage dans l'interpretation du format interne.
+**Le bug n'est PAS dans l'affichage** - il est dans les **données source** de la table `cafil014_dat`.
 
-**Recommandation:**
-- Verifier le type de donnee de la colonne 12 dans la table temporaire de planning
-- Si le type est String (char), verifier que le Picture d'affichage correspond au format stocke
+### Preuves SQL (base PHU2512)
+
+```sql
+-- Requête exécutée
+SELECT gm_compte, gm_filiation, gm_nom, gm_prenom, gm_date_debut, gm_date_fin
+FROM cafil014_dat WHERE gm_nom LIKE '%SEED%'
+```
+
+| Compte | Filiation | Nom | Prénom | Date Début | Date Fin |
+|--------|-----------|-----|--------|------------|----------|
+| 675336 | 0 | SEEDMAN | Michelle | 20251225 ✅ | 20260104 |
+| 675336 | 1 | SEEDSMAN | Warren | 20251225 ✅ | 20260104 |
+| 675336 | 2 | SEEDSMAN | Jasmine | 20251225 ✅ | 20260104 |
+| 675336 | **3** | SEEDSMAN | **Zoe** | **20260125 ❌** | 20260104 |
+
+**Zoe a une date d'arrivée (25/01/2026) APRÈS sa date de départ (04/01/2026) !**
+
+### Anomalies détectées
+
+```sql
+SELECT * FROM cafil014_dat WHERE gm_date_debut > gm_date_fin
+-- Résultat: 2 enregistrements
+```
+
+| Compte | Filiation | Nom | Date arrivée stockée | Date correcte probable |
+|--------|-----------|-----|----------------------|------------------------|
+| 675336 | 3 | SEEDSMAN Zoe | 20260125 | 20251225 |
+| 676227 | 3 | SHARMAN India Ray | 20260124 | 20251224 |
+
+### Analyse du pattern
+
+- **Pas systématique** : 459 autres GM filiation 3 ont des dates décembre correctes
+- **Erreur ponctuelle** : Bug de conversion lors de l'import PMS
+- **Conversion mois** : Le mois 12 (décembre) a été converti en mois 01 (janvier) année +1
+
+---
+
+## ANALYSE DES FICHIERS SOURCE NA (2026-01-07)
+
+### Fichiers extraits
+
+Archive `C:\data-01\ARRIVANT\VILLAGE\CVPHUK\ARCHIVE\251225.ZIP` :
+
+| Fichier | Taille | Contenu |
+|---------|--------|---------|
+| IDE.DAT | 3.7 MB | Identification GM |
+| FRA.DAT | 1.9 MB | Transport (vols) |
+| RV.HST | 5.3 MB | Historique réservations (ILOG, IPRE, ICLI, etc.) |
+| ANN.DAT | 1.9 KB | Annulations |
+| MOD.DAT | 1.6 KB | Modifications |
+
+### Données SEEDSMAN dans RV.HST (lignes ILOG - logement)
+
+```
+ILOGPHUC  CM0000PHUC  241225363116431001      004000UB2+B2A251225040126...
+ILOGPHUC  CM0000PHUC  241225363116431002      004000UB2+B2A251225040126...
+ILOGPHUC  CM0000PHUC  241225363116431003      004000UB2+B2A251225040126...
+ILOGPHUC  CM0000PHUC  241225363116431004      004000UB2+B2A251225040126...
+```
+
+### Comparaison Source NA vs Base PMS
+
+| Filiation | Nom | Date NA (RV.HST) | Date PMS (cafil014) | Statut |
+|-----------|-----|------------------|---------------------|--------|
+| 001 | SEEDMAN Michelle | **251225** ✅ | 20251225 ✅ | OK |
+| 002 | SEEDSMAN Warren | **251225** ✅ | 20251225 ✅ | OK |
+| 003 | SEEDSMAN Jasmine | **251225** ✅ | 20251225 ✅ | OK |
+| 004 | SEEDSMAN Zoe | **251225** ✅ | **20260125** ❌ | **BUG IMPORT** |
+
+### Conclusion DÉFINITIVE
+
+**Les données source NA sont CORRECTES** (251225 = 25/12/2025 pour tous les membres).
+
+**Le BUG est dans le programme d'IMPORT PMS** (PBG Prg_315 ou autre) qui a mal converti la date pour Zoe uniquement.
+
+### Traçabilité complète (archives NA)
+
+| Date archive | Source | Date Zoe (filiation 004) | Status |
+|--------------|--------|--------------------------|--------|
+| 01/12/2025 | RV.HST ligne 10561 | `251225040126` | ✅ CORRECT |
+| 10/12/2025 | RV.HST ligne 10358 | `251225040126` | ✅ CORRECT |
+| 20/12/2025 | RV.HST ligne 10436 | `251225040126` | ✅ CORRECT |
+| 25/12/2025 | RV.HST ligne 9528 | `251225040126` | ✅ CORRECT |
+| **Base PMS** | cafil014_dat | `20260125` | ❌ **ERREUR** |
+
+### Hypothèse du bug d'import - RÉVISÉE
+
+**DÉCOUVERTE** : Le bug affecte aussi SHARMAN India Ray (compte NA 324618615, PMS 676227).
+
+| GM | Date fichier | Date séjour NA | Date PMS erronée | Jour erroné |
+|-----|--------------|----------------|------------------|-------------|
+| SEEDSMAN Zoe | **25**/12 | 25/12/25 | **25**/01/26 | 25 ← fichier ou séjour |
+| SHARMAN India Ray | **24**/12 | 01/01/26 | **24**/01/26 | 24 ← **fichier** ! |
+
+**CAUSE PROBABLE** : Le programme d'import lit la **date du fichier** (JJMMAA dans l'en-tête RV.HST) à la place de la date de séjour pour certains GM (filiation 3).
+
+Pattern d'erreur :
+- Jour : pris du **fichier** (241225 → jour 24, ou 251225 → jour 25)
+- Mois : forcé à **01** (janvier)
+- Année : forcée à **2026**
+
+**Note** : Le programme d'import PBG Prg_315 est compilé (sans source XML), l'analyse du code n'est pas possible.
+
+---
+
+### Actions recommandées
+
+1. **Correction manuelle immédiate** :
+   ```sql
+   UPDATE cafil014_dat SET gm_date_debut = '20251225'
+   WHERE gm_compte = 675336 AND gm_filiation = 3;
+
+   UPDATE cafil014_dat SET gm_date_debut = '20251224'
+   WHERE gm_compte = 676227 AND gm_filiation = 3;
+   ```
+
+2. **Investigation Import PBG** : Analyser Prg_315 pour comprendre la conversion de date
+3. **Contrôle d'intégrité** : Ajouter une validation `date_debut <= date_fin` dans l'import
+
+### Conclusion
+
+**CAUSE RACINE** : Bug de conversion de date dans le programme d'import PMS (données source NA correctes).
 
 ---
 
