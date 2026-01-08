@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-08T17:53:35.173Z",
+  "lastUpdated": "2026-01-09T10:30:00.000Z",
   "reports": [
     {
       "id": "spec",
@@ -52,6 +52,14 @@
   ],
   "tickets": {
     "active": [
+      {
+        "id": "PMS-1446",
+        "title": "Location ski courts sejours",
+        "status": "spec",
+        "file": "tickets/PMS-1446/implementation.md",
+        "createdDate": "2026-01-09",
+        "lastAnalysis": "2026-01-09"
+      },
       {
         "id": "PMS-1373",
         "title": "Masquer annulations extrait",
