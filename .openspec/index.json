@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-09T08:03:13.169Z",
+  "lastUpdated": "2026-01-09T11:44:24.339Z",
   "reports": [
     {
       "id": "spec",
@@ -61,14 +61,6 @@
         "lastAnalysis": "2026-01-09"
       },
       {
-        "id": "PMS-1373",
-        "title": "Masquer annulations extrait",
-        "status": "spec",
-        "file": "tickets/PMS-1373/implementation.md",
-        "createdDate": "2026-01-07",
-        "lastAnalysis": "2026-01-08"
-      },
-      {
         "id": "CMDS-174321",
         "title": "Bug date arrivee PB027",
         "status": "progress",
@@ -85,6 +77,16 @@
         "lastAnalysis": "2026-01-09"
       }
     ],
-    "archived": []
+    "archived": [
+      {
+        "id": "PMS-1373",
+        "title": "Masquer annulations extrait",
+        "status": "spec",
+        "file": "tickets/PMS-1373/implementation.md",
+        "createdDate": "2026-01-07",
+        "lastAnalysis": "2026-01-09",
+        "resolvedDate": "2026-01-09"
+      }
+    ]
   }
 }
