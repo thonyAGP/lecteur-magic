@@ -2,7 +2,7 @@
 
 > **Jira** : <a href="https://clubmed.atlassian.net/browse/CMDS-176521" target="_blank">CMDS-176521</a>
 
-## Statut: CAUSE RACINE IDENTIFIÉE
+## Statut: BUG IDENTIFIÉ - FIX REQUIS
 
 ---
 
@@ -16,66 +16,110 @@
 
 ---
 
-## Diagnostic Complet
+## Programme concerné
 
-### Programme concerné : PVE IDE 284 - Main Sale Sale Bar Code
+### PVE IDE 181 - Main Sale-664
 
-L'analyse approfondie a révélé que le bug se situe dans **PVE IDE 284** (Main Sale Sale Bar Code), pas dans PVE IDE 186.
+**Fichier source** : `D:\Data\Migration\XPA\PMS\PVE\Source\Prg_181.xml`
 
-### Hiérarchie des tâches
+---
 
-```
-Task 1 - Main Sale Sale Bar Code (Root)
-  └── Task 19 - Forfait_Package=> account
-        └── Task 22 - SALE package_Creat_projet_FBO
-              └── Expression 33 (calcul prix remisé)
-```
+## CAUSE RACINE
 
-### Expression de calcul (Expression 33)
+### Expression 33 (ligne 34526)
 
 ```magic
 Round({1,13}*(1-ExpCalc('15'EXP)/100),10,{32768,43})
 ```
 
-**Où :**
-- `{1,13}` = Variable index 13 du parent (Level 1)
-- `ExpCalc('15'EXP)` = Expression 15 (pourcentage remise)
-- `{32768,43}` = Variable contexte arrondi
+### Le Bug
 
-### Expression 15 (calcul % remise)
+**`{1,13}` référence une variable qui N'EXISTE PAS dans le parent !**
 
-```magic
-IF({1,129} OR ({1,121} AND {32768,96}), 100, IF({1,103},{1,107},{1,59}))
-```
+**Task 19 (Forfait_Package=> account)** - Variables disponibles :
 
-**Logique :**
-- Si condition gratuite → 100%
-- Sinon si Great Members → % spécifique
-- Sinon → % par défaut
+| Index | Variable | Description |
+|-------|----------|-------------|
+| 16 | P. Customer | ID client |
+| 17 | P. Package Id OUT | ID package sortie |
+| 18 | P. Action type | Type action |
+| ... | ... | ... |
+| **31** | **P.Prix** | **PRIX DU PRODUIT** |
+| 32 | P.Montant PrePaid | Montant prépayé |
+| ... | ... | ... |
+
+**Il n'y a PAS de variable index 13 dans Task 19 !**
+
+Le prix est stocké à l'**index 31** (`P.Prix`), pas à l'index 13.
 
 ---
 
-## CAUSE RACINE IDENTIFIÉE
+## Correction
 
-### Variables dans Task 1 (Root)
+### AVANT (bug)
+```magic
+Round({1,13}*(1-ExpCalc('15'EXP)/100),10,{32768,43})
+```
 
-| Index | Variable | Type | Valeur typique |
-|-------|----------|------|----------------|
-| **13** | `v.LequipmentId` | ID équipement | Numérique |
-| **59** | `V.SoldeCompte` | Solde compte | **41,857** |
+### APRÈS (fix)
+```magic
+Round({1,31}*(1-ExpCalc('15'EXP)/100),10,{32768,43})
+```
 
-### Le Bug
+### Localisation exacte
 
-**L'expression `{1,13}` devrait référencer le PRIX du produit**, mais selon le contexte d'exécution, elle peut récupérer :
+| Élément | Valeur |
+|---------|--------|
+| **Programme** | PVE IDE 181 - Main Sale-664 |
+| **Fichier** | Prg_181.xml |
+| **Ligne XML** | 34526 |
+| **Task** | Task 22 (SALE package_Creat_projet_FBO) |
+| **Expression** | Expression 33 |
 
-1. **`v.LequipmentId`** (ID équipement) - mauvaise valeur
-2. Ou un autre index inattendu via l'héritage de contexte
+---
 
-La valeur **41,857** correspond probablement au **solde du compte BAR CASH** (`V.SoldeCompte`) qui est stocké à l'index 59, suggérant un problème de binding entre les niveaux de tâches.
+## Hiérarchie des tâches
 
-### Hypothèse de bug
+```
+Task 1 - Main Sale-664 (Root)
+  └── Task 19 - Forfait_Package=> account
+        └── Task 22 - SALE package_Creat_projet_FBO
+              └── Expression 33 (calcul prix remisé)
+```
 
-Le binding de variable entre Task 19 et Task 22 ne transmet pas correctement le prix du produit à l'index attendu (13), résultant en l'utilisation d'une valeur résiduelle ou incorrecte.
+**Depuis Task 22 :**
+- `{0,...}` = Task 22 (seulement Variable 2)
+- `{1,...}` = Task 19 (Variables 16-65, **PAS de 13**)
+- `{1,13}` → **Variable inexistante** → valeur aléatoire/résiduelle
+
+---
+
+## Pourquoi 41,857 ?
+
+Quand Magic référence une variable inexistante, il peut :
+1. Retourner 0 (comportement normal)
+2. Utiliser une valeur résiduelle en mémoire
+3. Remonter à un niveau parent supérieur
+
+La valeur **41,857** correspond probablement au **solde du compte** (`V.SoldeCompte` - index 59 dans Task 1) qui "fuite" via le contexte mémoire.
+
+---
+
+## Validation requise
+
+- [ ] Modifier Expression 33 : remplacer `{1,13}` par `{1,31}`
+- [ ] Tester avec différents % de remise (5%, 10%, 50%, 100%)
+- [ ] Vérifier que le prix facturé reste correct
+- [ ] Tester sur environnement de dev avant production
+
+---
+
+## Programmes similaires à vérifier
+
+| Programme | Description | Même bug potentiel ? |
+|-----------|-------------|---------------------|
+| PVE IDE 284 | Main Sale Sale Bar Code | **OUI** - même structure |
+| PVE IDE 360 | Main Sale-664 (copie) | **OUI** - à vérifier |
 
 ---
 
@@ -85,71 +129,25 @@ Le binding de variable entre Task 19 et Task 22 ne transmet pas correctement le 
 
 | IDE | Projet | Nom Public | Description |
 |-----|--------|------------|-------------|
-| **PVE IDE 284** | PVE | Main Sale Sale Bar Code | Vente via scan barcode |
+| **PVE IDE 181** | PVE | Main Sale-664 | Vente principale 664 |
 
 ### Tâches concernées
 
 | Task | ISN_2 | Description | Rôle |
 |------|-------|-------------|------|
-| Task 1 | 1 | Main Sale Sale Bar Code | Root - Variables globales |
+| Task 1 | 1 | Main Sale-664 | Root |
 | Task 19 | 19 | Forfait_Package=> account | Parent du calcul |
 | Task 22 | 22 | SALE package_Creat_projet_FBO | Contient Expression 33 |
-| Task 42 | 42 | Discount % | Saisie % remise manuel |
 
-### Variables critiques (Task 1 Root)
+### Variables Task 19 (pertinentes)
 
-| Variable | Index | Description | Impact |
-|----------|-------|-------------|--------|
-| N | 13 | v.LequipmentId | Mauvaise source pour prix |
-| BH | 59 | V.SoldeCompte | Possible source de 41,857 |
-
-### Expression clé
-
-| Programme | Expression | Formule | Bug |
-|-----------|------------|---------|-----|
-| PVE IDE 284 | 33 | `Round({1,13}*(1-ExpCalc('15'EXP)/100),10,CTX_43)` | {1,13} pointe vers mauvaise variable |
-
----
-
-## Solution proposée
-
-### Correction requise dans PVE IDE 284
-
-1. **Vérifier l'initialisation de la variable prix** avant l'appel à Task 22
-2. **S'assurer que le paramètre P.Prix (index 31 de Task 19)** est correctement passé
-3. **Modifier Expression 33** pour utiliser l'index correct du prix :
-   ```magic
-   -- Au lieu de {1,13}, utiliser {1,31} (P.Prix) ou le bon index
-   Round({1,31}*(1-ExpCalc('15'EXP)/100),10,{32768,43})
-   ```
-
-### Validation requise
-
-- [ ] Confirmer que P.Prix (index 31) contient bien le prix du produit
-- [ ] Tester la modification sur un environnement de dev
-- [ ] Vérifier que la valeur facturée reste correcte
-- [ ] Tester avec différents % de remise (5%, 10%, 50%, 100%)
-
----
-
-## Ticket Jira Dev
-
-Davide (CMDS) a confirmé :
-- Ticket Jira dev ouvert pour prochaine release PMS
-- Correction prévue avant fin janvier 2026
-
----
-
-## Comparaison PVE IDE 186 vs PVE IDE 284
-
-| Aspect | PVE IDE 186 (Main Sale) | PVE IDE 284 (Sale Bar Code) |
-|--------|-------------------------|------------------------------|
-| Expression prix remisé | Expression 33 | Expression 33 |
-| Structure | Moins de sous-tâches | 61+ sous-tâches imbriquées |
-| Calcul correct | Oui (prix facturé OK) | Affichage KO, facture OK |
-| Bug localisé | Non | **OUI** |
+| Index | Variable | Usage |
+|-------|----------|-------|
+| 31 | P.Prix | **Prix produit (CORRECT)** |
+| 32 | P.Montant PrePaid | Montant prépayé |
+| 35 | v Lien Remise Great Members | Lien remise |
 
 ---
 
 *Dernière mise à jour: 2026-01-09*
-*Analyse complète - Cause racine identifiée*
+*Bug identifié - Fix: remplacer {1,13} par {1,31} dans Expression 33*
