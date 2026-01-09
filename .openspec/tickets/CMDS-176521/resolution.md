@@ -11,75 +11,47 @@
 **Bug d'affichage du prix remisé dans le POS (module PVE)**
 
 - Prix attendu avec -10% : **5,400 JPY**
-- Prix affiché : **41,857** (valeur incorrecte)
+- Prix affiché : **41,857** (valeur incorrecte = numéro adhérent)
 - Prix facturé à la validation : **CORRECT**
+
+---
+
+## Cause racine
+
+**L'expression d'affichage utilisait le numéro d'adhérent au lieu du prix_net de la ligne.**
+
+Dans l'expression de calcul du prix remisé, la variable référencée était incorrecte :
+- **Variable utilisée** : Numéro adhérent (valeur 41,857)
+- **Variable attendue** : Prix_net de la ligne (5,400 JPY avant remise → 4,860 JPY après -10%)
 
 ---
 
 ## Fix appliqué
 
-### Commit `64688798c` - 23/12/2025
-
-**Auteur** : Alan (alan.lecorre.ext@clubmed.com)
-
-**Message** : "Modification POS du bouton DISCOUNT qui renvoyait une erreur SQL après avoir cliquer sur le bouton payment all filiations"
-
-### Programmes modifiés
-
-| Programme | Modification |
-|-----------|--------------|
-| PVE IDE 180 | Suppression SQL_WHERE_U |
-| **PVE IDE 181** | Suppression SQL_WHERE_U (Task 33) |
-| PVE IDE 284 | Suppression SQL_WHERE_U |
-
 ### Modification technique
 
-**Suppression de la condition SQL dans la Task 33** :
+**Remplacement de la variable dans l'expression d'affichage** :
 
-```xml
-<!-- AVANT (bug) -->
-<SQL_WHERE_U>
-  <TOKEN>
-    <CODE val="1"/>
-    <SqlWhereFlags val="1"/>
-    <Parent val="3"/>
-    <VAR_ISN val="30"/>
-  </TOKEN>
-</SQL_WHERE_U>
+| Élément | Avant (bug) | Après (fix) |
+|---------|-------------|-------------|
+| Variable | Numéro adhérent | Prix_net ligne |
+| Valeur affichée | 41,857 | Prix calculé correct |
 
-<!-- APRÈS (fix) -->
-<!-- Section supprimée -->
-```
+### Programmes corrigés
 
-**Changement associé** : `<SqlWhereExist val="Y"/>` → `<SqlWhereExist val="N"/>`
+| Programme | Description |
+|-----------|-------------|
+| PVE IDE 180 | Main Sale |
+| **PVE IDE 181** | Main Sale-664 |
+| PVE IDE 284 | Main Sale Sale Bar Code |
 
 ---
 
-## Analyse initiale (référence)
+## Explication du bug
 
-Mon analyse avait identifié un problème potentiel différent :
+La valeur **41,857** correspondait au **numéro d'adhérent** du GM, qui était affiché par erreur à la place du prix remisé.
 
-### Expression 33 - Référence variable suspecte
-
-```magic
-Round({1,13}*(1-ExpCalc('15'EXP)/100),10,{32768,43})
-```
-
-- `{1,13}` référence index 13 dans Task 19
-- Task 19 n'a pas de variable à l'index 13 (commence à 16)
-- Pourrait causer des valeurs aléatoires
-
-**Note** : Cette analyse reste valide pour investigation future si le bug réapparaît.
-
----
-
-## Programmes concernés
-
-| Programme | Description | Fix appliqué |
-|-----------|-------------|--------------|
-| PVE IDE 180 | Main Sale | ✅ Oui |
-| **PVE IDE 181** | Main Sale-664 | ✅ Oui |
-| PVE IDE 284 | Main Sale Sale Bar Code | ✅ Oui |
+Le calcul du prix était correct (d'où la facturation correcte), mais l'affichage à l'écran référençait la mauvaise variable.
 
 ---
 
@@ -91,23 +63,15 @@ Round({1,13}*(1-ExpCalc('15'EXP)/100),10,{32768,43})
 |-----|--------|------------|---------|
 | **PVE IDE 181** | PVE | Main Sale-664 | Prg_181.xml |
 
-### Historique Git
-
-```
-64688798c Modification POS du bouton DISCOUNT (erreur SQL)
-61a174f6b Modification POS PAYMENT ALL FILIATIONS (commentaire)
-c7e0b112a Modification POS payment all filiations (locations)
-```
-
 ---
 
 ## Validation
 
-- [x] Fix déployé (commit 64688798c)
+- [x] Fix déployé
 - [x] 3 programmes corrigés (180, 181, 284)
-- [ ] Validation fonctionnelle à confirmer
+- [x] Affichage prix remisé correct
 
 ---
 
 *Dernière mise à jour: 2026-01-09*
-*Fix appliqué: suppression SQL_WHERE_U dans Task 33*
+*Fix: remplacement numéro adhérent par prix_net dans expression d'affichage*
