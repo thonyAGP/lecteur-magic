@@ -83,16 +83,18 @@ Ce projet utilise le skill `magic-unipaas` pour toutes les operations d'analyse 
 | 3 | D | 13 | N | 23 | X |
 | 4 | E | 14 | O | 24 | Y |
 | 5 | F | 15 | P | 25 | Z |
-| 6 | G | 16 | Q | 26 | AA |
-| 7 | H | 17 | R | 27 | AB |
+| 6 | G | 16 | Q | 26 | **BA** |
+| 7 | H | 17 | R | 27 | BB |
 | 8 | I | 18 | S | ... | ... |
-| 9 | J | 19 | T | 51 | AZ |
+| 9 | J | 19 | T | 51 | BZ |
 
 **Formule pour index >= 26 :**
 ```
-Première lettre = (index // 26) → A=1, B=2...
-Deuxième lettre = (index % 26) → A=0, B=1...
-Exemple: index 30 = (30//26=1=A) + (30%26=4=E) = AE
+Première lettre = chr(65 + (index // 26)) → B pour 26-51, C pour 52-77...
+Deuxième lettre = chr(65 + (index % 26)) → A-Z
+Exemple: index 26 = BA
+Exemple: index 30 = BE
+Exemple: index 52 = CA
 ```
 
 ### Programmes - FORMAT IDE OBLIGATOIRE
