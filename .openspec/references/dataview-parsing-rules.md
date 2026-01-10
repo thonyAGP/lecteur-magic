@@ -113,10 +113,11 @@ Pour afficher les variables globales (pas locales), utiliser `-MainOffset` :
 
 ### RÈGLE CALCUL OFFSET SOUS-TÂCHES
 
+#### Cas 1: Sous-tâches de niveau 1 (ex: 320.1, 320.2, 320.3)
+
 **Formule :** `Main + Programme (tâche principale) + variable locale`
 
-Les sous-tâches partagent le MÊME offset de départ (après la tâche principale).
-Elles NE s'additionnent PAS séquentiellement.
+Les sous-tâches de **même niveau** partagent le MÊME offset de départ.
 
 **Exemple ADH 320.3 ligne 7 :**
 ```
@@ -125,10 +126,40 @@ Variable locale = F (index 5)
 Index global = 262 + 5 = 267 → JH
 ```
 
-| Programme | Offset sous-tâches | Calcul |
-|-----------|-------------------|--------|
+| Programme | Offset sous-tâches niveau 1 | Calcul |
+|-----------|----------------------------|--------|
 | ADH 320 | 262 | 143 + 119 |
-| ADH 160 | (143 + vars main task) | À calculer |
+| ADH 285 | 207 | 143 + 64 |
+
+#### Cas 2: Sous-tâches IMBRIQUÉES (ex: 285.1.2.5)
+
+**Formule :** `Main + Prg main + Subtask niveau 1 + Subtask niveau 2 + ... + variable locale`
+
+Pour les sous-tâches imbriquées, **chaque niveau parent ajoute ses variables**.
+
+**Exemple ADH 285.1.2.5 ligne 5 :**
+```
+Chemin: 285 (main) → 285.1 → 285.1.2 → 285.1.2.5
+
+Offset = Main (143)
+       + Prg 285 main (64 vars)
+       + Subtask 285.1 (0 vars)
+       + Subtask 285.1.2 (111 vars)
+       = 318
+
+Variable locale = D (FieldID=4, index 3)
+Index global = 3 + 318 = 321 → LJ
+```
+
+| Niveau | ISN | Nom | Variables | Cumul |
+|--------|-----|-----|-----------|-------|
+| Main ADH | - | - | 143 | 143 |
+| Prg 285 main | 1 | Print ticket vente LEX | 64 | 207 |
+| 285.1 | 2 | Printer 1 | 0 | 207 |
+| 285.1.2 | 5 | Print A4 | 111 | 318 |
+| **285.1.2.5** | 10 | Edition LCO Liberation | 5 | (cible) |
+
+**Script :** `tools/scripts/calc-nested-offset.ps1`
 
 ---
 
@@ -246,7 +277,8 @@ Ces valeurs sont dans l'attribut `<Init>` du XML.
 
 ## Scripts Associés
 
-- `tools/scripts/parse-dataview.ps1` - Parser actuel (à améliorer)
+- `tools/scripts/parse-dataview.ps1` - Parser Data View avec MainOffset
+- `tools/scripts/calc-nested-offset.ps1` - **Calcul offset sous-tâches imbriquées**
 - `tools/scripts/debug-param.ps1` - Debug paramètres
 - `tools/scripts/debug-cols.ps1` - Debug colonnes
 - `tools/scripts/check-prg.ps1` - Vérification header programme
