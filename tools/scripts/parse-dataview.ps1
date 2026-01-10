@@ -1,4 +1,4 @@
-# PARSE MAGIC DATA VIEW - VERSION DEFINITIVE V2
+# PARSE MAGIC DATA VIEW - VERSION DEFINITIVE V3
 # Règles brutes basées sur analyse positions XML vs IDE
 #
 # RÈGLES CLÉS (2026-01-10):
@@ -6,11 +6,13 @@
 # 2. Programmes: Position dans ProgramsRepositoryOutLine = IDE position
 # 3. Data View: Position dans LogicLines = IDE line number
 # 4. Colonnes: Column.val = séquentiel (Main), vrais IDs (Links)
+# 5. Variables: GLOBAL - Main TOUJOURS chargé en premier (offset à ajouter)
 
 param(
     [string]$Project = "ADH",
     [int]$PrgId = 159,
-    [int]$TaskIsn = 1
+    [int]$TaskIsn = 1,
+    [int]$MainOffset = 0  # Offset des variables du Main (0 = vue locale, 143 = ADH global)
 )
 
 $projectsPath = "D:\Data\Migration\XPA\PMS"
@@ -278,14 +280,17 @@ foreach ($logicLine in $logicUnit.LogicLines.LogicLine) {
         if (-not $type) { $type = $sel.Type.InnerText }
         if (-not $type) { $type = $sel.Type }
 
-        # Calculate variable letter
-        $fieldIdx = $fieldId - 1
+        # Calculate variable letter (with Main offset for global context)
+        $fieldIdx = $fieldId - 1 + $MainOffset
         if ($fieldIdx -lt 26) {
             $varLetter = [char]([int][char]'A' + $fieldIdx)
-        } else {
-            $first = [int][math]::Floor($fieldIdx / 26)
-            $second = $fieldIdx % 26
-            $varLetter = ([char]([int][char]'A' + $first - 1)).ToString() + ([char]([int][char]'A' + $second)).ToString()
+        } elseif ($fieldIdx -lt 702) {  # Up to ZZ (26 + 26*26 = 702)
+            $adjusted = $fieldIdx - 26
+            $first = [int][math]::Floor($adjusted / 26)
+            $second = $adjusted % 26
+            $varLetter = ([char]([int][char]'A' + $first)).ToString() + ([char]([int][char]'A' + $second)).ToString()
+        } else {  # AAA onwards (rare)
+            $varLetter = "V$fieldIdx"
         }
 
         # Check if it's a parameter (IsParameter can be XmlElement with val)
