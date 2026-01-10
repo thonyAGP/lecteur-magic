@@ -92,6 +92,25 @@ Il n'existe PAS de "contexte local" - le contexte local n'existe QUE pour le Mai
 | ... | ... | ... |
 | 36 | **FS** | sod_pourcentage_reduction |
 
+### Script parse-dataview.ps1 - Paramètre MainOffset
+
+Pour afficher les variables globales (pas locales), utiliser `-MainOffset` :
+
+```powershell
+# Vue locale (par défaut) - variables commencent à A
+./parse-dataview.ps1 -Project ADH -PrgId 317
+
+# Vue globale ADH - variables incluent le Main (offset 143)
+./parse-dataview.ps1 -Project ADH -PrgId 317 -MainOffset 143
+```
+
+**Offsets connus par projet :**
+| Projet | MainOffset | Dernière variable Main |
+|--------|------------|----------------------|
+| ADH | 143 | EK (VG.Masque) |
+| PBP | (à déterminer) | |
+| PVE | (à déterminer) | |
+
 ---
 
 ## Règle 2: Column IDs - DISTINCTION Main Source vs Link
