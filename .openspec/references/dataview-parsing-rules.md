@@ -111,6 +111,25 @@ Pour afficher les variables globales (pas locales), utiliser `-MainOffset` :
 | PBP | (à déterminer) | |
 | PVE | (à déterminer) | |
 
+### RÈGLE CALCUL OFFSET SOUS-TÂCHES
+
+**Formule :** `Main + Programme (tâche principale) + variable locale`
+
+Les sous-tâches partagent le MÊME offset de départ (après la tâche principale).
+Elles NE s'additionnent PAS séquentiellement.
+
+**Exemple ADH 320.3 ligne 7 :**
+```
+Offset = Main (143) + Prg 320 main task (119) = 262
+Variable locale = F (index 5)
+Index global = 262 + 5 = 267 → JH
+```
+
+| Programme | Offset sous-tâches | Calcul |
+|-----------|-------------------|--------|
+| ADH 320 | 262 | 143 + 119 |
+| ADH 160 | (143 + vars main task) | À calculer |
+
 ---
 
 ## Règle 2: Column IDs - DISTINCTION Main Source vs Link
