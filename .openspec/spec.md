@@ -470,6 +470,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-11: **MCP SDK UPGRADE 0.5.0** - ModelContextProtocol 0.2.0-preview.1 → 0.5.0-preview.1. Support parallel calls, Tasks API, Extensions. Build Release OK (0 errors). Redemarrer session pour charger
 - 2026-01-11: **HOOK POSTTOOLUSE IDE MAGIC IMPLEMENTE** - Script `validate-magic-ide-format.ps1` cree. Detecte patterns XML interdits (Prg_\d+, FieldID, ISN, {0,3}). Affiche violations avec format correct attendu. Cible agents magic-* + contexte Magic. Tests valides: 6 errors + 5 warnings detectes, clean output OK, skip non-Magic OK
 - 2026-01-11: **VEILLE TECHNOLOGIQUE COMPLETE** - Claude Code 2.1.0 (agent hooks, real-time thinking), MCP Nov 2025 (parallel calls, Tasks API), TypeScript 2025 best practices. 5 actions recommandees: Hook PostToolUse IDE Magic (HAUTE), Parallel Calls MCP (MOYENNE), Upgrade CC 2.1.0 (MOYENNE), Tasks API prototype (BASSE), --experimental-strip-types (BASSE). Rapport: `.openspec/veille-report-2026-01-11.md` + page HTML interactive. Prochain: 18 janvier
 - 2026-01-11: **REFERENCE RAPIDE TOP 30 FONCTIONS** - Extraction documentation CHM Magic xpa 2.3 (484 fichiers HTM). Reference rapide creee: `quick-reference-top30.md`. 30 fonctions critiques avec equivalences TS/C#/Python. Source: `C:\Appwin\Magic\Magicxpa23\Support\mghelpw_extracted\`
