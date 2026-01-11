@@ -58,6 +58,22 @@ export enum FunctionCategory {
   Variable = 'Variable',
   Environment = 'Environment',
   Error = 'Error',
+  XML = 'XML',
+  Vector = 'Vector',
+  Buffer = 'Buffer',
+  DLL = 'DLL',
+  HTTP = 'HTTP',
+  COM = 'COM',
+  Mail = 'Mail',
+  Security = 'Security',
+  Clipboard = 'Clipboard',
+  Context = 'Context',
+  Window = 'Window',
+  Menu = 'Menu',
+  Control = 'Control',
+  MultiMark = 'MultiMark',
+  Locking = 'Locking',
+  I18N = 'I18N',
 }
 
 /**
@@ -88,6 +104,10 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'StrBuild', minArgs: 1, maxArgs: -1, returnType: ParamType.Alpha, category: FunctionCategory.String, description: 'Build string from parts' },
   { name: 'Chr', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.String, description: 'Character from ASCII code' },
   { name: 'Asc', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.String, description: 'ASCII code of character' },
+  { name: 'Ins', minArgs: 4, maxArgs: 4, returnType: ParamType.Alpha, category: FunctionCategory.String, description: 'Insert string at position' },
+  { name: 'Soundx', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.String, description: 'Soundex phonetic algorithm' },
+  { name: 'Like', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.String, description: 'Pattern matching' },
+  { name: 'ASCIIVal', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.String, description: 'ASCII value of first character' },
 
   // ===== Numeric Functions =====
   { name: 'Abs', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Numeric, description: 'Absolute value' },
@@ -129,6 +149,13 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'NMonth', minArgs: 2, maxArgs: 2, returnType: ParamType.Alpha, category: FunctionCategory.Date, description: 'Name of month' },
   { name: 'DateToNum', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Date, description: 'Date to number' },
   { name: 'NumToDate', minArgs: 1, maxArgs: 1, returnType: ParamType.Date, category: FunctionCategory.Date, description: 'Number to date' },
+  { name: 'CDOW', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.Date, description: 'Character day of week (full name)' },
+  { name: 'NDOW', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Date, description: 'Numeric day of week (1=Sunday)' },
+  { name: 'CMonth', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.Date, description: 'Character month name' },
+  { name: 'MDate', minArgs: 3, maxArgs: 3, returnType: ParamType.Date, category: FunctionCategory.Date, description: 'Create date from Y/M/D' },
+  { name: 'AddDateTime', minArgs: 3, maxArgs: 3, returnType: ParamType.Date, category: FunctionCategory.Date, description: 'Add date and time' },
+  { name: 'DifDateTime', minArgs: 3, maxArgs: 3, returnType: ParamType.Numeric, category: FunctionCategory.Date, description: 'Difference between datetimes' },
+  { name: 'Week', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Date, description: 'Week number of year' },
 
   // ===== Time Functions =====
   { name: 'Time', minArgs: 0, maxArgs: 0, returnType: ParamType.Time, category: FunctionCategory.Time, description: 'Current time' },
@@ -142,6 +169,7 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'MTime', minArgs: 0, maxArgs: 0, returnType: ParamType.Time, category: FunctionCategory.Time, description: 'Time with milliseconds' },
   { name: 'TimeToNum', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Time, description: 'Time to number' },
   { name: 'NumToTime', minArgs: 1, maxArgs: 1, returnType: ParamType.Time, category: FunctionCategory.Time, description: 'Number to time' },
+  { name: 'Timer', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Time, description: 'Elapsed seconds since midnight' },
 
   // ===== Logical/Flow Functions =====
   { name: 'IF', minArgs: 3, maxArgs: 3, returnType: ParamType.Any, category: FunctionCategory.Flow, description: 'Conditional IF-THEN-ELSE' },
@@ -151,6 +179,10 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'NullIf', minArgs: 2, maxArgs: 2, returnType: ParamType.Any, category: FunctionCategory.Flow, description: 'Return null if equal' },
   { name: 'IsNull', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Flow, description: 'Check if null' },
   { name: 'IsDefault', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Flow, description: 'Check if default value' },
+  { name: 'Range', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.Flow, description: 'Check if value in range' },
+  { name: 'NullVal', minArgs: 2, maxArgs: 2, returnType: ParamType.Any, category: FunctionCategory.Flow, description: 'Return default if null' },
+  { name: 'IN', minArgs: 2, maxArgs: -1, returnType: ParamType.Logical, category: FunctionCategory.Flow, description: 'Check if value in list' },
+  { name: 'ExpCalc', minArgs: 1, maxArgs: 1, returnType: ParamType.Any, category: FunctionCategory.Flow, description: 'Evaluate expression by number' },
 
   // ===== Conversion Functions =====
   { name: 'Val', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Conversion, description: 'String to number' },
@@ -168,6 +200,16 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'DbSize', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Database, description: 'Get table row count' },
   { name: 'DbRecs', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Database, description: 'Record count' },
   { name: 'Counter', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Database, description: 'Record counter' },
+  { name: 'DbViewRefresh', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Refresh data view' },
+  { name: 'DbPos', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Database, description: 'Get current record position' },
+  { name: 'DbNext', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Move to next record' },
+  { name: 'DbPrev', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Move to previous record' },
+  { name: 'FlwLstRec', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Check if last record' },
+  { name: 'FlwFstRec', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Check if first record' },
+  { name: 'SortAdd', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Add sort condition' },
+  { name: 'LocateReset', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Reset locate conditions' },
+  { name: 'RangeReset', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Reset range conditions' },
+  { name: 'SortReset', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Reset sort conditions' },
 
   // ===== System Functions =====
   { name: 'Idle', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.System, description: 'Idle time' },
@@ -181,6 +223,13 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'ClientOSEnvSet', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.System, description: 'Set client environment' },
   { name: 'RunMode', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.System, description: 'Execution mode' },
   { name: 'IsComponent', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.System, description: 'Check if component' },
+  { name: 'Sleep', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.System, description: 'Sleep for milliseconds' },
+  { name: 'Wait', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.System, description: 'Wait for condition' },
+  { name: 'Exit', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.System, description: 'Exit current task' },
+  { name: 'ErrMagic', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.System, description: 'Last Magic error code' },
+  { name: 'ErrDbms', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.System, description: 'Last DBMS error code' },
+  { name: 'GetGUID', minArgs: 0, maxArgs: 0, returnType: ParamType.Alpha, category: FunctionCategory.System, description: 'Generate new GUID' },
+  { name: 'GetHostName', minArgs: 0, maxArgs: 0, returnType: ParamType.Alpha, category: FunctionCategory.System, description: 'Get machine hostname' },
 
   // ===== Variable/Parameter Functions =====
   { name: 'GetParam', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.Variable, description: 'Get parameter value' },
@@ -214,6 +263,12 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'ClrErr', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Clear error' },
   { name: 'WinHelp', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Show Windows help' },
   { name: 'WinBox', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.UI, description: 'Window box' },
+  { name: 'VerifyBox', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Show verification dialog' },
+  { name: 'InputBox', minArgs: 4, maxArgs: 4, returnType: ParamType.Alpha, category: FunctionCategory.UI, description: 'Show input dialog' },
+  { name: 'FormStateClear', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Clear form state' },
+  { name: 'CtrlGoto', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Move focus to control' },
+  { name: 'CtrlRefresh', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Refresh control' },
+  { name: 'ViewRefresh', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.UI, description: 'Refresh current view' },
 
   // ===== File/IO Functions =====
   { name: 'FileExist', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.IO, description: 'Check if file exists' },
@@ -227,6 +282,7 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'FileDlg', minArgs: 3, maxArgs: 5, returnType: ParamType.Alpha, category: FunctionCategory.IO, description: 'File dialog' },
   { name: 'File2Blb', minArgs: 1, maxArgs: 1, returnType: ParamType.Blob, category: FunctionCategory.IO, description: 'File to BLOB' },
   { name: 'Blb2File', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.IO, description: 'BLOB to file' },
+  { name: 'FileListGet', minArgs: 2, maxArgs: 2, returnType: ParamType.Alpha, category: FunctionCategory.IO, description: 'List files matching pattern' },
 
   // ===== BLOB Functions =====
   { name: 'BlobSize', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Blob, description: 'BLOB size' },
@@ -259,6 +315,123 @@ const MAGIC_FUNCTIONS: MagicFunction[] = [
   { name: 'EOF', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'End of file' },
   { name: 'BOF', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Beginning of file' },
   { name: 'NOT', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Logical, description: 'Logical NOT' },
+
+  // ===== XML Functions =====
+  { name: 'XMLStr', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.XML, description: 'Encode string for XML' },
+  { name: 'XMLVal', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.XML, description: 'Decode XML encoded string' },
+  { name: 'XMLGet', minArgs: 2, maxArgs: 2, returnType: ParamType.Alpha, category: FunctionCategory.XML, description: 'Get XML node value by XPath' },
+  { name: 'XMLCnt', minArgs: 2, maxArgs: 2, returnType: ParamType.Numeric, category: FunctionCategory.XML, description: 'Count XML nodes matching XPath' },
+  { name: 'XMLExist', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.XML, description: 'Check if XPath exists' },
+  { name: 'XMLInsert', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.XML, description: 'Insert XML node' },
+  { name: 'XMLModify', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.XML, description: 'Modify XML node value' },
+  { name: 'XMLDelete', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.XML, description: 'Delete XML node' },
+  { name: 'XMLValidate', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.XML, description: 'Validate XML against schema' },
+  { name: 'XMLSetNS', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.XML, description: 'Set XML namespace' },
+
+  // ===== Vector Functions =====
+  { name: 'VecGet', minArgs: 2, maxArgs: 2, returnType: ParamType.Any, category: FunctionCategory.Vector, description: 'Get vector element' },
+  { name: 'VecSet', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.Vector, description: 'Set vector element' },
+  { name: 'VecSize', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Vector, description: 'Get vector size' },
+  { name: 'VecCellAttr', minArgs: 3, maxArgs: 3, returnType: ParamType.Any, category: FunctionCategory.Vector, description: 'Get/set vector cell attribute' },
+
+  // ===== Buffer Functions =====
+  { name: 'BufGetAlpha', minArgs: 3, maxArgs: 3, returnType: ParamType.Alpha, category: FunctionCategory.Buffer, description: 'Get string from buffer' },
+  { name: 'BufSetAlpha', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set string in buffer' },
+  { name: 'BufGetNum', minArgs: 3, maxArgs: 3, returnType: ParamType.Numeric, category: FunctionCategory.Buffer, description: 'Get number from buffer' },
+  { name: 'BufSetNum', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set number in buffer' },
+  { name: 'BufGetDate', minArgs: 3, maxArgs: 3, returnType: ParamType.Date, category: FunctionCategory.Buffer, description: 'Get date from buffer' },
+  { name: 'BufSetDate', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set date in buffer' },
+  { name: 'BufGetTime', minArgs: 3, maxArgs: 3, returnType: ParamType.Time, category: FunctionCategory.Buffer, description: 'Get time from buffer' },
+  { name: 'BufSetTime', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set time in buffer' },
+  { name: 'BufGetLog', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Get boolean from buffer' },
+  { name: 'BufSetLog', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set boolean in buffer' },
+  { name: 'BufGetBlob', minArgs: 3, maxArgs: 3, returnType: ParamType.Blob, category: FunctionCategory.Buffer, description: 'Get BLOB from buffer' },
+  { name: 'BufSetBlob', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set BLOB in buffer' },
+  { name: 'BufGetUnicode', minArgs: 3, maxArgs: 3, returnType: ParamType.Unicode, category: FunctionCategory.Buffer, description: 'Get unicode string from buffer' },
+  { name: 'BufSetUnicode', minArgs: 4, maxArgs: 4, returnType: ParamType.Logical, category: FunctionCategory.Buffer, description: 'Set unicode string in buffer' },
+
+  // ===== DataView Export Functions =====
+  { name: 'DataViewToXML', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Export data view to XML' },
+  { name: 'DataViewToHTML', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.Database, description: 'Export data view to HTML' },
+
+  // ===== DLL Functions =====
+  { name: 'CallDLL', minArgs: 2, maxArgs: -1, returnType: ParamType.Any, category: FunctionCategory.DLL, description: 'Call DLL function' },
+  { name: 'CallDLLF', minArgs: 2, maxArgs: -1, returnType: ParamType.Any, category: FunctionCategory.DLL, description: 'Call DLL function (flat)' },
+  { name: 'CallDLLS', minArgs: 2, maxArgs: -1, returnType: ParamType.Any, category: FunctionCategory.DLL, description: 'Call DLL function (stdcall)' },
+
+  // ===== HTTP Functions =====
+  { name: 'CallURL', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.HTTP, description: 'Call HTTP URL' },
+  { name: 'CallProgURL', minArgs: 3, maxArgs: -1, returnType: ParamType.Logical, category: FunctionCategory.HTTP, description: 'Call program via HTTP' },
+
+  // ===== COM Functions =====
+  { name: 'COMObjCreate', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.COM, description: 'Create COM object' },
+  { name: 'COMObjRelease', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.COM, description: 'Release COM object' },
+  { name: 'COMHandleGet', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.COM, description: 'Get COM handle' },
+  { name: 'COMHandleSet', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.COM, description: 'Set COM handle' },
+  { name: 'COMError', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.COM, description: 'Get last COM error' },
+
+  // ===== Mail Functions =====
+  { name: 'MailSend', minArgs: 5, maxArgs: 5, returnType: ParamType.Logical, category: FunctionCategory.Mail, description: 'Send email' },
+
+  // ===== Security Functions =====
+  { name: 'Cipher', minArgs: 3, maxArgs: 3, returnType: ParamType.Alpha, category: FunctionCategory.Security, description: 'Encrypt/decrypt string' },
+  { name: 'ClientCertificateAdd', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.Security, description: 'Add client certificate' },
+  { name: 'ClientCertificateDiscard', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Security, description: 'Discard client certificates' },
+
+  // ===== Clipboard Functions =====
+  { name: 'ClipAdd', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Clipboard, description: 'Add text to clipboard' },
+  { name: 'ClipRead', minArgs: 0, maxArgs: 0, returnType: ParamType.Alpha, category: FunctionCategory.Clipboard, description: 'Read text from clipboard' },
+  { name: 'ClipWrite', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Clipboard, description: 'Write text to clipboard' },
+
+  // ===== Context Functions =====
+  { name: 'CtxGetId', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Context, description: 'Get current context ID' },
+  { name: 'CtxGetName', minArgs: 0, maxArgs: 0, returnType: ParamType.Alpha, category: FunctionCategory.Context, description: 'Get current context name' },
+  { name: 'CtxSetName', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Context, description: 'Set context name' },
+  { name: 'CtxNum', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Context, description: 'Get number of contexts' },
+  { name: 'CtxClose', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Context, description: 'Close context' },
+  { name: 'CtxKill', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Context, description: 'Kill context' },
+  { name: 'CtxStat', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Context, description: 'Get context status' },
+  { name: 'CtxProg', minArgs: 1, maxArgs: 1, returnType: ParamType.Alpha, category: FunctionCategory.Context, description: 'Get context program name' },
+  { name: 'CtxSize', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Context, description: 'Get context size' },
+  { name: 'CtxLstUse', minArgs: 1, maxArgs: 1, returnType: ParamType.Numeric, category: FunctionCategory.Context, description: 'Get context last use time' },
+  { name: 'CtxGetAllNames', minArgs: 0, maxArgs: 0, returnType: ParamType.Alpha, category: FunctionCategory.Context, description: 'Get all context names' },
+
+  // ===== Window Functions =====
+  { name: 'WinHWND', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Window, description: 'Get window handle' },
+  { name: 'WinMaximize', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Window, description: 'Maximize window' },
+  { name: 'WinMinimize', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Window, description: 'Minimize window' },
+  { name: 'WinRestore', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.Window, description: 'Restore window' },
+
+  // ===== Menu Functions =====
+  { name: 'MnuAdd', minArgs: 3, maxArgs: 3, returnType: ParamType.Logical, category: FunctionCategory.Menu, description: 'Add menu item' },
+  { name: 'MnuCheck', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.Menu, description: 'Check/uncheck menu item' },
+  { name: 'MnuEnabl', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.Menu, description: 'Enable/disable menu item' },
+  { name: 'MnuName', minArgs: 2, maxArgs: 2, returnType: ParamType.Logical, category: FunctionCategory.Menu, description: 'Set menu item name' },
+  { name: 'MnuRemove', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Menu, description: 'Remove menu item' },
+  { name: 'MnuShow', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Menu, description: 'Show menu' },
+
+  // ===== Control Functions =====
+  { name: 'CHeight', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get control height' },
+  { name: 'CWidth', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get control width' },
+  { name: 'CX', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get control X position' },
+  { name: 'CY', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get control Y position' },
+  { name: 'CurRow', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get current row in table' },
+  { name: 'ClickWX', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get click X coordinate' },
+  { name: 'ClickWY', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.Control, description: 'Get click Y coordinate' },
+
+  // ===== MultiMark Functions =====
+  { name: 'MMCount', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.MultiMark, description: 'Count marked records' },
+  { name: 'MMCurr', minArgs: 0, maxArgs: 0, returnType: ParamType.Numeric, category: FunctionCategory.MultiMark, description: 'Get current marked record' },
+  { name: 'MMClear', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.MultiMark, description: 'Clear all marks' },
+  { name: 'MMStop', minArgs: 0, maxArgs: 0, returnType: ParamType.Logical, category: FunctionCategory.MultiMark, description: 'Stop multi-mark operation' },
+
+  // ===== Locking Functions =====
+  { name: 'Lock', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Locking, description: 'Acquire lock' },
+  { name: 'UnLock', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.Locking, description: 'Release lock' },
+
+  // ===== I18N Functions =====
+  { name: 'SetLang', minArgs: 1, maxArgs: 1, returnType: ParamType.Logical, category: FunctionCategory.I18N, description: 'Set current language' },
+  { name: 'GetLang', minArgs: 0, maxArgs: 0, returnType: ParamType.Alpha, category: FunctionCategory.I18N, description: 'Get current language' },
 ];
 
 /**
