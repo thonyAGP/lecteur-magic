@@ -1696,10 +1696,375 @@ Python:     jinja2.Template(template).render(data=records)
 | Batch 1 | 30 Date/Heure/Strings/Math | FAIT |
 | Batch 2 | 30 DB/I/O/Flow/UI | FAIT |
 | Batch 3 | 30 XML/Vector/Buffer | FAIT |
-| Batch 4 | 30 COM/DLL/HTTP | A faire |
+| Batch 4 | 30 COM/DLL/HTTP/Context | FAIT |
+| Batch 5 | 30 Restantes | A faire |
+
+---
+
+## Batch 4 - Fonctions COM, DLL, HTTP et Context (30 nouvelles)
+
+### CallDLL - Appel fonction DLL
+```
+Syntaxe: CallDLL(dllName, functionName, arg1, arg2, ...)
+Retour:  Numeric - Valeur retournee par la fonction
+Note:    Pour fonctions retournant int/long
+
+Exemple: CallDLL('user32.dll', 'MessageBoxA', 0, 'Hello', 'Title', 0)
+
+TypeScript: // Node: ffi-napi
+            const lib = ffi.Library('user32', { MessageBoxA: ['int', ['int', 'string', 'string', 'int']] })
+C#:         [DllImport("user32.dll")] static extern int MessageBoxA(...)
+Python:     ctypes.windll.user32.MessageBoxA(0, b"Hello", b"Title", 0)
+```
+
+### CallDLLF - Appel fonction DLL (float)
+```
+Syntaxe: CallDLLF(dllName, functionName, arg1, arg2, ...)
+Retour:  Numeric - Valeur float retournee
+Note:    Pour fonctions retournant float/double
+
+TypeScript: // ffi-napi avec type 'float' ou 'double'
+C#:         [DllImport] avec retour float/double
+Python:     func.restype = ctypes.c_float
+```
+
+### CallDLLS - Appel fonction DLL (string)
+```
+Syntaxe: CallDLLS(dllName, functionName, arg1, arg2, ...)
+Retour:  Alpha - Chaine retournee par la fonction
+Note:    Pour fonctions retournant char*/string
+
+TypeScript: // ffi-napi avec type 'string'
+C#:         [DllImport] avec retour string + charset
+Python:     func.restype = ctypes.c_char_p
+```
+
+### CallURL - Appel URL HTTP
+```
+Syntaxe: CallURL(url, method, headers, body, responseVar)
+Retour:  Numeric - Code HTTP (200, 404, etc)
+Note:    Supporte GET, POST, PUT, DELETE
+
+TypeScript: const response = await fetch(url, { method, headers, body })
+C#:         var response = await httpClient.SendAsync(request)
+Python:     response = requests.request(method, url, headers=headers, data=body)
+```
+
+### CallProgURL - Appel programme via URL
+```
+Syntaxe: CallProgURL(baseUrl, programName, arg1, arg2, ...)
+Retour:  Alpha - Reponse du programme distant
+Note:    Appelle un programme Magic distant via HTTP
+
+TypeScript: await fetch(`${baseUrl}/api/${programName}`, { method: 'POST', body: JSON.stringify(args) })
+C#:         await httpClient.PostAsJsonAsync($"{baseUrl}/api/{programName}", args)
+Python:     requests.post(f"{base_url}/api/{program_name}", json=args)
+```
+
+### COMObjCreate - Creer objet COM
+```
+Syntaxe: COMObjCreate(progId)
+Retour:  Numeric - Handle de l'objet COM
+Note:    Cree une instance d'objet COM/ActiveX
+
+Exemple: COMObjCreate('Excel.Application')
+
+TypeScript: // Node: winax
+            const excel = new winax.Object('Excel.Application')
+C#:         dynamic excel = Activator.CreateInstance(Type.GetTypeFromProgID("Excel.Application"))
+Python:     excel = win32com.client.Dispatch("Excel.Application")
+```
+
+### COMObjRelease - Liberer objet COM
+```
+Syntaxe: COMObjRelease(handle)
+Retour:  Libere les ressources de l'objet COM
+
+TypeScript: // Garbage collection automatique
+C#:         Marshal.ReleaseComObject(comObject)
+Python:     del com_object  # ou pythoncom.CoUninitialize()
+```
+
+### COMHandleGet - Obtenir handle COM
+```
+Syntaxe: COMHandleGet(objectVar)
+Retour:  Numeric - Handle interne de l'objet
+
+TypeScript: // Pas d'equivalent direct
+C#:         Marshal.GetIUnknownForObject(obj).ToInt64()
+Python:     id(com_object)
+```
+
+### COMHandleSet - Definir handle COM
+```
+Syntaxe: COMHandleSet(objectVar, handle)
+Retour:  Associe un handle a une variable objet
+
+TypeScript: // Pas d'equivalent direct
+C#:         Marshal.GetObjectForIUnknown(new IntPtr(handle))
+Python:     pythoncom.ObjectFromAddress(handle)
+```
+
+### COMError - Erreur COM
+```
+Syntaxe: COMError()
+Retour:  Numeric - Code d'erreur COM (HRESULT)
+
+TypeScript: error.code // si COMException
+C#:         Marshal.GetHRForException(ex)
+Python:     pythoncom.com_error[0]
+```
+
+### MailSend - Envoyer email
+```
+Syntaxe: MailSend(to, subject, body, attachments, cc, bcc)
+Retour:  Logical - TRUE si envoi reussi
+
+TypeScript: // nodemailer
+            await transporter.sendMail({ to, subject, text: body, attachments })
+C#:         await smtpClient.SendMailAsync(message)
+Python:     smtplib.SMTP().send_message(msg)
+```
+
+### Cipher - Chiffrement
+```
+Syntaxe: Cipher(data, key, algorithm)
+Retour:  Alpha - Donnees chiffrees/dechiffrees
+Algorithm: 0=DES, 1=3DES, 2=AES
+
+TypeScript: crypto.createCipheriv('aes-256-cbc', key, iv).update(data)
+C#:         using var aes = Aes.Create(); aes.CreateEncryptor().TransformFinalBlock(...)
+Python:     from cryptography.fernet import Fernet; Fernet(key).encrypt(data)
+```
+
+### ClipAdd - Ajouter au presse-papier
+```
+Syntaxe: ClipAdd(data, format)
+Retour:  Ajoute contenu au presse-papier
+Format:  0=Text, 1=Bitmap, 2=Metafile
+
+TypeScript: await navigator.clipboard.writeText(data)
+C#:         Clipboard.SetText(data)
+Python:     pyperclip.copy(data)
+```
+
+### ClipRead - Lire presse-papier
+```
+Syntaxe: ClipRead(format)
+Retour:  Alpha/BLOB - Contenu du presse-papier
+
+TypeScript: await navigator.clipboard.readText()
+C#:         Clipboard.GetText()
+Python:     pyperclip.paste()
+```
+
+### ClipWrite - Ecrire presse-papier
+```
+Syntaxe: ClipWrite(data, format)
+Retour:  Remplace le contenu du presse-papier
+
+TypeScript: await navigator.clipboard.writeText(data)
+C#:         Clipboard.SetText(data)
+Python:     pyperclip.copy(data)
+```
+
+### CtxGetId - ID contexte
+```
+Syntaxe: CtxGetId(generation)
+Retour:  Numeric - ID unique du contexte d'execution
+
+TypeScript: context.id // AsyncLocalStorage
+C#:         Activity.Current?.Id
+Python:     contextvars.copy_context().get(ctx_id)
+```
+
+### CtxGetName - Nom contexte
+```
+Syntaxe: CtxGetName(contextId)
+Retour:  Alpha - Nom du contexte
+
+TypeScript: context.name
+C#:         Activity.Current?.DisplayName
+Python:     context.name
+```
+
+### CtxSetName - Definir nom contexte
+```
+Syntaxe: CtxSetName(contextId, name)
+Retour:  Definit le nom du contexte
+
+TypeScript: context.name = name
+C#:         Activity.Current.DisplayName = name
+Python:     context.name = name
+```
+
+### CtxNum - Numero contexte
+```
+Syntaxe: CtxNum()
+Retour:  Numeric - Nombre de contextes actifs
+
+TypeScript: activeContexts.size
+C#:         ContextManager.Count
+Python:     len(active_contexts)
+```
+
+### CtxClose - Fermer contexte
+```
+Syntaxe: CtxClose(contextId)
+Retour:  Ferme et libere le contexte specifie
+
+TypeScript: context.dispose()
+C#:         context.Dispose()
+Python:     context.__exit__(None, None, None)
+```
+
+### CtxKill - Tuer contexte
+```
+Syntaxe: CtxKill(contextId)
+Retour:  Force la terminaison du contexte
+Note:    Plus brutal que CtxClose
+
+TypeScript: context.abort()
+C#:         cts.Cancel(); context.Dispose()
+Python:     context.cancel()
+```
+
+### CtxStat - Statut contexte
+```
+Syntaxe: CtxStat(contextId)
+Retour:  Numeric - Statut (0=Idle, 1=Running, 2=Waiting)
+
+TypeScript: context.status
+C#:         context.State
+Python:     context.status
+```
+
+### CtxProg - Programme contexte
+```
+Syntaxe: CtxProg(contextId)
+Retour:  Numeric - Numero du programme en cours dans le contexte
+
+TypeScript: context.currentProgram
+C#:         context.CurrentOperation
+Python:     context.current_program
+```
+
+### CtxSize - Taille contexte
+```
+Syntaxe: CtxSize(contextId)
+Retour:  Numeric - Memoire utilisee par le contexte
+
+TypeScript: process.memoryUsage().heapUsed // approximatif
+C#:         GC.GetTotalMemory(false)
+Python:     sys.getsizeof(context)
+```
+
+### CtxLstUse - Derniere utilisation
+```
+Syntaxe: CtxLstUse(contextId)
+Retour:  Time - Heure de derniere activite du contexte
+
+TypeScript: context.lastActivity
+C#:         context.LastAccessTime
+Python:     context.last_used
+```
+
+### CtxGetAllNames - Tous les noms
+```
+Syntaxe: CtxGetAllNames()
+Retour:  Alpha - Liste des noms de contextes (separateur virgule)
+
+TypeScript: [...contexts.values()].map(c => c.name).join(',')
+C#:         string.Join(",", contexts.Select(c => c.Name))
+Python:     ','.join(c.name for c in contexts)
+```
+
+### ClientCertificateAdd - Ajouter certificat
+```
+Syntaxe: ClientCertificateAdd(certPath, password)
+Retour:  Logical - TRUE si certificat charge
+
+TypeScript: const agent = new https.Agent({ pfx: fs.readFileSync(certPath), passphrase: password })
+C#:         var cert = new X509Certificate2(certPath, password); handler.ClientCertificates.Add(cert)
+Python:     requests.get(url, cert=(cert_path, key_path))
+```
+
+### ClientCertificateDiscard - Supprimer certificat
+```
+Syntaxe: ClientCertificateDiscard(certName)
+Retour:  Supprime le certificat de la session
+
+TypeScript: agent.destroy()
+C#:         handler.ClientCertificates.Remove(cert)
+Python:     session.cert = None
+```
+
+### GetGUID - Generer GUID
+```
+Syntaxe: GetGUID()
+Retour:  Alpha - GUID unique (format 8-4-4-4-12)
+
+Exemple: GetGUID() = 'A1B2C3D4-E5F6-7890-ABCD-EF1234567890'
+
+TypeScript: crypto.randomUUID()
+C#:         Guid.NewGuid().ToString()
+Python:     str(uuid.uuid4())
+```
+
+### GetHostName - Nom machine
+```
+Syntaxe: GetHostName()
+Retour:  Alpha - Nom de la machine cliente
+
+TypeScript: os.hostname()
+C#:         Environment.MachineName
+Python:     socket.gethostname()
+```
+
+---
+
+## Resume - Couverture Fonctions
+
+| Categorie | Fonctions documentees | Coverage |
+|-----------|----------------------|----------|
+| Conditionnelles | IF, CASE, IN, IsNull, IsDefault, Range | 100% |
+| String | 20 fonctions (Mid, Left, Right, Trim, Ins, DelStr, Flip, Soundx, Like...) | 95% |
+| Conversion | Val, Str, DStr, DVal, TStr, TVal, ASCIIChr, ASCIIVal, NullVal | 95% |
+| Date/Heure | 22 fonctions (Date, Time, BOM, EOM, BOY, EOY, DOW, CDOW, NDOW, CMonth, NMonth, Week, AddDate, AddTime, AddDateTime, DifDateTime, MDate, MTime...) | 98% |
+| Numeriques | Round, ABS, MIN, MAX, MOD, Fix, Log, Exp, Pwr, Sqrt | 95% |
+| Base de donnees | DbRecs, DbDel, DbName, Counter, EOF, DbViewRefresh, DbPos, DbSize, DbNext, DbPrev | 95% |
+| Programme | CallProg, Prog, Level, ExpCalc, Exit | 90% |
+| Systeme | GetParam, SetParam, OSEnvGet, User, INIGet, Delay, Timer, Wait, Sleep, SetLang, GetLang | 98% |
+| Fichiers | FileExist, FileDelete, FileCopy, FileRename, FileInfo, FileListGet, Blb2File, File2Blb, Translate | 95% |
+| Flow | Rollback, FlwLstRec, FlwFstRec, LastPark, ErrMagic, ErrDbms | 90% |
+| UI | SetCrsr, MsgBox, VerifyBox, InputBox, FormStateClear, CtrlGoto, CtrlRefresh, ViewRefresh | 85% |
+| I18n | MlsTrans, SetLang, GetLang | 100% |
+| XML | XMLStr, XMLVal, XMLGet, XMLCnt, XMLExist, XMLInsert, XMLModify, XMLDelete, XMLValidate, XMLSetNS | 95% |
+| Vector | VecGet, VecSet, VecSize, VecCellAttr | 100% |
+| Buffer | BufGetAlpha, BufSetAlpha, BufGetNum, BufSetNum, BufGetDate, BufSetDate, BufGetTime, BufSetTime, BufGetLog, BufSetLog, BufGetBlob, BufSetBlob, BufGetUnicode, BufSetUnicode | 95% |
+| DataView Export | DataViewToXML, DataViewToHTML | 100% |
+| **DLL** | **CallDLL, CallDLLF, CallDLLS** | **100%** |
+| **HTTP** | **CallURL, CallProgURL** | **100%** |
+| **COM** | **COMObjCreate, COMObjRelease, COMHandleGet, COMHandleSet, COMError** | **100%** |
+| **Mail** | **MailSend** | **100%** |
+| **Security** | **Cipher, ClientCertificateAdd, ClientCertificateDiscard** | **100%** |
+| **Clipboard** | **ClipAdd, ClipRead, ClipWrite** | **100%** |
+| **Context** | **CtxGetId, CtxGetName, CtxSetName, CtxNum, CtxClose, CtxKill, CtxStat, CtxProg, CtxSize, CtxLstUse, CtxGetAllNames** | **100%** |
+| **Misc** | **GetGUID, GetHostName** | **100%** |
+
+**Total: 170 fonctions avec equivalences TS/C#/Python (85%)**
+
+### Progression par Batch
+| Batch | Fonctions | Statut |
+|-------|-----------|--------|
+| Batch 0 | TOP 50 frequence | FAIT |
+| Batch 1 | 30 Date/Heure/Strings/Math | FAIT |
+| Batch 2 | 30 DB/I/O/Flow/UI | FAIT |
+| Batch 3 | 30 XML/Vector/Buffer | FAIT |
+| Batch 4 | 30 COM/DLL/HTTP/Context | FAIT |
 | Batch 5 | 30 Restantes | A faire |
 
 ---
 
 *Genere le 2026-01-11 depuis C:\Appwin\Magic\Magicxpa23\Support\mghelpw_extracted\*
-*Mis a jour avec Batch 3 : 30 fonctions XML/Vector/Buffer additionnelles (140/200 total)*
+*Mis a jour avec Batch 4 : 30 fonctions COM/DLL/HTTP/Context additionnelles (170/200 total)*
