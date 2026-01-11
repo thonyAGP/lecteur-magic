@@ -2062,9 +2062,365 @@ Python:     socket.gethostname()
 | Batch 2 | 30 DB/I/O/Flow/UI | FAIT |
 | Batch 3 | 30 XML/Vector/Buffer | FAIT |
 | Batch 4 | 30 COM/DLL/HTTP/Context | FAIT |
-| Batch 5 | 30 Restantes | A faire |
+| Batch 5 | 30 Window/Menu/Control/Range | FAIT |
+
+---
+
+## Batch 5 - Fonctions Window, Menu, Control et Range (30 nouvelles)
+
+### WinBox - Dimensions fenetre
+```
+Syntaxe: WinBox(windowName, property)
+Retour:  Numeric - Valeur de la propriete
+Property: 0=Left, 1=Top, 2=Width, 3=Height
+
+TypeScript: { left: window.screenX, top: window.screenY, width: window.innerWidth, height: window.innerHeight }
+C#:         form.Left, form.Top, form.Width, form.Height
+Python:     window.winfo_x(), window.winfo_y(), window.winfo_width(), window.winfo_height()
+```
+
+### WinHWND - Handle fenetre
+```
+Syntaxe: WinHWND(windowName)
+Retour:  Numeric - Handle Windows (HWND)
+
+TypeScript: // Electron: BrowserWindow.getNativeWindowHandle()
+C#:         form.Handle.ToInt64()
+Python:     window.winfo_id()
+```
+
+### WinMaximize - Maximiser fenetre
+```
+Syntaxe: WinMaximize(windowName)
+Retour:  Maximise la fenetre specifiee
+
+TypeScript: // Electron: win.maximize()
+C#:         form.WindowState = FormWindowState.Maximized
+Python:     window.state('zoomed')
+```
+
+### WinMinimize - Minimiser fenetre
+```
+Syntaxe: WinMinimize(windowName)
+Retour:  Minimise la fenetre specifiee
+
+TypeScript: // Electron: win.minimize()
+C#:         form.WindowState = FormWindowState.Minimized
+Python:     window.state('iconic')
+```
+
+### WinRestore - Restaurer fenetre
+```
+Syntaxe: WinRestore(windowName)
+Retour:  Restaure la fenetre a sa taille normale
+
+TypeScript: // Electron: win.restore()
+C#:         form.WindowState = FormWindowState.Normal
+Python:     window.state('normal')
+```
+
+### MnuAdd - Ajouter menu
+```
+Syntaxe: MnuAdd(menuPath, menuName, position)
+Retour:  Ajoute un element de menu
+
+TypeScript: menu.append(new MenuItem({ label: menuName }))
+C#:         menuStrip.Items.Add(new ToolStripMenuItem(menuName))
+Python:     menu.add_command(label=menu_name)
+```
+
+### MnuCheck - Cocher menu
+```
+Syntaxe: MnuCheck(menuPath, checked)
+Retour:  Coche/decoche un element de menu
+
+TypeScript: menuItem.checked = checked
+C#:         menuItem.Checked = checked
+Python:     menu.entryconfig(index, checkbutton=checked)
+```
+
+### MnuEnabl - Activer/desactiver menu
+```
+Syntaxe: MnuEnabl(menuPath, enabled)
+Retour:  Active ou desactive un element de menu
+
+TypeScript: menuItem.enabled = enabled
+C#:         menuItem.Enabled = enabled
+Python:     menu.entryconfig(index, state='normal' if enabled else 'disabled')
+```
+
+### MnuName - Texte menu
+```
+Syntaxe: MnuName(menuPath)
+Retour:  Alpha - Texte de l'element de menu
+
+TypeScript: menuItem.label
+C#:         menuItem.Text
+Python:     menu.entrycget(index, 'label')
+```
+
+### MnuRemove - Supprimer menu
+```
+Syntaxe: MnuRemove(menuPath)
+Retour:  Supprime un element de menu
+
+TypeScript: menu.remove(menuItem)
+C#:         menuStrip.Items.Remove(menuItem)
+Python:     menu.delete(index)
+```
+
+### MnuShow - Afficher/cacher menu
+```
+Syntaxe: MnuShow(menuPath, visible)
+Retour:  Affiche ou cache un element de menu
+
+TypeScript: menuItem.visible = visible
+C#:         menuItem.Visible = visible
+Python:     # Pas d'equivalent direct, utiliser add/remove
+```
+
+### CHeight - Hauteur controle
+```
+Syntaxe: CHeight(controlName)
+Retour:  Numeric - Hauteur du controle en pixels
+
+TypeScript: element.offsetHeight
+C#:         control.Height
+Python:     widget.winfo_height()
+```
+
+### CWidth - Largeur controle
+```
+Syntaxe: CWidth(controlName)
+Retour:  Numeric - Largeur du controle en pixels
+
+TypeScript: element.offsetWidth
+C#:         control.Width
+Python:     widget.winfo_width()
+```
+
+### CX - Position X controle
+```
+Syntaxe: CX(controlName)
+Retour:  Numeric - Position X du controle
+
+TypeScript: element.offsetLeft
+C#:         control.Left
+Python:     widget.winfo_x()
+```
+
+### CY - Position Y controle
+```
+Syntaxe: CY(controlName)
+Retour:  Numeric - Position Y du controle
+
+TypeScript: element.offsetTop
+C#:         control.Top
+Python:     widget.winfo_y()
+```
+
+### CurRow - Ligne courante table
+```
+Syntaxe: CurRow(generation)
+Retour:  Numeric - Index de la ligne courante dans une table/grille
+
+TypeScript: dataGrid.currentRowIndex
+C#:         dataGridView.CurrentRow?.Index ?? -1
+Python:     treeview.focus() # retourne l'item selectionne
+```
+
+### ClickWX - Position X click fenetre
+```
+Syntaxe: ClickWX()
+Retour:  Numeric - Position X du dernier click relatif a la fenetre
+
+TypeScript: event.clientX
+C#:         e.X (dans MouseEventArgs)
+Python:     event.x
+```
+
+### ClickWY - Position Y click fenetre
+```
+Syntaxe: ClickWY()
+Retour:  Numeric - Position Y du dernier click relatif a la fenetre
+
+TypeScript: event.clientY
+C#:         e.Y (dans MouseEventArgs)
+Python:     event.y
+```
+
+### MMCount - Nombre records marques
+```
+Syntaxe: MMCount(generation)
+Retour:  Numeric - Nombre de records marques pour multi-mark
+
+TypeScript: selectedRows.length
+C#:         dataGridView.SelectedRows.Count
+Python:     len(treeview.selection())
+```
+
+### MMCurr - Record marque courant
+```
+Syntaxe: MMCurr(generation)
+Retour:  Numeric - Index du record marque en cours de traitement
+
+TypeScript: currentSelectedIndex
+C#:         currentMarkedRowIndex
+Python:     current_selection_index
+```
+
+### MMClear - Effacer marquage
+```
+Syntaxe: MMClear(generation)
+Retour:  Efface tous les marquages multi-mark
+
+TypeScript: selectedRows = []
+C#:         dataGridView.ClearSelection()
+Python:     treeview.selection_remove(treeview.selection())
+```
+
+### MMStop - Arreter traitement multi-mark
+```
+Syntaxe: MMStop()
+Retour:  Arrete le handler de traitement multi-mark
+
+TypeScript: break // dans la boucle
+C#:         return // sortir du handler
+Python:     break
+```
+
+### Lock - Verrouiller
+```
+Syntaxe: Lock(lockType, timeout)
+Retour:  Logical - TRUE si verrouillage reussi
+Type:    0=Record, 1=Task, 2=Wait
+
+TypeScript: await mutex.acquire()
+C#:         await semaphore.WaitAsync()
+Python:     lock.acquire()
+```
+
+### UnLock - Deverrouiller
+```
+Syntaxe: UnLock(lockType)
+Retour:  Libere le verrouillage
+
+TypeScript: mutex.release()
+C#:         semaphore.Release()
+Python:     lock.release()
+```
+
+### RangeAdd - Ajouter critere Range
+```
+Syntaxe: RangeAdd(tableNum, fieldNum, fromValue, toValue)
+Retour:  Ajoute un critere de filtrage range
+
+TypeScript: query = query.where(field).gte(from).lte(to)
+C#:         query = query.Where(x => x.Field >= from && x.Field <= to)
+Python:     query = query.filter(Table.field.between(from_val, to_val))
+```
+
+### RangeReset - Reset Range
+```
+Syntaxe: RangeReset(tableNum)
+Retour:  Supprime tous les criteres range
+
+TypeScript: query = baseQuery // reset
+C#:         query = _context.Table.AsQueryable()
+Python:     query = session.query(Table)
+```
+
+### LocateAdd - Ajouter critere Locate
+```
+Syntaxe: LocateAdd(tableNum, fieldNum, value)
+Retour:  Ajoute un critere de positionnement
+
+TypeScript: query = query.where({ field: value })
+C#:         query = query.Where(x => x.Field == value)
+Python:     query = query.filter(Table.field == value)
+```
+
+### LocateReset - Reset Locate
+```
+Syntaxe: LocateReset(tableNum)
+Retour:  Supprime tous les criteres locate
+
+TypeScript: locateCriteria = {}
+C#:         locateParams.Clear()
+Python:     locate_criteria = {}
+```
+
+### SortAdd - Ajouter critere tri
+```
+Syntaxe: SortAdd(tableNum, fieldNum, direction)
+Retour:  Ajoute un critere de tri
+Direction: 0=Ascending, 1=Descending
+
+TypeScript: query = query.orderBy(field, direction === 0 ? 'asc' : 'desc')
+C#:         query = direction == 0 ? query.OrderBy(x => x.Field) : query.OrderByDescending(x => x.Field)
+Python:     query = query.order_by(Table.field.asc() if direction == 0 else Table.field.desc())
+```
+
+### SortReset - Reset tri
+```
+Syntaxe: SortReset(tableNum)
+Retour:  Supprime tous les criteres de tri
+
+TypeScript: query = query.unordered()
+C#:         // Recreer la query sans OrderBy
+Python:     query = session.query(Table)  # reset
+```
+
+---
+
+## Resume - Couverture Fonctions COMPLETE
+
+| Categorie | Fonctions documentees | Coverage |
+|-----------|----------------------|----------|
+| Conditionnelles | IF, CASE, IN, IsNull, IsDefault, Range | 100% |
+| String | 20 fonctions (Mid, Left, Right, Trim, Ins, DelStr, Flip, Soundx, Like...) | 100% |
+| Conversion | Val, Str, DStr, DVal, TStr, TVal, ASCIIChr, ASCIIVal, NullVal | 100% |
+| Date/Heure | 22 fonctions (Date, Time, BOM, EOM, BOY, EOY, DOW, CDOW, NDOW, CMonth, NMonth, Week, AddDate, AddTime, AddDateTime, DifDateTime, MDate, MTime...) | 100% |
+| Numeriques | Round, ABS, MIN, MAX, MOD, Fix, Log, Exp, Pwr, Sqrt | 100% |
+| Base de donnees | DbRecs, DbDel, DbName, Counter, EOF, DbViewRefresh, DbPos, DbSize, DbNext, DbPrev | 100% |
+| Programme | CallProg, Prog, Level, ExpCalc, Exit | 100% |
+| Systeme | GetParam, SetParam, OSEnvGet, User, INIGet, Delay, Timer, Wait, Sleep, SetLang, GetLang | 100% |
+| Fichiers | FileExist, FileDelete, FileCopy, FileRename, FileInfo, FileListGet, Blb2File, File2Blb, Translate | 100% |
+| Flow | Rollback, FlwLstRec, FlwFstRec, LastPark, ErrMagic, ErrDbms | 100% |
+| UI | SetCrsr, MsgBox, VerifyBox, InputBox, FormStateClear, CtrlGoto, CtrlRefresh, ViewRefresh | 100% |
+| I18n | MlsTrans, SetLang, GetLang | 100% |
+| XML | XMLStr, XMLVal, XMLGet, XMLCnt, XMLExist, XMLInsert, XMLModify, XMLDelete, XMLValidate, XMLSetNS | 100% |
+| Vector | VecGet, VecSet, VecSize, VecCellAttr | 100% |
+| Buffer | BufGetAlpha, BufSetAlpha, BufGetNum, BufSetNum, BufGetDate, BufSetDate, BufGetTime, BufSetTime, BufGetLog, BufSetLog, BufGetBlob, BufSetBlob, BufGetUnicode, BufSetUnicode | 100% |
+| DataView Export | DataViewToXML, DataViewToHTML | 100% |
+| DLL | CallDLL, CallDLLF, CallDLLS | 100% |
+| HTTP | CallURL, CallProgURL | 100% |
+| COM | COMObjCreate, COMObjRelease, COMHandleGet, COMHandleSet, COMError | 100% |
+| Mail | MailSend | 100% |
+| Security | Cipher, ClientCertificateAdd, ClientCertificateDiscard | 100% |
+| Clipboard | ClipAdd, ClipRead, ClipWrite | 100% |
+| Context | CtxGetId, CtxGetName, CtxSetName, CtxNum, CtxClose, CtxKill, CtxStat, CtxProg, CtxSize, CtxLstUse, CtxGetAllNames | 100% |
+| Misc | GetGUID, GetHostName | 100% |
+| **Window** | **WinBox, WinHWND, WinMaximize, WinMinimize, WinRestore** | **100%** |
+| **Menu** | **MnuAdd, MnuCheck, MnuEnabl, MnuName, MnuRemove, MnuShow** | **100%** |
+| **Control** | **CHeight, CWidth, CX, CY, CurRow, ClickWX, ClickWY** | **100%** |
+| **MultiMark** | **MMCount, MMCurr, MMClear, MMStop** | **100%** |
+| **Locking** | **Lock, UnLock** | **100%** |
+| **Range/Locate/Sort** | **RangeAdd, RangeReset, LocateAdd, LocateReset, SortAdd, SortReset** | **100%** |
+
+**Total: 200 fonctions avec equivalences TS/C#/Python (100%) ✓**
+
+### Progression par Batch - COMPLETE
+| Batch | Fonctions | Statut |
+|-------|-----------|--------|
+| Batch 0 | TOP 50 frequence | ✓ FAIT |
+| Batch 1 | 30 Date/Heure/Strings/Math | ✓ FAIT |
+| Batch 2 | 30 DB/I/O/Flow/UI | ✓ FAIT |
+| Batch 3 | 30 XML/Vector/Buffer | ✓ FAIT |
+| Batch 4 | 30 COM/DLL/HTTP/Context | ✓ FAIT |
+| Batch 5 | 30 Window/Menu/Control/Range | ✓ FAIT |
 
 ---
 
 *Genere le 2026-01-11 depuis C:\Appwin\Magic\Magicxpa23\Support\mghelpw_extracted\*
-*Mis a jour avec Batch 4 : 30 fonctions COM/DLL/HTTP/Context additionnelles (170/200 total)*
+*COMPLET: 200 fonctions Magic documentees avec equivalences TypeScript, C# et Python*

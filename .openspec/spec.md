@@ -252,7 +252,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 | Scripts PowerShell | 20 scripts | 100% | 100% | Maintenir |
 | Parser TypeScript | 3 generateurs | 70% | 100% | Completer fonctions |
 | Skill/References | 22 fichiers | 100% | 100% | Enrichir |
-| **Fonctions Magic** | **170/200** | **85%** | **100%** | **Batch 4 FAIT** |
+| **Fonctions Magic** | **200/200** | **100%** | **100%** | **COMPLET** |
 
 ---
 
@@ -282,7 +282,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 | Composant | Actuel | Cible | Actions |
 |-----------|--------|-------|---------|
 | Lexer/Parser | 90% | 100% | Gerer cas limites |
-| Fonctions Magic | **170/200** | 200/200 | Mapper 30 fonctions restantes |
+| Fonctions Magic | **200/200** | 200/200 | **COMPLET** |
 | Generateur TS | 70% | 100% | Async/await, Decimal.js |
 | Generateur C# | 70% | 100% | CQRS patterns, DateOnly |
 | Generateur Python | 50% | 100% | FastAPI patterns |
@@ -294,7 +294,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 - [x] **Batch 2** : 30 fonctions (DB, I/O, Flow, UI) - FAIT 2026-01-12
 - [x] **Batch 3** : 30 fonctions (XML, Vector, Buffer) - FAIT 2026-01-12
 - [x] **Batch 4** : 30 fonctions (COM, DLL, HTTP, Context) - FAIT 2026-01-12
-- [ ] **Batch 5** : 30 fonctions (restantes) - A faire
+- [x] **Batch 5** : 30 fonctions (Window, Menu, Control, Range) - FAIT 2026-01-12
 
 ### 4. Communication IDE (REGLE ABSOLUE)
 
@@ -472,6 +472,7 @@ Composant "Sessions_Reprises" - 30 programmes:
 
 ## Changelog
 
+- 2026-01-12: **FONCTIONS MAGIC COMPLET - 200/200 (100%)** - Batch 5 termine avec 30 fonctions Window/Menu/Control/Range (WinBox, WinHWND, WinMaximize, WinMinimize, WinRestore, MnuAdd, MnuCheck, MnuEnabl, MnuName, MnuRemove, MnuShow, CHeight, CWidth, CX, CY, CurRow, ClickWX, ClickWY, MMCount, MMCurr, MMClear, MMStop, Lock, UnLock, RangeAdd, RangeReset, LocateAdd, LocateReset, SortAdd, SortReset). OBJECTIF 100% ATTEINT
 - 2026-01-12: **BATCH 4 FONCTIONS MAGIC - 170/200** - 30 nouvelles fonctions COM/DLL/HTTP/Context avec equivalences TS/C#/Python (CallDLL, CallDLLF, CallDLLS, CallURL, CallProgURL, COMObjCreate, COMObjRelease, COMHandleGet, COMHandleSet, COMError, MailSend, Cipher, ClipAdd, ClipRead, ClipWrite, CtxGetId, CtxGetName, CtxSetName, CtxNum, CtxClose, CtxKill, CtxStat, CtxProg, CtxSize, CtxLstUse, CtxGetAllNames, ClientCertificateAdd, ClientCertificateDiscard, GetGUID, GetHostName). Total: 170 fonctions documentees (85%)
 - 2026-01-12: **BATCH 3 FONCTIONS MAGIC - 140/200** - 30 nouvelles fonctions XML/Vector/Buffer avec equivalences TS/C#/Python (XMLStr, XMLVal, XMLGet, XMLCnt, XMLExist, XMLInsert, XMLModify, XMLDelete, XMLValidate, XMLSetNS, VecGet, VecSet, VecSize, VecCellAttr, BufGetAlpha, BufSetAlpha, BufGetNum, BufSetNum, BufGetDate, BufSetDate, BufGetTime, BufSetTime, BufGetLog, BufSetLog, BufGetBlob, BufSetBlob, BufGetUnicode, BufSetUnicode, DataViewToXML, DataViewToHTML). Total: 140 fonctions documentees (70%)
 - 2026-01-12: **BATCH 2 FONCTIONS MAGIC - 110/200** - 30 nouvelles fonctions DB/I/O/Flow/UI avec equivalences TS/C#/Python (DbViewRefresh, DbPos, DbSize, DbNext, DbPrev, Rollback, SetCrsr, Wait, Sleep, ErrMagic, ErrDbms, Exit, FlwLstRec, FlwFstRec, LastPark, FileDelete, FileCopy, FileRename, FileInfo, FileListGet, Blb2File, File2Blb, MsgBox, VerifyBox, InputBox, FormStateClear, CtrlGoto, CtrlRefresh, ViewRefresh, SetLang, GetLang). Total: 110 fonctions documentees (55%)
@@ -557,4 +558,4 @@ Composant "Sessions_Reprises" - 30 programmes:
 - 2025-12-22: Creation structure openspec/mecano/
 
 ---
-*Derniere mise a jour: 2026-01-12 - Batch 4 fonctions Magic (170/200)*
+*Derniere mise a jour: 2026-01-12 - FONCTIONS MAGIC COMPLET (200/200 - 100%)*
