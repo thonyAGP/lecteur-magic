@@ -266,6 +266,59 @@ Cette table est utilisée comme MainSource dans TOUTES les sous-tâches d'impres
 
 ---
 
+## IMPLEMENTATION REALISEE (2026-01-08)
+
+### Commit
+
+| Element | Valeur |
+|---------|--------|
+| **Hash** | `000d134efd31e5c42971149a936f24dd099995f1` |
+| **Date** | 2026-01-08 23:57:34 |
+| **Message** | Mise à jour des extraits de compte afin de ne pas afficher les lignes en doubles si on n'a pas demandé un extrait complet. |
+
+### Fichiers modifies
+
+| Fichier | Modifications |
+|---------|---------------|
+| `Prg_69.xml` | +2 arguments CallTask vers ADH IDE 72/73 |
+| `Prg_72.xml` | +1 parametre `P. Sans annulations`, decalage colonnes |
+| `Prg_73.xml` | +1 parametre, +2 colonnes Select, Expression 44, Range Exp |
+| `Prg_3.xml` | Ajustements mineurs |
+| `Prg_64.xml` | Ajustements mineurs |
+| `Prg_98.xml` | Ajustements mineurs |
+
+### Solution technique
+
+**Parametre ajoute** : `P. Sans annulations` (Boolean)
+
+**Expression de filtrage (Expression 44)** :
+```
+IF({2,25}, {0,28}=0 AND {0,29}<>'A', 'TRUE'LOG)
+```
+
+**Logique** :
+- `{2,25}` = Parametre Boolean du parent
+- `{0,28}` = Montant lie a l'annulation
+- `{0,29}` = Flag type operation ('A' = Annulation)
+- Si parametre TRUE → exclure les lignes avec flag='A'
+
+**Mecanisme** : Utilisation du Range Expression pour filtrer au niveau SQL
+
+### Pattern documente
+
+Voir : `.openspec/patterns/add-filter-parameter.md`
+
+### Status final
+
+| Element | Valeur |
+|---------|--------|
+| **Implementation** | COMPLETE ✅ |
+| **Recette** | A VALIDER |
+| **Pattern capitalise** | OUI |
+
+---
+
 *Rapport généré le 2026-01-07*
 *Verification MCP: 2026-01-12*
-*Statut: PRÊT POUR IMPLÉMENTATION*
+*Implementation: 2026-01-08*
+*Statut: IMPLEMENTE - EN ATTENTE RECETTE*
