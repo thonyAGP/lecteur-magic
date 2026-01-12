@@ -158,18 +158,18 @@ Conversion :
 | 3 | D | 13 | N | 23 | X |
 | 4 | E | 14 | O | 24 | Y |
 | 5 | F | 15 | P | 25 | Z |
-| 6 | G | 16 | Q | 26 | **AA** |
-| 7 | H | 17 | R | 27 | AB |
+| 6 | G | 16 | Q | 26 | **BA** |
+| 7 | H | 17 | R | 27 | BB |
 | 8 | I | 18 | S | ... | ... |
-| 9 | J | 19 | T | 51 | AZ |
+| 9 | J | 19 | T | 51 | BZ |
 
 **Formule pour position >= 26 :**
 ```
-Première lettre = chr(65 + (position // 26)) → A pour 26-51, B pour 52-77...
+Première lettre = chr(65 + (position // 26)) → B pour 26-51, C pour 52-77...
 Deuxième lettre = chr(65 + (position % 26)) → A-Z
-Exemple: position 26 = AA
-Exemple: position 30 = AE
-Exemple: position 52 = BA
+Exemple: position 26 = BA
+Exemple: position 30 = BE
+Exemple: position 52 = CA
 ```
 
 ### Programmes - FORMAT IDE OBLIGATOIRE
