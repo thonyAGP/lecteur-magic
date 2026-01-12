@@ -9,9 +9,9 @@
         },
         {
             "hasLocalData": true,
-            "status": "local-only",
+            "status": "implemente",
             "key": "PMS-1373",
-            "summary": "Masquer annulations dans extrait compte"
+            "summary": "Masquer annulations dans extrait compte - IMPLEMENTE"
         },
         {
             "hasLocalData": true,
