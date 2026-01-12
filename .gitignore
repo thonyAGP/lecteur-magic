@@ -32,3 +32,6 @@ migration/caisse/temp_out2/
 
 # Node (if not used)
 node_modules/
+
+.vercel
+.env*.local

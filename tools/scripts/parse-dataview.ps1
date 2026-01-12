@@ -1,4 +1,4 @@
-# PARSE MAGIC DATA VIEW - VERSION DEFINITIVE V6
+# PARSE MAGIC DATA VIEW - VERSION DEFINITIVE V7
 # Règles brutes basées sur analyse positions XML vs IDE
 #
 # RÈGLES CLÉS (2026-01-11):
@@ -7,9 +7,9 @@
 # 3. Data View: Position dans LogicLines = IDE line number
 # 4. Colonnes: Column.val = séquentiel (Main), vrais IDs (Links)
 # 5. Variables: GLOBAL - Main TOUJOURS chargé en premier (offset AUTO-CALCULÉ)
-# 6. Init: Task/Record Prefix Updates → WithValue Expression + Condition (Block IF)
+# 6. Init: Task/Record Prefix Updates → WithValue Expression
 # 7. Offset: Calculé automatiquement via chemin Main → Tâche cible
-# 8. Conditions: Affichage compact (variables) ET expanded (noms colonnes)
+# 8. Conditions: Block IF (BLOCK.Condition.Exp) ET Update direct (Update.Condition.Exp)
 
 param(
     [string]$Project = "ADH",
@@ -530,11 +530,21 @@ foreach ($lu in $task.TaskLogic.LogicUnit) {
                     $valueCompact = if ($expressionsCompact.ContainsKey("$withValue")) { $expressionsCompact["$withValue"] } else { "Exp$withValue" }
                     $valueExpanded = if ($expressionsExpanded.ContainsKey("$withValue")) { $expressionsExpanded["$withValue"] } else { "Exp$withValue" }
 
+                    # Check for condition DIRECTLY on the Update (Cnd column in IDE)
+                    $updCondCompact = $currentCondCompact
+                    $updCondExpanded = $currentCondExpanded
+
+                    if ($upd.Condition.Exp) {
+                        $updCondExpId = $upd.Condition.Exp
+                        $updCondCompact = if ($expressionsCompact.ContainsKey("$updCondExpId")) { $expressionsCompact["$updCondExpId"] } else { "Exp$updCondExpId" }
+                        $updCondExpanded = if ($expressionsExpanded.ContainsKey("$updCondExpId")) { $expressionsExpanded["$updCondExpId"] } else { "Exp$updCondExpId" }
+                    }
+
                     $initMap["$fieldId"] = @{
                         compact = $valueCompact
                         expanded = $valueExpanded
-                        condCompact = $currentCondCompact
-                        condExpanded = $currentCondExpanded
+                        condCompact = $updCondCompact
+                        condExpanded = $updCondExpanded
                     }
                 }
             }

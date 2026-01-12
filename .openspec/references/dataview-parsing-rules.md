@@ -391,6 +391,29 @@ Les initialisations peuvent être conditionnelles, encadrées par des Block IF/E
 
 ---
 
+## Tests Validés (2026-01-11)
+
+Suite de validation du script `parse-dataview.ps1` V6 :
+
+| Test | Programme | TaskIsn | Validations | Résultat |
+|------|-----------|---------|-------------|----------|
+| 1 | ADH 159 | 1 | Tâche principale, Offset=143, VG résolus | ✅ |
+| 2 | ADH 285 | 10 | Sous-tâche niveau 5, Offset=318 (Main+64+0+111) | ✅ |
+| 3 | ADH 122 | 4 | Handlers inclus, 13 selects (non 14) | ✅ |
+| 4 | ADH 155 | 41 | 25 Init, conditions `[IF IE='']` → `[IF pointage='']` | ✅ |
+| 5 | PVE 186 | 3 | Multi-projet, Init avec expressions et VG | ✅ |
+
+### Fonctionnalités validées
+
+- [x] Calcul automatique offset via path traversal
+- [x] Résolution VG.X → noms depuis Prg_1.xml
+- [x] Init depuis Update dans Record Prefix/Suffix
+- [x] Conditions Block IF format compact et expanded
+- [x] Multi-projets (ADH, PVE)
+- [x] Position-based lookup pour Parameters (Column.val = position, pas ID)
+
+---
+
 ## Scripts Associés
 
 - `tools/scripts/parse-dataview.ps1` - **Parser Data View V6** (offset auto, Init, VG resolution, conditions)
