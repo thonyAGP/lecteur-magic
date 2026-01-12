@@ -51,14 +51,18 @@ Cette sous-tache gere les actions de vente incluant l'Early Return.
 
 ### Variables pertinentes (Tache 186.45)
 
-| Variable | ID | Nom | Type | Role |
-|----------|-----|-----|------|------|
-| E | 5 | V days difference | Numeric 2.1 | Difference jours |
-| F | 6 | V allow cancel | Logical | Autorisation annulation |
-| **G** | **7** | **V.Comment annulation** | **Alpha 100** | **Commentaire** |
-| J | 10 | V.DernierJourLocation | Date | Dernier jour location |
-| **K** | **11** | **V.PremierJourLocation** | **Date** | **Premier jour location** |
-| N | 14 | V.NumberDaysAFacture | Numeric 2 | Nb jours a facturer |
+> **Note** : La lettre est basee sur la POSITION dans le DataView, pas le Column ID.
+
+| Position | Variable | Column ID | Nom | Type | Role |
+|----------|----------|-----------|-----|------|------|
+| 0 | A | 4 | BP. Exit | Alpha 1 | Bouton sortie |
+| 1 | B | 5 | V days difference | Numeric 2.1 | Difference jours |
+| 2 | C | 6 | V allow cancel | Logical | Autorisation annulation |
+| 3 | **D** | **7** | **V.Comment annulation** | **Alpha 100** | **Commentaire** |
+| 4 | **E** | **11** | **V.PremierJourLocation** | **Date** | **Premier jour location** |
+| 5 | F | 10 | V.DernierJourLocation | Date | Dernier jour location |
+| 6 | G | 14 | V.NumberDaysAFacture | Numeric 2 | Nb jours a facturer |
+| 7 | H | 15 | V.AnnulerToutLaPeriode | Logical | Flag annulation complete |
 
 ### Expression suspecte
 
@@ -70,15 +74,15 @@ Date()- GetParam('MODEDAYINC')+ {0,7}
 
 **Traduction** :
 ```
-Date() - MODEDAYINC + Variable G (V.Comment annulation)
+Date() - MODEDAYINC + Variable D (V.Comment annulation)
 ```
 
 ### PROBLEME IDENTIFIE
 
-L'Expression 28 utilise **{0,7} = Variable G = "V.Comment annulation"** qui est de type **ALPHA (string)**.
+L'Expression 28 utilise **{0,7} = Variable D = "V.Comment annulation"** qui est de type **ALPHA (string)**.
 
 Pour un calcul de date, la variable correcte devrait etre :
-- **{0,11} = Variable K = "V.PremierJourLocation"** (type DATE)
+- **{0,11} = Variable E = "V.PremierJourLocation"** (type DATE)
 
 ### Relation avec PMS-1446
 
@@ -94,8 +98,8 @@ Ce bug utilise le meme parametre **MODEDAYINC** que PMS-1446 (Location ski court
 ### Hypothese 1 : Variable incorrecte (HAUTE probabilite)
 
 L'Expression 28 reference la mauvaise variable :
-- **Actuel** : {0,7} = V.Comment annulation (string)
-- **Attendu** : {0,11} = V.PremierJourLocation (date)
+- **Actuel** : {0,7} = Variable D = V.Comment annulation (string)
+- **Attendu** : {0,11} = Variable E = V.PremierJourLocation (date)
 
 ### Hypothese 2 : Logique MODEDAYINC (MOYENNE probabilite)
 
@@ -121,7 +125,7 @@ Le calcul est correct mais l'affichage utilise une autre source de donnees.
 | Element | Avant (bug) | Apres (fix) |
 |---------|-------------|-------------|
 | Expression 28 | `Date()- GetParam('MODEDAYINC')+ {0,7}` | `Date()- GetParam('MODEDAYINC')+ {0,11}` |
-| Variable | G (V.Comment annulation) | K (V.PremierJourLocation) |
+| Variable | D (V.Comment annulation) | E (V.PremierJourLocation) |
 
 ### XML avant
 
