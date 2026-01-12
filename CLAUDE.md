@@ -122,26 +122,54 @@ Ce projet utilise le skill `magic-unipaas` pour toutes les operations d'analyse 
 **INTERDIT : `{0,3}`, `{1,2}`, `FieldID="25"`**
 **OBLIGATOIRE : Noms de variables en LETTRES**
 
-| Index | Variable | Index | Variable | Index | Variable |
-|-------|----------|-------|----------|-------|----------|
+> **ATTENTION** : La lettre de variable est basée sur la **POSITION dans le DataView**,
+> PAS sur le Column ID. Le Column ID peut être non-séquentiel !
+
+#### Règle de conversion {niveau,columnID} → Variable
+
+1. **Identifier la tâche** où la variable est définie
+2. **Compter la position** de la colonne dans le DataView de CETTE tâche
+3. **Appliquer la lettre** selon la position (0=A, 1=B, 2=C...)
+
+#### Exemple concret
+
+DataView d'une sous-tâche :
+```xml
+<Column id="4" name="BP. Exit"/>      <!-- Position 0 = A -->
+<Column id="5" name="V days diff"/>   <!-- Position 1 = B -->
+<Column id="6" name="V allow"/>       <!-- Position 2 = C -->
+<Column id="7" name="V.Comment"/>     <!-- Position 3 = D -->
+<Column id="11" name="V.DateDebut"/>  <!-- Position 4 = E -->
+<Column id="10" name="V.DateFin"/>    <!-- Position 5 = F -->
+```
+
+Conversion :
+- `{0,7}` → Column ID 7 → Position 3 → **Variable D**
+- `{0,11}` → Column ID 11 → Position 4 → **Variable E**
+- `{0,10}` → Column ID 10 → Position 5 → **Variable F**
+
+#### Table de référence Position → Lettre
+
+| Position | Variable | Position | Variable | Position | Variable |
+|----------|----------|----------|----------|----------|----------|
 | 0 | A | 10 | K | 20 | U |
 | 1 | B | 11 | L | 21 | V |
 | 2 | C | 12 | M | 22 | W |
 | 3 | D | 13 | N | 23 | X |
 | 4 | E | 14 | O | 24 | Y |
 | 5 | F | 15 | P | 25 | Z |
-| 6 | G | 16 | Q | 26 | **BA** |
-| 7 | H | 17 | R | 27 | BB |
+| 6 | G | 16 | Q | 26 | **AA** |
+| 7 | H | 17 | R | 27 | AB |
 | 8 | I | 18 | S | ... | ... |
-| 9 | J | 19 | T | 51 | BZ |
+| 9 | J | 19 | T | 51 | AZ |
 
-**Formule pour index >= 26 :**
+**Formule pour position >= 26 :**
 ```
-Première lettre = chr(65 + (index // 26)) → B pour 26-51, C pour 52-77...
-Deuxième lettre = chr(65 + (index % 26)) → A-Z
-Exemple: index 26 = BA
-Exemple: index 30 = BE
-Exemple: index 52 = CA
+Première lettre = chr(65 + (position // 26)) → A pour 26-51, B pour 52-77...
+Deuxième lettre = chr(65 + (position % 26)) → A-Z
+Exemple: position 26 = AA
+Exemple: position 30 = AE
+Exemple: position 52 = BA
 ```
 
 ### Programmes - FORMAT IDE OBLIGATOIRE
