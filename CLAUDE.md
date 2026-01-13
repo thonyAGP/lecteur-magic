@@ -163,6 +163,25 @@ Un hook `validate-magic-ide.ts` **BLOQUE** toute écriture dans `.openspec/ticke
 > Dans une sous-tâche 186.1.5.4, les variables ne commencent PAS à A !
 > Elles continuent après celles de Main + 186 + 186.1 + 186.1.5.
 
+#### ⚠️ WORKFLOW OBLIGATOIRE - Variables d'une tâche
+
+**AVANT** de documenter les variables d'une tâche dans un rapport :
+
+```
+1. APPELER magic_get_line(project, taskPosition, lineNumber, mainOffset)
+2. Le mainOffset est OBLIGATOIRE (voir tableau ci-dessous)
+3. UTILISER UNIQUEMENT la variable retournée (ex: MG, WF, MK)
+```
+
+**JAMAIS** : Utiliser les variables locales de `magic_dump_dataview` (A, B, C...)
+**TOUJOURS** : Utiliser `magic_get_line` avec `mainOffset` pour obtenir les vraies variables globales
+
+**Exemple** :
+```
+❌ INTERDIT  : magic_dump_dataview → "Variable A (v.Date operation)"
+✅ CORRECT   : magic_get_line(PVE, "87.1.1.1", 1, 143) → "Variable MK (v.Date operation)"
+```
+
 #### Offset Main par projet (VG variables)
 
 | Projet | Main Offset | Dernière VG |

@@ -50,10 +50,12 @@ Ce parametre est initialise dans **PVE IDE 145** (Tache 145.1 - Init mode day / 
 
 ### Variables cles (PVE IDE 186 - Main Sale)
 
+> **Note** : Offset Main PVE = 143. Les variables de la tâche root 186 commencent à l'index 143.
+
 | Variable | Nom | Type | Role |
 |----------|-----|------|------|
-| **BG** | v.Deb_Sejour | Date | Date debut sejour GM |
-| **BH** | v.Fin_sejour | Date | Date fin sejour GM |
+| **MG** | v.Deb_Sejour | Date | Date debut sejour GM |
+| **MH** | v.Fin_sejour | Date | Date fin sejour GM |
 
 Ces variables sont passees en **parametres d'entree** (parametres 42 et 43 du programme).
 
@@ -61,7 +63,7 @@ Ces variables sont passees en **parametres d'entree** (parametres 42 et 43 du pr
 
 La duree du sejour peut etre calculee :
 ```
-DureeSejour = Variable BH - Variable BG
+DureeSejour = Variable MH - Variable MG
 ```
 
 ### Tables concernees
@@ -87,7 +89,7 @@ DureeSejour = Variable BH - Variable BG
 ### Pseudo-code logique
 
 ```
-DureeSejour = Variable BH - Variable BG   -- Fin sejour - Debut sejour
+DureeSejour = Variable MH - Variable MG   -- Fin sejour - Debut sejour
 
 SI DureeSejour < SeuilCourtSejour ALORS
     MODEDAYINC = 0   -- Court sejour : materiel jour arrivee
@@ -117,8 +119,8 @@ FIN SI
 ### 2. PVE IDE 186 - Main Sale
 
 **Variables a utiliser** :
-- Variable BG (v.Deb_Sejour)
-- Variable BH (v.Fin_sejour)
+- Variable MG (v.Deb_Sejour)
+- Variable MH (v.Fin_sejour)
 
 **Modification** : Les expressions utilisant GetParam('MODEDAYINC') beneficieront automatiquement de la nouvelle valeur calculee.
 
@@ -144,12 +146,12 @@ FIN SI
 | 145.2.1 | Lecture tpe v1 | Lecture TPE |
 | 145.3 | Parameters for invoice T2H | Parametres T2H |
 
-### Variables PVE IDE 186 confirmees
+### Variables PVE IDE 186 confirmees (avec offset Main)
 
-| Variable | Nom | Type |
-|----------|-----|------|
-| BG | v.Deb_Sejour | Date |
-| BH | v.Fin_sejour | Date |
+| Variable | Nom | Type | Ligne DataView |
+|----------|-----|------|----------------|
+| **MG** | v.Deb_Sejour | Date | Ligne 35 |
+| **MH** | v.Fin_sejour | Date | Ligne 36 |
 
 ---
 
@@ -158,7 +160,7 @@ FIN SI
 | Element | Valeur |
 |---------|--------|
 | **Analyse** | CONFIRMEE par MCP |
-| **Variables disponibles** | Variable BG, Variable BH |
+| **Variables disponibles** | Variable MG, Variable MH |
 | **Solution** | Calcul auto + seuil configurable |
 | **Prochaine etape** | Valider avec le metier |
 
