@@ -44,7 +44,7 @@ Lors d'un EARLY RETURN sur location ski, les dates affichees sur la ligne de ven
 
 **Expression decouverte** :
 ```
-Expression 28 = Date() - GetParam('MODEDAYINC') + Variable F
+Expression 28 = Date() - GetParam('MODEDAYINC') + Variable WG
 ```
 
 **Analyse** :
@@ -88,21 +88,24 @@ L'update de la date a ete desactive, ce qui explique pourquoi la date affichee e
 
 **Variables du DataView** :
 
+> **Note** : Les variables sont numerotees globalement avec offset cumulatif.
+> Premiere variable de Tache 186.1.5.4 = **Variable WB** (pas A)
+
 | Variable | Nom | Type | Role |
 |----------|-----|------|------|
-| **E** | V.PremierJourLocation | Date | Premier jour de location |
-| **F** | V.DernierJourLocation | Date | Dernier jour de location |
-| **G** | V.NumberDaysAFacture | Numeric | Nombre de jours a facturer |
+| **WF** | V.PremierJourLocation | Date | Premier jour de location |
+| **WG** | V.DernierJourLocation | Date | Dernier jour de location |
+| **WH** | V.NumberDaysAFacture | Numeric | Nombre de jours a facturer |
 
 **Observation** :
-Les variables E et F sont les dates de location. Si elles ne sont pas mises a jour correctement lors de l'Early Return, l'affichage sera incorrect.
+Les variables WF et WG sont les dates de location. Si elles ne sont pas mises a jour correctement lors de l'Early Return, l'affichage sera incorrect.
 
 **Hypothese** :
 Les updates envoient les dates vers les mauvaises variables ?
 
 ---
 
-### PISTE 4 : Calcul du nombre de jours (Variable G) - BASSE SUSPICION
+### PISTE 4 : Calcul du nombre de jours (Variable WH) - BASSE SUSPICION
 
 **Statut** : PARTIELLEMENT ECARTEE
 
@@ -110,11 +113,11 @@ Les montants sont corrects, ce qui suggere que le calcul du nombre de jours est 
 
 **Expression concernee** :
 ```
-Variable G = Variable F - Variable E + 1
+Variable WH = Variable WG - Variable WF + 1
 ```
 
 **Verification** :
-Confirmer que Variable G n'est pas utilise dans l'expression d'affichage des dates.
+Confirmer que Variable WH n'est pas utilise dans l'expression d'affichage des dates.
 
 ---
 
@@ -124,8 +127,8 @@ Confirmer que Variable G n'est pas utilise dans l'expression d'affichage des dat
 |-------|-----------|--------|
 | **1. Expression 28 + MODEDAYINC** | HAUTE | Tracer valeur MODEDAYINC, tester impact |
 | **2. Update desactive** | MOYENNE | Reactiver et tester |
-| **3. Variables E/F mal mises a jour** | MOYENNE | Verifier mapping exact |
-| **4. Calcul Variable G** | BASSE | Deja verifie (montants OK) |
+| **3. Variables WF/WG mal mises a jour** | MOYENNE | Verifier mapping exact |
+| **4. Calcul Variable WH** | BASSE | Deja verifie (montants OK) |
 
 ---
 
@@ -154,16 +157,19 @@ PVE IDE 186 - Main Sale
 
 ## VARIABLES TACHE 186.1.5.4
 
+> **Note** : Offset cumulatif = Main PVE (143) + Tache 186 (119) + Tache 186.1 (3) + Tache 186.1.5 (165) = 430
+> Premiere variable = **Variable WB** (index 586)
+
 | Variable | Nom | Type | Description |
 |----------|-----|------|-------------|
-| A | BP. Exit | Alpha | Bouton sortie |
-| B | V days difference | Numeric | Difference jours |
-| C | V allow cancel | Logical | Autoriser annulation |
-| D | V.Comment annulation | Alpha | Commentaire |
-| **E** | **V.PremierJourLocation** | Date | Premier jour |
-| **F** | **V.DernierJourLocation** | Date | Dernier jour |
-| G | V.NumberDaysAFacture | Numeric | Jours a facturer |
-| H | V.AnnulerToutLaPeriode | Logical | Annuler toute periode |
+| **WB** | BP. Exit | Alpha | Bouton sortie |
+| **WC** | V days difference | Numeric | Difference jours |
+| **WD** | V allow cancel | Logical | Autoriser annulation |
+| **WE** | V.Comment annulation | Alpha | Commentaire |
+| **WF** | V.PremierJourLocation | Date | Premier jour |
+| **WG** | V.DernierJourLocation | Date | Dernier jour |
+| **WH** | V.NumberDaysAFacture | Numeric | Jours a facturer |
+| **WI** | V.AnnulerToutLaPeriode | Logical | Annuler toute periode |
 
 ---
 
@@ -191,7 +197,7 @@ PVE IDE 186 - Main Sale
 
 1. **Reactiver update desactive** dans Tache 186.1.5.4.4
 2. **Forcer MODEDAYINC=0** et retester
-3. **Tracer** avec logs les valeurs de Variable E, Variable F, Variable G lors de l'Early Return
+3. **Tracer** avec logs les valeurs de Variable WF, Variable WG, Variable WH lors de l'Early Return
 
 ---
 

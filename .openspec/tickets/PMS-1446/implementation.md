@@ -65,17 +65,19 @@ SetParam('MODEDAYINC',
 
 ### Variables existantes a utiliser
 
+> **Note** : Offset Main PVE = 143. Les variables ci-dessous sont les vraies variables globales.
+
 | Variable | Nom | Type | Usage |
 |----------|-----|------|-------|
-| **BG** | v.Deb_Sejour | Date | Date arrivee |
-| **BH** | v.Fin_sejour | Date | Date depart |
+| **MG** | v.Deb_Sejour | Date | Date arrivee |
+| **MH** | v.Fin_sejour | Date | Date depart |
 
 ### Nouvelle logique
 
 Avant l'appel a `GetParam('MODEDAYINC')`, calculer :
 
 ```
-v.DureeSejour = Variable BH - Variable BG
+v.DureeSejour = Variable MH - Variable MG
 v.EstCourtSejour = (v.DureeSejour < 7)
 
 SI v.EstCourtSejour ALORS

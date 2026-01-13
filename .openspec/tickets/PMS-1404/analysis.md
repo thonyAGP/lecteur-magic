@@ -38,18 +38,22 @@ Dans le menu POS > REPORTS > M&E, deux problemes :
 
 **Variables du DataView de la Tache 87.1.1.1** (60 colonnes) :
 
+> **Note** : Les variables sont numerotees globalement avec offset cumulatif.
+> Offset = Main PVE (143) + Tache 87 (18) + Tache 87.1 (17) + Tache 87.1.1 (1) = 179
+> Premiere variable de 87.1.1.1 = **Variable MK** (index 322)
+
 | Variable | Nom | Type | Role |
 |----------|-----|------|------|
-| A | v. Date operation | Date | Date de l'operation |
-| B | v. Date debut sejour | Date | Debut sejour |
-| C | v. Date fin sejour | Date | Fin sejour |
-| I | v.LabelAafficher | Unicode | Label produit |
-| L | V.Regular_price Ht | Numeric | Prix normal HT |
-| M | V.Regular_price Ttc | Numeric | Prix normal TTC |
-| O | V.Discounted price Ht | Numeric | Prix remise HT |
-| P | V.Discounted price Ttc | Numeric | Prix remise TTC |
-| R-Z | V.Total CA... | Numeric | Totaux CA |
-| BA-CD | V.Total... | Numeric | Autres totaux |
+| **MK** | v. Date operation | Date | Date de l'operation |
+| **ML** | v. Date debut sejour | Date | Debut sejour |
+| **MM** | v. Date fin sejour | Date | Fin sejour |
+| **MS** | v.LabelAafficher | Unicode | Label produit |
+| **MV** | V.Regular_price Ht | Numeric | Prix normal HT |
+| **MW** | V.Regular_price Ttc | Numeric | Prix normal TTC |
+| **MY** | V.Discounted price Ht | Numeric | Prix remise HT |
+| **MZ** | V.Discounted price Ttc | Numeric | Prix remise TTC |
+| **NB-NJ** | V.Total CA... | Numeric | Totaux CA |
+| **NK-OP** | V.Total... | Numeric | Autres totaux |
 
 **AUCUNE variable "Quantity" dans la liste !**
 
@@ -76,9 +80,9 @@ Les filtres "person" et "item label" mentionnes dans le ticket :
 **Taches a verifier** :
 | Tache | Nom | Role potentiel |
 |-------|-----|----------------|
-| 87.1.2 | SELECTION | Tache de filtrage principale |
-| 87.1.2.1 | Calcul CA | Calcul chiffre d'affaires |
-| 87.1.2.2 | Selection compta | Selection comptable |
+| Tache 87.1.2 | SELECTION | Tache de filtrage principale |
+| Tache 87.1.2.1 | Calcul CA | Calcul chiffre d'affaires |
+| Tache 87.1.2.2 | Selection compta | Selection comptable |
 
 **Solution** :
 1. Identifier les controles de saisie filtre dans le form principal
@@ -122,7 +126,8 @@ Le ticket parle de "M&E" (Meetings & Events) mais nous analysons "Discount & Gra
 - Trouver le champ quantite (probablement dans table operations ou ventes)
 
 **Etape 2** : Ajouter dans DataView de Tache 87.1.1.1
-- Ajouter nouvelle variable (ex: Variable CE = V.Quantity)
+- Ajouter nouvelle variable apres Variable OP (position 61)
+- Nom: V.Quantity
 - Type: Numeric
 - Picture: N5
 
