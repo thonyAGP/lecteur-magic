@@ -74,9 +74,11 @@
         },
         {
             "hasLocalData": true,
-            "status": "analyse-initiale",
+            "status": "investigation-en-cours",
             "key": "PMS-1414",
-            "summary": "Validation groupee seminaire - Vol retour non requis"
+            "summary": "Validation groupee seminaire - Vol retour non requis",
+            "lastAnalysis": "2026-01-19",
+            "program": "PBG IDE 124"
         },
         {
             "hasLocalData": true,
