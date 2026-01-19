@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-01-18T19:45:54.831Z",
+  "lastUpdated": "2026-01-19T10:30:00.000Z",
   "reports": [
     {
       "id": "spec",
@@ -84,6 +84,15 @@
         "file": "tickets/PMS-1359/analysis.md",
         "createdDate": "2026-01-12",
         "lastAnalysis": "2026-01-12"
+      },
+      {
+        "id": "PMS-1414",
+        "title": "Validation groupee seminaire - Vol retour non requis",
+        "status": "investigation-en-cours",
+        "file": "tickets/PMS-1414/analysis.md",
+        "createdDate": "2025-11-18",
+        "lastAnalysis": "2026-01-19",
+        "program": "PBG IDE 124"
       }
     ],
     "archived": [
