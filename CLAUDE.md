@@ -22,6 +22,8 @@ Quand l'utilisateur pose une question sur Magic, **DETECTER automatiquement** l'
 
 ### REGLE AUTOMATIQUE - Tickets Jira
 
+> **REGLE CRITIQUE** : Apres CHAQUE analyse de ticket, **TOUJOURS commit et push automatiquement** pour que les resultats soient visibles sur https://jira.lb2i.com. Ne JAMAIS attendre que l'utilisateur le demande.
+
 **Quand un numero de ticket est mentionne (PMS-XXXX, CMDS-XXXXXX) :**
 
 1. **TOUJOURS** fetcher les infos Jira en premier :
