@@ -5,6 +5,54 @@
 
 ---
 
+## RÈGLES IMPÉRATIVES (MANDATORY)
+
+### 1. HEURE = HEURE SYSTÈME (JAMAIS HARDCODÉ)
+
+| Champ | Source | Exemple |
+|-------|--------|---------|
+| `dga_heure` | `Time(0)` ou `MTime()` | Heure système au moment du traitement |
+| `dga_date` | `Date(0)` ou paramètre | Date comptable |
+
+**INTERDIT** : `dga_heure = '08:00:00'` (hardcodé)
+**OBLIGATOIRE** : `dga_heure = Time(0)` (heure système)
+
+### 2. STRUCTURE AVEC ONGLETS (TABS)
+
+L'analyse DOIT utiliser des onglets pour organiser les sections :
+
+```markdown
+<!-- ONGLET: Contexte -->
+## 1. Contexte Jira
+...
+
+<!-- ONGLET: Localisation -->
+## 2. Localisation
+...
+
+<!-- ONGLET: Tables -->
+## 3. Tables concernées
+...
+
+<!-- ONGLET: Spécification -->
+## 4. Spécification technique
+...
+
+<!-- ONGLET: Tests -->
+## 5. Tests de validation
+...
+```
+
+### 3. FORMAT DOCUMENTATION SPÉCIFICATION
+
+| Section | Obligatoire | Contenu |
+|---------|-------------|---------|
+| **Logic** | OUI | Pseudo-code avec `Time(0)` pour heure système |
+| **Variables** | OUI | Tableau avec source (système/config/table) |
+| **Tests** | OUI | Scénarios avec heures variées |
+
+---
+
 ## PRINCIPE FONDAMENTAL
 
 **Chaque affirmation doit être VÉRIFIÉE par un appel MCP.**
