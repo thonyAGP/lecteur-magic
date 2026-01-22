@@ -5,6 +5,7 @@
 
 ---
 
+<!-- ONGLET: Contexte -->
 ## 1. Contexte Jira
 
 | Élément | Valeur |
@@ -24,9 +25,11 @@
 | **Exclusion 2** | Âge < 6 ans | Pas de caution |
 | **Exclusion 3** | GM non validé | Pas de caution |
 | **Configuration** | Par code projet (village) | Activable/désactivable |
+| **Heure** | **Heure système** au moment du traitement | `Time(0)` |
 
 ---
 
+<!-- ONGLET: Localisation -->
 ## 2. Localisation - Point d'injection
 
 ### Programme de clôture
@@ -58,6 +61,7 @@ REF IDE 621 - Cloture OB
 
 ---
 
+<!-- ONGLET: Tables -->
 ## 3. Tables concernées
 
 ### Table n°168 - heb_circuit (cafil146_dat)
@@ -91,15 +95,16 @@ REF IDE 621 - Cloture OB
 
 **Rôle** : Stockage de la caution créée
 
-| Champ | Type | Description | Valeur |
-|-------|------|-------------|--------|
-| `dga_societe` | Alpha | Code société | hci_societe |
-| `dga_compte` | Numeric | Numéro compte | hci_num_compte |
-| `dga_filiation` | Numeric | Filiation | hci_filiation |
-| `dga_type` | Alpha | **Type garantie** | 'SKI' |
-| `dga_montant` | Numeric | **Montant** | 25.00 (config) |
-| `dga_date` | Date | Date création | DateComptable |
-| `dga_operateur` | Alpha | Opérateur | 'BATCH_CLOTURE' |
+| Champ | Type | Description | Valeur | Source |
+|-------|------|-------------|--------|--------|
+| `dga_societe` | Alpha | Code société | hci_societe | Table |
+| `dga_compte` | Numeric | Numéro compte | hci_num_compte | Table |
+| `dga_filiation` | Numeric | Filiation | hci_filiation | Table |
+| `dga_type` | Alpha | **Type garantie** | 'SKI' | Constante |
+| `dga_montant` | Numeric | **Montant** | 25.00 | Config (dvi_reserve6) |
+| `dga_date` | Date | Date création | P.DateComptable | Paramètre |
+| `dga_heure` | Time | **Heure création** | **Time(0)** | **SYSTÈME** |
+| `dga_operateur` | Alpha | Opérateur | 'BATCH_CLOTURE' | Constante |
 
 ### Table n°27 - donnees_village (cafil005_dat)
 
@@ -113,6 +118,7 @@ REF IDE 621 - Cloture OB
 
 ---
 
+<!-- ONGLET: Spécification -->
 ## 4. Spécification technique
 
 ### 4.1 Nouvelle sous-tâche à créer
@@ -141,11 +147,12 @@ Link 3: Table n°39 (depot_garantie) - WRITE
 
 ### 4.3 Variables virtuelles
 
-| Variable | Type | Expression | Description |
-|----------|------|------------|-------------|
-| V.SkiActif | Logical | `dvi_reserve5 = 'SKI'` | Village configuré |
-| V.MontantCaution | Numeric | `dvi_reserve6` | Montant depuis config |
-| V.CautionExiste | Logical | DbCount(...) > 0 | Anti-doublon |
+| Variable | Type | Expression | Description | Source |
+|----------|------|------------|-------------|--------|
+| V.SkiActif | Logical | `dvi_reserve5 = 'SKI'` | Village configuré | Config |
+| V.MontantCaution | Numeric | `dvi_reserve6` | Montant depuis config | Config |
+| V.CautionExiste | Logical | DbCount(...) > 0 | Anti-doublon | Calcul |
+| **V.HeureTraitement** | **Time** | **`Time(0)`** | **Heure système** | **SYSTÈME** |
 
 ### 4.4 Logic - Record Main
 
@@ -178,7 +185,8 @@ Ligne 20:   dga_filiation  = hci_filiation
 Ligne 21:   dga_type       = 'SKI'
 Ligne 22:   dga_montant    = V.MontantCaution
 Ligne 23:   dga_date       = P.DateComptable
-Ligne 24:   dga_operateur  = 'BATCH_CLOTURE'
+Ligne 24:   dga_heure      = Time(0)           ◄── HEURE SYSTÈME
+Ligne 25:   dga_operateur  = 'BATCH_CLOTURE'
 ```
 
 ### 4.5 Expression anti-doublon
@@ -193,6 +201,7 @@ V.CautionExiste = DbCount(Table n°39,
 
 ---
 
+<!-- ONGLET: Configuration -->
 ## 5. Configuration village
 
 ### Activation pour St Moritz (SMRC)
@@ -225,6 +234,7 @@ WHERE dvi_societe = 'VBEL';
 
 ---
 
+<!-- ONGLET: Tests -->
 ## 6. Tests de validation
 
 ### Cas nominaux
@@ -259,8 +269,17 @@ WHERE dvi_societe = 'VBEL';
 | 11 | Caution déjà existante | Même GM, même type SKI | ❌ Pas de doublon |
 | 12 | Caution autre type | Même GM, type='MATERIEL' | ✅ Nouvelle caution SKI |
 
+### Cas heure système (MANDATORY)
+
+| # | Scénario | Heure exécution | `dga_heure` attendu |
+|---|----------|-----------------|---------------------|
+| 13 | Clôture à 02:00 | 02:00:00 | 02:00:00 |
+| 14 | Clôture à 03:30 | 03:30:15 | 03:30:15 |
+| 15 | Clôture à 23:59 | 23:59:59 | 23:59:59 |
+
 ---
 
+<!-- ONGLET: SQL -->
 ## 7. Requêtes SQL de vérification
 
 ### Vérifier GM éligibles (avant clôture)
@@ -289,13 +308,14 @@ WHERE h.hci_societe = 'SMRC'
 ### Vérifier cautions créées (après clôture)
 
 ```sql
--- Cautions ski créées par le batch
+-- Cautions ski créées par le batch avec heure système
 SELECT
     dga_societe,
     dga_compte,
     dga_filiation,
     dga_montant,
     dga_date,
+    dga_heure,          -- ◄── HEURE SYSTÈME
     dga_operateur
 FROM cafil017_dat  -- depot_garantie
 WHERE dga_type = 'SKI'
@@ -306,12 +326,14 @@ ORDER BY dga_compte, dga_filiation
 
 ---
 
+<!-- ONGLET: Flux -->
 ## 8. Diagramme de flux
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  CLÔTURE DE NUIT - REF IDE 621                              │
 │  DateComptable = Date du jour                               │
+│  HeureTraitement = Time(0) ◄── HEURE SYSTÈME                │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -349,11 +371,13 @@ ORDER BY dga_compte, dga_filiation
                     │ depot_garantie    │
                     │ - type = 'SKI'    │
                     │ - montant = 25CHF │
+                    │ - heure = Time(0) │ ◄── SYSTÈME
                     └───────────────────┘
 ```
 
 ---
 
+<!-- ONGLET: Références -->
 ## 9. Références Magic IDE
 
 ### Tables
@@ -373,8 +397,17 @@ ORDER BY dga_compte, dga_filiation
 | 619 | REF | Calcul Cloture OB | Prg_618.xml | Calculs |
 | 165 | ADH | Saisies cautions | Prg_164.xml | Modèle |
 
+### Fonctions Magic utilisées
+
+| Fonction | Usage | Retour |
+|----------|-------|--------|
+| `Time(0)` | **Heure système courante** | Time (HH:MM:SS) |
+| `Date(0)` | Date système courante | Date |
+| `DbCount()` | Comptage enregistrements | Numeric |
+
 ---
 
+<!-- ONGLET: Statut -->
 ## 10. Statut
 
 | Étape | Statut | Date |
@@ -388,7 +421,8 @@ ORDER BY dga_compte, dga_filiation
 
 ---
 
-*Dernière mise à jour : 2026-01-22T23:30*
+*Dernière mise à jour : 2026-01-22T23:45*
 *Programme à modifier : REF IDE 621 "Cloture OB"*
 *Nouvelle tâche : 621.13 "Caution forfait ski auto"*
 *Tables : n°168 (source), n°47 (validation), n°39 (écriture), n°27 (config)*
+*Heure : Time(0) - HEURE SYSTÈME OBLIGATOIRE*
