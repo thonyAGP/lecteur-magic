@@ -239,6 +239,16 @@
                                        "lastAnalysis":  "2026-01-22",
                                        "lastAnalysisTime":  "2026-01-22T21:00:00+01:00",
                                        "program":  "PUG IDE 18"
+                                   },
+                                   {
+                                       "id":  "PMS-1457",
+                                       "title":  "Caution forfait ski automatique St Moritz",
+                                       "status":  "spec-complete",
+                                       "file":  "tickets/PMS-1457/analysis.md",
+                                       "createdDate":  "2026-01-22",
+                                       "lastAnalysis":  "2026-01-22",
+                                       "lastAnalysisTime":  "2026-01-22T23:30:00+01:00",
+                                       "program":  "REF IDE 621"
                                    }
                                ],
                     "archived":  [

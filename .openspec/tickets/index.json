@@ -133,6 +133,14 @@
             "summary": "Messages verrouillages PURGE - Comportement normal gestion concurrence",
             "lastAnalysis": "2026-01-22",
             "program": "PUG IDE 18"
+        },
+        {
+            "hasLocalData": true,
+            "status": "spec-complete",
+            "key": "PMS-1457",
+            "summary": "Caution forfait ski automatique St Moritz - 25 CHF cloture nuit",
+            "lastAnalysis": "2026-01-22",
+            "program": "REF IDE 621"
         }
     ],
     "tickets": []
