@@ -548,96 +548,13 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 
 ## Changelog
 
-- 2026-01-22: **PARSER MAGIC V3 DETERMINISTE 100%** - Nouveau script `magic-logic-parser-v3.ps1` avec formule d'offset automatique et correcte. Formule: Offset = colonnes_ancetres_complets + colonnes_table_tache_cible. Teste sur VIL Prg_558 tache 19: Offset=131→EB, EU=v.FDR fermeture, EV=v.Session prec. Parsing ExpSyntax pour expressions. Documentation: `skills/magic-unipaas/references/dataview-offset-formula.md`
-- 2026-01-12: **MCP SERVER 100% COMPLET** - Tests unitaires C# (27/27 pass), hooks validation IDE Magic (PreToolUse + PostToolUse). Suite: `tools/MagicMcp.Tests/`. Patterns interdits detectes: Prg_XXX, {0,3}, ISN_2, FieldID, obj=XX. Hook PreToolUse bloque ecriture fichiers tickets avec violations
-- 2026-01-12: **MCP INSPECTOR CONFIGURE** - Script `tools/start-mcp-inspector.ps1` pour dev MCP sans redemarrer Claude Code. Workflow: modifier code → rebuild → tester dans navigateur (http://localhost:6274). MCP Server passe de 90% a 95%
-- 2026-01-12: **PARSER TYPESCRIPT COMPLET - 200 fonctions** - Enrichissement des 4 fichiers generateurs: function-registry.ts (+100 definitions, 16 nouvelles categories), typescript-generator.ts (+150 mappings), csharp-generator.ts (+150 mappings .NET 6+), python-generator.ts (+150 mappings). Total: +1023 lignes. Commit 2b92ed9
-- 2026-01-12: **FONCTIONS MAGIC COMPLET - 200/200 (100%)** - Batch 5 termine avec 30 fonctions Window/Menu/Control/Range (WinBox, WinHWND, WinMaximize, WinMinimize, WinRestore, MnuAdd, MnuCheck, MnuEnabl, MnuName, MnuRemove, MnuShow, CHeight, CWidth, CX, CY, CurRow, ClickWX, ClickWY, MMCount, MMCurr, MMClear, MMStop, Lock, UnLock, RangeAdd, RangeReset, LocateAdd, LocateReset, SortAdd, SortReset). OBJECTIF 100% ATTEINT
-- 2026-01-12: **BATCH 4 FONCTIONS MAGIC - 170/200** - 30 nouvelles fonctions COM/DLL/HTTP/Context avec equivalences TS/C#/Python (CallDLL, CallDLLF, CallDLLS, CallURL, CallProgURL, COMObjCreate, COMObjRelease, COMHandleGet, COMHandleSet, COMError, MailSend, Cipher, ClipAdd, ClipRead, ClipWrite, CtxGetId, CtxGetName, CtxSetName, CtxNum, CtxClose, CtxKill, CtxStat, CtxProg, CtxSize, CtxLstUse, CtxGetAllNames, ClientCertificateAdd, ClientCertificateDiscard, GetGUID, GetHostName). Total: 170 fonctions documentees (85%)
-- 2026-01-12: **BATCH 3 FONCTIONS MAGIC - 140/200** - 30 nouvelles fonctions XML/Vector/Buffer avec equivalences TS/C#/Python (XMLStr, XMLVal, XMLGet, XMLCnt, XMLExist, XMLInsert, XMLModify, XMLDelete, XMLValidate, XMLSetNS, VecGet, VecSet, VecSize, VecCellAttr, BufGetAlpha, BufSetAlpha, BufGetNum, BufSetNum, BufGetDate, BufSetDate, BufGetTime, BufSetTime, BufGetLog, BufSetLog, BufGetBlob, BufSetBlob, BufGetUnicode, BufSetUnicode, DataViewToXML, DataViewToHTML). Total: 140 fonctions documentees (70%)
-- 2026-01-12: **BATCH 2 FONCTIONS MAGIC - 110/200** - 30 nouvelles fonctions DB/I/O/Flow/UI avec equivalences TS/C#/Python (DbViewRefresh, DbPos, DbSize, DbNext, DbPrev, Rollback, SetCrsr, Wait, Sleep, ErrMagic, ErrDbms, Exit, FlwLstRec, FlwFstRec, LastPark, FileDelete, FileCopy, FileRename, FileInfo, FileListGet, Blb2File, File2Blb, MsgBox, VerifyBox, InputBox, FormStateClear, CtrlGoto, CtrlRefresh, ViewRefresh, SetLang, GetLang). Total: 110 fonctions documentees (55%)
-- 2026-01-11: **BATCH 1 FONCTIONS MAGIC - 80/200** - 30 nouvelles fonctions Date/Heure/Strings/Math avec equivalences TS/C#/Python (DOW, CDOW, NDOW, CMonth, NMonth, BOY, EOY, MDate, AddTime, AddDateTime, DifDateTime, TVal, Week, MTime, Delay, Timer, IsNull, NullVal, IsDefault, Range, DelStr, Ins, Flip, Soundx, Like, ASCIIVal, Log, Exp, Pwr, Sqrt). Total: 80 fonctions documentees
-- 2026-01-11: **MCP TEST SUITE + FONCTIONS TOP 50** - Suite de tests automatises (17/17 pass). Analyse frequence 200 fichiers XML. 20 fonctions supplementaires avec equivalences TS/C#/Python (MlsTrans, ExpCalc, IN, CndRange, INIGet, TStr, Fill, DbDel, etc). Coverage 50 fonctions total. Script `analyze-function-usage.ps1`
-- 2026-01-11: **MCP SDK UPGRADE 0.5.0** - ModelContextProtocol 0.2.0-preview.1 → 0.5.0-preview.1. Support parallel calls, Tasks API, Extensions. Build Release OK (0 errors). Redemarrer session pour charger
-- 2026-01-11: **HOOK POSTTOOLUSE IDE MAGIC IMPLEMENTE** - Script `validate-magic-ide-format.ps1` cree. Detecte patterns XML interdits (Prg_\d+, FieldID, ISN, {0,3}). Affiche violations avec format correct attendu. Cible agents magic-* + contexte Magic. Tests valides: 6 errors + 5 warnings detectes, clean output OK, skip non-Magic OK
-- 2026-01-11: **VEILLE TECHNOLOGIQUE COMPLETE** - Claude Code 2.1.0 (agent hooks, real-time thinking), MCP Nov 2025 (parallel calls, Tasks API), TypeScript 2025 best practices. 5 actions recommandees: Hook PostToolUse IDE Magic (HAUTE), Parallel Calls MCP (MOYENNE), Upgrade CC 2.1.0 (MOYENNE), Tasks API prototype (BASSE), --experimental-strip-types (BASSE). Rapport: `.openspec/veille-report-2026-01-11.md` + page HTML interactive. Prochain: 18 janvier
-- 2026-01-11: **REFERENCE RAPIDE TOP 30 FONCTIONS** - Extraction documentation CHM Magic xpa 2.3 (484 fichiers HTM). Reference rapide creee: `quick-reference-top30.md`. 30 fonctions critiques avec equivalences TS/C#/Python. Source: `C:\Appwin\Magic\Magicxpa23\Support\mghelpw_extracted\`
-- 2026-01-10: **ARCHITECTURE MAGIC ROUTER COMPLETE** - 5 agents specialises crees (magic-router, magic-analyzer, magic-debugger, magic-migrator, magic-documenter). Detection automatique d'intention + routage intelligent. Regles IDE renforcees dans CLAUDE.md. Plan 100% documente avec roadmap detaillee
-- 2026-01-10: **REGLES POSITION XML→IDE VALIDEES** - Script parse-dataview.ps1 V2 complet. Tables: XML obj=ItemIsn→Comps.xml id=IDE position. Programmes: IDE position=ordre dans ProgramsRepositoryOutLine. Variables: A-Z, AA-ZZ numerotation correcte. Colonnes: sequentielles Main Source, vrais IDs pour Links. Tests valides: ADH 294→IDE 297, ADH 159→IDE 160. Documentation: xml-position-rules.md, dataview-parsing-rules.md
-- 2026-01-08: **MCP XmlIndexer REWRITE** - Correction complete du parsing XML. Structure reelle: Task>Header (pas TaskDefinition), Task>Resource>Columns, Task>TaskLogic>LogicUnit>LogicLines. Nouvel outil magic_dump_dataview pour diagnostic. Tables composants via Comps.xml (id/ItemIsn/PublicName mapping)
-- 2026-01-09: **PMS-1446 SPEC COMPLETE** - Location materiel ski courts sejours. Analyse PVE IDE 186/139/256. Solution: calcul auto MODEDAYINC selon duree sejour (< 7 nuits = jour meme, >= 7 = lendemain). Seuil configurable via table. Spec implementation.md creee
-- 2026-01-08: **MCP Tool magic_get_line** - Nouvel outil pour lookup deterministe ligne Data View ET Logic. Parsing colonnes (MagicColumn model, A-Z/AA-ZZ naming). Numerotation Logic continue a travers handlers. Commande /magic-line mise a jour
-- 2026-01-08: **OpenSpec Viewer ONLINE** - Deploiement Vercel sur https://jira.lb2i.com/viewer.html. API serverless pour gestion tickets (archive/unarchive/statut) avec commit auto GitHub. Service Windows local installe au demarrage
-- 2026-01-08: **CMDS-176521 DIAGNOSTIC COMPLET** - Bug affichage prix remise POS (41,857 au lieu de 5,400). PVE IDE 186 (Main Sale) et PVE IDE 201 (Discounts) analyses. Calcul correct (Expression 30/33), bug dans Picture Format ou binding formulaire. Ticket dev ouvert par Davide, fix prevu fin janvier
-- 2026-01-08: **PMS-1373 Spécification COMPLETE** - Découverte champ `cte_flag_annulation` existant (valeurs Normal/Annulation/X-annule). Solution simplifiée: filtre WHERE au lieu de matching +/-. Spec implementation.md créée. Branche feature/PMS-1373-masquer-annulations. Sources synchronisées GitHub (thonyAGP/PMS-Magic-Sources)
-- 2026-01-07: **CMDS-174321 RÉSOLU - Analyse fichiers NA** - PREUVES: fichiers source NA (RV.HST) contiennent dates CORRECTES (251225=25/12/25) pour tous les SEEDSMAN. Le BUG est dans l'IMPORT PMS (PBG IDE 315), pas dans les données NA. Hypothèse: inversion MM/DD lors conversion date pour filiation 004 uniquement. SQL correction fourni
-- 2026-01-07: **PMS-1373 Analyse ADH IDE 69 EXTRAIT_COMPTE** - Structure complete (466KB, 12 sous-taches). Flux edition identifie (Choix_action → ADH IDE 70/71/72/73/76). Point d'injection: sous-tache 5 "scroll sur compte". Skill enrichi: section "Analyse par Troncons" pour fichiers volumineux
-- 2026-01-07: **Interface Gestion Tickets Jira** - Menu CLI au demarrage (hook SessionStart), 4 commandes (/ticket, /ticket-new, /ticket-learn, /ticket-search), KB SQLite pour capitalisation, structure .openspec/tickets/{KEY}/. Migration CMDS-174321 vers nouvelle structure. 5 scripts PS securises (.env credentials)
-- 2026-01-07: **CMDS-174321 Analyse approfondie** - Tracage flux PB027 (PBG IDE 62→PBG IDE 63). Decouverte: terminal affiche date correcte (25DEC), GUI affiche erreur (25/01). Bug dans affichage GUI, pas import. Tables requises: cafil014_dat, table temp planning. Attente base VPHUKET
-- 2026-01-06: **Analyse CMDS-174321 + MCP Global Index** - Bug date arrivee (NA=25/12/2025, PMS=25/01/2026). Hypothese: inversion DD/MM vs MM/DD. 4 nouveaux outils MCP: magic_find_program, magic_list_programs, magic_index_stats, magic_get_dependencies. Rapport `.openspec/reports/CMDS-174321_ANALYSIS.md`
-- 2026-01-06: **Documentation SADT projet ADH** - Analyse structuree complete. 9 modules fonctionnels, ~350 programmes, 27 dossiers, 20 tables. Rapport `.openspec/reports/ADH_SADT_DOCUMENTATION.md`
-- 2026-01-06: **MCP Server Magic Interpreter** - Serveur MCP C# .NET 8 pour parsing XML deterministe. 5 outils: magic_get_position, magic_get_tree, magic_get_dataview, magic_get_expression, magic_get_logic. 2383 programmes indexes (PBP, REF, VIL, PBG, PVE). Config dans .claude/settings.local.json
-- 2026-01-05: **Session 7: CallTask Advanced** - Wait disponible SEULEMENT pour Raise Event (pas Call SubTask/Program). Task ID = numero local (pas ISN_2). Skill enrichi avec tableau proprietes
-- 2026-01-05: **Session 6: Settings Repositories** - Font Repository unifie (#1-23 Application, #24-151 Internal, #152+ Studio). Color Repository valide. Nouvelle section settings_repositories dans skill
-- 2026-01-05: **Outil magic-ide-position cree** - Slash command pour convertir references XML en positions IDE. Format: PROJET IDE Nom: Description
-- 2026-01-05: **CALIBRATION DLU VALIDEE** - Facteurs de conversion DLU→Pixels calibrés et validés: X=0.65, Y=2.0 (CA0142: 939×178 DLU → 610×356 px). Skill mis à jour section 13 et 15
-- 2026-01-05: **Bug VIL ANALYSE COMPLETE** - Tache 22.16.1 Record Suffix conditionnel: lignes IDE 5 et 9, remplacer expression 31 par 32 (DK<>EU). Mapping XML id→IDE position documente
-- 2026-01-05: **Skill: Convention nommage variables** - Variables DataView A-Z, AA-ZZ, AAA-ZZZ. Formule: DK = 4*26+11 = 115
-- 2026-01-05: **Skill: Mapping expressions XML→IDE** - XML conserve id originaux avec trous, IDE renumérote séquentiellement. WithValue reference id XML, pas numero IDE
-- 2026-01-05: **Skill enrichi: Debugging/Troubleshooting** - Dead Expressions, ExpCalc function, Remark comme indices, methodologie tracage WithValue, checklist debugging
-- 2026-01-04: **CORRECTION CRITIQUE: Tracage flux ecrans** - Erreur identifiee: ADH IDE 162 considere a tort comme ecran visible alors que c'est un menu intermediaire. Flux reel: Main→ADH IDE 1→ADH IDE 162→ADH IDE 121 (CA0142). Ecran principal = ADH IDE 121 avec WindowType=2 (SDI)
-- 2026-01-04: **ouverture-session.html (CA0143)** - Ecran cree depuis analyse ADH IDE 294. Grille 7 colonnes (Cash/Cartes/Cheques/Produits/TOTAL/OD/Devises), 6 lignes (Solde initial/Appro caisse/Appro produits/Caisse comptee/Controle PMS/Ecart). Boutons Abandon/Valider avec validation ecart
-- 2026-01-04: **index.html corrige (CA0142)** - Reconstruction fidele depuis ADH IDE 121 avec tous les boutons (Ouvrir/Continuer/Fermer session, Appro, Regul Telecollecte, etc.) et zone info utilisateur/coffre/etat
-- 2026-01-04: **Skill enrichi: Menu intermediaire vs Ecran visible** - Regles ajoutees: WindowType=2=SDI visible, tracage multi-niveaux obligatoire, ne pas s'arreter au premier CallTask
-- 2026-01-04: **Skill: Flow Tracing & Window Types** - Documentation Window Types (Modal/SDI/MDI), flux d'execution Task Prefix→Suffix, methodologie tracage demarrage depuis MainProgram (ADH IDE 1→ADH IDE 162)
-- 2026-01-04: **Navigation SPA complete** - sessions.html (ADH IDE 77/80/236), modales coffre (ADH IDE 233/234/235/163/197), panel navigation 11 ecrans
-- 2026-01-04: **Skill enrichi: Detection code desactive** - ISEMPTY_TSK pour programmes vides, Disabled val="1" pour lignes, 9 progs vides + 354 lignes exclus
-- 2026-01-04: **Rapport couverture complet** - `.openspec/reports/COVERAGE_REPORT_2025-01-04.md`, 85.5% couverture, 12 ecrans SPA, ~125 endpoints
-- 2026-01-04: **Verification REF.ecf** - 5 progs (800,877,895,1066,1095) identifies comme compiles (.eci), non analysables en source
-- 2025-12-31: **Analyse Main/ADH IDE 162 complete** - Tracage flux CallTask, couverture API validee, 3 gaps combles (DetailAppels, MenuTelephone, ZoomServicesVillage)
-- 2025-12-31: **6 ecrans SPA crees** - ventes.html, extrait.html, garanties.html, easycheckout.html, factures.html, changement-compte.html
-- 2025-12-31: Navigation modules ajoutee a index.html - Panel fixe avec liens vers tous les ecrans
-- 2025-12-29: **MIGRATION ADH COMPLETE** - 527 tests unitaires (100% pass), ~70 endpoints, 18 modules migres, build Release operationnel
-- 2025-12-29: Fix validators Societe (MaxLength 2->10), correction tests Ventes orphelins, nettoyage fichiers agents
-- 2025-12-28: **Interface Graphique Complete** - 15 ecrans SPA (dashboard, sessions, ventes, EzCard, depot, etc.), 411 tests total
-- 2025-12-28: **Phase 12: Divers** - 5 programmes prioritaires (ADH IDE 42,43,45,47,48), 5 endpoints, 458 tests total
-- 2025-12-28: **Phase 12: Depot** - GetExtraitDepot + RetirerDepot, 2 endpoints
-- 2025-12-28: **Phase 12: EzCard** - GetEzCardByMember + DesactiverEzCard + ValiderCaracteres, 3 endpoints
-- 2025-12-28: **Phase 11: Identification** - VerifierOperateur + VerifierSessionCaisse, 327 tests total
-- 2025-12-28: **Phase 10: Factures** - GetFacturesCheckOut + CreerFacture, calcul TVA
-- 2025-12-28: **Phase 9: EasyCheckOut** - Edition + Extrait queries, complete workflow
-- 2025-12-28: **Phase 8: Telephone** - LigneTelephone entity, 2 endpoints (get/gerer), OPEN/CLOSE commands
-- 2025-12-28: **Phase 7: Change** - TauxChange entity, 3 endpoints (devise-locale/taux/calculer), logique conversion bidirectionnelle
-- 2025-12-28: **Phase 3-6: Solde, Ventes, Extrait, Garantie** - 4 nouvelles queries, 7 entites, 52 tests validators
-- 2025-12-27: **Phase 2: Members (ADH IDE 160 GetCMP)** - Endpoint /api/members/club-med-pass, table ezcard, 14 tests, 145 tests total
-- 2025-12-27: **Phase 1: Zooms (8 endpoints)** - 7 tables REF, 7 entites, ecran interactif /zooms.html, fix decimal->double
-- 2025-12-27: **Migration ADH IDE 250 Solde Resort Credit** - Endpoint /api/ventes/solde-resortcredit, table resort_credit, dashboard HTML visuel, 131 tests
-- 2025-12-27: **Migration ADH IDE 237 Solde Gift Pass** - Premier programme Ventes migre vers C#, endpoint /api/ventes/solde-giftpass, table ccpartyp, 116 tests
-- 2025-12-27: **Flux coffre complet** - Ouverture avec 4 details (I,C,K,L) + coffre, fermeture avec validation ecart, 108 tests
-- 2025-12-27: Fix entites non-null pour DB (commentaire_ecart, montants) + validation CommentaireEcart max 30 car
-- 2025-12-27: **Logique metier ecarts** - Value Objects (EcartSession, EcartMontants, EcartDevise), IEcartCalculator, validation fermeture avec seuil
-- 2025-12-27: FluentValidation + tests - 7 validators, ValidationBehavior pipeline
-- 2025-12-27: **MILESTONE: API Caisse COMPLETE** - 24 endpoints, 9 tables, Clean Architecture
-- 2025-12-26: API Caisse C# .NET 8 fonctionnelle - Solution 5 projets, 9 tables, 32 sessions lues depuis CSK0912
-- 2025-12-26: Analyse ADH IDE 131 Fermeture caisse - 22 sous-taches, 10 tables REF, architecture WS (13 services)
-- 2025-12-24: Exploration PBG (394 progs) et PVE (448 progs) - roles et composants identifies
-- 2025-12-24: Analyse ADH IDE 122 complete - 15 params, 9 sous-taches, tables caisse_devise/devisein_par/cafil045_dat
-- 2025-12-24: Amelioration skill tables - StoredAs codes (6=float, 32=nvarchar) documentes
-- 2025-12-24: Guide ECRANS complet cree - ecrans-guide.md (Controls, Events, Forms)
-- 2025-12-24: Guide EDITIONS complet cree - editions-guide.md (Area, Groups, Page/Counter)
-- 2025-12-24: Guide EXPORTS complet cree - exports-guide.md (Media types, FormIO, FORM_TEXT)
-- 2025-12-24: Analyse COMPLETE 40 fichiers XML (10 par projet) - gaps-analysis-complete.md
-- 2025-12-24: Analyse 10 fichiers XML (ADH/PBP/REF/PBG) - Creation gaps-analysis.md
-- 2025-12-24: Creation xml-structure-guide.md - Guide complet structure XML pour conversion
-- 2025-12-24: Analyse ADH IDE 122 (Ouverture caisse) - Structure XML maitrisee
-- 2025-12-24: Analyse tables REF ADH IDE 121 (6 tables: caisse_session, caisse_session_detail, caisse_parametres, cafil048_dat, user_dat, caisse_session_coffre2)
-- 2025-12-24: Analyse complete Gestion Caisse (41 progs), doc GESTION_CAISSE_SPEC.md
-- 2025-12-24: Ajout projet ADH, identification 30 programmes partages ADH.ecf
-- 2025-12-24: Creation .openspec/spec.md (nouvelle structure)
-- 2025-12-22: Validation MECANO sur base CSK0912
-- 2025-12-22: Creation structure openspec/mecano/
+> Historique complet: `.openspec/history/changelog.md`
 
-- 2026-01-18: **INFRASTRUCTURE GIT DOCUMENTEE** - Architecture 4 repos (S: origin, C: dev, D: analyse, GitHub backup). Commandes sync, gestion conflits .opt/ProgramHeaders, schéma ASCII complet
+**Derniers changements:**
+- 2026-01-24: Optimisation contexte (separation changelog, prompt Lanceur_Claude)
+- 2026-01-22: Parser Magic V3 deterministe 100%
+- 2026-01-18: Infrastructure Git documentee
+- 2026-01-12: MCP Server + Parser TypeScript 100% complet
 
 ---
-*Derniere mise a jour: 2026-01-18 - Infrastructure Git Sources PMS documentee*
+*Derniere mise a jour: 2026-01-24*
