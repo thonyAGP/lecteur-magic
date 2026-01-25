@@ -303,7 +303,7 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 
 | Categorie | Outils | Etat | Cible | Action |
 |-----------|--------|------|-------|--------|
-| MCP Server | **34 outils** | **100%** | 100% | **+6 outils Synergie (Tiers 1-3)** |
+| MCP Server | **38 outils** | **100%** | 100% | **+10 outils Synergie (Tiers 1-4)** |
 | Agents specialises | 5 agents | 100% | 100% | Maintenir |
 | Commandes Slash | 15 commandes | 100% | 100% | Maintenir |
 | Scripts PowerShell | **32 scripts** | 100% | 100% | **+sync-patterns-to-kb.ps1** |
@@ -312,7 +312,7 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 | **Fonctions Magic** | **200/200** | **100%** | **100%** | **COMPLET** |
 | **Workflow Tickets** | **Orchestre v2.0** | **100%** | 100% | **6 phases, patterns KB, metrics** |
 | **Migration Specs** | **MigrationExtractor** | **100%** | 100% | **Cahier des charges auto** |
-| **Synergie Ecosysteme** | **Tiers 1-3** | **100%** | 100% | **NOUVEAU - 40%→75% synergie** |
+| **Synergie Ecosysteme** | **Tiers 1-4** | **100%** | 100% | **40%→80% synergie, 762 ECF composants** |
 
 ### Nouveaux outils MCP (2026-01-24)
 
@@ -357,7 +357,44 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 |------------------------|-------------|--------|
 | `variable-lineage <project> <ide> <var>` | Test lineage depuis CLI | **NOUVEAU** |
 
-### Schema Knowledge Base v3 (2026-01-25) - NOUVEAU
+**Tier 4: ECF Shared Components Registry** (cross-project dependencies)
+
+| Outil | Description | Statut |
+|-------|-------------|--------|
+| `magic_ecf_list` | Liste ECF files avec statistiques | **NOUVEAU** |
+| `magic_ecf_programs` | Liste programmes dans un ECF | **NOUVEAU** |
+| `magic_ecf_usedby` | Trouve qui utilise un programme | **NOUVEAU** |
+| `magic_ecf_dependencies` | Dépendances cross-projet | **NOUVEAU** |
+
+| Commande KbIndexRunner | Description | Statut |
+|------------------------|-------------|--------|
+| `populate-ecf` | Peuple le registre ECF (762 composants) | **NOUVEAU** |
+
+### Schema Knowledge Base v4 (2026-01-25) - NOUVEAU
+
+```sql
+-- Table Tier 4: ECF Shared Components
+CREATE TABLE IF NOT EXISTS shared_components (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ecf_name TEXT NOT NULL,           -- "ADH.ecf", "REF.ecf", "UTILS.ecf"
+    program_ide_position INTEGER NOT NULL,
+    program_public_name TEXT,
+    program_internal_name TEXT,
+    owner_project TEXT NOT NULL,      -- Project that owns this program
+    used_by_projects TEXT,            -- JSON array ["PBP", "PVE"]
+    component_group TEXT,             -- "Sessions_Reprises", "Tables", etc.
+    UNIQUE(ecf_name, program_ide_position)
+);
+```
+
+**ECF Registry Stats:**
+| ECF | Programs | Owner | Used By |
+|-----|----------|-------|---------|
+| REF.ecf | 734 | REF | ADH, PBP, PVE, PBG |
+| ADH.ecf | 27 | ADH | PBP, PVE |
+| UTILS.ecf | 1 | UTILS | ADH |
+
+### Schema Knowledge Base v3 (2026-01-25)
 
 ```sql
 -- Table Tier 3: Variable Lineage
@@ -553,7 +590,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 - [x] **P1.1** Reparer connexion MCP magic-interpreter (en cours: 2026-01-10)
 
 ### Terminees
-- [x] **Synergie Ecosysteme Tiers 1-3** (terminee: 2026-01-25) - Feedback loop, Pattern sync FTS5, Variable lineage. 6 outils MCP, 3 commandes KbIndexRunner, Schema v3. Synergie 40%→75%
+- [x] **Synergie Ecosysteme Tiers 1-4** (terminee: 2026-01-25) - Feedback loop, Pattern sync FTS5, Variable lineage, ECF Registry. 10 outils MCP, 4 commandes KbIndexRunner, Schema v4. 762 composants partagés
 - [x] **Amelioration Systeme Analyse Tickets + Migration Specs** (terminee: 2026-01-24) - Schema v2 (3 tables), ExpressionCacheService, auto-capitalize, track-metrics, MigrationExtractor, Generate-MigrationSpec
 - [x] **Form Controls + Discovery + Validation** (terminee: 2026-01-24) - magic_get_form_controls outil MCP, ProjectDiscoveryService, KbIndexRunner validate mode
 - [x] **Forms MCP + Offsets dynamiques** (terminee: 2026-01-24) - magic_get_forms outil MCP, calcul automatique Main offset, MagicTaskForm model
@@ -706,6 +743,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 > Historique complet: `.openspec/history/changelog.md`
 
 **Derniers changements:**
+- 2026-01-25: **EcfRegistryTool.cs** - 4 outils MCP Tier 4 (magic_ecf_list, magic_ecf_programs, magic_ecf_usedby, magic_ecf_dependencies) + Schema v4 + 762 composants
 - 2026-01-25: **VariableLineageTool.cs** - 2 outils MCP Tier 3 (magic_variable_lineage, magic_variable_sources) + Schema v3 (variable_modifications)
 - 2026-01-25: **sync-patterns-to-kb.ps1** - Tier 2: Import patterns Markdown vers KB SQLite avec FTS5
 - 2026-01-25: **PatternFeedbackTool.cs** - 4 outils MCP Tier 1 (search, stats, link, feedback) pour boucle retour tickets/patterns
