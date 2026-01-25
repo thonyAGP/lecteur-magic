@@ -303,7 +303,7 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 
 | Categorie | Outils | Etat | Cible | Action |
 |-----------|--------|------|-------|--------|
-| MCP Server | **38 outils** | **100%** | 100% | **+10 outils Synergie (Tiers 1-4)** |
+| MCP Server | **42 outils** | **100%** | 100% | **+14 outils Synergie (Tiers 1-5)** |
 | Agents specialises | 5 agents | 100% | 100% | Maintenir |
 | Commandes Slash | 15 commandes | 100% | 100% | Maintenir |
 | Scripts PowerShell | **32 scripts** | 100% | 100% | **+sync-patterns-to-kb.ps1** |
@@ -312,7 +312,7 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 | **Fonctions Magic** | **200/200** | **100%** | **100%** | **COMPLET** |
 | **Workflow Tickets** | **Orchestre v2.0** | **100%** | 100% | **6 phases, patterns KB, metrics** |
 | **Migration Specs** | **MigrationExtractor** | **100%** | 100% | **Cahier des charges auto** |
-| **Synergie Ecosysteme** | **Tiers 1-4** | **100%** | 100% | **40%→80% synergie, 762 ECF composants** |
+| **Synergie Ecosysteme** | **Tiers 1-5** | **100%** | 100% | **40%→80% synergie, 762 ECF, Impact Analysis** |
 
 ### Nouveaux outils MCP (2026-01-24)
 
@@ -370,7 +370,38 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 |------------------------|-------------|--------|
 | `populate-ecf` | Peuple le registre ECF (762 composants) | **NOUVEAU** |
 
-### Schema Knowledge Base v4 (2026-01-25) - NOUVEAU
+**Tier 5: Change Impact Analysis** ("Si je modifie X, qu'est-ce qui casse?")
+
+| Outil | Description | Statut |
+|-------|-------------|--------|
+| `magic_impact_program` | Analyse impact complet d'un programme (callers, callees, tables, ECF) | **NOUVEAU** |
+| `magic_impact_table` | Analyse impact modification d'une table | **NOUVEAU** |
+| `magic_impact_expression` | Trouve programmes utilisant un pattern d'expression | **NOUVEAU** |
+| `magic_impact_crossproject` | Analyse dépendances cross-projet | **NOUVEAU** |
+
+| Commande KbIndexRunner | Description | Statut |
+|------------------------|-------------|--------|
+| `analyze-impact <project> <ide>` | Analyse d'impact rapide depuis CLI | **NOUVEAU** |
+
+### Schema Knowledge Base v5 (2026-01-25) - NOUVEAU
+
+```sql
+-- Table Tier 5: Change Impact Analysis
+CREATE TABLE IF NOT EXISTS change_impacts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_project TEXT NOT NULL,
+    source_program_id INTEGER NOT NULL,
+    source_element_type TEXT NOT NULL,  -- 'program', 'expression', 'variable', 'table'
+    source_element_id TEXT,
+    affected_project TEXT NOT NULL,
+    affected_program_id INTEGER NOT NULL,
+    impact_type TEXT NOT NULL,          -- 'calls', 'called_by', 'reads', 'writes', 'uses_table', 'uses_ecf'
+    severity TEXT NOT NULL DEFAULT 'medium',  -- 'critical', 'high', 'medium', 'low'
+    UNIQUE(source_project, source_program_id, source_element_type, source_element_id, affected_project, affected_program_id, impact_type)
+);
+```
+
+### Schema Knowledge Base v4 (2026-01-25)
 
 ```sql
 -- Table Tier 4: ECF Shared Components
@@ -590,7 +621,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 - [x] **P1.1** Reparer connexion MCP magic-interpreter (en cours: 2026-01-10)
 
 ### Terminees
-- [x] **Synergie Ecosysteme Tiers 1-4** (terminee: 2026-01-25) - Feedback loop, Pattern sync FTS5, Variable lineage, ECF Registry. 10 outils MCP, 4 commandes KbIndexRunner, Schema v4. 762 composants partagés
+- [x] **Synergie Ecosysteme Tiers 1-5** (terminee: 2026-01-25) - Feedback loop, Pattern sync FTS5, Variable lineage, ECF Registry, Change Impact Analysis. 14 outils MCP, 5 commandes KbIndexRunner, Schema v5. 762 composants partagés
 - [x] **Amelioration Systeme Analyse Tickets + Migration Specs** (terminee: 2026-01-24) - Schema v2 (3 tables), ExpressionCacheService, auto-capitalize, track-metrics, MigrationExtractor, Generate-MigrationSpec
 - [x] **Form Controls + Discovery + Validation** (terminee: 2026-01-24) - magic_get_form_controls outil MCP, ProjectDiscoveryService, KbIndexRunner validate mode
 - [x] **Forms MCP + Offsets dynamiques** (terminee: 2026-01-24) - magic_get_forms outil MCP, calcul automatique Main offset, MagicTaskForm model
@@ -743,6 +774,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 > Historique complet: `.openspec/history/changelog.md`
 
 **Derniers changements:**
+- 2026-01-25: **ChangeImpactTool.cs** - 4 outils MCP Tier 5 (magic_impact_program, magic_impact_table, magic_impact_expression, magic_impact_crossproject) + Schema v5 + analyze-impact CLI
 - 2026-01-25: **EcfRegistryTool.cs** - 4 outils MCP Tier 4 (magic_ecf_list, magic_ecf_programs, magic_ecf_usedby, magic_ecf_dependencies) + Schema v4 + 762 composants
 - 2026-01-25: **VariableLineageTool.cs** - 2 outils MCP Tier 3 (magic_variable_lineage, magic_variable_sources) + Schema v3 (variable_modifications)
 - 2026-01-25: **sync-patterns-to-kb.ps1** - Tier 2: Import patterns Markdown vers KB SQLite avec FTS5
