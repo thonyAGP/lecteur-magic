@@ -219,6 +219,188 @@ if (args.Length > 1 && args[0] == "query")
     return 0;
 }
 
+// Sync patterns mode: import .openspec/patterns/*.md to resolution_patterns table
+if (args.Length > 0 && args[0] == "sync-patterns")
+{
+    var patternsPath = args.Length > 1 ? args[1] : @"D:\Projects\Lecteur_Magic\.openspec\patterns";
+    var syncDb = new KnowledgeDb();
+
+    if (!syncDb.IsInitialized())
+    {
+        Console.WriteLine("ERROR: Knowledge Base not initialized");
+        return 1;
+    }
+
+    // Apply schema v2 tables if missing (CREATE TABLE IF NOT EXISTS)
+    Console.WriteLine("Ensuring schema v2 tables exist...");
+    syncDb.InitializeSchema();
+
+    Console.WriteLine("=== Sync Patterns to Knowledge Base ===");
+    Console.WriteLine($"Patterns path: {patternsPath}");
+    Console.WriteLine();
+
+    if (!Directory.Exists(patternsPath))
+    {
+        Console.WriteLine($"ERROR: Patterns directory not found: {patternsPath}");
+        return 1;
+    }
+
+    var mdFiles = Directory.GetFiles(patternsPath, "*.md")
+        .Where(f => !Path.GetFileName(f).Equals("README.md", StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+    Console.WriteLine($"Found {mdFiles.Count} pattern file(s)");
+    Console.WriteLine();
+
+    int synced = 0;
+    foreach (var file in mdFiles)
+    {
+        var fileName = Path.GetFileNameWithoutExtension(file);
+        var content = File.ReadAllText(file);
+
+        // Parse pattern metadata
+        string? sourceTicket = null;
+        string? rootCauseType = null;
+        var symptoms = new List<string>();
+
+        // Extract Source: > **Source**: CMDS-174321
+        var sourceMatch = System.Text.RegularExpressions.Regex.Match(content, @">\s*\*\*Source\*\*:\s*([A-Z]+-\d+)");
+        if (sourceMatch.Success) sourceTicket = sourceMatch.Groups[1].Value;
+
+        // Extract Type: > **Type**: Bug logique
+        var typeMatch = System.Text.RegularExpressions.Regex.Match(content, @">\s*\*\*Type\*\*:\s*(.+)");
+        if (typeMatch.Success) rootCauseType = typeMatch.Groups[1].Value.Trim();
+
+        // Extract symptoms from bullet lists
+        var symptomMatches = System.Text.RegularExpressions.Regex.Matches(content, @"^-\s*[""']?([^""\r\n]+)[""']?\s*$", System.Text.RegularExpressions.RegexOptions.Multiline);
+        foreach (System.Text.RegularExpressions.Match m in symptomMatches)
+        {
+            var symptom = m.Groups[1].Value.Trim(' ', '"', '\'');
+            if (symptom.Length > 3 && !symptom.StartsWith("[") && !symptoms.Contains(symptom))
+            {
+                symptoms.Add(symptom);
+            }
+        }
+
+        // Extract solution template
+        string solutionTemplate = "";
+        var solutionMatch = System.Text.RegularExpressions.Regex.Match(content, @"##\s*Solution\s*type\s*\r?\n([\s\S]*?)(?=\r?\n##\s*[A-Z]|\r?\n---\s*\r?\n\*Pattern|\Z)");
+        if (solutionMatch.Success)
+        {
+            solutionTemplate = solutionMatch.Groups[1].Value.Trim();
+            if (solutionTemplate.Length > 2000) solutionTemplate = solutionTemplate[..2000] + "...";
+        }
+
+        // Create pattern record
+        var pattern = new MagicKnowledgeBase.Models.DbResolutionPattern
+        {
+            PatternName = fileName,
+            SourceTicket = sourceTicket,
+            RootCauseType = rootCauseType,
+            SymptomKeywords = System.Text.Json.JsonSerializer.Serialize(symptoms.Take(20)),
+            SolutionTemplate = solutionTemplate
+        };
+
+        // Check if exists
+        var existing = syncDb.GetPattern(fileName);
+        if (existing != null)
+        {
+            // Update existing (preserve usage_count)
+            using var cmd = syncDb.Connection.CreateCommand();
+            cmd.CommandText = @"
+                UPDATE resolution_patterns SET
+                    symptom_keywords = @keywords,
+                    root_cause_type = @cause,
+                    solution_template = @solution,
+                    source_ticket = @ticket
+                WHERE pattern_name = @name";
+            cmd.Parameters.AddWithValue("@name", fileName);
+            cmd.Parameters.AddWithValue("@keywords", pattern.SymptomKeywords ?? "[]");
+            cmd.Parameters.AddWithValue("@cause", (object?)rootCauseType ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@solution", (object?)solutionTemplate ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@ticket", (object?)sourceTicket ?? DBNull.Value);
+            cmd.ExecuteNonQuery();
+            Console.WriteLine($"  [UPDATE] {fileName} (usage: {existing.UsageCount})");
+        }
+        else
+        {
+            // Insert new
+            syncDb.InsertPattern(pattern);
+            Console.WriteLine($"  [INSERT] {fileName}");
+        }
+        synced++;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine($"Synced {synced} patterns");
+
+    // Show current state
+    var allPatterns = syncDb.GetAllPatterns().ToList();
+    Console.WriteLine();
+    Console.WriteLine("=== Patterns in KB ===");
+    Console.WriteLine("Name                           | Source      | Type              | Usage");
+    Console.WriteLine("-------------------------------|-------------|-------------------|------");
+    foreach (var p in allPatterns)
+    {
+        var name = p.PatternName.Length > 30 ? p.PatternName[..30] : p.PatternName.PadRight(30);
+        var source = (p.SourceTicket ?? "-").PadRight(11);
+        var type = (p.RootCauseType ?? "-").Length > 17 ? (p.RootCauseType ?? "-")[..17] : (p.RootCauseType ?? "-").PadRight(17);
+        Console.WriteLine($"{name} | {source} | {type} | {p.UsageCount}");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("=== Sync Complete ===");
+    return 0;
+}
+
+// Test pattern search
+if (args.Length > 0 && args[0] == "search-patterns")
+{
+    var query = args.Length > 1 ? string.Join(" ", args.Skip(1)) : "date";
+    var searchDb = new KnowledgeDb();
+
+    if (!searchDb.IsInitialized())
+    {
+        Console.WriteLine("ERROR: Knowledge Base not initialized");
+        return 1;
+    }
+
+    Console.WriteLine($"=== Pattern Search: '{query}' ===");
+    Console.WriteLine();
+
+    // Try FTS search
+    var ftsResults = searchDb.SearchPatterns(query, 5).ToList();
+
+    if (ftsResults.Count > 0)
+    {
+        Console.WriteLine("FTS Results:");
+        foreach (var r in ftsResults)
+        {
+            Console.WriteLine($"  [{r.Score:F2}] {r.PatternName} - {r.RootCauseType ?? "-"} (usage: {r.UsageCount})");
+        }
+    }
+    else
+    {
+        Console.WriteLine("No FTS results, trying keyword search...");
+
+        // Fallback: search in symptom_keywords JSON
+        var allPatterns = searchDb.GetAllPatterns().ToList();
+        var matches = allPatterns.Where(p =>
+            (p.SymptomKeywords?.Contains(query, StringComparison.OrdinalIgnoreCase) == true) ||
+            p.PatternName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+            (p.RootCauseType?.Contains(query, StringComparison.OrdinalIgnoreCase) == true))
+            .Take(5);
+
+        foreach (var p in matches)
+        {
+            Console.WriteLine($"  [keyword] {p.PatternName} - {p.RootCauseType ?? "-"} (usage: {p.UsageCount})");
+        }
+    }
+
+    Console.WriteLine();
+    return 0;
+}
+
 // Migration mode: test MigrationExtractor
 if (args.Length > 0 && args[0] == "migration")
 {
