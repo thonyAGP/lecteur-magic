@@ -553,6 +553,27 @@
     .file-tab.commits:hover { background: var(--purple); color: #fff; }
     .file-tab.commits.active { background: var(--purple); color: #fff; }
 
+    /* Spec section tabs */
+    .spec-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+    .spec-tab { padding: 10px 20px; font-size: 13px; font-weight: 600; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; margin-bottom: -2px; }
+    .spec-tab:hover { color: var(--text-primary); background: var(--bg-tertiary); }
+    .spec-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .spec-tab.fonctionnel { }
+    .spec-tab.fonctionnel.active { color: var(--success); border-bottom-color: var(--success); }
+    .spec-tab.technique { }
+    .spec-tab.technique.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .spec-tab.cartographie { }
+    .spec-tab.cartographie.active { color: var(--purple); border-bottom-color: var(--purple); }
+    .spec-section { display: none; }
+    .spec-section.active { display: block; }
+
+    /* Analysis timing */
+    .analysis-timing { display: flex; gap: 16px; align-items: center; margin-bottom: 16px; padding: 12px 16px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; }
+    .analysis-timing .timing-item { display: flex; align-items: center; gap: 6px; }
+    .analysis-timing .timing-label { color: var(--text-secondary); }
+    .analysis-timing .timing-value { color: var(--text-primary); font-weight: 600; font-family: monospace; }
+    .analysis-timing .timing-duration { color: var(--success); font-weight: 700; }
+
     /* Ticket header with date/time */
     .ticket-header {
       background: var(--bg-secondary);
@@ -1520,12 +1541,115 @@
         const response = await fetch(path + '?t=' + Date.now());
         if (!response.ok) throw new Error('Fichier non trouve');
         const text = await response.text();
-        content.innerHTML = headerHtml + tabsHtml + marked.parse(text);
+
+        // Check for spec tabs (<!-- TAB:xxx --> markers)
+        if (isSpec && text.includes('<!-- TAB:')) {
+          const renderedContent = renderSpecWithTabs(text, headerHtml);
+          content.innerHTML = renderedContent;
+        } else {
+          content.innerHTML = headerHtml + tabsHtml + marked.parse(text);
+        }
         // Attach click handlers to spec links
         attachSpecLinks(content);
       } catch (err) {
         content.innerHTML = headerHtml + tabsHtml + `<div class="welcome"><h2>Fichier non trouve</h2><p>${path}</p></div>`;
       }
+    }
+
+    function renderSpecWithTabs(markdown, headerHtml) {
+      // Extract timing info from header if present
+      const timingMatch = markdown.match(/>\s*\*\*Analyse\*\*:\s*(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s*→\s*(\d{2}:\d{2})/);
+      let timingHtml = '';
+      if (timingMatch) {
+        const [_, date, startTime, endTime] = timingMatch;
+        const duration = calculateDuration(startTime, endTime);
+        timingHtml = `
+          <div class="analysis-timing">
+            <div class="timing-item">
+              <span class="timing-label">📅 Date:</span>
+              <span class="timing-value">${date}</span>
+            </div>
+            <div class="timing-item">
+              <span class="timing-label">🕐 Début:</span>
+              <span class="timing-value">${startTime}</span>
+            </div>
+            <div class="timing-item">
+              <span class="timing-label">🕑 Fin:</span>
+              <span class="timing-value">${endTime}</span>
+            </div>
+            <div class="timing-item">
+              <span class="timing-label">⏱️ Durée:</span>
+              <span class="timing-value timing-duration">${duration}</span>
+            </div>
+          </div>`;
+      }
+
+      // Parse tabs from markdown
+      const tabRegex = /<!--\s*TAB:(\w+)\s*-->/g;
+      const tabs = [];
+      let match;
+      while ((match = tabRegex.exec(markdown)) !== null) {
+        tabs.push({ name: match[1], position: match.index });
+      }
+
+      if (tabs.length === 0) {
+        return headerHtml + timingHtml + marked.parse(markdown);
+      }
+
+      // Extract header content (before first tab)
+      const headerContent = markdown.substring(0, tabs[0].position);
+
+      // Build tabs HTML
+      const tabLabels = {
+        'Fonctionnel': '📋 Fonctionnel',
+        'Technique': '⚙️ Technique',
+        'Cartographie': '🗺️ Cartographie'
+      };
+
+      let tabsBarHtml = '<div class="spec-tabs">';
+      tabs.forEach((tab, i) => {
+        const label = tabLabels[tab.name] || tab.name;
+        const active = i === 0 ? 'active' : '';
+        const tabClass = tab.name.toLowerCase();
+        tabsBarHtml += `<div class="spec-tab ${tabClass} ${active}" onclick="switchSpecTab('${tab.name}')">${label}</div>`;
+      });
+      tabsBarHtml += '</div>';
+
+      // Build sections HTML
+      let sectionsHtml = '';
+      tabs.forEach((tab, i) => {
+        const startPos = tab.position + `<!-- TAB:${tab.name} -->`.length;
+        const endPos = i < tabs.length - 1 ? tabs[i + 1].position : markdown.length;
+        const sectionContent = markdown.substring(startPos, endPos).trim();
+        const active = i === 0 ? 'active' : '';
+        sectionsHtml += `<div class="spec-section ${active}" data-tab="${tab.name}">${marked.parse(sectionContent)}</div>`;
+      });
+
+      return headerHtml + timingHtml + marked.parse(headerContent) + tabsBarHtml + sectionsHtml;
+    }
+
+    function calculateDuration(startTime, endTime) {
+      const [startH, startM] = startTime.split(':').map(Number);
+      const [endH, endM] = endTime.split(':').map(Number);
+      let totalMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+      if (totalMinutes < 0) totalMinutes += 24 * 60; // Handle day wrap
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      if (hours > 0) {
+        return `${hours}h ${minutes}min`;
+      }
+      return `${minutes} min`;
+    }
+
+    function switchSpecTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('.spec-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.textContent.includes(tabName) || tab.getAttribute('onclick')?.includes(tabName));
+      });
+      // Update sections
+      document.querySelectorAll('.spec-section').forEach(section => {
+        section.classList.toggle('active', section.dataset.tab === tabName);
+      });
     }
 
     function buildCommitsPanel(ticketId) {

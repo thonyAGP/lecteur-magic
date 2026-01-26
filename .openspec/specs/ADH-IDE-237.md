@@ -1,28 +1,68 @@
-﻿# ADH IDE 237 - Transaction Nouv vente avec GP
+# ADH IDE 237 - Transaction Nouv vente avec GP
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-26
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_233.xml`
+> **Version spec**: 3.0
+> **Analyse**: 2026-01-26 22:52 → 22:58
+> **Source**: `Prg_233.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur de caisse |
+| **Quoi** | Ecran de transaction de vente avec Gift Pass |
+| **Pourquoi** | Permettre la vente avec paiement par Gift Pass |
+| **Declencheur** | Selection menu "Nouvelle vente" avec compte Gift Pass |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | Verification solde GP | Solde Gift Pass suffisant |
+| RM-002 | Gestion services VRL/VSL | Selon parametre `W0 sous-imput.` |
+| RM-003 | Calcul total vente | `W0 Titre * W0 Date du transfert Retour` |
+| RM-004 | Validation date activite | VAE pendant le sejour uniquement |
+
+### 1.3 Flux utilisateur
+
+1. Selection article depuis catalogue
+2. Saisie quantite et prix unitaire
+3. Verification solde Gift Pass disponible
+4. Application reduction si code promo
+5. Validation transaction
+6. Mise a jour compteurs et statistiques
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| Solde GP insuffisant | Message d'erreur, refus transaction |
+| Article derniere minute invalide | Warning, demande confirmation |
+| Cloture en cours | Blocage saisie, message informatif |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 237 |
 | **Fichier XML** | Prg_233.xml |
-| **Description** | Transaction Nouv vente avec GP |
-| **Type** | O (O=Online, B=Batch) |
+| **Type** | O (Online) |
 | **Parametres** | 20 |
 | **Module** | ADH |
 | **Dossier IDE** | Ventes |
 
-> **Note**: Ce programme est Prg_233.xml. L'ID XML (233) peut differer de la position IDE (237).
-
----
-
-## 2. TABLES (30 tables - 9 en ecriture)
+### 2.2 Tables (30 tables - 9 en ecriture)
 
 | IDE# | Nom Physique | Nom Logique | Access | Usage |
 |------|--------------|-------------|--------|-------|
@@ -57,172 +97,130 @@
 | #801 | `moyens_reglement_complem` | moyens_reglement_complem | R | 1x |
 | #818 | `zcircafil146` | Circuit supprime | R | 1x |
 
----
+### 2.3 Parametres d'entree (20)
 
-## 3. PARAMETRES D'ENTREE (20)
+| # | Nom | Type |
+|---|-----|------|
+| P1 | P0 societe | ALPHA |
+| P2 | P0 devise locale | ALPHA |
+| P3 | P0 masque montant | ALPHA |
+| P4 | P0 solde compte | NUMERIC |
+| P5 | P0 code GM | NUMERIC |
+| P6 | P0 filiation | NUMERIC |
+| P7 | P0 date fin sejour | DATE |
+| P8 | P0 etat compte | ALPHA |
+| P9 | P0 date solde | DATE |
+| P10 | P0 garanti O/N | ALPHA |
+| P11 | P0 Nom & prenom | ALPHA |
+| P12 | P0 UNI/BI | ALPHA |
+| P13 | Bouton IDENTITE | ALPHA |
+| P14 | Bouton ABANDON | ALPHA |
+| P15 | W0 FIN SAISIE OD | LOGICAL |
+| P16 | Bouton FIN SAISIE OD | ALPHA |
+| P17 | W0 Cloture en cours | LOGICAL |
+| P18 | W0 code article | NUMERIC |
+| P19 | W0 imputation | NUMERIC |
+| P20 | W0 sous-imput. | NUMERIC |
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 societe | ALPHA | - |
-| P2 | P0 devise locale | ALPHA | - |
-| P3 | P0 masque montant | ALPHA | - |
-| P4 | P0 solde compte | NUMERIC | - |
-| P5 | P0 code GM | NUMERIC | - |
-| P6 | P0 filiation | NUMERIC | - |
-| P7 | P0 date fin sejour | DATE | - |
-| P8 | P0 etat compte | ALPHA | - |
-| P9 | P0 date solde | DATE | - |
-| P10 | P0 garanti O/N | ALPHA | - |
-| P11 | P0 Nom & prenom | ALPHA | - |
-| P12 | P0 UNI/BI | ALPHA | - |
-| P13 | Bouton IDENTITE | ALPHA | - |
-| P14 | Bouton ABANDON | ALPHA | - |
-| P15 | W0 FIN SAISIE OD | LOGICAL | - |
-| P16 | Bouton FIN SAISIE OD | ALPHA | - |
-| P17 | W0 Cloture en cours | LOGICAL | - |
-| P18 | W0 code article | NUMERIC | - |
-| P19 | W0 imputation | NUMERIC | - |
-| P20 | W0 sous-imput. | NUMERIC | - |
-| P21 | W0 date d'achat | DATE | - |
-| P22 | W0 annulation | ALPHA | - |
+### 2.4 Expressions cles
 
----
+| # | Expression | Signification |
+|---|------------|---------------|
+| 6 | `NOT {32768,38}` | Gift Pass v2.00 non actif |
+| 21 | `{0,21}` | Code reduction applique |
+| 22 | `{0,49}>0 AND {0,48}=0` | Titre sans retour |
+| 26 | `{0,23}='VRL' OR {0,23}='VSL'` | Service VRL ou VSL |
 
-## 4. VARIABLES PRINCIPALES
-
-### 4.1 Variables de travail (W0/V0)
-
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
-| `{0,-37}` | W0 FIN SAISIE OD | LOGICAL | - |
-| `{0,-35}` | W0 Cloture en cours | LOGICAL | - |
-| `{0,-34}` | W0 code article | NUMERIC | - |
-| `{0,133}` | v.SoldeGiftPass | NUMERIC | - |
-| `{0,-33}` | W0 imputation | NUMERIC | - |
-| `{0,-32}` | W0 sous-imput. | NUMERIC | - |
-| `{0,-31}` | W0 date d'achat | DATE | - |
-| `{0,-30}` | W0 annulation | ALPHA | - |
-| `{0,-29}` | W0 service village | ALPHA | - |
-| `{0,-28}` | W0 libelle article | ALPHA | - |
-| `{0,-27}` | W0 article dernière minute | LOGICAL | - |
-| `{0,-22}` | W0 nbre articles | NUMERIC | - |
-| `{0,-25}` | W0 prix unitaire | NUMERIC | - |
-| `{0,31}` | W0 Categorie de chambre | ALPHA | - |
-| `{0,61}` | W0 Lieu sejour | ALPHA | - |
-| `{0,21}` | W0 Code reduction | ALPHA | - |
-| `{0,158}` | v.Date activité VAE | DATE | - |
-| `{0,163}` | v.VAE pendant le séjour ? | LOGICAL | - |
-| `{0,160}` | v.Matin/Après midi | UNICODE | - |
-| `{0,102}` | W0 Sens du transfert Aller | ALPHA | - |
-
-### 4.2 Variables globales (VG)
-
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
-
-> Total: 339 variables mappees
-
----
-
-## 5. EXPRESSIONS (849 total, 547 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `DStr({0,7},'DD/MM/YYYY')` | `DStr(W0 Total_Vente,'DD/MM/YYYY')` |
-| 2 | `IF(Trim({0,53})='1','ALLER',IF(Trim({0,53})='2','RETOUR',...` | `IF(Trim(W0 Nom de la rue)='1','ALLER',IF(Trim(W0 Nom de l...` |
-| 3 | `MlsTrans ('Verifier que la transaction est bien pour')&' ...` | `MlsTrans ('Verifier que la transaction est bien pour')&' ...` |
-| 4 | `Date ()` | `Date ()` |
-| 5 | `IF({0,183}=0,IF({0,23}='VSL',{0,13},Date()),{0,96})` | `IF({0,183}=0,IF(W0 sous-imput.='VSL',Bouton Ok,Date()),W0...` |
-| 6 | `NOT {32768,38}` | `NOT VG.VG GIFT PASS_V2.00` |
-| 7 | `{32768,2}` | `VG.Retour Chariot` |
-| 8 | `Trim ({0,143})` | `Trim (V.Total carte)` |
-| 9 | `154` | `154` |
-| 10 | `{0,1}` | `W0 Retour Transmission TPE` |
-| 11 | `{0,5}` | `W0 Fin Transaction TPE` |
-| 12 | `{0,6}` | `v. titre` |
-| 13 | `'F'` | `'F'` |
-| 14 | `Date ()` | `Date ()` |
-| 15 | `{0,49}*{0,48}` | `W0 Titre*W0 Date du transfert Retour` |
-| 16 | `({0,49}*{0,48})-{0,95}` | `(W0 Titre*W0 Date du transfert Retour)-W0 forfait date(O/N)` |
-| 17 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 18 | `'N'` | `'N'` |
-| 19 | `1` | `1` |
-| 20 | `'CAISSE'` | `'CAISSE'` |
-| 21 | `{0,21}` | `W0 Code reduction` |
-| 22 | `{0,49}>0 AND {0,48}=0` | `W0 Titre>0 AND W0 Date du transfert Retour=0` |
-| 23 | `{0,117} AND {0,42}='N'` | `Bouton Ok AND W0 Type d'endroit Aller='N'` |
-| 24 | `{0,48}>{0,118} AND NOT ({0,149})` | `W0 Date du transfert Retour>W0 Lien Logement Lieu Séjour ...` |
-| 25 | `{0,119}=0 AND {0,43}<>'' AND {0,93}<>100 AND {0,23}<>'VRL...` | `V.VADA ?=0 AND W0 Code Gare/Aéroport Aller<>'' AND W0 for...` |
-| 26 | `{0,23}='VRL' OR {0,23}='VSL'` | `W0 sous-imput.='VRL' OR W0 sous-imput.='VSL'` |
-| 306 | `NOT({0,188})` | `NOT({0,188})` |
-| 28 | `{0,49}>0 AND {0,129}='N'` | `W0 Titre>0 AND v.NumeroTicket(VRL/VSL)='N'` |
-| 29 | `({0,49}=0) AND (ExpCalc('55'EXP))` | `(W0 Titre=0) AND (ExpCalc('55'EXP))` |
-| 30 | `({0,49}=0) AND {0,23}<>'VRL' AND (ExpCalc('55'EXP))` | `(W0 Titre=0) AND W0 sous-imput.<>'VRL' AND (ExpCalc('55'E...` |
-
----
-
-## 6. STATISTIQUES
+### 2.5 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 30 (9 W / 21 R) |
-| Parametres | 20 |
-| Variables locales | 171 |
+| Tables | 30 (9W / 21R) |
 | Expressions | 849 |
-| Expressions 100% decodees | 547 (64%) |
+| Expressions decodees | 547 (64%) |
+| Variables locales | 171 |
 
 ---
 
-## 7. DEPENDANCES ET CALLERS
+<!-- TAB:Cartographie -->
 
-### 7.1 Callers (programmes appelants)
+## CARTOGRAPHIE APPLICATIVE
 
-| Programme | Fichier | Nb appels | Dossier |
-|-----------|---------|-----------|---------|
-| ADH IDE 166 | Prg_162.xml | 1 | Menus |
-| ADH IDE 242 | Prg_238.xml | 1 | Ventes |
-| ADH IDE 317 | Prg_313.xml | 1 | **Suppr** |
+### 3.1 Callers (programmes qui appellent ADH IDE 237)
 
-> **STATUT: NON ORPHELIN** - 3 appels depuis 3 programmes (2 actifs + 1 dans Suppr)
+| IDE | Programme | Description | Nb appels | Dossier |
+|-----|-----------|-------------|-----------|---------|
+| 166 | ADH IDE 166 | Menu caisse GM - scroll | 1 | Menus |
+| 242 | ADH IDE 242 | Menu Choix Saisie/Annul vente | 1 | Ventes |
+| 317 | ADH IDE 317 | Saisie transaction Nouv vente | 1 | **Suppr** |
 
-### 7.2 Verification orphelin
+> **Total**: 3 appels depuis 3 programmes (2 actifs + 1 orphelin)
+
+### 3.2 Callees (programmes appeles par ADH IDE 237)
+
+| IDE | Programme | Description | Contexte |
+|-----|-----------|-------------|----------|
+| - | Aucun | Ce programme n'appelle pas d'autres programmes | - |
+
+### 3.3 Diagramme de dependances
+
+```mermaid
+graph TD
+    subgraph Callers["Programmes appelants"]
+        C1[ADH IDE 166<br/>Menu caisse GM - scroll]
+        C2[ADH IDE 242<br/>Menu Choix Saisie/Annul]
+        C3[ADH IDE 317<br/>Saisie transaction Nouv vente]
+    end
+
+    subgraph Target["Programme cible"]
+        T[ADH IDE 237<br/>Transaction Nouv vente avec GP]
+    end
+
+    C1 -->|1 appel| T
+    C2 -->|1 appel| T
+    C3 -.->|1 appel| T
+
+    style T fill:#58a6ff,color:#000
+    style C1 fill:#3fb950,color:#000
+    style C2 fill:#3fb950,color:#000
+    style C3 fill:#f85149,color:#000
+```
+
+> **Legende**: Vert = Caller actif | Rouge = Caller orphelin (Suppr) | Pointille = Ne compte pas
+
+### 3.4 Verification orphelin
 
 | Critere | Resultat |
 |---------|----------|
-| Callers (TaskID obj="233") | 3 programmes |
+| Callers (TaskID obj="233") | **3 programmes** |
 | Callers actifs | 2 (Prg_162, Prg_238) |
+| Callers orphelins | 1 (Prg_313 dans Suppr) |
 | PublicName | Non |
 | Dossier | Ventes (actif) |
-| **Conclusion** | **Programme ACTIF** |
+| **Conclusion** | **Programme ACTIF - NON ORPHELIN** |
 
-### 7.3 Note sur Prg_313
+### 3.5 Impact modification
 
-Le programme Prg_313 est dans le dossier **Suppr** (orphelin). Son appel vers ADH IDE 237 ne compte pas comme utilisation active.
+| Type de changement | Programmes impactes | Severite |
+|--------------------|---------------------|----------|
+| Modification signature | 2 programmes actifs | HAUTE |
+| Changement logique GP | Aucun (local) | BASSE |
+| Ajout parametre | 2 programmes actifs | MOYENNE |
+
+### 3.6 Note sur ADH IDE 317
+
+Le programme ADH IDE 317 (Prg_313.xml) est dans le dossier **Suppr** (orphelin). Son appel vers ADH IDE 237 ne compte pas comme utilisation active car lui-meme n'est jamais appele.
 
 ---
 
-## 8. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
 | 2026-01-26 | Creation specification v2.0 | Claude |
 | 2026-01-26 | Ajout section callers et verification orphelin | Claude |
+| 2026-01-26 | **Upgrade v3.0**: 3 onglets, timing, cartographie Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification v3.0 - Format avec onglets Fonctionnel/Technique/Cartographie*
