@@ -2,7 +2,7 @@
 
 > **Jira** : [PMS-1453](https://clubmed.atlassian.net/browse/PMS-1453)
 > **Protocole** : `.claude/protocols/ticket-analysis.md` applique
-> **Version** : Template v3.0
+> **Version** : Template v3.0 - ANALYSE CORRIGEE
 
 ---
 
@@ -13,167 +13,110 @@
 | **Symptome** | Dans l'ecran de vente de transfert, l'utilisateur peut saisir une heure invalide (ex: 70:00) |
 | **Donnees entree** | Saisie de "70:00" dans le champ heure transfert |
 | **Attendu** | Le systeme devrait limiter la saisie aux heures valides (00:00 a 23:59) |
-| **Obtenu** | Donnees incohérentes stockees dans la table `transfertn` |
+| **Obtenu** | Donnees incoherentes stockees dans la table `transfertn` |
 | **Reporter** | Utilisateur metier |
 | **Date** | 2026-01 |
 
 ### Indices extraits du ticket
-- Programme mentionne : `Saisie vente transfert` -> verifie ETAPE 2
-- Table mentionnee : `transfertn` -> verifie ETAPE 2
-- Champ concerne : `trf_heure` (heure transfert)
+- Ecran : Saisie vente transfert
+- Table cible : `transfertn`
+- Champ concerne : `trf_heure` (heure transfert Aller/Retour)
 
 ---
 
 ## 2. Localisation Programmes
 
-### MCP Evidence
+### Analyse dossiers Progs.xml
 
-> **OBLIGATOIRE** : Documenter chaque appel MCP effectue
+| Dossier | Position | Contenu |
+|---------|----------|---------|
+| **Ventes** | 232-255 | Programmes ACTIFS de vente |
+| **Suppr** | 289-322 | Programmes ORPHELINS/supprimes |
 
-| Outil | Parametres | Resultat |
-|-------|------------|----------|
-| `magic_find_program` | "transfert", "ADH" | 4 resultats (IDE 174, 175, 307, 313) |
-| `magic_get_position` | "ADH", 307 | **ADH IDE 307 - Saisie transaction Nouv vente** |
-| `magic_get_position` | "ADH", 313 | **ADH IDE 313 - Saisie transaction Nouv vente** (variante) |
-| `magic_get_tree` | "ADH", 307 | 42 taches, tache principale 307.37 pour saisie heure |
+### Programmes ORPHELINS (a IGNORER)
 
-### Programmes identifies
+| IDE | Fichier | Dossier | Statut |
+|-----|---------|---------|--------|
+| 304 | Prg_304.xml | Suppr | **ORPHELIN - NE PAS CORRIGER** |
+| 307 | Prg_307.xml | Suppr | **ORPHELIN - NE PAS CORRIGER** |
+| 313 | Prg_313.xml | Suppr | **ORPHELIN - NE PAS CORRIGER** |
 
-| Fichier XML | IDE Verifie | Nom | Role dans le flux |
-|-------------|-------------|-----|-------------------|
-| Prg_307.xml | **ADH IDE 307** | Saisie transaction Nouv vente | Ecran principal de saisie |
-| Prg_313.xml | **ADH IDE 313** | Saisie transaction Nouv vente | Variante de saisie |
-| Prg_174.xml | **ADH IDE 174** | Transferts | Liste des transferts |
-| Prg_175.xml | **ADH IDE 175** | Print transferts | Impression |
+> **IMPORTANT** : Ces programmes n'ont pas de PublicName et aucun CallProg ne les appelle.
+> Ils sont dans le dossier "Suppr" = code mort.
 
----
+### Programmes ACTIFS (dossier Ventes)
 
-## 3. Tracage Flux
-
-### Arborescence Taches
-
-> **OBLIGATOIRE** : Chemin hierarchique depuis la racine
-
-```
-ADH IDE 307 - Saisie transaction Nouv vente
-├── Tache 307.1 - Main
-│   └── CallTask vers 307.36
-├── Tache 307.36 - Type Transfert (selection type)
-│   └── Subform vers 307.37
-├── Tache 307.37 - Affiche details transfert ← SAISIE HEURE
-│   └── Columns W1 Heure transfert Aller/Retour
-└── Tache 307.39 - Creation Transfertn → Ecriture table
-```
-
-### Resolution des CallTask/CallProgram
-
-| Ligne | Source | TargetPrg | MCP Verifie | Destination |
-|-------|--------|-----------|-------------|-------------|
-| - | Tache 307.1 | 307.36 | `magic_get_tree` | Tache 307.36 - Type Transfert |
-| - | Tache 307.36 | 307.37 | `magic_get_tree` | Tache 307.37 - Affiche details |
-| - | Tache 307.37 | 307.39 | `magic_get_tree` | Tache 307.39 - Creation |
-
-### Diagramme du flux
-
-```
-┌─────────────────────┐
-│ ADH IDE 307         │ Saisie transaction Nouv vente
-│ Tache 307.1         │ Main
-└─────────┬───────────┘
-          │ CallTask
-          ▼
-┌─────────────────────┐
-│ ADH IDE 307         │
-│ Tache 307.36        │ Type Transfert
-└─────────┬───────────┘
-          │ Subform
-          ▼
-┌─────────────────────┐
-│ ADH IDE 307         │
-│ Tache 307.37        │ Affiche details transfert ← SAISIE HEURE
-└─────────┬───────────┘
-          │ CallTask
-          ▼
-┌─────────────────────┐
-│ ADH IDE 307         │
-│ Tache 307.39        │ Creation Transfertn → Ecriture table
-└─────────────────────┘
-```
+| IDE | Fichier | Nom | Colonnes heure transfert |
+|-----|---------|-----|-------------------------|
+| **233** | Prg_233.xml | Transaction Nouv vente avec GP | 4 colonnes |
+| **234** | Prg_234.xml | Transaction Nouv vente PMS-584 | 4 colonnes |
+| **235** | Prg_235.xml | Transaction Nouv vente PMS-721 | 4 colonnes |
+| **236** | Prg_236.xml | Transaction Nouv vente PMS-710 | 4 colonnes |
 
 ---
 
-## 4. Analyse Expressions
+## 3. Analyse Expressions
 
-### MCP Evidence
+### Colonnes FIELD_TIME sans Picture (BUG)
 
-| Outil | Parametres | Resultat |
-|-------|------------|----------|
-| `magic_get_line` | "ADH", "307.37", colonnes | Colonnes id=5 et id=13 sans Picture |
-| - | - | FIELD_TIME sans validation de format |
+Chaque programme (233-236) contient **4 colonnes** de saisie d'heure transfert **SANS validation Picture** :
 
-### Analyse des colonnes
+| Colonne ID | Nom | Ligne approx | Picture |
+|------------|-----|--------------|---------|
+| 222 | W0 Heure du transfert Aller | ~590 | **ABSENT** |
+| 234 | W0 Heure du transfert Retour | ~666 | **ABSENT** |
+| 5 | W1 Heure transfert Aller | ~36943 (233) | **ABSENT** |
+| 13 | W1 Heure transfert Retour | ~37000 (233) | **ABSENT** |
 
-Dans la **Tache 307.37** "Affiche details transfert", les colonnes de saisie d'heure sont definies **SANS Picture de validation** :
+### Exemple code XML (Prg_233.xml ligne 590)
 
-**Colonne id=5 "W1 Heure transfert Aller"** (ligne ~31823):
-- Model: FIELD_TIME
-- Picture: ABSENT ← PROBLEME
-
-**Colonne id=13 "W1 Heure transfert Retour"** (ligne ~31880):
-- Model: FIELD_TIME
-- Picture: ABSENT ← PROBLEME
-
-### Comparaison avec table REF (correctement definie)
-
-La table `transfertn` dans DataSources.xml definit le champ avec Picture:
 ```xml
-<Column id="5" name="trf_heure">
+<Column id="222" name="W0 Heure du transfert Aller">
   <PropertyList model="FIELD">
     <Model attr_obj="FIELD_TIME" id="1"/>
-    <Picture id="157" valUnicode="HH:MM:SS"/>  <!-- Validation presente -->
+    <_FieldStyle id="276" val="1"/>
+    <!-- MISSING: <Picture id="157" valUnicode="HH:MM"/> -->
   </PropertyList>
 </Column>
 ```
 
+### Table REF (correctement definie)
+
+La table `transfertn` dans REF/DataSources.xml definit le champ avec Picture :
+```xml
+<_FieldPhysical Name="trf_heure" PIC_U="HH:MM:SS" ... />
+```
+
+Mais cette validation table n'empeche pas la saisie invalide dans le programme.
+
 ---
 
-## 5. Root Cause
+## 4. Root Cause
 
 | Element | Valeur |
 |---------|--------|
-| **Programme** | ADH IDE 307 - Saisie transaction Nouv vente, Tache 307.37 |
-| **Sous-tache** | Tache 307.37 - Affiche details transfert |
-| **Ligne Logic** | Colonnes id=5 et id=13 |
+| **Programmes** | ADH IDE 233, 234, 235, 236 (dossier Ventes) |
+| **Colonnes** | id=222, 234 (W0) et id=5, 13 (W1) |
 | **Expression** | PropertyList des colonnes FIELD_TIME |
 | **Erreur** | Picture de validation HH:MM absente |
 | **Impact** | Saisie de valeurs invalides (ex: 70:00) acceptee |
 
-### Localisation dans l'arborescence
-
-```
-ADH IDE 307
-└── Tache 307.37
-    ├── Column id=5 "W1 Heure transfert Aller" ← MANQUE Picture
-    └── Column id=13 "W1 Heure transfert Retour" ← MANQUE Picture
-```
-
 ### Cause technique
 
-Le type `FIELD_TIME` definit le format de stockage mais **le Picture definit la validation de saisie**.
+Le type `FIELD_TIME` definit le format de stockage (secondes depuis minuit) mais **le Picture definit la validation de saisie**.
 Sans Picture, Magic accepte n'importe quelle valeur numerique.
 
 ---
 
-## 6. Solution
+## 5. Solution
 
 ### Avant (bug)
 
 ```xml
-<Column id="5" name="W1 Heure transfert Aller">
+<Column id="222" name="W0 Heure du transfert Aller">
   <PropertyList model="FIELD">
     <Model attr_obj="FIELD_TIME" id="1"/>
     <_FieldStyle id="276" val="1"/>
-    <!-- MISSING: Picture -->
   </PropertyList>
 </Column>
 ```
@@ -181,7 +124,7 @@ Sans Picture, Magic accepte n'importe quelle valeur numerique.
 ### Apres (fix)
 
 ```xml
-<Column id="5" name="W1 Heure transfert Aller">
+<Column id="222" name="W0 Heure du transfert Aller">
   <PropertyList model="FIELD">
     <Model attr_obj="FIELD_TIME" id="1"/>
     <Picture id="157" valUnicode="HH:MM"/>
@@ -190,24 +133,47 @@ Sans Picture, Magic accepte n'importe quelle valeur numerique.
 </Column>
 ```
 
-### Actions requises
+### Actions requises (16 modifications)
 
-| Fichier | Ligne | Action |
-|---------|-------|--------|
-| `Prg_307.xml` | ~31823 | Ajouter `<Picture id="157" valUnicode="HH:MM"/>` a Column id="5" |
-| `Prg_307.xml` | ~31880 | Ajouter `<Picture id="157" valUnicode="HH:MM"/>` a Column id="13" |
-| `Prg_313.xml` | a verifier | Meme correction sur variante si applicable |
+| Fichier | Colonne | Ligne approx | Action |
+|---------|---------|--------------|--------|
+| Prg_233.xml | 222 | ~590 | Ajouter Picture HH:MM |
+| Prg_233.xml | 234 | ~666 | Ajouter Picture HH:MM |
+| Prg_233.xml | 5 | ~36943 | Ajouter Picture HH:MM |
+| Prg_233.xml | 13 | ~37000 | Ajouter Picture HH:MM |
+| Prg_234.xml | 222 | ~590 | Ajouter Picture HH:MM |
+| Prg_234.xml | 234 | ~666 | Ajouter Picture HH:MM |
+| Prg_234.xml | 5 | ~42574 | Ajouter Picture HH:MM |
+| Prg_234.xml | 13 | ~42631 | Ajouter Picture HH:MM |
+| Prg_235.xml | 222 | ~590 | Ajouter Picture HH:MM |
+| Prg_235.xml | 234 | ~666 | Ajouter Picture HH:MM |
+| Prg_235.xml | 5 | ~39036 | Ajouter Picture HH:MM |
+| Prg_235.xml | 13 | ~39093 | Ajouter Picture HH:MM |
+| Prg_236.xml | 222 | ~590 | Ajouter Picture HH:MM |
+| Prg_236.xml | 234 | ~666 | Ajouter Picture HH:MM |
+| Prg_236.xml | 5 | ~41187 | Ajouter Picture HH:MM |
+| Prg_236.xml | 13 | ~41244 | Ajouter Picture HH:MM |
+
+---
+
+## 6. Tests de validation
+
+- [ ] Saisie 00:00 -> Acceptee
+- [ ] Saisie 12:30 -> Acceptee
+- [ ] Saisie 23:59 -> Acceptee
+- [ ] Saisie 24:00 -> Rejetee
+- [ ] Saisie 70:00 -> Rejetee
 
 ---
 
 ## Donnees requises
 
 - Base de donnees : N/A (modification code source uniquement)
-- Fichier(s) : `Prg_307.xml`, `Prg_313.xml`
-- Table(s) a extraire : N/A
+- Fichiers : `Prg_233.xml`, `Prg_234.xml`, `Prg_235.xml`, `Prg_236.xml`
+- Table : `transfertn` (lecture seule pour verification)
 
 ---
 
-*Analyse : 2026-01-26*
+*Analyse corrigee : 2026-01-26*
 *Pattern KB : [missing-time-validation](../../patterns/missing-time-validation.md)*
-*Spec generee : [ADH-IDE-307](../../specs/ADH-IDE-307.md)*
+*Erreur precedente : ADH IDE 307 est ORPHELIN (dossier Suppr), corrige vers IDE 233-236*
