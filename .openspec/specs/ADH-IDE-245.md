@@ -1,0 +1,136 @@
+﻿# ADH IDE 245 - Histo ventes payantes /PMS-623
+
+> **Version spec** : 2.0
+> **Genere le** : 2026-01-26
+> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_241.xml`
+
+---
+
+## 1. IDENTIFICATION
+
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 245 |
+| **Fichier XML** | Prg_241.xml |
+| **Description** | Histo ventes payantes /PMS-623 |
+| **Type** | O (O=Online, B=Batch) |
+| **Parametres** | 16 |
+| **Module** | ADH |
+| **Dossier IDE** | Ventes |
+
+> **Note**: Ce programme est Prg_241.xml. L'ID XML (241) peut differer de la position IDE (245).
+
+---
+
+## 2. TABLES (0 tables)
+
+| IDE# | Nom Physique | Nom Logique | Access |
+|------|--------------|-------------|--------|
+
+---
+
+## 3. PARAMETRES D'ENTREE (16)
+
+| # | Nom | Type | Description |
+|---|-----|------|-------------|
+
+---
+
+## 4. VARIABLES PRINCIPALES
+
+### 4.1 Variables de travail (W0/V0)
+
+| Ref | Nom | Type | Role |
+|-----|-----|------|------|
+| `{0,-94}` | v.Type Operation | NUMERIC | - |
+| `{0,-93}` | v.Services | ALPHA | - |
+| `{0,-102}` | v.Onglet Histo,VAD | ALPHA | - |
+| `{0,-97}` | v. Flag selection lignes VAD | LOGICAL | - |
+| `{0,-96}` | v.Confirmation validation | NUMERIC | - |
+| `{0,-95}` | v.Nb lignes à valider | NUMERIC | - |
+| `{0,-90}` | v.Date Comptable | DATE | - |
+| `{0,-86}` | v.Liste Tickets | ALPHA | - |
+| `{0,-87}` | v.validation confirmée? | LOGICAL | - |
+
+### 4.2 Variables globales (VG)
+
+| Ref | Decode | Role |
+|-----|--------|------|
+| `{32768,0}` | VG.LOGIN | - |
+| `{32768,1}` | VG.USER | - |
+| `{32768,2}` | VG.Retour Chariot | - |
+| `{32768,3}` | VG.DROIT ACCES IT ? | - |
+| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
+| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
+| `{32768,6}` | VG.USE MDR | - |
+| `{32768,7}` | VG.VRL ACTIF ? | - |
+| `{32768,8}` | VG.ECI ACTIF ? | - |
+| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
+| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
+| `{32768,11}` | VG.CODE LANGUE USER | - |
+| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
+| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
+| `{32768,14}` | VG.N° version | - |
+
+> Total: 168 variables mappees
+
+---
+
+## 5. EXPRESSIONS (794 total, 242 decodees)
+
+| # | Expression brute | Decode |
+|---|------------------|--------|
+| 1 | `Date()` | `Date()` |
+| 2 | `'V'` | `'V'` |
+| 3 | `DbDel('{519,4}'DSOURCE,'')` | `DbDel('{519,4}'DSOURCE,'')` |
+| 4 | `DbDel('{596,4}'DSOURCE,'')` | `DbDel('{596,4}'DSOURCE,'')` |
+| 5 | `DbDel('{933,4}'DSOURCE,'')` | `DbDel('{933,4}'DSOURCE,'')` |
+| 6 | `NOT {0,18}` | `NOT v.Confirmation validation` |
+| 7 | `{0,18}` | `v.Confirmation validation` |
+| 8 | `{0,19}=6` | `v.Nb lignes à valider=6` |
+| 9 | `'Ventes payantes'` | `'Ventes payantes'` |
+| 10 | `'VAD'` | `'VAD'` |
+| 11 | `{0,20}>0` | `v.Date Comptable>0` |
+| 12 | `'TRUE'LOG` | `'TRUE'LOG` |
+| 13 | `'\ '` | `'\ '` |
+| 14 | `'Tous les services'` | `'Tous les services'` |
+| 15 | `'VSERV'` | `'VSERV'` |
+| 16 | `'O'` | `'O'` |
+| 17 | `{0,20}=-1` | `v.Date Comptable=-1` |
+| 18 | `'Histo_Vtes'` | `'Histo_Vtes'` |
+| 19 | `0` | `0` |
+| 20 | `IF({32768,83},'V,A','V')` | `IF(VG.VG Envoi Mail paiement VAD,'V,A','V')` |
+| 21 | `IF({32768,83},MlsTrans('Historique des ventes,Paiements e...` | `IF(VG.VG Envoi Mail paiement VAD,MlsTrans('Historique des...` |
+| 22 | `{0,21}` | `v.Liste Tickets` |
+| 23 | `{0,1}` | `P.I Devise locale` |
+| 24 | `{32768,83}` | `VG.VG Envoi Mail paiement VAD` |
+| 1 | `'TRUE'LOG` | `'TRUE'LOG` |
+| 2 | `'FALSE'LOG` | `'FALSE'LOG` |
+| 3 | `''` | `''` |
+| 4 | `Trim({1,25})&Trim(Str({0,2},'8'))&','` | `Trim({1,25})&Trim(Str(P.I Masque montant,'8'))&','` |
+| 5 | `Left(Trim({1,25}),Len(Trim({1,25}))-1)` | `Left(Trim({1,25}),Len(Trim({1,25}))-1)` |
+| 1 | `MlsTrans('Liste des ventes du compte')` | `MlsTrans('Liste des ventes du compte')` |
+
+---
+
+## 6. STATISTIQUES
+
+| Metrique | Valeur |
+|----------|--------|
+| Tables | 0 |
+| Parametres | 16 |
+| Variables locales | 25 |
+| Expressions | 794 |
+| Expressions 100% decodees | 242 (30%) |
+
+---
+
+## 7. HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-26 | Creation specification v2.0 | Claude |
+
+---
+
+*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
