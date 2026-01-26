@@ -1,8 +1,8 @@
-﻿# ADH IDE 238 - Transaction Nouv vente PMS-584
+﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
 > **Version spec** : 2.0
 > **Genere le** : 2026-01-26
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_234.xml`
+> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_233.xml`
 
 ---
 
@@ -10,15 +10,15 @@
 
 | Attribut | Valeur |
 |----------|--------|
-| **Format IDE** | ADH IDE 238 |
-| **Fichier XML** | Prg_234.xml |
-| **Description** | Transaction Nouv vente PMS-584 |
+| **Format IDE** | ADH IDE 237 |
+| **Fichier XML** | Prg_233.xml |
+| **Description** | Transaction Nouv vente avec GP |
 | **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 22 |
+| **Parametres** | 20 |
 | **Module** | ADH |
 | **Dossier IDE** | Ventes |
 
-> **Note**: Ce programme est Prg_234.xml. L'ID XML (234) peut differer de la position IDE (238).
+> **Note**: Ce programme est Prg_233.xml. L'ID XML (233) peut differer de la position IDE (237).
 
 ---
 
@@ -41,7 +41,7 @@
 
 ---
 
-## 3. PARAMETRES D'ENTREE (22)
+## 3. PARAMETRES D'ENTREE (20)
 
 | # | Nom | Type | Description |
 |---|-----|------|-------------|
@@ -79,7 +79,6 @@
 | `{0,-37}` | W0 FIN SAISIE OD | LOGICAL | - |
 | `{0,-35}` | W0 Cloture en cours | LOGICAL | - |
 | `{0,-34}` | W0 code article | NUMERIC | - |
-| `{0,172}` | v.retour lien sous_type article | ALPHA | - |
 | `{0,133}` | v.SoldeGiftPass | NUMERIC | - |
 | `{0,-33}` | W0 imputation | NUMERIC | - |
 | `{0,-32}` | W0 sous-imput. | NUMERIC | - |
@@ -93,9 +92,10 @@
 | `{0,31}` | W0 Categorie de chambre | ALPHA | - |
 | `{0,61}` | W0 Lieu sejour | ALPHA | - |
 | `{0,21}` | W0 Code reduction | ALPHA | - |
-| `{0,169}` | v.Date activité VAE | DATE | - |
-| `{0,175}` | v.VAE pendant le séjour ? | LOGICAL | - |
-| `{0,170}` | v.Matin/Après midi | UNICODE | - |
+| `{0,158}` | v.Date activité VAE | DATE | - |
+| `{0,163}` | v.VAE pendant le séjour ? | LOGICAL | - |
+| `{0,160}` | v.Matin/Après midi | UNICODE | - |
+| `{0,102}` | W0 Sens du transfert Aller | ALPHA | - |
 
 ### 4.2 Variables globales (VG)
 
@@ -117,44 +117,44 @@
 | `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
 | `{32768,14}` | VG.N° version | - |
 
-> Total: 363 variables mappees
+> Total: 339 variables mappees
 
 ---
 
-## 5. EXPRESSIONS (1052 total, 679 decodees)
+## 5. EXPRESSIONS (849 total, 547 decodees)
 
 | # | Expression brute | Decode |
 |---|------------------|--------|
 | 1 | `DStr({0,7},'DD/MM/YYYY')` | `DStr(W0 Total_Vente,'DD/MM/YYYY')` |
-| 2 | `IF(Trim({0,54})='1','ALLER',IF(Trim({0,54})='2','RETOUR',...` | `IF(Trim(W0 Commune)='1','ALLER',IF(Trim(W0 Commune)='2','...` |
+| 2 | `IF(Trim({0,53})='1','ALLER',IF(Trim({0,53})='2','RETOUR',...` | `IF(Trim(W0 Nom de la rue)='1','ALLER',IF(Trim(W0 Nom de l...` |
 | 3 | `MlsTrans ('Verifier que la transaction est bien pour')&' ...` | `MlsTrans ('Verifier que la transaction est bien pour')&' ...` |
 | 4 | `Date ()` | `Date ()` |
-| 5 | `IF({0,184}=0,IF({0,23}='VSL',{0,13},Date()),{0,97})` | `IF(CHG_REASON_W0 nbre articles=0,IF(W0 imputation='VSL',B...` |
+| 5 | `IF({0,183}=0,IF({0,23}='VSL',{0,13},Date()),{0,96})` | `IF({0,183}=0,IF(W0 sous-imput.='VSL',Bouton Ok,Date()),W0...` |
 | 6 | `NOT {32768,38}` | `NOT VG.VG GIFT PASS_V2.00` |
 | 7 | `{32768,2}` | `VG.Retour Chariot` |
-| 8 | `Trim ({0,144})` | `Trim (V.Total carte)` |
+| 8 | `Trim ({0,143})` | `Trim (V.Total carte)` |
 | 9 | `154` | `154` |
 | 10 | `{0,1}` | `W0 Retour Transmission TPE` |
 | 11 | `{0,5}` | `W0 Fin Transaction TPE` |
 | 12 | `{0,6}` | `v. titre` |
 | 13 | `'F'` | `'F'` |
 | 14 | `Date ()` | `Date ()` |
-| 15 | `{0,50}*{0,49}` | `W0 Nom*W0 Titre` |
-| 16 | `({0,50}*{0,49})-{0,96}` | `(W0 Nom*W0 Titre)-W0 forfait date(O/N)` |
+| 15 | `{0,49}*{0,48}` | `W0 Titre*W0 Date du transfert Retour` |
+| 16 | `({0,49}*{0,48})-{0,95}` | `(W0 Titre*W0 Date du transfert Retour)-W0 forfait date(O/N)` |
 | 17 | `'FALSE'LOG` | `'FALSE'LOG` |
 | 18 | `'N'` | `'N'` |
 | 19 | `1` | `1` |
 | 20 | `'CAISSE'` | `'CAISSE'` |
 | 21 | `{0,21}` | `W0 Code reduction` |
-| 22 | `{0,50}>0 AND {0,49}=0` | `W0 Nom>0 AND W0 Titre=0` |
-| 23 | `{0,118} AND {0,43}='N'` | `Bouton Ok AND W0 Type d'endroit Aller='N'` |
-| 24 | `{0,49}>{0,119} AND NOT ({0,150})` | `W0 Titre>W0 Lien Logement Lieu Séjour AND NOT (V.SoldeRes...` |
-| 25 | `{0,120}=0 AND {0,44}<>'' AND {0,94}<>100 AND {0,23}<>'VRL...` | `V.VADA ?=0 AND W0 Code Gare/Aéroport Aller<>'' AND W0 for...` |
-| 26 | `{0,23}='VRL' OR {0,23}='VSL'` | `W0 imputation='VRL' OR W0 imputation='VSL'` |
-| 351 | `NOT({0,189})` | `NOT({0,189})` |
-| 28 | `{0,50}>0 AND {0,130}='N'` | `W0 Nom>0 AND v.NumeroTicket(VRL/VSL)='N'` |
-| 29 | `({0,50}=0) AND (ExpCalc('55'EXP))` | `(W0 Nom=0) AND (ExpCalc('55'EXP))` |
-| 30 | `({0,50}=0) AND {0,23}<>'VRL' AND (ExpCalc('55'EXP))` | `(W0 Nom=0) AND W0 imputation<>'VRL' AND (ExpCalc('55'EXP))` |
+| 22 | `{0,49}>0 AND {0,48}=0` | `W0 Titre>0 AND W0 Date du transfert Retour=0` |
+| 23 | `{0,117} AND {0,42}='N'` | `Bouton Ok AND W0 Type d'endroit Aller='N'` |
+| 24 | `{0,48}>{0,118} AND NOT ({0,149})` | `W0 Date du transfert Retour>W0 Lien Logement Lieu Séjour ...` |
+| 25 | `{0,119}=0 AND {0,43}<>'' AND {0,93}<>100 AND {0,23}<>'VRL...` | `V.VADA ?=0 AND W0 Code Gare/Aéroport Aller<>'' AND W0 for...` |
+| 26 | `{0,23}='VRL' OR {0,23}='VSL'` | `W0 sous-imput.='VRL' OR W0 sous-imput.='VSL'` |
+| 306 | `NOT({0,188})` | `NOT({0,188})` |
+| 28 | `{0,49}>0 AND {0,129}='N'` | `W0 Titre>0 AND v.NumeroTicket(VRL/VSL)='N'` |
+| 29 | `({0,49}=0) AND (ExpCalc('55'EXP))` | `(W0 Titre=0) AND (ExpCalc('55'EXP))` |
+| 30 | `({0,49}=0) AND {0,23}<>'VRL' AND (ExpCalc('55'EXP))` | `(W0 Titre=0) AND W0 sous-imput.<>'VRL' AND (ExpCalc('55'E...` |
 
 ---
 
@@ -163,10 +163,10 @@
 | Metrique | Valeur |
 |----------|--------|
 | Tables | 12 |
-| Parametres | 22 |
-| Variables locales | 188 |
-| Expressions | 1052 |
-| Expressions 100% decodees | 679 (65%) |
+| Parametres | 20 |
+| Variables locales | 171 |
+| Expressions | 849 |
+| Expressions 100% decodees | 547 (64%) |
 
 ---
 

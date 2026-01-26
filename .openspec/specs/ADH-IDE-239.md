@@ -1,8 +1,8 @@
-﻿# ADH IDE 238 - Transaction Nouv vente PMS-584
+﻿# ADH IDE 239 - Transaction Nouv vente PMS-721
 
 > **Version spec** : 2.0
 > **Genere le** : 2026-01-26
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_234.xml`
+> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_235.xml`
 
 ---
 
@@ -10,15 +10,15 @@
 
 | Attribut | Valeur |
 |----------|--------|
-| **Format IDE** | ADH IDE 238 |
-| **Fichier XML** | Prg_234.xml |
-| **Description** | Transaction Nouv vente PMS-584 |
+| **Format IDE** | ADH IDE 239 |
+| **Fichier XML** | Prg_235.xml |
+| **Description** | Transaction Nouv vente PMS-721 |
 | **Type** | O (O=Online, B=Batch) |
 | **Parametres** | 22 |
 | **Module** | ADH |
 | **Dossier IDE** | Ventes |
 
-> **Note**: Ce programme est Prg_234.xml. L'ID XML (234) peut differer de la position IDE (238).
+> **Note**: Ce programme est Prg_235.xml. L'ID XML (235) peut differer de la position IDE (239).
 
 ---
 
@@ -79,7 +79,6 @@
 | `{0,-37}` | W0 FIN SAISIE OD | LOGICAL | - |
 | `{0,-35}` | W0 Cloture en cours | LOGICAL | - |
 | `{0,-34}` | W0 code article | NUMERIC | - |
-| `{0,172}` | v.retour lien sous_type article | ALPHA | - |
 | `{0,133}` | v.SoldeGiftPass | NUMERIC | - |
 | `{0,-33}` | W0 imputation | NUMERIC | - |
 | `{0,-32}` | W0 sous-imput. | NUMERIC | - |
@@ -93,9 +92,10 @@
 | `{0,31}` | W0 Categorie de chambre | ALPHA | - |
 | `{0,61}` | W0 Lieu sejour | ALPHA | - |
 | `{0,21}` | W0 Code reduction | ALPHA | - |
-| `{0,169}` | v.Date activité VAE | DATE | - |
-| `{0,175}` | v.VAE pendant le séjour ? | LOGICAL | - |
-| `{0,170}` | v.Matin/Après midi | UNICODE | - |
+| `{0,158}` | v.Date activité VAE | DATE | - |
+| `{0,163}` | v.VAE pendant le séjour ? | LOGICAL | - |
+| `{0,160}` | v.Matin/Après midi | UNICODE | - |
+| `{0,102}` | W0 Sens du transfert Aller | ALPHA | - |
 
 ### 4.2 Variables globales (VG)
 
@@ -117,11 +117,11 @@
 | `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
 | `{32768,14}` | VG.N° version | - |
 
-> Total: 363 variables mappees
+> Total: 376 variables mappees
 
 ---
 
-## 5. EXPRESSIONS (1052 total, 679 decodees)
+## 5. EXPRESSIONS (1015 total, 678 decodees)
 
 | # | Expression brute | Decode |
 |---|------------------|--------|
@@ -129,10 +129,10 @@
 | 2 | `IF(Trim({0,54})='1','ALLER',IF(Trim({0,54})='2','RETOUR',...` | `IF(Trim(W0 Commune)='1','ALLER',IF(Trim(W0 Commune)='2','...` |
 | 3 | `MlsTrans ('Verifier que la transaction est bien pour')&' ...` | `MlsTrans ('Verifier que la transaction est bien pour')&' ...` |
 | 4 | `Date ()` | `Date ()` |
-| 5 | `IF({0,184}=0,IF({0,23}='VSL',{0,13},Date()),{0,97})` | `IF(CHG_REASON_W0 nbre articles=0,IF(W0 imputation='VSL',B...` |
+| 5 | `IF({0,184}=0,IF({0,23}='VSL',{0,13},Date()),{0,97})` | `IF(v. pied type existe?=0,IF(W0 imputation='VSL',Bouton O...` |
 | 6 | `NOT {32768,38}` | `NOT VG.VG GIFT PASS_V2.00` |
 | 7 | `{32768,2}` | `VG.Retour Chariot` |
-| 8 | `Trim ({0,144})` | `Trim (V.Total carte)` |
+| 8 | `Trim ({0,144})` | `Trim (V.Num Autorisation)` |
 | 9 | `154` | `154` |
 | 10 | `{0,1}` | `W0 Retour Transmission TPE` |
 | 11 | `{0,5}` | `W0 Fin Transaction TPE` |
@@ -151,7 +151,7 @@
 | 24 | `{0,49}>{0,119} AND NOT ({0,150})` | `W0 Titre>W0 Lien Logement Lieu Séjour AND NOT (V.SoldeRes...` |
 | 25 | `{0,120}=0 AND {0,44}<>'' AND {0,94}<>100 AND {0,23}<>'VRL...` | `V.VADA ?=0 AND W0 Code Gare/Aéroport Aller<>'' AND W0 for...` |
 | 26 | `{0,23}='VRL' OR {0,23}='VSL'` | `W0 imputation='VRL' OR W0 imputation='VSL'` |
-| 351 | `NOT({0,189})` | `NOT({0,189})` |
+| 330 | `NOT({0,189})` | `NOT(P.Toute ligne)` |
 | 28 | `{0,50}>0 AND {0,130}='N'` | `W0 Nom>0 AND v.NumeroTicket(VRL/VSL)='N'` |
 | 29 | `({0,50}=0) AND (ExpCalc('55'EXP))` | `(W0 Nom=0) AND (ExpCalc('55'EXP))` |
 | 30 | `({0,50}=0) AND {0,23}<>'VRL' AND (ExpCalc('55'EXP))` | `(W0 Nom=0) AND W0 imputation<>'VRL' AND (ExpCalc('55'EXP))` |
@@ -164,9 +164,9 @@
 |----------|--------|
 | Tables | 12 |
 | Parametres | 22 |
-| Variables locales | 188 |
-| Expressions | 1052 |
-| Expressions 100% decodees | 679 (65%) |
+| Variables locales | 194 |
+| Expressions | 1015 |
+| Expressions 100% decodees | 678 (67%) |
 
 ---
 

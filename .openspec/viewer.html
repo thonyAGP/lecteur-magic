@@ -1003,6 +1003,28 @@
       }
     }
 
+    // Intercept spec links in rendered Markdown and make them navigable
+    function attachSpecLinks(container) {
+      const links = container.querySelectorAll('a[href]');
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+        // Match patterns like: ADH-IDE-238.md, specs/ADH-IDE-238.md, ../specs/PVE-IDE-10.md
+        const specMatch = href.match(/(?:specs\/)?([A-Z]{2,4}-IDE-\d+)\.md$/i);
+        if (specMatch) {
+          const specId = specMatch[1].toUpperCase();
+          link.style.cursor = 'pointer';
+          link.style.color = 'var(--accent)';
+          link.style.textDecoration = 'underline';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const specPath = `specs/${specId}.md`;
+            loadFile(specPath);
+            setActiveNav(specPath);
+          });
+        }
+      });
+    }
+
     function setActiveNav(file) {
       document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.toggle('active', item.dataset.file === file);
@@ -1130,6 +1152,8 @@
         if (!response.ok) throw new Error('Fichier non trouve');
         const text = await response.text();
         content.innerHTML = headerHtml + tabsHtml + marked.parse(text);
+        // Attach click handlers to spec links
+        attachSpecLinks(content);
       } catch (err) {
         content.innerHTML = headerHtml + tabsHtml + `<div class="welcome"><h2>Fichier non trouve</h2><p>${path}</p></div>`;
       }

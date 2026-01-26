@@ -1,297 +1,589 @@
-{
-  "project": "Lecteur_Magic",
-  "lastUpdated": "2026-01-26T16:08:27.183Z",
-  "specs": [
-    {
-      "id": "ADH-IDE-238",
-      "title": "Transaction Nouv vente PMS-584",
-      "project": "ADH",
-      "ide": 238,
-      "xmlFile": "Prg_234.xml",
-      "type": "Online",
-      "file": "specs/ADH-IDE-238.md",
-      "tables": 12,
-      "tasks": 1,
-      "expressions": 1052,
-      "complexity": "Moyen-Eleve",
-      "callers": [],
-      "callees": [
-        "ADH IDE 152",
-        "ADH IDE 149"
-      ],
-      "specVersion": "2.0"
-    },
-    {
-      "id": "TEMPLATE-V1",
-      "title": "Template Specification Programme v1",
-      "project": "-",
-      "ide": 0,
-      "type": "Template",
-      "file": "specs/TEMPLATE-PROGRAM-SPEC.md",
-      "tables": 0,
-      "tasks": 0,
-      "complexity": "-"
-    },
-    {
-      "id": "TEMPLATE-V2",
-      "title": "Template Specification Programme v2",
-      "project": "-",
-      "ide": 0,
-      "type": "Template",
-      "file": "specs/TEMPLATE-PROGRAM-SPEC-V2.md",
-      "tables": 0,
-      "tasks": 0,
-      "complexity": "-",
-      "specVersion": "2.0"
-    }
-  ],
-  "reports": [
-    {
-      "category": "principal",
-      "title": "OpenSpec - Vue d'ensemble",
-      "file": "spec.md"
-    },
-    {
-      "category": "principal",
-      "title": "Deploiement",
-      "file": "DEPLOY.md"
-    },
-    {
-      "category": "principal",
-      "title": "Couverture ADH",
-      "file": "ADH_COVERAGE_ANALYSIS.md"
-    },
-    {
-      "category": "reports",
-      "title": "ADH SADT Documentation",
-      "file": "reports/ADH_SADT_DOCUMENTATION.md"
-    },
-    {
-      "category": "reports",
-      "title": "Coverage Report 2025-01-04",
-      "file": "reports/COVERAGE_REPORT_2025-01-04.md"
-    },
-    {
-      "category": "reports",
-      "title": "PVE Rental Dates Analysis",
-      "file": "reports/PVE_RENTAL_DATES_ANALYSIS_2026-01-04.md"
-    },
-    {
-      "category": "reports",
-      "title": "VIL FDR Etoiles Analysis",
-      "file": "reports/VIL_FDR_ETOILES_ANALYSIS.md"
-    },
-    {
-      "category": "reports",
-      "title": "XML Learning Log",
-      "file": "reports/XML_LEARNING_LOG.md"
-    },
-    {
-      "category": "reports",
-      "title": "Ticket Automation Analysis",
-      "file": "reports/TICKET_AUTOMATION_ANALYSIS.md"
-    },
-    {
-      "category": "reports",
-      "title": "Changelog",
-      "file": "history/changelog.md"
-    }
-  ],
-  "tickets": {
-    "active": [
-      {
-        "id": "PMS-1453",
-        "title": "Caisse Adherent - Vente transfert heure erronee",
-        "status": "analyse-complete",
-        "file": "tickets/PMS-1453/analysis.md",
-        "createdDate": "2026-01-06",
-        "lastAnalysis": "2026-01-26",
-        "lastAnalysisTime": "2026-01-26T12:00:00+01:00",
-        "program": "ADH IDE 307",
-        "rootCause": "Missing Picture validation on FIELD_TIME columns"
-      },
-      {
-        "id": "PMS-1407",
-        "title": "Validation auto Back Office - NON REGRESSION (Magic.ini)",
-        "status": "diagnostic-ok",
-        "file": "tickets/PMS-1407/analysis.md",
-        "createdDate": "2025-11-13",
-        "lastAnalysis": "2026-01-19",
-        "lastAnalysisTime": "2026-01-19T11:40:22+01:00",
-        "program": "PBG IDE 121"
-      },
-      {
-        "id": "PMS-1359",
-        "title": "Edition Cloture - Indicateur ecart FDR",
-        "status": "done",
-        "file": "tickets/PMS-1359/analysis.md",
-        "createdDate": "2026-01-12",
-        "lastAnalysis": "2026-01-22",
-        "lastAnalysisTime": "2026-01-22T16:31:00+01:00",
-        "program": "VIL IDE 22"
-      },
-      {
-        "id": "PMS-1414",
-        "title": "Validation groupee seminaire - Vol retour non requis",
-        "status": "investigation-en-cours",
-        "file": "tickets/PMS-1414/analysis.md",
-        "createdDate": "2025-11-18",
-        "lastAnalysis": "2026-01-19",
-        "lastAnalysisTime": "2026-01-19T13:36:49+01:00",
-        "program": "PBG IDE 124"
-      },
-      {
-        "id": "PMS-1412",
-        "title": "POS SKI Japon - Impression facture obligatoire meme si mail",
-        "status": "pret-implementation",
-        "file": "tickets/PMS-1412/analysis.md",
-        "createdDate": "2025-11-17",
-        "lastAnalysis": "2026-01-21",
-        "lastAnalysisTime": "2026-01-22T00:15:23+01:00",
-        "program": "PVE IDE 205"
-      },
-      {
-        "id": "PMS-1400",
-        "title": "POS Reports - Evolution REVENUE CANCELATIONS",
-        "status": "analysis",
-        "file": "tickets/PMS-1400/analysis.md",
-        "createdDate": "2025-11-06",
-        "lastAnalysis": "2026-01-21",
-        "lastAnalysisTime": "2026-01-21T22:30:00+01:00",
-        "program": "PVE IDE 75"
-      },
-      {
-        "id": "PMS-1381",
-        "title": "Messages verrouillages pendant PURGE",
-        "status": "diagnostic-ok",
-        "file": "tickets/PMS-1381/analysis.md",
-        "createdDate": "2025-09-24",
-        "lastAnalysis": "2026-01-22",
-        "lastAnalysisTime": "2026-01-22T21:00:00+01:00",
-        "program": "PUG IDE 18"
-      },
-      {
-        "id": "PMS-1457",
-        "title": "Caution forfait ski automatique St Moritz",
-        "status": "spec-complete",
-        "file": "tickets/PMS-1457/analysis.md",
-        "createdDate": "2026-01-22",
-        "lastAnalysis": "2026-01-22",
-        "lastAnalysisTime": "2026-01-22T23:30:00+01:00",
-        "program": "REF IDE 621"
-      },
-      {
-        "id": "PMS-1402",
-        "title": "Automatisation Taxe de sejour",
-        "status": "blocage",
-        "file": "tickets/PMS-1402/analysis.md",
-        "createdDate": "2025-11-06",
-        "lastAnalysis": "2026-01-18"
-      }
-    ],
-    "archived": [
-      {
-        "id": "CMDS-176521",
-        "title": "Prix remise affiche incorrect POS",
-        "status": "ferme",
-        "file": "tickets/CMDS-176521/analysis.md",
-        "createdDate": "2026-01-08",
-        "lastAnalysis": "2026-01-08",
-        "program": "PVE",
-        "rootCause": "Picture format mismatch"
-      },
-      {
-        "id": "CMDS-176481",
-        "title": "Double attribution Gift Pass",
-        "status": "ferme",
-        "file": "tickets/CMDS-176481/analysis.md",
-        "createdDate": "2026-01-12",
-        "lastAnalysis": "2026-01-12",
-        "rootCause": "Bug AFFAUTO (API externe)"
-      },
-      {
-        "id": "CMDS-176818",
-        "title": "Tickets Epson police grande",
-        "status": "ferme",
-        "file": "tickets/CMDS-176818/analysis.md",
-        "createdDate": "2026-01-13",
-        "lastAnalysis": "2026-01-13",
-        "rootCause": "Config imprimante Valmorel"
-      },
-      {
-        "id": "CMDS-174321",
-        "title": "Bug date arrivee PB027 (+1 mois)",
-        "status": "ferme",
-        "file": "tickets/CMDS-174321/analysis.md",
-        "createdDate": "2025-12-01",
-        "lastAnalysis": "2026-01-08",
-        "rootCause": "Date format inversion"
-      },
-      {
-        "id": "PMS-1337",
-        "title": "Double lancement Caisse Adherent",
-        "status": "recette-ok",
-        "file": "tickets/PMS-1337/analysis.md",
-        "createdDate": "2025-08-01",
-        "lastAnalysis": "2026-01-21",
-        "program": "ADH IDE 156",
-        "rootCause": "Session concurrency check"
-      },
-      {
-        "id": "PMS-1373",
-        "title": "Masquer annulations dans extrait compte",
-        "status": "recette-ok",
-        "file": "tickets/PMS-1373/analysis.md",
-        "createdDate": "2025-09-01",
-        "lastAnalysis": "2026-01-13",
-        "rootCause": "Add filter parameter"
-      },
-      {
-        "id": "PMS-1437",
-        "title": "Early return SKI - 5 pistes classees",
-        "status": "recette-ok",
-        "file": "tickets/PMS-1437/analysis.md",
-        "createdDate": "2025-12-01",
-        "lastAnalysis": "2026-01-12",
-        "rootCause": "MODEDAYINC date display"
-      },
-      {
-        "id": "PMS-1446",
-        "title": "Location materiel ski courts sejours",
-        "status": "recette-ok",
-        "file": "tickets/PMS-1446/analysis.md",
-        "createdDate": "2025-12-15",
-        "lastAnalysis": "2026-01-19",
-        "rootCause": "Ski rental duration calc"
-      },
-      {
-        "id": "PMS-1404",
-        "title": "POS Reports M&E - Quantity OK",
-        "status": "recette-ok",
-        "file": "tickets/PMS-1404/analysis.md",
-        "createdDate": "2026-01-12",
-        "lastAnalysis": "2026-01-18",
-        "program": "PVE"
-      },
-      {
-        "id": "PMS-1332",
-        "title": "Fiche police date fin 00/00/0000",
-        "status": "recette-ok",
-        "file": "tickets/PMS-1332/analysis.md",
-        "createdDate": "2025-07-01",
-        "lastAnalysis": "2026-01-10"
-      },
-      {
-        "id": "PMS-1451",
-        "title": "PURGE prend uniquement le 1er troncon de sejour",
-        "status": "diagnostic-confirme",
-        "file": "tickets/PMS-1451/analysis.md",
-        "createdDate": "2026-01-06",
-        "lastAnalysis": "2026-01-26",
-        "lastAnalysisTime": "2026-01-22T22:00:00+01:00",
-        "program": "REF IDE 749.1",
-        "resolvedDate": "2026-01-26"
-      }
-    ]
-  }
+﻿{
+    "project":  "Lecteur_Magic",
+    "lastUpdated":  "2026-01-26T17:06:17+01:00",
+    "specs":  [
+                  {
+                      "id":  "TEMPLATE-V1",
+                      "title":  "Template Specification Programme v1",
+                      "project":  "-",
+                      "ide":  0,
+                      "type":  "Template",
+                      "file":  "specs/TEMPLATE-PROGRAM-SPEC.md",
+                      "tables":  0,
+                      "tasks":  0,
+                      "complexity":  "-"
+                  },
+                  {
+                      "id":  "TEMPLATE-V2",
+                      "title":  "Template Specification Programme v2",
+                      "project":  "-",
+                      "ide":  0,
+                      "type":  "Template",
+                      "file":  "specs/TEMPLATE-PROGRAM-SPEC-V2.md",
+                      "tables":  0,
+                      "tasks":  0,
+                      "complexity":  "-",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-232",
+                      "title":  "Verif session caisse ouverte",
+                      "project":  "ADH",
+                      "ide":  232,
+                      "xmlFile":  "Prg_328.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-232.md",
+                      "tables":  0,
+                      "expressions":  7,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-233",
+                      "title":  "Appel Print ticket vente PMS28",
+                      "project":  "ADH",
+                      "ide":  233,
+                      "xmlFile":  "Prg_229.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-233.md",
+                      "tables":  0,
+                      "expressions":  2,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-234",
+                      "title":  "Print ticket vente",
+                      "project":  "ADH",
+                      "ide":  234,
+                      "xmlFile":  "Prg_230.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-234.md",
+                      "tables":  3,
+                      "expressions":  552,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-235",
+                      "title":  "Print ticket vente LEX",
+                      "project":  "ADH",
+                      "ide":  235,
+                      "xmlFile":  "Prg_231.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-235.md",
+                      "tables":  4,
+                      "expressions":  844,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-236",
+                      "title":  "Print ticket vente PMS-584",
+                      "project":  "ADH",
+                      "ide":  236,
+                      "xmlFile":  "Prg_232.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-236.md",
+                      "tables":  3,
+                      "expressions":  705,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-237",
+                      "title":  "Transaction Nouv vente avec GP",
+                      "project":  "ADH",
+                      "ide":  237,
+                      "xmlFile":  "Prg_233.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-237.md",
+                      "tables":  12,
+                      "expressions":  849,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-238",
+                      "title":  "Transaction Nouv vente PMS-584",
+                      "project":  "ADH",
+                      "ide":  238,
+                      "xmlFile":  "Prg_234.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-238.md",
+                      "tables":  12,
+                      "expressions":  1052,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-239",
+                      "title":  "Transaction Nouv vente PMS-721",
+                      "project":  "ADH",
+                      "ide":  239,
+                      "xmlFile":  "Prg_235.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-239.md",
+                      "tables":  12,
+                      "expressions":  1015,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-240",
+                      "title":  "Transaction Nouv vente PMS-710",
+                      "project":  "ADH",
+                      "ide":  240,
+                      "xmlFile":  "Prg_236.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-240.md",
+                      "tables":  12,
+                      "expressions":  1063,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-241",
+                      "title":  "Solde Gift Pass",
+                      "project":  "ADH",
+                      "ide":  241,
+                      "xmlFile":  "Prg_237.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-241.md",
+                      "tables":  1,
+                      "expressions":  5,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-242",
+                      "title":  "Menu Choix Saisie/Annul vente",
+                      "project":  "ADH",
+                      "ide":  242,
+                      "xmlFile":  "Prg_238.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-242.md",
+                      "tables":  0,
+                      "expressions":  40,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-243",
+                      "title":  "Histo ventes payantes",
+                      "project":  "ADH",
+                      "ide":  243,
+                      "xmlFile":  "Prg_239.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-243.md",
+                      "tables":  4,
+                      "expressions":  585,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-244",
+                      "title":  "Histo ventes payantes /PMS-605",
+                      "project":  "ADH",
+                      "ide":  244,
+                      "xmlFile":  "Prg_240.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-244.md",
+                      "tables":  0,
+                      "expressions":  646,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-245",
+                      "title":  "Histo ventes payantes /PMS-623",
+                      "project":  "ADH",
+                      "ide":  245,
+                      "xmlFile":  "Prg_241.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-245.md",
+                      "tables":  0,
+                      "expressions":  794,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-246",
+                      "title":  "(Vide)",
+                      "project":  "ADH",
+                      "ide":  246,
+                      "xmlFile":  "Prg_242.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-246.md",
+                      "tables":  0,
+                      "expressions":  0,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-247",
+                      "title":  "Deversement Transaction",
+                      "project":  "ADH",
+                      "ide":  247,
+                      "xmlFile":  "Prg_243.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-247.md",
+                      "tables":  18,
+                      "expressions":  546,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-248",
+                      "title":  "Choix PYR (plusieurs chambres)",
+                      "project":  "ADH",
+                      "ide":  248,
+                      "xmlFile":  "Prg_244.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-248.md",
+                      "tables":  0,
+                      "expressions":  45,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-249",
+                      "title":  "Reinit Aff PYR",
+                      "project":  "ADH",
+                      "ide":  249,
+                      "xmlFile":  "Prg_245.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-249.md",
+                      "tables":  1,
+                      "expressions":  5,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-250",
+                      "title":  "Lancement Choix Chambre",
+                      "project":  "ADH",
+                      "ide":  250,
+                      "xmlFile":  "Prg_246.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-250.md",
+                      "tables":  0,
+                      "expressions":  4,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-251",
+                      "title":  "Creation pied Ticket",
+                      "project":  "ADH",
+                      "ide":  251,
+                      "xmlFile":  "Prg_247.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-251.md",
+                      "tables":  1,
+                      "expressions":  13,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-252",
+                      "title":  "Histo ventes IGR",
+                      "project":  "ADH",
+                      "ide":  252,
+                      "xmlFile":  "Prg_248.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-252.md",
+                      "tables":  3,
+                      "expressions":  209,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-253",
+                      "title":  "Histo ventes Gratuites",
+                      "project":  "ADH",
+                      "ide":  253,
+                      "xmlFile":  "Prg_249.xml",
+                      "type":  "Online",
+                      "file":  "specs/ADH-IDE-253.md",
+                      "tables":  4,
+                      "expressions":  257,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-254",
+                      "title":  "Solde Resort Credit",
+                      "project":  "ADH",
+                      "ide":  254,
+                      "xmlFile":  "Prg_250.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-254.md",
+                      "tables":  1,
+                      "expressions":  7,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  },
+                  {
+                      "id":  "ADH-IDE-255",
+                      "title":  "VAD valides a imprimer",
+                      "project":  "ADH",
+                      "ide":  255,
+                      "xmlFile":  "Prg_251.xml",
+                      "type":  "Batch",
+                      "file":  "specs/ADH-IDE-255.md",
+                      "tables":  5,
+                      "expressions":  157,
+                      "folder":  "Ventes",
+                      "specVersion":  "2.0"
+                  }
+              ],
+    "reports":  [
+                    {
+                        "category":  "principal",
+                        "title":  "OpenSpec - Vue d\u0027ensemble",
+                        "file":  "spec.md"
+                    },
+                    {
+                        "category":  "principal",
+                        "title":  "Deploiement",
+                        "file":  "DEPLOY.md"
+                    },
+                    {
+                        "category":  "principal",
+                        "title":  "Couverture ADH",
+                        "file":  "ADH_COVERAGE_ANALYSIS.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "ADH SADT Documentation",
+                        "file":  "reports/ADH_SADT_DOCUMENTATION.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "Coverage Report 2025-01-04",
+                        "file":  "reports/COVERAGE_REPORT_2025-01-04.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "PVE Rental Dates Analysis",
+                        "file":  "reports/PVE_RENTAL_DATES_ANALYSIS_2026-01-04.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "VIL FDR Etoiles Analysis",
+                        "file":  "reports/VIL_FDR_ETOILES_ANALYSIS.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "XML Learning Log",
+                        "file":  "reports/XML_LEARNING_LOG.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "Ticket Automation Analysis",
+                        "file":  "reports/TICKET_AUTOMATION_ANALYSIS.md"
+                    },
+                    {
+                        "category":  "reports",
+                        "title":  "Changelog",
+                        "file":  "history/changelog.md"
+                    }
+                ],
+    "tickets":  {
+                    "active":  [
+                                   {
+                                       "id":  "PMS-1453",
+                                       "title":  "Caisse Adherent - Vente transfert heure erronee",
+                                       "status":  "analyse-complete",
+                                       "file":  "tickets/PMS-1453/analysis.md",
+                                       "createdDate":  "2026-01-06",
+                                       "lastAnalysis":  "2026-01-26",
+                                       "lastAnalysisTime":  "2026-01-26T12:00:00+01:00",
+                                       "program":  "ADH IDE 307",
+                                       "rootCause":  "Missing Picture validation on FIELD_TIME columns"
+                                   },
+                                   {
+                                       "id":  "PMS-1407",
+                                       "title":  "Validation auto Back Office - NON REGRESSION (Magic.ini)",
+                                       "status":  "diagnostic-ok",
+                                       "file":  "tickets/PMS-1407/analysis.md",
+                                       "createdDate":  "2025-11-13",
+                                       "lastAnalysis":  "2026-01-19",
+                                       "lastAnalysisTime":  "2026-01-19T11:40:22+01:00",
+                                       "program":  "PBG IDE 121"
+                                   },
+                                   {
+                                       "id":  "PMS-1359",
+                                       "title":  "Edition Cloture - Indicateur ecart FDR",
+                                       "status":  "done",
+                                       "file":  "tickets/PMS-1359/analysis.md",
+                                       "createdDate":  "2026-01-12",
+                                       "lastAnalysis":  "2026-01-22",
+                                       "lastAnalysisTime":  "2026-01-22T16:31:00+01:00",
+                                       "program":  "VIL IDE 22"
+                                   },
+                                   {
+                                       "id":  "PMS-1414",
+                                       "title":  "Validation groupee seminaire - Vol retour non requis",
+                                       "status":  "investigation-en-cours",
+                                       "file":  "tickets/PMS-1414/analysis.md",
+                                       "createdDate":  "2025-11-18",
+                                       "lastAnalysis":  "2026-01-19",
+                                       "lastAnalysisTime":  "2026-01-19T13:36:49+01:00",
+                                       "program":  "PBG IDE 124"
+                                   },
+                                   {
+                                       "id":  "PMS-1412",
+                                       "title":  "POS SKI Japon - Impression facture obligatoire meme si mail",
+                                       "status":  "pret-implementation",
+                                       "file":  "tickets/PMS-1412/analysis.md",
+                                       "createdDate":  "2025-11-17",
+                                       "lastAnalysis":  "2026-01-21",
+                                       "lastAnalysisTime":  "2026-01-22T00:15:23+01:00",
+                                       "program":  "PVE IDE 205"
+                                   },
+                                   {
+                                       "id":  "PMS-1400",
+                                       "title":  "POS Reports - Evolution REVENUE CANCELATIONS",
+                                       "status":  "analysis",
+                                       "file":  "tickets/PMS-1400/analysis.md",
+                                       "createdDate":  "2025-11-06",
+                                       "lastAnalysis":  "2026-01-21",
+                                       "lastAnalysisTime":  "2026-01-21T22:30:00+01:00",
+                                       "program":  "PVE IDE 75"
+                                   },
+                                   {
+                                       "id":  "PMS-1451",
+                                       "title":  "PURGE prend uniquement le 1er troncon de sejour",
+                                       "status":  "diagnostic-confirme",
+                                       "file":  "tickets/PMS-1451/analysis.md",
+                                       "createdDate":  "2026-01-06",
+                                       "lastAnalysis":  "2026-01-22",
+                                       "lastAnalysisTime":  "2026-01-22T22:00:00+01:00",
+                                       "program":  "REF IDE 749.1"
+                                   },
+                                   {
+                                       "id":  "PMS-1381",
+                                       "title":  "Messages verrouillages pendant PURGE",
+                                       "status":  "diagnostic-ok",
+                                       "file":  "tickets/PMS-1381/analysis.md",
+                                       "createdDate":  "2025-09-24",
+                                       "lastAnalysis":  "2026-01-22",
+                                       "lastAnalysisTime":  "2026-01-22T21:00:00+01:00",
+                                       "program":  "PUG IDE 18"
+                                   },
+                                   {
+                                       "id":  "PMS-1457",
+                                       "title":  "Caution forfait ski automatique St Moritz",
+                                       "status":  "spec-complete",
+                                       "file":  "tickets/PMS-1457/analysis.md",
+                                       "createdDate":  "2026-01-22",
+                                       "lastAnalysis":  "2026-01-22",
+                                       "lastAnalysisTime":  "2026-01-22T23:30:00+01:00",
+                                       "program":  "REF IDE 621"
+                                   },
+                                   {
+                                       "id":  "PMS-1402",
+                                       "title":  "Automatisation Taxe de sejour",
+                                       "status":  "blocage",
+                                       "file":  "tickets/PMS-1402/analysis.md",
+                                       "createdDate":  "2025-11-06",
+                                       "lastAnalysis":  "2026-01-18"
+                                   }
+                               ],
+                    "archived":  [
+                                     {
+                                         "id":  "CMDS-176521",
+                                         "title":  "Prix remise affiche incorrect POS",
+                                         "status":  "ferme",
+                                         "file":  "tickets/CMDS-176521/analysis.md",
+                                         "createdDate":  "2026-01-08",
+                                         "lastAnalysis":  "2026-01-08",
+                                         "program":  "PVE",
+                                         "rootCause":  "Picture format mismatch"
+                                     },
+                                     {
+                                         "id":  "CMDS-176481",
+                                         "title":  "Double attribution Gift Pass",
+                                         "status":  "ferme",
+                                         "file":  "tickets/CMDS-176481/analysis.md",
+                                         "createdDate":  "2026-01-12",
+                                         "lastAnalysis":  "2026-01-12",
+                                         "rootCause":  "Bug AFFAUTO (API externe)"
+                                     },
+                                     {
+                                         "id":  "CMDS-176818",
+                                         "title":  "Tickets Epson police grande",
+                                         "status":  "ferme",
+                                         "file":  "tickets/CMDS-176818/analysis.md",
+                                         "createdDate":  "2026-01-13",
+                                         "lastAnalysis":  "2026-01-13",
+                                         "rootCause":  "Config imprimante Valmorel"
+                                     },
+                                     {
+                                         "id":  "CMDS-174321",
+                                         "title":  "Bug date arrivee PB027 (+1 mois)",
+                                         "status":  "ferme",
+                                         "file":  "tickets/CMDS-174321/analysis.md",
+                                         "createdDate":  "2025-12-01",
+                                         "lastAnalysis":  "2026-01-08",
+                                         "rootCause":  "Date format inversion"
+                                     },
+                                     {
+                                         "id":  "PMS-1337",
+                                         "title":  "Double lancement Caisse Adherent",
+                                         "status":  "recette-ok",
+                                         "file":  "tickets/PMS-1337/analysis.md",
+                                         "createdDate":  "2025-08-01",
+                                         "lastAnalysis":  "2026-01-21",
+                                         "program":  "ADH IDE 156",
+                                         "rootCause":  "Session concurrency check"
+                                     },
+                                     {
+                                         "id":  "PMS-1373",
+                                         "title":  "Masquer annulations dans extrait compte",
+                                         "status":  "recette-ok",
+                                         "file":  "tickets/PMS-1373/analysis.md",
+                                         "createdDate":  "2025-09-01",
+                                         "lastAnalysis":  "2026-01-13",
+                                         "rootCause":  "Add filter parameter"
+                                     },
+                                     {
+                                         "id":  "PMS-1437",
+                                         "title":  "Early return SKI - 5 pistes classees",
+                                         "status":  "recette-ok",
+                                         "file":  "tickets/PMS-1437/analysis.md",
+                                         "createdDate":  "2025-12-01",
+                                         "lastAnalysis":  "2026-01-12",
+                                         "rootCause":  "MODEDAYINC date display"
+                                     },
+                                     {
+                                         "id":  "PMS-1446",
+                                         "title":  "Location materiel ski courts sejours",
+                                         "status":  "recette-ok",
+                                         "file":  "tickets/PMS-1446/analysis.md",
+                                         "createdDate":  "2025-12-15",
+                                         "lastAnalysis":  "2026-01-19",
+                                         "rootCause":  "Ski rental duration calc"
+                                     },
+                                     {
+                                         "id":  "PMS-1404",
+                                         "title":  "POS Reports M\u0026E - Quantity OK",
+                                         "status":  "recette-ok",
+                                         "file":  "tickets/PMS-1404/analysis.md",
+                                         "createdDate":  "2026-01-12",
+                                         "lastAnalysis":  "2026-01-18",
+                                         "program":  "PVE"
+                                     },
+                                     {
+                                         "id":  "PMS-1332",
+                                         "title":  "Fiche police date fin 00/00/0000",
+                                         "status":  "recette-ok",
+                                         "file":  "tickets/PMS-1332/analysis.md",
+                                         "createdDate":  "2025-07-01",
+                                         "lastAnalysis":  "2026-01-10"
+                                     }
+                                 ]
+                }
 }
