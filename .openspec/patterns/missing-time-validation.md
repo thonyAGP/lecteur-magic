@@ -102,33 +102,41 @@ Chercher les colonnes avec:
 
 ---
 
-## Exemple PMS-1453
+## Exemple PMS-1453 (CORRIGE)
 
 **Contexte**: Saisie heure de transfert
 
-| Element | Valeur |
-|---------|--------|
-| Programme | **ADH IDE 307** - Saisie transaction Nouv vente |
-| Fichier | Prg_304.xml |
-| Tache | 307.37 - Affiche details transfert |
-| Colonnes | id=5 (Aller), id=13 (Retour) |
-| Table cible | `transfertn` (champ `trf_heure`) |
+> **ATTENTION** : ADH IDE 307/313 sont ORPHELINS (dossier Suppr) - NE PAS CORRIGER.
 
-### Colonnes a corriger
+### Programmes ACTIFS a corriger (dossier Ventes)
 
-| Colonne | Nom | Ligne XML | Action |
-|---------|-----|-----------|--------|
-| id=5 | W1 Heure transfert Aller | ~31823 | Ajouter Picture HH:MM |
-| id=13 | W1 Heure transfert Retour | ~31880 | Ajouter Picture HH:MM |
+| Programme | Fichier | Colonnes | Table cible |
+|-----------|---------|----------|-------------|
+| **ADH IDE 233** | Prg_233.xml | 222, 234, 5, 13 | `transfertn` |
+| **ADH IDE 234** | Prg_234.xml | 222, 234, 5, 13 | `transfertn` |
+| **ADH IDE 235** | Prg_235.xml | 222, 234, 5, 13 | `transfertn` |
+| **ADH IDE 236** | Prg_236.xml | 222, 234, 5, 13 | `transfertn` |
+
+### Colonnes a corriger (par programme)
+
+| Colonne | Nom | Ligne approx | Action |
+|---------|-----|--------------|--------|
+| 222 | W0 Heure du transfert Aller | ~590 | Ajouter Picture HH:MM |
+| 234 | W0 Heure du transfert Retour | ~666 | Ajouter Picture HH:MM |
+| 5 | W1 Heure transfert Aller | ~36943 | Ajouter Picture HH:MM |
+| 13 | W1 Heure transfert Retour | ~37000 | Ajouter Picture HH:MM |
+
+**Total: 16 modifications (4 colonnes x 4 programmes)**
 
 ---
 
 ## Checklist resolution
 
+- [ ] Verifier dossier du programme dans Progs.xml (Ventes vs Suppr)
+- [ ] IGNORER programmes dans dossier Suppr (orphelins)
 - [ ] Identifier tous les champs FIELD_TIME concernes
 - [ ] Verifier presence Picture sur chaque champ
 - [ ] Ajouter Picture "HH:MM" si absent
-- [ ] Verifier variantes du programme (ADH IDE 313 pour PMS-1453)
 - [ ] Tester saisie 00:00, 12:30, 23:59 (valide)
 - [ ] Tester saisie 24:00, 70:00, 99:99 (doit etre rejete)
 
@@ -167,4 +175,5 @@ Retourne TRUE si valide, FALSE sinon.
 ---
 
 *Pattern capitalise le 2026-01-26*
-*Specs liees: ADH-IDE-307, ADH-IDE-313*
+*Corrige le 2026-01-26 : IDE 307/313 orphelins, vrais programmes = IDE 233-236*
+*Specs liees: ADH-IDE-233, ADH-IDE-234, ADH-IDE-235, ADH-IDE-236*
