@@ -115,42 +115,24 @@
 flowchart TD
     START([START])
     LOAD[Charger DataView]
-    SELECT[Selectionner champs]
-    PRINTER{Imprimante}
-    P1[Format A4]
-    P4[Format A5]
-    P5[Format SLIP]
-    P8[Format 8]
-    P9[Format 9]
-    PDF{PDF}
-    T41[PDF Handler]
-    PDFOK{OK}
-    T37[Update Status]
+    PRINTER{Imprimante 1 4 5 8 9}
+    PRINT[Imprimer selon format]
+    PDF{PDF requis}
+    GENPDF[Generer PDF]
+    UPDATE[Update Status]
     COUNTER{Termine}
     ENDOK([END])
 
-    START --> LOAD --> SELECT --> PRINTER
-    PRINTER -->|1| P1
-    PRINTER -->|4| P4
-    PRINTER -->|5| P5
-    PRINTER -->|8| P8
-    PRINTER -->|9| P9
-    P1 --> PDF
-    P4 --> PDF
-    P5 --> PDF
-    P8 --> PDF
-    P9 --> PDF
-    PDF -->|OUI| T41 --> PDFOK
+    START --> LOAD --> PRINTER
+    PRINTER --> PRINT --> PDF
+    PDF -->|OUI| GENPDF --> UPDATE --> COUNTER
     PDF -->|NON| COUNTER
-    PDFOK -->|OUI| T37 --> COUNTER
-    PDFOK -->|NON| COUNTER
     COUNTER -->|NON| START
     COUNTER -->|OUI| ENDOK
 
     style START fill:#3fb950
     style ENDOK fill:#f85149
     style PDF fill:#58a6ff
-    style PDFOK fill:#58a6ff
 ```
 
 ### 2.5 Expressions cles
