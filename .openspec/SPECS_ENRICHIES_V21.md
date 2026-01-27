@@ -17,25 +17,25 @@ Les specifications V2.1 Enhanced combinent:
 
 ### ECF Partages (ADH.ecf)
 
-| IDE | Nom | Type | Complexite | Spec |
-|-----|-----|------|------------|------|
-| 27 | Separation compte | Batch | HIGH | [ADH-IDE-27](renders/ADH-IDE-27.md) |
-| 28 | Fusion compte | Batch | HIGH | [ADH-IDE-28](renders/ADH-IDE-28.md) |
-| 69 | Extrait de compte | Batch | MEDIUM | [ADH-IDE-69](renders/ADH-IDE-69.md) |
-| 192 | Calcul si depot existe | Batch | LOW | [ADH-IDE-192](renders/ADH-IDE-192.md) |
+| IDE | Nom | Type | Complexite | Spec V2.1 |
+|-----|-----|------|------------|-----------|
+| 27 | Separation compte | Batch | HIGH | [Voir spec](renders/ADH-IDE-27.md) |
+| 28 | Fusion compte | Batch | HIGH | [Voir spec](renders/ADH-IDE-28.md) |
+| 69 | Extrait de compte | Batch | MEDIUM | [Voir spec](renders/ADH-IDE-69.md) |
+| 192 | Calcul si depot existe | Batch | LOW | [Voir spec](renders/ADH-IDE-192.md) |
 
 ### Gestion Caisse
 
-| IDE | Nom | Type | Complexite | Spec |
-|-----|-----|------|------------|------|
-| 121 | Gestion Caisse (Main) | Online | HIGH | [ADH-IDE-121](renders/ADH-IDE-121.md) |
+| IDE | Nom | Type | Complexite | Spec V2.1 |
+|-----|-----|------|------------|-----------|
+| 121 | Gestion Caisse (Main) | Online | HIGH | [Voir spec](renders/ADH-IDE-121.md) |
 
 ### Ventes
 
-| IDE | Nom | Type | Complexite | Spec |
-|-----|-----|------|------------|------|
-| 235 | Print ticket vente LEX | Batch | LOW | [ADH-IDE-235](renders/ADH-IDE-235.md) |
-| 238 | Transaction Nouv vente | Online | HIGH | [ADH-IDE-238](renders/ADH-IDE-238.md) |
+| IDE | Nom | Type | Complexite | Spec V2.1 |
+|-----|-----|------|------------|-----------|
+| 235 | Print ticket vente LEX | Batch | LOW | [Voir spec](renders/ADH-IDE-235.md) |
+| 238 | Transaction Nouv vente | Online | HIGH | [Voir spec](renders/ADH-IDE-238.md) |
 
 ---
 
@@ -61,36 +61,27 @@ PARTIE II: SPECIFICATION TECHNIQUE
 
 ---
 
-## Annotations YAML
-
-Les annotations sont stockees dans `.openspec/annotations/`:
-
-| Fichier | Programme |
-|---------|-----------|
-| [ADH-IDE-27.yaml](annotations/ADH-IDE-27.yaml) | Separation compte |
-| [ADH-IDE-28.yaml](annotations/ADH-IDE-28.yaml) | Fusion compte |
-| [ADH-IDE-69.yaml](annotations/ADH-IDE-69.yaml) | Extrait de compte |
-| [ADH-IDE-121.yaml](annotations/ADH-IDE-121.yaml) | Gestion Caisse |
-| [ADH-IDE-192.yaml](annotations/ADH-IDE-192.yaml) | Calcul depot existe |
-| [ADH-IDE-235.yaml](annotations/ADH-IDE-235.yaml) | Print ticket vente |
-| [ADH-IDE-238.yaml](annotations/ADH-IDE-238.yaml) | Transaction vente |
-
----
-
 ## Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
 | Programmes documentes | 7 |
-| Annotations YAML | 7 |
 | Specs V2.1 rendues | 7 |
 | ECF partages | 4 (IDE 27, 28, 69, 192) |
 
 ---
 
-## Generation
+## Fichiers sources
 
-Les specs V2.1 sont generees par:
+| Type | Emplacement |
+|------|-------------|
+| Specs V2.0 (tech) | `.openspec/specs/ADH-IDE-*.md` |
+| Annotations (fonc) | `.openspec/annotations/ADH-IDE-*.yaml` |
+| Specs V2.1 (merged) | `.openspec/renders/ADH-IDE-*.md` |
+
+---
+
+## Generation
 
 ```powershell
 # Extraire regles metier (cree annotations YAML)
