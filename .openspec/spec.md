@@ -823,6 +823,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 > Historique complet: `.openspec/history/changelog.md`
 
 **Derniers changements:**
+- 2026-01-27: **AUDIT PDCA Phase 3** - (1) Dashboard analytics patterns KB (HTML, 16 patterns, coverage 73%), (2) Tests E2E Playwright API Caisse (api-caisse.spec.ts), (3) Documentation API complete (125 endpoints, API_CAISSE_DOCUMENTATION.md), (4) Blueprints generator validé (limitation: specs V3.5 sans tables détaillées). Scripts: generate-patterns-dashboard.ps1
 - 2026-01-27: **AUDIT PDCA Phase 2** - (1) Linking specs-patterns bidirectionnel (235/323, 73%), (2) Tests spec-generator (25/25, 100%), (3) Upgrade 322 specs V2.0→V3.5 (TAB markers + Mermaid), (4) Strategie migration C# documentee (22.6%→40% M+1). Scripts: link-specs-patterns.ps1, Upgrade-SpecsToV35.ps1, test-spec-generator.ps1
 - 2026-01-27: **AUDIT PDCA Phase 1** - Archive magic-logic-parser v1-v4 dans tools/_archive, README tools/scripts (66 scripts), +4 patterns KB (16 total, 80%), Tests MCP valides 88/88. Scorecard: MCP A+, Patterns B+, Migration C (22.6%)
 - 2026-01-26: **Spec Capitalization Implementation P1-P3** - (P1-A) auto-find-programs.ps1 spec context injection, (P1-D) sync-patterns-to-kb.ps1 bidirectional links + known_patterns_json, (P2-C) RegressionDetectionTool.cs (magic_detect_regression, magic_spec_drift_report), (P3-B) Generate-MigrationBlueprint.ps1 C# code skeleton, (P3-E) Generate-TestsFromSpec.ps1 xUnit/Vitest scaffolds
