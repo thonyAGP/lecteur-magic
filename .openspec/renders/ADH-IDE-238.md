@@ -124,48 +124,48 @@ Utilise potentiellement des fonctions partagees de ADH.ecf
 
 ### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
-| `{0,-37}` | W0 FIN SAISIE OD | LOGICAL | - |
-| `{0,-35}` | W0 Cloture en cours | LOGICAL | - |
-| `{0,-34}` | W0 code article | NUMERIC | - |
-| `{0,172}` | v.retour lien sous_type article | ALPHA | - |
-| `{0,133}` | v.SoldeGiftPass | NUMERIC | - |
-| `{0,-33}` | W0 imputation | NUMERIC | - |
-| `{0,-32}` | W0 sous-imput. | NUMERIC | - |
-| `{0,-31}` | W0 date d'achat | DATE | - |
-| `{0,-30}` | W0 annulation | ALPHA | - |
-| `{0,-29}` | W0 service village | ALPHA | - |
-| `{0,-28}` | W0 libelle article | ALPHA | - |
-| `{0,-27}` | W0 article dernière minute | LOGICAL | - |
-| `{0,-22}` | W0 nbre articles | NUMERIC | - |
-| `{0,-25}` | W0 prix unitaire | NUMERIC | - |
-| `{0,31}` | W0 Categorie de chambre | ALPHA | - |
-| `{0,61}` | W0 Lieu sejour | ALPHA | - |
-| `{0,21}` | W0 Code reduction | ALPHA | - |
-| `{0,169}` | v.Date activité VAE | DATE | - |
-| `{0,175}` | v.VAE pendant le séjour ? | LOGICAL | - |
-| `{0,170}` | v.Matin/Après midi | UNICODE | - |
+| Nom | Type | Role |
+|-----|------|------|
+| W0 FIN SAISIE OD | LOGICAL | - |
+| W0 Cloture en cours | LOGICAL | - |
+| W0 code article | NUMERIC | - |
+| v.retour lien sous_type article | ALPHA | - |
+| v.SoldeGiftPass | NUMERIC | - |
+| W0 imputation | NUMERIC | - |
+| W0 sous-imput. | NUMERIC | - |
+| W0 date d'achat | DATE | - |
+| W0 annulation | ALPHA | - |
+| W0 service village | ALPHA | - |
+| W0 libelle article | ALPHA | - |
+| W0 article dernière minute | LOGICAL | - |
+| W0 nbre articles | NUMERIC | - |
+| W0 prix unitaire | NUMERIC | - |
+| W0 Categorie de chambre | ALPHA | - |
+| W0 Lieu sejour | ALPHA | - |
+| W0 Code reduction | ALPHA | - |
+| v.Date activité VAE | DATE | - |
+| v.VAE pendant le séjour ? | LOGICAL | - |
+| v.Matin/Après midi | UNICODE | - |
 
 ### 4.2 Variables globales (VG)
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
+| Variable | Role |
+|----------|------|
+| VG.LOGIN | - |
+| VG.USER | - |
+| VG.Retour Chariot | - |
+| VG.DROIT ACCES IT ? | - |
+| VG.DROIT ACCES CAISSE ? | - |
+| VG.BRAZIL DATACATCHING? | - |
+| VG.USE MDR | - |
+| VG.VRL ACTIF ? | - |
+| VG.ECI ACTIF ? | - |
+| VG.COMPTE CASH ACTIF ? | - |
+| VG.IND SEJ PAYE ACTIF ? | - |
+| VG.CODE LANGUE USER | - |
+| VG.EFFECTIF ACTIF ? | - |
+| VG.TAXE SEJOUR ACTIF ? | - |
+| VG.N° version | - |
 
 > Total: 363 variables mappees
 

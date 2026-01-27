@@ -79,28 +79,28 @@ PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
 
 ### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
+| Nom | Type | Role |
+|-----|------|------|
 
 ### 4.2 Variables globales (VG)
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
+| Variable | Role |
+|----------|------|
+| VG.LOGIN | - |
+| VG.USER | - |
+| VG.Retour Chariot | - |
+| VG.DROIT ACCES IT ? | - |
+| VG.DROIT ACCES CAISSE ? | - |
+| VG.BRAZIL DATACATCHING? | - |
+| VG.USE MDR | - |
+| VG.VRL ACTIF ? | - |
+| VG.ECI ACTIF ? | - |
+| VG.COMPTE CASH ACTIF ? | - |
+| VG.IND SEJ PAYE ACTIF ? | - |
+| VG.CODE LANGUE USER | - |
+| VG.EFFECTIF ACTIF ? | - |
+| VG.TAXE SEJOUR ACTIF ? | - |
+| VG.N° version | - |
 
 > Total: 134 variables mappees
 
