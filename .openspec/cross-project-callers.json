@@ -1,0 +1,52 @@
+{
+  "description": "ADH programs that can be called from other projects via ECF components",
+  "generated": "2026-01-27",
+  "ecf_components": {
+    "ADH.ecf": {
+      "description": "Sessions_Reprises - ADH programs shared with PBP, PVE",
+      "used_by_projects": ["PBP", "PVE"],
+      "programs": [
+        { "ide": 27, "publicName": "Separation", "description": "Separation de compte" },
+        { "ide": 28, "publicName": "Fusion", "description": "Fusion de compte" },
+        { "ide": 53, "publicName": "EXTRAIT_EASY_CHECKOUT", "description": "Extrait Easy Check Out" },
+        { "ide": 54, "publicName": "FACTURES_CHECK_OUT", "description": "Factures Check Out" },
+        { "ide": 64, "publicName": "SOLDE_EASY_CHECK_OUT", "description": "Solde Easy Check Out" },
+        { "ide": 65, "publicName": "EDITION_EASY_CHECK_OUT", "description": "Edition Easy Check Out" },
+        { "ide": 69, "publicName": "EXTRAIT_COMPTE", "description": "Extrait de compte" },
+        { "ide": 70, "publicName": "EXTRAIT_NOM", "description": "Extrait par nom" },
+        { "ide": 71, "publicName": "EXTRAIT_DATE", "description": "Extrait par date" },
+        { "ide": 72, "publicName": "EXTRAIT_CUM", "description": "Extrait cumule" },
+        { "ide": 73, "publicName": "EXTRAIT_IMP", "description": "Extrait impression" },
+        { "ide": 74, "publicName": "EXTRAIT_DATE_IMP", "description": "Extrait date impression" },
+        { "ide": 76, "publicName": "EXTRAIT_SERVICE", "description": "Extrait par service" },
+        { "ide": 84, "publicName": "CARACT_INTERDIT", "description": "Caracteres interdits" },
+        { "ide": 97, "publicName": "Saisie_facture_tva", "description": "Saisie facture TVA" },
+        { "ide": 111, "publicName": "GARANTIE", "description": "Garantie sur compte" },
+        { "ide": 121, "publicName": "Gestion_Caisse_142", "description": "Gestion caisse" },
+        { "ide": 149, "publicName": "CALC_STOCK_PRODUIT", "description": "Calcul stock produit" },
+        { "ide": 152, "publicName": "RECUP_CLASSE_MOP", "description": "Recuperation classe MOP" },
+        { "ide": 178, "publicName": "GET_PRINTER", "description": "Get printer" },
+        { "ide": 180, "publicName": "SET_LIST_NUMBER", "description": "Set listing number" },
+        { "ide": 181, "publicName": "RAZ_PRINTER", "description": "Raz current printer" },
+        { "ide": 185, "publicName": "CHAINED_LIST_DEFAULT", "description": "Chained list default" },
+        { "ide": 192, "publicName": "SOLDE_COMPTE", "description": "Solde compte" },
+        { "ide": 208, "publicName": "OPEN_PHONE_LINE", "description": "Ouverture ligne tel" },
+        { "ide": 210, "publicName": "CLOSE_PHONE_LINE", "description": "Fermeture ligne tel" },
+        { "ide": 229, "publicName": "PRINT_TICKET", "description": "Print ticket" },
+        { "ide": 243, "publicName": "DEVERSEMENT", "description": "Deversement caisse" }
+      ]
+    },
+    "UTILS.ecf": {
+      "description": "Utilitaires partages",
+      "used_by_projects": ["ADH"],
+      "programs": [
+        { "ide": 0, "publicName": "Calendrier", "description": "Calendrier .NET" }
+      ]
+    }
+  },
+  "notes": [
+    "Ces programmes ne sont JAMAIS orphelins car appelables depuis d'autres projets",
+    "Lors de l'analyse des projets PBP/PVE, verifier les appels ProgIdx() vers ces noms publics",
+    "Les specs de ces programmes doivent inclure une section 'Callers cross-projet'"
+  ]
+}
