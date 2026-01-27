@@ -312,6 +312,7 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 | Patterns KB | **16 patterns** | **80%** | 20+ | **B+** |
 | Specs generees | **323** | **92%** | 350 | **B+** |
 | Migration C# | **79 progs** | **22.6%** | 350 | **C** |
+| Orphelins ADH | **88** | N/A | - | Archives |
 
 ### Nouveaux outils MCP (2026-01-26) - Regression Detection
 
