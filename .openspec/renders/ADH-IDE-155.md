@@ -6,6 +6,10 @@
 
 ---
 
+---
+
+<!-- TAB:Fonctionnel -->
+
 ## 1. IDENTIFICATION
 
 | Attribut | Valeur |
@@ -41,6 +45,10 @@
 > Aucun tag defini
 
 ---
+
+---
+
+<!-- TAB:Technique -->
 
 ## 2. TABLES (21 tables - 7 en ecriture)
 
@@ -190,3 +198,22 @@
 
 *Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
 
+---
+
+<!-- TAB:Cartographie -->
+
+## CARTOGRAPHIE
+
+*Aucun callee identifie - programme terminal ou appels dynamiques*
+
+### Metriques
+
+| Metrique | Valeur |
+|----------|--------|
+| Tables | 21 |
+| Expressions | 1313 |
+| Complexite | Eleve |
+
+---
+
+*Spec V2.1 avec marqueurs TAB - Genere automatiquement*

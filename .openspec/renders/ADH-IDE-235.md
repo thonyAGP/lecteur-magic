@@ -6,6 +6,10 @@
 
 ---
 
+---
+
+<!-- TAB:Fonctionnel -->
+
 ## 1. IDENTIFICATION
 
 | Attribut | Valeur |
@@ -53,6 +57,10 @@ Appele depuis ADH IDE 238 (Transaction vente)
 `impression``, ``ticket``, ``ventes``, ``read-only``, ``batch`
 
 ---
+
+---
+
+<!-- TAB:Technique -->
 
 ## 2. TABLES (17 tables - 0 en ecriture)
 
@@ -217,3 +225,22 @@ Str(P0 UNI/BI,'...` |
 
 *Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
 
+---
+
+<!-- TAB:Cartographie -->
+
+## CARTOGRAPHIE
+
+*Aucun callee identifie - programme terminal ou appels dynamiques*
+
+### Metriques
+
+| Metrique | Valeur |
+|----------|--------|
+| Tables | 17 |
+| Expressions | 844 |
+| Complexite | Eleve |
+
+---
+
+*Spec V2.1 avec marqueurs TAB - Genere automatiquement*

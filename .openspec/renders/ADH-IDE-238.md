@@ -6,6 +6,10 @@
 
 ---
 
+---
+
+<!-- TAB:Fonctionnel -->
+
 ## 1. IDENTIFICATION
 
 | Attribut | Valeur |
@@ -49,6 +53,10 @@ Utilise potentiellement des fonctions partagees de ADH.ecf
 `ventes``, ``gift-pass``, ``caisse`
 
 ---
+
+---
+
+<!-- TAB:Technique -->
 
 ## 2. TABLES (34 tables - 11 en ecriture)
 
@@ -230,3 +238,22 @@ Utilise potentiellement des fonctions partagees de ADH.ecf
 
 *Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
 
+---
+
+<!-- TAB:Cartographie -->
+
+## CARTOGRAPHIE
+
+*Aucun callee identifie - programme terminal ou appels dynamiques*
+
+### Metriques
+
+| Metrique | Valeur |
+|----------|--------|
+| Tables | 34 |
+| Expressions | 1052 |
+| Complexite | Eleve |
+
+---
+
+*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
