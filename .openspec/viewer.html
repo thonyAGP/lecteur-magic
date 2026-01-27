@@ -35,8 +35,13 @@
       });
     });
 
-    // Function to render Mermaid diagrams after content is loaded
+    // Function to render Mermaid diagrams - LAZY RENDERING
+    // Only renders diagrams in currently visible sections to avoid display:none issues
     async function renderMermaidDiagrams() {
+      // Find the visible section (for tabbed specs) or use whole document
+      const visibleSection = document.querySelector('.spec-section.active') || document.getElementById('content');
+      if (!visibleSection) return;
+
       // Try multiple selectors - marked.js may use different class names
       const selectors = [
         'pre code.language-mermaid',
@@ -47,36 +52,43 @@
 
       let mermaidBlocks = [];
       for (const selector of selectors) {
-        const blocks = document.querySelectorAll(selector);
+        const blocks = visibleSection.querySelectorAll(selector);
         if (blocks.length > 0) {
-          mermaidBlocks = blocks;
+          mermaidBlocks = Array.from(blocks);
           break;
         }
       }
 
       // Also find by content - look for flowchart or graph keywords
       if (mermaidBlocks.length === 0) {
-        document.querySelectorAll('pre code').forEach(block => {
+        visibleSection.querySelectorAll('pre code').forEach(block => {
           const text = block.textContent.trim();
           if (text.startsWith('flowchart') || text.startsWith('graph') || text.startsWith('sequenceDiagram')) {
-            mermaidBlocks.push ? mermaidBlocks.push(block) : (mermaidBlocks = [block]);
+            mermaidBlocks.push(block);
           }
         });
       }
 
+      // Convert code blocks to mermaid divs and collect for rendering
+      const divsToRender = [];
       mermaidBlocks.forEach((block, index) => {
         const pre = block.parentElement;
+        // Skip if already converted to mermaid div
+        if (pre.classList.contains('mermaid') || pre.querySelector('svg')) {
+          return;
+        }
         const container = document.createElement('div');
         container.className = 'mermaid';
-        container.id = 'mermaid-' + index;
+        container.id = 'mermaid-' + Date.now() + '-' + index;
         container.textContent = block.textContent;
         pre.replaceWith(container);
+        divsToRender.push(container);
       });
 
-      // Re-run mermaid on new elements
-      if (mermaidBlocks.length > 0) {
+      // Render only newly created divs (avoid re-rendering already rendered ones)
+      if (divsToRender.length > 0) {
         try {
-          await mermaid.run();
+          await mermaid.run({ nodes: divsToRender });
         } catch (e) {
           console.error('Mermaid rendering error:', e);
         }
