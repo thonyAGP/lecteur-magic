@@ -1,145 +1,137 @@
-﻿# ADH IDE 126 - Calcul solde initial WS
+﻿# ADH IDE 126 - Calcul solde initial WS
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_126.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Calcul solde initial WS |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 126 |
-| **Fichier XML** | Prg_126.xml |
-| **Description** | Calcul solde initial WS |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 12 |
+| **Description** | Calcul solde initial WS |
 | **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
 
-> **Note**: Ce programme est Prg_126.xml. L'ID XML (126) peut differer de la position IDE (126).
+### 2.2 Tables
 
----
 
-## 2. TABLES (7 tables - 0 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #50 | `cafil028_dat` | moyens_reglement_mor | R | 1x |
-| #77 | `cafil055_dat` | articles_________art | R | 2x |
-| #139 | `cafil117_dat` | moyens_reglement_mor | R | 1x |
-| #222 | `caisse_compcais_histo2` | comptage_caisse_histo | R | 1x |
-| #247 | `caisse_session_article` | histo_sessions_caisse_article | R | 1x |
-| #249 | `caisse_session_detail` | histo_sessions_caisse_detail | R | 2x |
-| #250 | `caisse_session_devise` | histo_sessions_caisse_devise | R | 2x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (12)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P.i. societe | ALPHA | - |
-| P2 | P.i. devise locale | ALPHA | - |
-| P3 | P.i. session | NUMERIC | - |
-| P4 | P.o. solde initial | NUMERIC | - |
-| P5 | P.o. solde initial monnaie | NUMERIC | - |
-| P6 | P.o. solde initial produits | NUMERIC | - |
-| P7 | P.o. solde initial cartes | NUMERIC | - |
-| P8 | P.o. solde initial cheques | NUMERIC | - |
-| P9 | P.o. solde initial od | NUMERIC | - |
-| P10 | P.o. nbre devise initial | NUMERIC | - |
-| P11 | P.i. UNI/BI | ALPHA | - |
+### 2.4 Algorigramme
+
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
+
+### 2.5 Expressions cles
+
+
+
+### 2.6 Variables importantes
+
+
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 4. VARIABLES PRINCIPALES
+<!-- TAB:Cartographie -->
 
-### 4.1 Variables de travail (W0/V0)
+## CARTOGRAPHIE APPLICATIVE
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
+### 3.1 Chaine d'appels depuis Main
 
-### 4.2 Variables globales (VG)
+```mermaid
+graph LR
+    M[1 Main]
+    T[126 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
+### 3.2 Callers directs
 
-> Total: 142 variables mappees
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
 
----
+### 3.3 Callees
 
-## 5. EXPRESSIONS (58 total, 35 decodees)
+```mermaid
+graph LR
+    T[126 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `'F'` | `'F'` |
-| 3 | `'F'` | `'F'` |
-| 4 | `{0,18}` | `{0,18}` |
-| 5 | `{0,19}` | `{0,19}` |
-| 6 | `NOT({0,12})` | `NOT({0,12})` |
-| 7 | `{0,20}` | `{0,20}` |
-| 8 | `{0,12}` | `{0,12}` |
-| 9 | `{0,21}` | `{0,21}` |
-| 10 | `{0,22}` | `{0,22}` |
-| 11 | `{0,23}` | `{0,23}` |
-| 12 | `{0,24}` | `{0,24}` |
-| 1 | `{1,11}<>'B'` | `{1,11}<>'B'` |
-| 2 | `{1,11}='B'` | `{1,11}='B'` |
-| 1 | `{2,1}` | `{2,1}` |
-| 2 | `{32768,1}` | `VG.USER` |
-| 3 | `{2,3}-1` | `{2,3}-1` |
-| 4 | `'F'` | `'F'` |
-| 5 | `'F'` | `'F'` |
-| 6 | `{0,2}` | `P.i. session` |
-| 7 | `{0,4}` | `P.o. solde initial monnaie` |
-| 8 | `'O'` | `'O'` |
-| 9 | `'I'` | `'I'` |
-| 10 | `'K'` | `'K'` |
-| 11 | `{0,13}<>0 AND {0,5}` | `{0,13}<>0 AND P.o. solde initial produits` |
-| 1 | `{2,1}` | `{2,1}` |
-| 2 | `'O'` | `'O'` |
-| 3 | `0` | `0` |
-| 4 | `{32768,1}` | `VG.USER` |
-| 5 | `{2,3}-1` | `{2,3}-1` |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 6. STATISTIQUES
-
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 7 (0 W / 7 R) |
-| Parametres | 12 |
-| Variables locales | 12 |
-| Expressions | 58 |
-| Expressions 100% decodees | 35 (60%) |
-
----
-
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*

@@ -1,112 +1,137 @@
-﻿# ADH IDE 203 - Lecture autocom
+﻿# ADH IDE 203 - Lecture autocom
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_202.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Lecture autocom |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 203 |
-| **Fichier XML** | Prg_202.xml |
-| **Description** | Lecture autocom |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 7 |
+| **Description** | Lecture autocom |
 | **Module** | ADH |
-| **Dossier IDE** | Telephone |
 
-> **Note**: Ce programme est Prg_202.xml. L'ID XML (202) peut differer de la position IDE (203).
+### 2.2 Tables
 
----
 
-## 2. TABLES (1 tables - 0 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #80 | `cafil058_dat` | codes_autocom____aut | R | 1x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (7)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | PI societe | ALPHA | - |
-| P2 | PI compte | NUMERIC | - |
-| P3 | PI filiation | NUMERIC | - |
-| P4 | PO code | NUMERIC | - |
-| P5 | PO ligne | NUMERIC | - |
-| P6 | PO poste | NUMERIC | - |
-| P7 | PO Existe à P | LOGICAL | - |
+### 2.4 Algorigramme
 
----
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-## 4. VARIABLES PRINCIPALES
+### 2.5 Expressions cles
 
-### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
 
-### 4.2 Variables globales (VG)
+### 2.6 Variables importantes
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
 
-> Total: 132 variables mappees
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 5. EXPRESSIONS (7 total, 4 decodees)
+<!-- TAB:Cartographie -->
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,1}` | `PI compte` |
-| 2 | `{0,2}` | `PI filiation` |
-| 3 | `{0,3}` | `PO code` |
-| 4 | `'P'` | `'P'` |
-| 5 | `{0,11}` | `{0,11}` |
-| 6 | `{0,12}` | `{0,12}` |
-| 7 | `{0,13}` | `{0,13}` |
+## CARTOGRAPHIE APPLICATIVE
+
+### 3.1 Chaine d'appels depuis Main
+
+```mermaid
+graph LR
+    M[1 Main]
+    T[203 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
+
+### 3.2 Callers directs
+
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
+
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[203 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 6. STATISTIQUES
-
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 1 (0 W /  R) |
-| Parametres | 7 |
-| Variables locales | 7 |
-| Expressions | 7 |
-| Expressions 100% decodees | 4 (57%) |
-
----
-
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*

@@ -1,142 +1,137 @@
-﻿# ADH IDE 150 - Print comptage WS
+﻿# ADH IDE 150 - Print comptage WS
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_150.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Print comptage WS |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 150 |
-| **Fichier XML** | Prg_150.xml |
-| **Description** | Print comptage WS |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 5 |
+| **Description** | Print comptage WS |
 | **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
 
-> **Note**: Ce programme est Prg_150.xml. L'ID XML (150) peut differer de la position IDE (150).
+### 2.2 Tables
 
----
 
-## 2. TABLES (4 tables - 0 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #69 | `cafil047_dat` | initialisation___ini | R | 1x |
-| #491 | `%club_user%_caisse_solde_par_mop` | soldes_par_mop | R | 4x |
-| #492 | `caisse_tabrecap` | edition_tableau_recap | R | 2x |
-| #493 | `%club_user%_caisse_ticket` | edition_ticket | R | 2x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (5)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param societe | ALPHA | - |
-| P2 | Param Devise locale | ALPHA | - |
-| P3 | Param Masque | ALPHA | - |
-| P4 | Param quand | ALPHA | - |
-| P5 | Param chrono session | NUMERIC | - |
-| P6 | W0 en-tête ? | ALPHA | - |
-| P7 | W0 fin tâche | ALPHA | - |
-| P8 | W0 copies | NUMERIC | - |
+### 2.4 Algorigramme
 
----
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-## 4. VARIABLES PRINCIPALES
+### 2.5 Expressions cles
 
-### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
-| `{0,-102}` | W0 en-tête ? | ALPHA | - |
-| `{0,-101}` | W0 fin tâche | ALPHA | - |
-| `{0,-100}` | W0 copies | NUMERIC | - |
 
-### 4.2 Variables globales (VG)
+### 2.6 Variables importantes
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
 
-> Total: 134 variables mappees
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 5. EXPRESSIONS (72 total, 60 decodees)
+<!-- TAB:Cartographie -->
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `35` | `35` |
-| 2 | `SetCrsr (2)` | `SetCrsr (2)` |
-| 3 | `SetCrsr (1)` | `SetCrsr (1)` |
-| 4 | `GetParam ('CURRENTPRINTERNUM')=1` | `GetParam ('CURRENTPRINTERNUM')=1` |
-| 5 | `GetParam ('CURRENTPRINTERNUM')=9` | `GetParam ('CURRENTPRINTERNUM')=9` |
-| 6 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `Counter (0)>=GetParam ('NUMBERCOPIES')` | `Counter (0)>=GetParam ('NUMBERCOPIES')` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `Date ()` | `Date ()` |
-| 3 | `IF ({2,4}='O','Ouverture de la','Fermeture de la')&' '&'S...` | `IF ({2,4}='O','Ouverture de la','Fermeture de la')&' '&'S...` |
-| 4 | `{2,3}` | `{2,3}` |
-| 5 | `{32768,2}` | `VG.Retour Chariot` |
-| 6 | `Date ()` | `Date ()` |
-| 7 | `Time ()` | `Time ()` |
-| 8 | `GetParam ('VI_CLUB')` | `GetParam ('VI_CLUB')` |
-| 9 | `GetParam ('VI_NAME')` | `GetParam ('VI_NAME')` |
-| 10 | `GetParam ('VI_ADR1')` | `GetParam ('VI_ADR1')` |
-| 11 | `GetParam ('VI_ADR2')` | `GetParam ('VI_ADR2')` |
-| 12 | `GetParam ('VI_ZIPC')` | `GetParam ('VI_ZIPC')` |
-| 13 | `GetParam ('VI_PHON')` | `GetParam ('VI_PHON')` |
-| 14 | `GetParam ('VI_FAXN')` | `GetParam ('VI_FAXN')` |
-| 15 | `GetParam ('VI_MAIL')` | `GetParam ('VI_MAIL')` |
-| 16 | `GetParam ('VI_SIRE')` | `GetParam ('VI_SIRE')` |
-| 17 | `GetParam ('VI_VATN')` | `GetParam ('VI_VATN')` |
-| 18 | `INIGet ('[MAGIC_LOGICAL_NAMES]preview')='O'` | `INIGet ('[MAGIC_LOGICAL_NAMES]preview')='O'` |
-| 19 | `GetParam ('GM_ADHN')` | `GetParam ('GM_ADHN')` |
-| 20 | `GetParam ('GM_ACCN')` | `GetParam ('GM_ACCN')` |
-| 21 | `0` | `0` |
-| 22 | `{0,10}+{0,6}` | `{0,10}+W0 fin tâche` |
-| 23 | `{0,2}<>'OD' AND {0,2}<>'DEV'` | `Param Masque<>'OD' AND Param Masque<>'DEV'` |
+## CARTOGRAPHIE APPLICATIVE
 
----
+### 3.1 Chaine d'appels depuis Main
 
-## 6. STATISTIQUES
+```mermaid
+graph LR
+    M[1 Main]
+    T[150 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 4 (0 W / 4 R) |
-| Parametres | 5 |
-| Variables locales | 8 |
-| Expressions | 72 |
-| Expressions 100% decodees | 60 (83%) |
+### 3.2 Callers directs
+
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
+
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[150 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*

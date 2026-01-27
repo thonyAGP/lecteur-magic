@@ -1,141 +1,137 @@
-﻿# ADH IDE 30 - Read histo Fus_Sep_Det
+﻿# ADH IDE 30 - Read histo Fus_Sep_Det
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_30.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Read histo Fus_Sep_Det |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 30 |
-| **Fichier XML** | Prg_30.xml |
-| **Description** | Read histo Fus_Sep_Det |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 8 |
+| **Description** | Read histo Fus_Sep_Det |
 | **Module** | ADH |
-| **Dossier IDE** | Changement Compte |
 
-> **Note**: Ce programme est Prg_30.xml. L'ID XML (30) peut differer de la position IDE (30).
+### 2.2 Tables
 
----
 
-## 2. TABLES (5 tables - 2 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 2x |
-| #343 | `histo_fus_sep_saisie` | histo_fusionseparation_saisie | **W** | 2x |
-| #23 | `cafil001_dat` | reseau_cloture___rec | R | 4x |
-| #340 | `histo_fus_sep` | histo_fusionseparation | R | 1x |
-| #341 | `histo_fus_sep_detail` | histo_fusionseparation_detail | R | 1x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (8)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | i type F/E | ALPHA | - |
-| P2 | i societe | ALPHA | - |
-| P3 | i chrono reprise | NUMERIC | - |
-| P4 | i position reprise | ALPHA | - |
-| P5 | i taskNumber | NUMERIC | - |
-| P6 | i compte reference | NUMERIC | - |
-| P7 | o toDo | LOGICAL | - |
-| P8 | o etat reseau | ALPHA | - |
-| P9 | exist | LOGICAL | - |
+### 2.4 Algorigramme
 
----
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-## 4. VARIABLES PRINCIPALES
+### 2.5 Expressions cles
 
-### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
 
-### 4.2 Variables globales (VG)
+### 2.6 Variables importantes
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
 
-> Total: 136 variables mappees
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 5. EXPRESSIONS (52 total, 36 decodees)
+<!-- TAB:Cartographie -->
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 2 | `{0,3}` | `i position reprise` |
-| 3 | `{0,4}` | `i taskNumber` |
-| 4 | `{0,5}` | `i compte reference` |
-| 5 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 6 | `{0,9}` | `{0,9}` |
-| 7 | `{0,7}` | `o etat reseau` |
-| 8 | `{0,4}='1F' AND {0,5}=10` | `i taskNumber='1F' AND i compte reference=10` |
-| 9 | `{0,4}='1F' AND {0,5}=20` | `i taskNumber='1F' AND i compte reference=20` |
-| 10 | `{0,4}='1F' AND {0,5}=30` | `i taskNumber='1F' AND i compte reference=30` |
-| 11 | `{0,4}='3E' AND {0,5}=50` | `i taskNumber='3E' AND i compte reference=50` |
-| 12 | `{0,4}='3E' AND {0,5}=60` | `i taskNumber='3E' AND i compte reference=60` |
-| 13 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 14 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `{32768,79}` | `VG.Numéro pseudo terminal` |
-| 3 | `'T'` | `'T'` |
-| 4 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 5 | `{0,1}` | `i societe` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `0` | `0` |
-| 3 | `'T'` | `'T'` |
-| 4 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 5 | `{0,1}` | `i societe` |
-| 6 | `GetHostName()` | `GetHostName()` |
-| 1 | `{2,2}` | `{2,2}` |
-| 2 | `{2,6}` | `{2,6}` |
-| 3 | `{0,4}` | `i taskNumber` |
-| 4 | `''` | `''` |
-| 1 | `{1,1}='F'` | `{1,1}='F'` |
+## CARTOGRAPHIE APPLICATIVE
 
----
+### 3.1 Chaine d'appels depuis Main
 
-## 6. STATISTIQUES
+```mermaid
+graph LR
+    M[1 Main]
+    T[30 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 5 (2 W / 3 R) |
-| Parametres | 8 |
-| Variables locales | 9 |
-| Expressions | 52 |
-| Expressions 100% decodees | 36 (69%) |
+### 3.2 Callers directs
+
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
+
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[30 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*
