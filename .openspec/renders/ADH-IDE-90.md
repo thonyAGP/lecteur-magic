@@ -1,183 +1,175 @@
-﻿# ADH IDE 90 - Edition Facture Tva(Compta&Ve)
+﻿# ADH IDE 90 - Edition Facture Tva(Compta&Ve)
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_90.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 90 |
-| **Fichier XML** | Prg_90.xml |
-| **Description** | Edition Facture Tva(Compta&Ve) |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 12 |
-| **Module** | ADH |
-| **Dossier IDE** | Factures |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_90.xml. L'ID XML (90) peut differer de la position IDE (90).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Edition Facture Tva(Compta&Ve) |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-90.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (8 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #27 | `cafil005_dat` | donnees_village__dvi | R | 1x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | R | 1x |
-| #372 | `pv_budget_dat` | pv_budget | R | 1x |
-| #744 | `pv_lieux_vente` | pv_lieux_vente | R | 1x |
-| #866 | `maj_appli_tpe` | maj_appli_tpe | R | 1x |
-| #867 | `log_maj_tpe` | log_maj_tpe | R | 2x |
-| #869 | `detail_import_boutique` | Detail_Import_Boutique | R | 1x |
-| #932 | `taxe_add_param` | taxe_add_param | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 90 |
+| **Description** | Edition Facture Tva(Compta&Ve) |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (12)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 27 | donnees_village__dvi | `cafil005_dat` | R | 1x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | L | 1x |
+| 372 | pv_budget | `pv_budget_dat` | L | 1x |
+| 744 | pv_lieux_vente | `pv_lieux_vente` | R | 1x |
+| 866 | maj_appli_tpe | `maj_appli_tpe` | L | 1x |
+| 867 | log_maj_tpe | `log_maj_tpe` | R | 2x |
+| 869 | Detail_Import_Boutique | `detail_import_boutique` | L | 1x |
+| 932 | taxe_add_param | `taxe_add_param` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,5}` | - |
+| 2 | `IF(Trim({32768,22})='','N12.2Z',{32768,22})` | - |
+| 3 | `INIPut('EmbedFonts=N','FALSE'LOG)` | - |
+| 4 | `INIPut('CompressPDF =Y','FALSE'LOG)` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 4 expressions (affichees: 4)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 142 variables mappees
 
----
-
-## 5. EXPRESSIONS (39 total, 11 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,5}` | `P.Service` |
-| 2 | `IF(Trim({32768,22})='','N12.2Z',{32768,22})` | `IF(Trim(VG.MASQUE MONTANT)='','N12.2Z',VG.MASQUE MONTANT)` |
-| 3 | `INIPut('EmbedFonts=N','FALSE'LOG)` | `INIPut('EmbedFonts=N','FALSE'LOG)` |
-| 4 | `INIPut('CompressPDF =Y','FALSE'LOG)` | `INIPut('CompressPDF =Y','FALSE'LOG)` |
-| 1 | `Trim({1,4})` | `Trim({1,4})` |
-| 2 | `Trim({1,15})` | `Trim({1,15})` |
-| 3 | `Trim({1,23})` | `Trim({1,23})` |
-| 4 | `IF({1,10},Trim(Str({0,44},'10P0Z')),GetParam('GM_ADHN'))` | `IF({1,10},Trim(Str({0,44},'10P0Z')),GetParam('GM_ADHN'))` |
-| 5 | `IF({1,10},Trim(Str({0,39},'8P0')),GetParam('GM_ACCN'))` | `IF({1,10},Trim(Str({0,39},'8P0')),GetParam('GM_ACCN'))` |
-| 6 | `Trim({1,16})` | `Trim({1,16})` |
-| 7 | `Trim({1,14})` | `Trim({1,14})` |
-| 8 | `Trim({1,17})` | `Trim({1,17})` |
-| 9 | `Trim({1,19})` | `Trim({1,19})` |
-| 10 | `'Facture N° '&Trim({1,40})&Trim(Str({1,5},'8P0'))&' du '&...` | `'Facture N° '&Trim({1,40})&Trim(Str({1,5},'8P0'))&' du '&...` |
-| 11 | `{1,1}` | `{1,1}` |
-| 12 | `{1,2}` | `{1,2}` |
-| 13 | `{1,3}` | `{1,3}` |
-| 14 | `CndRange(NOT({1,12}),Date())` | `CndRange(NOT({1,12}),Date())` |
-| 15 | `IF({1,10},Trim({0,45})&' '&Trim({0,46}),Trim({0,33})&' '&...` | `IF({1,10},Trim({0,45})&' '&Trim({0,46}),Trim({0,33})&' '&...` |
-| 16 | `{0,16}<>0` | `{0,16}<>0` |
-| 17 | `'Téléphone :'&Trim({1,27})&' - ''Fax :'&Trim({1,28})&' - ...` | `'Téléphone :'&Trim({1,27})&' - ''Fax :'&Trim({1,28})&' - ...` |
-| 18 | `NOT({1,7})` | `NOT({1,7})` |
-| 19 | `NOT({1,8})` | `NOT({1,8})` |
-| 20 | `{0,15}` | `{0,15}` |
-| 21 | `Counter(0)=1` | `Counter(0)=1` |
-| 22 | `CndRange(NOT({1,12}),IF({1,9},'TRUE'LOG,'FALSE'LOG))` | `CndRange(NOT({1,12}),IF({1,9},'TRUE'LOG,'FALSE'LOG))` |
-| 23 | `{0,25}<>'R'` | `{0,25}<>'R'` |
-| 24 | `{1,10}` | `{1,10}` |
-| 25 | `IF({1,10},{0,49},{0,37})` | `IF({1,10},{0,49},{0,37})` |
-| 26 | `{32768,22}` | `VG.MASQUE MONTANT` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 8 (0 W / 8 R) |
-| Parametres | 12 |
-| Variables locales | 12 |
-| Expressions | 39 |
-| Expressions 100% decodees | 11 (28%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 4 |
+| **Lignes logique** | 138 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N287[287 Solde Easy C]
+    N313[313 Easy Check O]
+    N283[283 Easy Check O]
+    N55[55 Easy Check O]
+    N66[66 Lancement So]
+    T[90 Edition Fact]
+    M --> N287
+    N287 --> N313
+    N313 --> N283
+    N283 --> N55
+    N55 --> N66
+    N66 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N287 fill:#f59e0b
+    style N313 fill:#f59e0b
+    style N283 fill:#f59e0b
+    style N55 fill:#f59e0b
+    style N66 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 8 |
-| Expressions | 39 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 89 | Factures (Tble Compta&Vent | 3 |
+| 54 | Factures_Check_Out | 2 |
+| 279 | Lancement Edition Facture | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[90 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:20 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:45 | **DATA POPULATED** - Tables, Callgraph (4 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

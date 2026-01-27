@@ -1,155 +1,170 @@
-﻿# ADH IDE 156 - Verif session caisse ouverte2
+﻿# ADH IDE 156 - Verif session caisse ouverte2
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_329.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 156 |
-| **Fichier XML** | Prg_329.xml |
-| **Description** | Verif session caisse ouverte2 |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 2 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_329.xml. L'ID XML (329) peut differer de la position IDE (156).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Verif session caisse ouverte2 |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-156.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (1 tables -  en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #249 | `caisse_session_detail` | histo_sessions_caisse_detail | **W** | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 156 |
+| **Description** | Verif session caisse ouverte2 |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (2)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `'I'` | - |
+| 2 | `'O'` | - |
+| 3 | `'F'` | - |
+| 4 | `Str({0,7},'3P0')` | - |
+| 5 | `Date()` | - |
+| 6 | `Trim({0,1})` | - |
+| 7 | `{0,2}` | - |
+| 8 | `NOT({0,22}) OR {0,21}` | - |
+| 9 | `'TRUE'LOG` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 9 expressions (affichees: 9)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 126 variables mappees
 
----
-
-## 5. EXPRESSIONS (9 total, 7 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 2 | `'I'` | `'I'` |
-| 3 | `'O'` | `'O'` |
-| 8 | `'F'` | `'F'` |
-| 1 | `Str({0,7},'3P0')` | `Str({0,7},'3P0')` |
-| 4 | `Date()` | `Date()` |
-| 5 | `Trim({0,1})` | `Trim(Po.Ouverture caisse possible?)` |
-| 6 | `{0,2}` | `e.Caisse ouverte aujourd'hui?` |
-| 9 | `NOT({0,22}) OR {0,21}` | `NOT({0,22}) OR {0,21}` |
-| 10 | `'TRUE'LOG` | `'TRUE'LOG` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 1 ( W / 0 R) |
-| Parametres | 2 |
-| Variables locales | 4 |
-| Expressions | 9 |
-| Expressions 100% decodees | 7 (78%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 28 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N163[163 Menu caisse ]
+    N121[121 Gestion cais]
+    N298[298 Gestion cais]
+    N1[1 Main Program]
+    N281[281 Fermeture Se]
+    T[156 Verif sessio]
+    N163 --> N121
+    N121 --> N298
+    N298 --> N1
+    N1 --> N281
+    N281 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N163 fill:#f59e0b
+    style N121 fill:#f59e0b
+    style N298 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N281 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 1 |
-| Expressions | 9 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 121 | Gestion caisse | 1 |
+| 122 | Ouverture caisse | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[156 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (9 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

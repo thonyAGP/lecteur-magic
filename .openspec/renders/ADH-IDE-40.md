@@ -1,195 +1,196 @@
-﻿# ADH IDE 40 - Comptes de depôt
+﻿# ADH IDE 40 - Comptes de depôt
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_40.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 40 |
-| **Fichier XML** | Prg_40.xml |
-| **Description** | Comptes de depôt |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 8 |
-| **Module** | ADH |
-| **Dossier IDE** | Depot |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_40.xml. L'ID XML (40) peut differer de la position IDE (40).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Comptes de depôt |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-40.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (8 tables - 6 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #41 | `cafil019_dat` | depot_objets_____doa | **W** | 5x |
-| #42 | `cafil020_dat` | depot_devises____dda | **W** | 2x |
-| #43 | `cafil021_dat` | solde_devises____sda | **W** | 4x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 2x |
-| #367 | `pmsprintparamdefault` | pms_print_param_default | **W** | 1x |
-| #456 | `taistart` | tai_demarrage | **W** | 3x |
-| #50 | `cafil028_dat` | moyens_reglement_mor | R | 1x |
-| #67 | `cafil045_dat` | tables___________tab | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 40 |
+| **Description** | Comptes de depôt |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (8)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | > societe | ALPHA | - |
-| P2 | > code adherent | NUMERIC | - |
-| P3 | > filiation | NUMERIC | - |
-| P4 | > devise locale | ALPHA | - |
-| P5 | > nb decimale | NUMERIC | - |
-| P6 | > masque montant | ALPHA | - |
-| P7 | > nom village | ALPHA | - |
-| P8 | > change uni/bi ? | ALPHA | - |
-| P9 | W0 reseau | ALPHA | - |
-| P10 | W0 fin de tache | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 41 | depot_objets_____doa | `cafil019_dat` | **W** | 5x |
+| 42 | depot_devises____dda | `cafil020_dat` | **W** | 2x |
+| 43 | solde_devises____sda | `cafil021_dat` | **W** | 4x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 2x |
+| 50 | moyens_reglement_mor | `cafil028_dat` | R | 1x |
+| 67 | tables___________tab | `cafil045_dat` | L | 1x |
+| 367 | pms_print_param_default | `pmsprintparamdefault` | **W** | 1x |
+| 456 | tai_demarrage | `taistart` | R | 1x |
+| 456 | tai_demarrage | `taistart` | **W** | 2x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 reseau | ALPHA | - |
-| W0 fin de tache | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,9}<>'R'` | - |
+| 2 | `'F'` | - |
+| 3 | `{0,10}='F'` | - |
+| 4 | `'C'` | - |
+| 5 | `{0,1}=''` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 5 expressions (affichees: 5)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 138 variables mappees
 
----
-
-## 5. EXPRESSIONS (237 total, 136 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,9}<>'R'` | `W0 fin de tache<>'R'` |
-| 2 | `'F'` | `'F'` |
-| 3 | `{0,10}='F'` | `{0,10}='F'` |
-| 4 | `'C'` | `'C'` |
-| 5 | `{0,1}=''` | `> code adherent=''` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{0,3}` | `> devise locale` |
-| 4 | `{1,9}='R'` | `{1,9}='R'` |
-| 5 | `{1,9}<>'R'` | `{1,9}<>'R'` |
-| 6 | `'R'` | `'R'` |
-| 1 | `Trim ({0,18})` | `Trim ({0,18})` |
-| 2 | `10` | `10` |
-| 3 | `'&Quitter'` | `'&Quitter'` |
-| 4 | `'I'` | `'I'` |
-| 5 | `{0,1}='S'` | `> code adherent='S'` |
-| 6 | `InStr ('SO',{0,1})>0` | `InStr ('SO',> code adherent)>0` |
-| 7 | `InStr ('SD',{0,1})>0` | `InStr ('SD',> code adherent)>0` |
-| 8 | `{0,1}='D' AND {0,7}='O'` | `> code adherent='D' AND > change uni/bi ?='O'` |
-| 9 | `{0,1}='O' AND {0,7}='O'` | `> code adherent='O' AND > change uni/bi ?='O'` |
-| 10 | `{0,3}='OD'` | `> devise locale='OD'` |
-| 11 | `{0,3}='DD' OR {0,3}='DP'` | `> devise locale='DD' OR > devise locale='DP'` |
-| 12 | `Left ({0,3},1)='D'` | `Left (> devise locale,1)='D'` |
-| 13 | `{0,3}='DD' OR {0,3}='DP'` | `> devise locale='DD' OR > devise locale='DP'` |
-| 14 | `{0,3}='DT'` | `> devise locale='DT'` |
-| 15 | `InStr ('AI',{0,2})>0` | `InStr ('AI',> filiation)>0` |
-| 16 | `{0,2}=''` | `> filiation=''` |
-| 17 | `Date ()` | `Date ()` |
-| 18 | `Time ()` | `Time ()` |
-| 19 | `{32768,1}` | `VG.USER` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 8 (6 W / 2 R) |
-| Parametres | 8 |
-| Variables locales | 10 |
-| Expressions | 237 |
-| Expressions 100% decodees | 136 (57%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 25 |
+| **Lignes logique** | 480 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[40 Comptes de d]
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 8 |
-| Expressions | 237 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 163 | Menu caisse GM - scroll | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[40 Programme]
+    C44[44 Appel progra]
+    T --> C44
+    C179[179 Get Printer]
+    T --> C179
+    C181[181 Set Listing ]
+    T --> C181
+    C43[43 Recuperation]
+    T --> C43
+    C183[183 Other Listin]
+    T --> C183
+    C263[263 Zoom modes d]
+    T --> C263
+    C39[39 Print extrai]
+    T --> C39
+    C172[172 Print Depot ]
+    T --> C172
+    style T fill:#58a6ff,color:#000
+    style C44 fill:#3fb950
+    style C179 fill:#3fb950
+    style C181 fill:#3fb950
+    style C43 fill:#3fb950
+    style C183 fill:#3fb950
+    style C263 fill:#3fb950
+    style C39 fill:#3fb950
+    style C172 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 44 | Appel programme | 3 |
+| 1 | 179 | Get Printer | 3 |
+| 1 | 181 | Set Listing Number | 3 |
+| 1 | 43 | Recuperation du titre | 2 |
+| 1 | 183 | Other Listing | 2 |
+| 1 | 263 | Zoom modes de paiement | 2 |
+| 1 | 39 | Print extrait ObjDevSce | 1 |
+| 1 | 172 | Print Depot Obj/Dev/Sce | 1 |
+| 1 | 180 | Printer choice | 1 |
+| 1 | 182 | Raz Current Printer | 1 |
+| 1 | 262 | Zoom  des types d'objets | 1 |
+| 1 | 266 | Zoom des all devises | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:44 | **DATA POPULATED** - Tables, Callgraph (5 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

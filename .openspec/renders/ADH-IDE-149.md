@@ -1,188 +1,176 @@
-﻿# ADH IDE 149 - Calcul stock produit WS
+﻿# ADH IDE 149 - Calcul stock produit WS
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_149.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 149 |
-| **Fichier XML** | Prg_149.xml |
-| **Description** | Calcul stock produit WS |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 4 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_149.xml. L'ID XML (149) peut differer de la position IDE (149).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Calcul stock produit WS |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-149.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (6 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #40 | `cafil018_dat` | comptable________cte | R | 1x |
-| #222 | `caisse_compcais_histo2` | comptage_caisse_histo | R | 1x |
-| #246 | `caisse_session` | histo_sessions_caisse | R | 1x |
-| #247 | `caisse_session_article` | histo_sessions_caisse_article | R | 1x |
-| #249 | `caisse_session_detail` | histo_sessions_caisse_detail | R | 1x |
-| #263 | `caisse_vente` | vente | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 149 |
+| **Description** | Calcul stock produit WS |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (4)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param societe | ALPHA | - |
-| P2 | Param date comptable | DATE | - |
-| P3 | Param Numero article | NUMERIC | - |
-| P4 | Param stock article | NUMERIC | - |
-| P5 | Session | NUMERIC | - |
-| P6 | Date debut session | DATE | - |
-| P7 | Heure debut session | TIME | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 40 | comptable________cte | `cafil018_dat` | R | 1x |
+| 222 | comptage_caisse_histo | `caisse_compcais_histo2` | R | 1x |
+| 246 | histo_sessions_caisse | `caisse_session` | R | 1x |
+| 247 | histo_sessions_caisse_article | `caisse_session_article` | L | 1x |
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | R | 1x |
+| 263 | vente | `caisse_vente` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `0` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 1 expressions (affichees: 1)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 132 variables mappees
 
----
-
-## 5. EXPRESSIONS (44 total, 18 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `0` | `0` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `{0,2}` | `Param Numero article` |
-| 3 | `{0,3}` | `Param stock article` |
-| 4 | `{0,4}` | `Session` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `'ART'` | `'ART'` |
-| 3 | `{1,5}` | `{1,5}` |
-| 4 | `{1,3}` | `{1,3}` |
-| 5 | `{0,2}` | `Param Numero article` |
-| 6 | `{0,7}=0` | `{0,7}=0` |
-| 7 | `{0,2}<{0,7}` | `Param Numero article<{0,7}` |
-| 8 | `{1,4}+{0,4}` | `{1,4}+Session` |
-| 9 | `{0,2}={0,7}` | `Param Numero article={0,7}` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `{1,5}` | `{1,5}` |
-| 3 | `{1,3}` | `{1,3}` |
-| 4 | `{1,4}+{0,5}` | `{1,4}+Date debut session` |
-| 5 | `{1,4}-{0,5}` | `{1,4}-Date debut session` |
-| 6 | `{0,3}` | `Param stock article` |
-| 7 | `{0,10}='E' AND {0,11}='P'` | `{0,10}='E' AND {0,11}='P'` |
-| 8 | `{0,10}='V' AND {0,11}='P'` | `{0,10}='V' AND {0,11}='P'` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `'O'` | `'O'` |
-| 3 | `{1,3}` | `{1,3}` |
-| 4 | `{1,2}` | `{1,2}` |
-| 5 | `{1,6}` | `{1,6}` |
-| 6 | `{32768,1}` | `VG.USER` |
-| 7 | `{0,6}*1000000+{0,7}>={1,6}*1000000+{1,7}` | `Heure debut session*1000000+{0,7}>={1,6}*1000000+{1,7}` |
-| 8 | `{1,4}-{0,8}` | `{1,4}-{0,8}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 6 (0 W / 6 R) |
-| Parametres | 4 |
-| Variables locales | 7 |
-| Expressions | 44 |
-| Expressions 100% decodees | 18 (41%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 6 |
+| **Lignes logique** | 88 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N242[242 Menu Choix S]
+    N163[163 Menu caisse ]
+    N299[299 Fermeture ca]
+    N298[298 Gestion cais]
+    N131[131 Fermeture ca]
+    T[149 Calcul stock]
+    M --> N242
+    N242 --> N163
+    N163 --> N299
+    N299 --> N298
+    N298 --> N131
+    N131 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N242 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N299 fill:#f59e0b
+    style N298 fill:#f59e0b
+    style N131 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 6 |
-| Expressions | 44 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 125 | Remise en caisse | 1 |
+| 237 | Transaction Nouv vente avec GP | 1 |
+| 238 | Transaction Nouv vente PMS-584 | 1 |
+| 239 | Transaction Nouv vente PMS-721 | 1 |
+| 240 | Transaction Nouv vente PMS-710 | 1 |
+| 300 | Saisie transaction 154 N.U | 1 |
+| 307 | Saisie transaction 154  N.U | 1 |
+| 310 | Saisie transaction Nouv vente | 1 |
+| 316 | Saisie transaction Nouv vente | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[149 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (1 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

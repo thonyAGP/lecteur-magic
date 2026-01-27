@@ -1,205 +1,157 @@
-﻿# ADH IDE 17 - Print C/O confirmation
+﻿# ADH IDE 17 - Print C/O confirmation
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_17.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 17 |
-| **Fichier XML** | Prg_17.xml |
-| **Description** | Print C/O confirmation |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 7 |
-| **Module** | ADH |
-| **Dossier IDE** | Brazil DataCatching |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_17.xml. L'ID XML (17) peut differer de la position IDE (17).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Print C/O confirmation |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-17.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (3 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 4x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | R | 3x |
-| #40 | `cafil018_dat` | comptable________cte | R | 3x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 17 |
+| **Description** | Print C/O confirmation |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (7)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 société | ALPHA | - |
-| P2 | P0 n° compte | NUMERIC | - |
-| P3 | P0 filiation | NUMERIC | - |
-| P4 | P0 masque montant | ALPHA | - |
-| P5 | P0 nom village | ALPHA | - |
-| P6 | P0 fictif | LOGICAL | - |
-| P7 | P0 date comptable | DATE | - |
-| P8 | W0 imprimante | NUMERIC | - |
-| P9 | W0 titre | ALPHA | - |
-| P10 | W0 nom adhérent | ALPHA | - |
-| P11 | W0 prénom adhérent | ALPHA | - |
-| P12 | W0 n° adhérent | NUMERIC | - |
-| P13 | W0 lettre contrôle | ALPHA | - |
-| P14 | W0 filiation | NUMERIC | - |
-| P15 | W0 masque extrait | ALPHA | - |
-| P16 | W0 langue parlée | ALPHA | - |
-| P17 | W0 devise locale | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 4x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | L | 3x |
+| 40 | comptable________cte | `cafil018_dat` | L | 3x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 imprimante | NUMERIC | - |
-| W0 titre | ALPHA | - |
-| W0 nom adhérent | ALPHA | - |
-| W0 prénom adhérent | ALPHA | - |
-| W0 n° adhérent | NUMERIC | - |
-| W0 lettre contrôle | ALPHA | - |
-| W0 filiation | NUMERIC | - |
-| W0 masque extrait | ALPHA | - |
-| W0 langue parlée | ALPHA | - |
-| W0 devise locale | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `SetCrsr (1)` | - |
+| 2 | `SetCrsr (2)` | - |
+| 3 | `Left ({0,4},Len (RTrim ({0,4}))-1)` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 3 expressions (affichees: 3)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 152 variables mappees
 
----
-
-## 5. EXPRESSIONS (93 total, 84 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetCrsr (1)` | `SetCrsr (1)` |
-| 2 | `SetCrsr (2)` | `SetCrsr (2)` |
-| 3 | `Left ({0,4},Len (RTrim ({0,4}))-1)` | `Left (P0 nom village,Len (RTrim (P0 nom village))-1)` |
-| 1 | `{0,8}` | `W0 titre` |
-| 2 | `{0,9}` | `W0 nom adhérent` |
-| 3 | `IF ({0,10}='H','Mr',IF ({0,10}='F','Me',''))` | `IF (W0 prénom adhérent='H','Mr',IF (W0 prénom adhérent='F...` |
-| 4 | `{0,5}` | `P0 fictif` |
-| 5 | `{0,6}` | `P0 date comptable` |
-| 6 | `{0,7}` | `W0 imprimante` |
-| 7 | `'F'` | `'F'` |
-| 8 | `{0,1}='F'` | `P0 n° compte='F'` |
-| 9 | `{0,11}` | `W0 n° adhérent` |
-| 1 | `GetParam ('LANGUAGE')='ENG'` | `GetParam ('LANGUAGE')='ENG'` |
-| 2 | `GetParam ('LANGUAGE')='FRE'` | `GetParam ('LANGUAGE')='FRE'` |
-| 3 | `GetParam ('LANGUAGE')='SPA'` | `GetParam ('LANGUAGE')='SPA'` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `SetCrsr (1)` | `SetCrsr (1)` |
-| 3 | `SetCrsr (2)` | `SetCrsr (2)` |
-| 4 | `{2,1}` | `{2,1}` |
-| 5 | `{2,2}` | `{2,2}` |
-| 6 | `{0,10}+{0,20}` | `W0 prénom adhérent+{0,20}` |
-| 7 | `{0,12}` | `W0 lettre contrôle` |
-| 8 | `{0,14}` | `W0 masque extrait` |
-| 9 | `Date ()` | `Date ()` |
-| 10 | `Time ()` | `Time ()` |
-| 11 | `INIGet ('[MAGIC_LOGICAL_NAMES]preview')='O'` | `INIGet ('[MAGIC_LOGICAL_NAMES]preview')='O'` |
-| 12 | `GetParam ('VI_CLUB')` | `GetParam ('VI_CLUB')` |
-| 13 | `GetParam ('VI_NAME')` | `GetParam ('VI_NAME')` |
-| 14 | `GetParam ('VI_ADR1')` | `GetParam ('VI_ADR1')` |
-| 15 | `GetParam ('VI_ADR2')` | `GetParam ('VI_ADR2')` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 3 (0 W / 3 R) |
-| Parametres | 7 |
-| Variables locales | 17 |
-| Expressions | 93 |
-| Expressions 100% decodees | 84 (90%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 6 |
+| **Lignes logique** | 192 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N7[7 Menu Data Ca]
+    T[17 Print CO con]
+    M --> N
+    N --> N
+    N --> N
+    N --> T
+    style M fill:#8b5cf6,color:#fff
+    style N7 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 3 |
-| Expressions | 93 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 7 | Menu Data Catching | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[17 Programme]
+    C21[21 Recupere dev]
+    T --> C21
+    style T fill:#58a6ff,color:#000
+    style C21 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 21 | Recupere devise local | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:43 | **DATA POPULATED** - Tables, Callgraph (3 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

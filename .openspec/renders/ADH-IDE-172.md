@@ -1,196 +1,172 @@
-﻿# ADH IDE 172 - Print Depot Obj/Dev/Sce
+﻿# ADH IDE 172 - Print Depot Obj/Dev/Sce
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_171.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 172 |
-| **Fichier XML** | Prg_171.xml |
-| **Description** | Print Depot Obj/Dev/Sce |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 11 |
-| **Module** | ADH |
-| **Dossier IDE** | Operations GM |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_171.xml. L'ID XML (171) peut differer de la position IDE (172).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Print Depot Obj/Dev/Sce |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-172.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (6 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 9x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | R | 8x |
-| #41 | `cafil019_dat` | depot_objets_____doa | R | 26x |
-| #42 | `cafil020_dat` | depot_devises____dda | R | 7x |
-| #43 | `cafil021_dat` | solde_devises____sda | R | 6x |
-| #456 | `taistart` | tai_demarrage | R | 7x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 172 |
+| **Description** | Print Depot Obj/Dev/Sce |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (11)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 societe | ALPHA | - |
-| P2 | P0 code adherent | NUMERIC | - |
-| P3 | P0 filiation | NUMERIC | - |
-| P4 | P0 date session | DATE | - |
-| P5 | P0 heure session | TIME | - |
-| P6 | P0 nom village | ALPHA | - |
-| P7 | P0 user | ALPHA | - |
-| P8 | P0 existe objet | ALPHA | - |
-| P9 | P0 existe devise | ALPHA | - |
-| P10 | P0 existe scelle | ALPHA | - |
-| P11 | P0 Code scelle | ALPHA | - |
-| P12 | W0 nbre d'edition | NUMERIC | - |
-| P13 | W0 fin tâche | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 9x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | L | 8x |
+| 41 | depot_objets_____doa | `cafil019_dat` | R | 26x |
+| 42 | depot_devises____dda | `cafil020_dat` | R | 7x |
+| 43 | solde_devises____sda | `cafil021_dat` | L | 6x |
+| 456 | tai_demarrage | `taistart` | R | 7x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 nbre d'edition | NUMERIC | - |
-| W0 fin tâche | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `SetCrsr (1)` | - |
+| 2 | `SetCrsr (2)` | - |
+| 3 | `1` | - |
+| 4 | `GetParam ('CURRENTPRINTERNUM')=1` | - |
+| 5 | `GetParam ('CURRENTPRINTERNUM')=4` | - |
+| 6 | `GetParam ('CURRENTPRINTERNUM')=5` | - |
+| 7 | `GetParam ('CURRENTPRINTERNUM')=8` | - |
+| 8 | `GetParam ('CURRENTPRINTERNUM')=9` | - |
+| 9 | `'TRUE'LOG` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 9 expressions (affichees: 9)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 144 variables mappees
 
----
-
-## 5. EXPRESSIONS (530 total, 274 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetCrsr (1)` | `SetCrsr (1)` |
-| 2 | `SetCrsr (2)` | `SetCrsr (2)` |
-| 3 | `1` | `1` |
-| 4 | `GetParam ('CURRENTPRINTERNUM')=1` | `GetParam ('CURRENTPRINTERNUM')=1` |
-| 5 | `GetParam ('CURRENTPRINTERNUM')=4` | `GetParam ('CURRENTPRINTERNUM')=4` |
-| 6 | `GetParam ('CURRENTPRINTERNUM')=5` | `GetParam ('CURRENTPRINTERNUM')=5` |
-| 7 | `GetParam ('CURRENTPRINTERNUM')=8` | `GetParam ('CURRENTPRINTERNUM')=8` |
-| 8 | `GetParam ('CURRENTPRINTERNUM')=9` | `GetParam ('CURRENTPRINTERNUM')=9` |
-| 9 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `Counter (0)>=GetParam ('NUMBERCOPIES')` | `Counter (0)>=GetParam ('NUMBERCOPIES')` |
-| 2 | `SetParam ('CURRENTPAGENUMBER',0)` | `SetParam ('CURRENTPAGENUMBER',0)` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `{2,8}='O' AND {0,4}` | `{2,8}='O' AND P0 heure session` |
-| 3 | `{2,8}='O' AND {0,5}` | `{2,8}='O' AND P0 nom village` |
-| 4 | `{2,10}='O'` | `{2,10}='O'` |
-| 5 | `{2,9}='O'` | `{2,9}='O'` |
-| 6 | `GetParam ('VI_CLUB')` | `GetParam ('VI_CLUB')` |
-| 7 | `GetParam ('VI_NAME')` | `GetParam ('VI_NAME')` |
-| 8 | `GetParam ('VI_ADR1')` | `GetParam ('VI_ADR1')` |
-| 9 | `GetParam ('VI_ADR2')` | `GetParam ('VI_ADR2')` |
-| 10 | `GetParam ('VI_ZIPC')` | `GetParam ('VI_ZIPC')` |
-| 11 | `GetParam ('VI_PHON')` | `GetParam ('VI_PHON')` |
-| 12 | `GetParam ('VI_FAXN')` | `GetParam ('VI_FAXN')` |
-| 13 | `GetParam ('VI_MAIL')` | `GetParam ('VI_MAIL')` |
-| 14 | `GetParam ('VI_SIRE')` | `GetParam ('VI_SIRE')` |
-| 15 | `GetParam ('VI_VATN')` | `GetParam ('VI_VATN')` |
-| 16 | `Date ()` | `Date ()` |
-| 17 | `Time ()` | `Time ()` |
-| 18 | `{32768,2}` | `VG.Retour Chariot` |
-| 19 | `GetParam ('GM_ADHN')` | `GetParam ('GM_ADHN')` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 6 (0 W / 6 R) |
-| Parametres | 11 |
-| Variables locales | 13 |
-| Expressions | 530 |
-| Expressions 100% decodees | 274 (52%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 63 |
+| **Lignes logique** | 972 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N0[0 Garantie sur]
+    N40[40 Comptes de d]
+    N1[1 Main Program]
+    N163[163 Menu caisse ]
+    T[172 Print Depot ]
+    N0 --> N40
+    N40 --> N1
+    N1 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N0 fill:#f59e0b
+    style N40 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 6 |
-| Expressions | 530 |
-| Complexite | Eleve |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 0 | Garantie sur compte PMS-584 | 4 |
+| 40 | Comptes de depôt | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[172 Programme]
+    C182[182 Raz Current ]
+    T --> C182
+    style T fill:#58a6ff,color:#000
+    style C182 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 182 | Raz Current Printer | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:22 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:48 | **DATA POPULATED** - Tables, Callgraph (9 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

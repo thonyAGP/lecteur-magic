@@ -1,153 +1,185 @@
-﻿# ADH IDE 43 - Recuperation du titre
+﻿# ADH IDE 43 - Recuperation du titre
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_43.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 43 |
-| **Fichier XML** | Prg_43.xml |
-| **Description** | Recuperation du titre |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 3 |
-| **Module** | ADH |
-| **Dossier IDE** | Divers |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_43.xml. L'ID XML (43) peut differer de la position IDE (43).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Recuperation du titre |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-43.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (1 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #719 | `arc_bartransacdet` | arc_transac_detail_bar | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 43 |
+| **Description** | Recuperation du titre |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (3)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | > code ecran | NUMERIC | - |
-| P2 | < nom ecran | ALPHA | - |
-| P3 | > type prog (CA si vide) | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 719 | arc_transac_detail_bar | `arc_bartransacdet` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `GetParam ('CODELANGUE')` | - |
+| 2 | `{0,1}` | - |
+| 3 | `IF ({0,3}='','CA',{0,3})` | - |
+| 4 | `Trim ({0,7})&' - '&Trim ({0,8})` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 4 expressions (affichees: 4)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 124 variables mappees
 
----
-
-## 5. EXPRESSIONS (4 total, 2 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `GetParam ('CODELANGUE')` | `GetParam ('CODELANGUE')` |
-| 2 | `{0,1}` | `< nom ecran` |
-| 3 | `IF ({0,3}='','CA',{0,3})` | `IF ({0,3}='','CA',{0,3})` |
-| 4 | `Trim ({0,7})&' - '&Trim ({0,8})` | `Trim ({0,7})&' - '&Trim ({0,8})` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 1 (0 W /  R) |
-| Parametres | 3 |
-| Variables locales | 3 |
-| Expressions | 4 |
-| Expressions 100% decodees | 2 (50%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 13 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N0[0 Transaction ]
+    N0[0 Garantie sur]
+    N0[0 Transferts]
+    N0[0 Transaction ]
+    N0[0 Transaction ]
+    T[43 Recuperation]
+    M --> N0
+    N0 --> N0
+    N0 --> N0
+    N0 --> N0
+    N0 --> N0
+    N0 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 1 |
-| Expressions | 4 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 119 | Affichage sessions | 7 |
+| 25 | Change GM | 4 |
+| 173 | Gestion forfait TAI LOCAL | 4 |
+| 293 | Bi  Change GM Achat | 4 |
+| 294 | Bi  Change GM Vente | 4 |
+| 193 | Solde compte fin sejour | 3 |
+| 0 | Garantie sur compte PMS-584 | 2 |
+| 28 | Fusion | 2 |
+| 40 | Comptes de depôt | 2 |
+| 111 | Garantie sur compte | 2 |
+| 112 | Garantie sur compte PMS-584 | 2 |
+| 120 | Saisie contenu caisse | 2 |
+| 123 | Apport coffre | 2 |
+| 163 | Menu caisse GM - scroll | 2 |
+| 170 | Messagerie | 2 |
+| 209 | Affectation code autocom | 2 |
+| 217 | Menu telephone | 2 |
+| 272 | Zoom modes de paiement | 2 |
+| 288 | Garantie sur compte | 2 |
+| 0 | Transaction Nouv vente PMS-584 | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[43 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:44 | **DATA POPULATED** - Tables, Callgraph (4 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

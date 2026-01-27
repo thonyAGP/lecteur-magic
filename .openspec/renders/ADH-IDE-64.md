@@ -1,217 +1,220 @@
-﻿# ADH IDE 64 - Solde Easy Check Out
+﻿# ADH IDE 64 - Solde Easy Check Out
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_64.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 64 |
-| **Fichier XML** | Prg_64.xml |
-| **Description** | Solde Easy Check Out |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 5 |
-| **Module** | ADH |
-| **Dossier IDE** | Easy Check Out |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_64.xml. L'ID XML (64) peut differer de la position IDE (64).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Solde Easy Check Out |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-64.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (22 tables - 14 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #39 | `cafil017_dat` | depot_garantie___dga | **W** | 2x |
-| #40 | `cafil018_dat` | comptable________cte | **W** | 3x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 2x |
-| #48 | `cafil026_dat` | lignes_de_solde__sld | **W** | 1x |
-| #53 | `cafil031_dat` | ligne_telephone__lgn | **W** | 1x |
-| #68 | `cafil046_dat` | compteurs________cpt | **W** | 4x |
-| #75 | `cafil053_dat` | commande_autocom_cot | **W** | 1x |
-| #80 | `cafil058_dat` | codes_autocom____aut | **W** | 2x |
-| #87 | `cafil065_dat` | sda_telephone____sda | **W** | 4x |
-| #136 | `cafil114_dat` | fichier_echanges | **W** | 2x |
-| #151 | `cafil129_dat` | nb_code__poste | **W** | 2x |
-| #312 | `ezcard` | ez_card | **W** | 1x |
-| #911 | `log_booker` | log_booker | **W** | 1x |
-| #934 | `selection_enregistrement_div` | selection enregistrement diver | **W** | 1x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 2x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | R | 1x |
-| #66 | `cafil044_dat` | imputations______imp | R | 2x |
-| #69 | `cafil047_dat` | initialisation___ini | R | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #78 | `cafil056_dat` | param__telephone_tel | R | 2x |
-| #91 | `cafil069_dat` | garantie_________gar | R | 1x |
-| #285 | `email` | email | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 64 |
+| **Description** | Solde Easy Check Out |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (5)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | L | 1x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | L | 1x |
+| 39 | depot_garantie___dga | `cafil017_dat` | L | 2x |
+| 40 | comptable________cte | `cafil018_dat` | R | 1x |
+| 40 | comptable________cte | `cafil018_dat` | **W** | 2x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 2x |
+| 48 | lignes_de_solde__sld | `cafil026_dat` | **W** | 1x |
+| 53 | ligne_telephone__lgn | `cafil031_dat` | **W** | 1x |
+| 66 | imputations______imp | `cafil044_dat` | L | 2x |
+| 68 | compteurs________cpt | `cafil046_dat` | **W** | 4x |
+| 69 | initialisation___ini | `cafil047_dat` | L | 1x |
+| 70 | date_comptable___dat | `cafil048_dat` | L | 1x |
+| 75 | commande_autocom_cot | `cafil053_dat` | **W** | 1x |
+| 78 | param__telephone_tel | `cafil056_dat` | L | 1x |
+| 78 | param__telephone_tel | `cafil056_dat` | R | 1x |
+| 80 | codes_autocom____aut | `cafil058_dat` | L | 1x |
+| 80 | codes_autocom____aut | `cafil058_dat` | **W** | 1x |
+| 87 | sda_telephone____sda | `cafil065_dat` | L | 2x |
+| 87 | sda_telephone____sda | `cafil065_dat` | **W** | 2x |
+| 91 | garantie_________gar | `cafil069_dat` | L | 1x |
+| 136 | fichier_echanges | `cafil114_dat` | **W** | 2x |
+| 151 | nb_code__poste | `cafil129_dat` | **W** | 2x |
+| 285 | email | `email` | L | 1x |
+| 312 | ez_card | `ezcard` | **W** | 1x |
+| 911 | log_booker | `log_booker` | **W** | 1x |
+| 934 | selection enregistrement diver | `selection_enregistrement_div` | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v.Transaction Validée | LOGICAL | - |
-| v.Message Erreur | ALPHA | - |
-| v.Id_Dossier_Pms | ALPHA | - |
-| v.Date_Solde | DATE | - |
-| v.Heure-Solde | TIME | - |
-| v.NomFact_PDF_OD | ALPHA | - |
-| v.NomFact_PDF_Autres | ALPHA | - |
-| v.Ligne_Solde | LOGICAL | - |
-| v.MajExtrait | LOGICAL | - |
-| v.MajCompte | LOGICAL | - |
-| v.MajTel | NUMERIC | - |
-| v.NbCard | NUMERIC | - |
-| v.Fact | LOGICAL | - |
-| v.Evoi_mail | LOGICAL | - |
-| v.Num dossier Axis | ALPHA | - |
-| v.Num Autorisation | ALPHA | - |
-| v.MOP | ALPHA | - |
-| v.Solde du compte | NUMERIC | - |
-| v.MailAtachedFiles | ALPHA | - |
-| v.NomFichierPDF | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,6}` | - |
+| 2 | `{0,7}` | - |
+| 3 | `{0,8}` | - |
+| 4 | `{0,40}` | - |
+| 5 | `Trim({0,11})&Trim({0,12})<>''` | - |
+| 6 | `'00/00/0000'DATE` | - |
+| 7 | `{0,1}` | - |
+| 8 | `({32768,43} OR {32768,94}) AND NOT({0,5})` | - |
+| 9 | `{0,5}` | - |
+| 10 | `({32768,43} OR {32768,94}) AND {0,56}<0` | - |
+| 11 | `{32768,23}` | - |
+| 12 | `{32768,94} AND NOT({32768,23})` | - |
+| 13 | `'S'` | - |
+| 14 | `IF(Trim({0,12})<>'','A'&Trim({0,12}),{0,11})` | - |
+| 15 | `Date()` | - |
+| 16 | `Time()` | - |
+| 17 | `Trim({0,36})<>'' AND Trim({0,57})<>''` | - |
+| 18 | `'TRUE'LOG` | - |
+| 19 | `'I'` | - |
+| 20 | `{0,3}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 43 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 172 variables mappees
 
----
-
-## 5. EXPRESSIONS (262 total, 159 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,6}` | `v.Message Erreur` |
-| 2 | `{0,7}` | `v.Id_Dossier_Pms` |
-| 3 | `{0,8}` | `v.Date_Solde` |
-| 4 | `{0,40}` | `{0,40}` |
-| 5 | `Trim({0,11})&Trim({0,12})<>''` | `Trim(v.NomFact_PDF_Autres)&Trim(v.Ligne_Solde)<>''` |
-| 6 | `'00/00/0000'DATE` | `'00/00/0000'DATE` |
-| 7 | `{0,1}` | `P.i.Clause Where` |
-| 8 | `({32768,43} OR {32768,94}) AND NOT({0,5})` | `(VG.VG_TPE_V2.00 OR VG.Gestion Garantie API CM) AND NOT(v...` |
-| 9 | `{0,5}` | `v.Transaction Validée` |
-| 10 | `({32768,43} OR {32768,94}) AND {0,56}<0` | `(VG.VG_TPE_V2.00 OR VG.Gestion Garantie API CM) AND {0,56}<0` |
-| 43 | `{32768,23}` | `VG.PROJ.INTERF.TPE ACTIF` |
-| 44 | `{32768,94} AND NOT({32768,23})` | `VG.Gestion Garantie API CM AND NOT(VG.PROJ.INTERF.TPE ACTIF)` |
-| 13 | `'S'` | `'S'` |
-| 14 | `IF(Trim({0,12})<>'','A'&Trim({0,12}),{0,11})` | `IF(Trim(v.Ligne_Solde)<>'','A'&Trim(v.Ligne_Solde),v.NomF...` |
-| 15 | `Date()` | `Date()` |
-| 16 | `Time()` | `Time()` |
-| 17 | `Trim({0,36})<>'' AND Trim({0,57})<>''` | `Trim({0,36})<>'' AND Trim({0,57})<>''` |
-| 18 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 19 | `'I'` | `'I'` |
-| 20 | `{0,3}` | `P.i.Num Compte Test` |
-| 21 | `INIPut('EmbedFonts=N','FALSE'LOG)` | `INIPut('EmbedFonts=N','FALSE'LOG)` |
-| 22 | `INIPut('CompressPDF=N','FALSE'LOG)` | `INIPut('CompressPDF=N','FALSE'LOG)` |
-| 23 | `{32768,76} AND NOT {0,3}` | `VG.VG Edit Extrait Co V1.00 AND NOT P.i.Num Compte Test` |
-| 24 | `IF({0,3},'TRUE'LOG,'FALSE'LOG)` | `IF(P.i.Num Compte Test,'TRUE'LOG,'FALSE'LOG)` |
-| 25 | `IF({0,3},Translate('%club_exportdata%')&'Easy_Check_Out\'...` | `IF(P.i.Num Compte Test,Translate('%club_exportdata%')&'Ea...` |
-| 26 | `'EXTCOMPTE_'&DStr(Date(),'YYYYMMDD')&'_'&TStr(Time(),'HHM...` | `'EXTCOMPTE_'&DStr(Date(),'YYYYMMDD')&'_'&TStr(Time(),'HHM...` |
-| 27 | `IF({0,3},'E','P')` | `IF(P.i.Num Compte Test,'E','P')` |
-| 28 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 29 | `IF({0,3},Trim({0,58}),'')` | `IF(P.i.Num Compte Test,Trim({0,58}),'')` |
-| 30 | `IF({0,3},'EditionPDF','')` | `IF(P.i.Num Compte Test,'EditionPDF','')` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 22 (14 W / 8 R) |
-| Parametres | 5 |
-| Variables locales | 27 |
-| Expressions | 262 |
-| Expressions 100% decodees | 159 (61%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 26 |
+| **Lignes logique** | 626 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N55[55 Easy Check O]
+    N66[66 Lancement So]
+    N283[283 Easy Check O]
+    T[64 Solde Easy C]
+    M --> N55
+    N55 --> N66
+    N66 --> N283
+    N283 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N55 fill:#f59e0b
+    style N66 fill:#f59e0b
+    style N283 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 22 |
-| Expressions | 262 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 55 | Easy Check-Out === V2.00 | 1 |
+| 66 | Lancement Solde ECO | 1 |
+| 283 | Easy Check-Out === V2.00 | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[64 Programme]
+    C54[54 FacturesChec]
+    T --> C54
+    C65[65 Edition  Mai]
+    T --> C65
+    C71[71 Print extrai]
+    T --> C71
+    C179[179 Get Printer]
+    T --> C179
+    C181[181 Set Listing ]
+    T --> C181
+    style T fill:#58a6ff,color:#000
+    style C54 fill:#3fb950
+    style C65 fill:#3fb950
+    style C71 fill:#3fb950
+    style C179 fill:#3fb950
+    style C181 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 54 | Factures_Check_Out | 1 |
+| 1 | 65 | Edition & Mail Easy Check Out | 1 |
+| 1 | 71 | Print extrait compte /Date | 1 |
+| 1 | 179 | Get Printer | 1 |
+| 1 | 181 | Set Listing Number | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:19 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:45 | **DATA POPULATED** - Tables, Callgraph (43 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

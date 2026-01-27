@@ -1,186 +1,165 @@
-﻿# ADH IDE 208 - Print Reçu code autocom
+﻿# ADH IDE 208 - Print Reçu code autocom
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_207.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 208 |
-| **Fichier XML** | Prg_207.xml |
-| **Description** | Print Reçu code autocom |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 9 |
-| **Module** | ADH |
-| **Dossier IDE** | Telephone |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_207.xml. L'ID XML (207) peut differer de la position IDE (208).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Print Reçu code autocom |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-208.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (2 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 7x |
-| #80 | `cafil058_dat` | codes_autocom____aut | R | 7x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 208 |
+| **Description** | Print Reçu code autocom |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (9)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 societe | ALPHA | - |
-| P2 | P0 code adherent | NUMERIC | - |
-| P3 | P0 filiation | NUMERIC | - |
-| P4 | P0 nom village | ALPHA | - |
-| P5 | P0 longueur code | NUMERIC | - |
-| P6 | P0 code autocom | NUMERIC | - |
-| P7 | P0 n° ligne | NUMERIC | - |
-| P8 | P0 salle seminaire | ALPHA | - |
-| P9 | P0 telephone direct | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 7x |
+| 80 | codes_autocom____aut | `cafil058_dat` | L | 7x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `GetParam ('CURRENTPRINTERNUM')=1` | - |
+| 2 | `GetParam ('CURRENTPRINTERNUM')=4` | - |
+| 3 | `GetParam ('CURRENTPRINTERNUM')=6` | - |
+| 4 | `GetParam ('CURRENTPRINTERNUM')=8` | - |
+| 5 | `GetParam ('CURRENTPRINTERNUM')=9` | - |
+| 6 | `'TRUE'LOG` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 6 expressions (affichees: 6)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 136 variables mappees
 
----
-
-## 5. EXPRESSIONS (247 total, 157 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `GetParam ('CURRENTPRINTERNUM')=1` | `GetParam ('CURRENTPRINTERNUM')=1` |
-| 2 | `GetParam ('CURRENTPRINTERNUM')=4` | `GetParam ('CURRENTPRINTERNUM')=4` |
-| 3 | `GetParam ('CURRENTPRINTERNUM')=6` | `GetParam ('CURRENTPRINTERNUM')=6` |
-| 4 | `GetParam ('CURRENTPRINTERNUM')=8` | `GetParam ('CURRENTPRINTERNUM')=8` |
-| 5 | `GetParam ('CURRENTPRINTERNUM')=9` | `GetParam ('CURRENTPRINTERNUM')=9` |
-| 6 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `Counter (0)>=GetParam ('NUMBERCOPIES')` | `Counter (0)>=GetParam ('NUMBERCOPIES')` |
-| 2 | `SetParam ('CURRENTPAGENUMBER',0)` | `SetParam ('CURRENTPAGENUMBER',0)` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `MlsTrans ('CODE TELEPHONE')` | `MlsTrans ('CODE TELEPHONE')` |
-| 3 | `{2,1}` | `{2,1}` |
-| 4 | `{2,2}` | `{2,2}` |
-| 5 | `{2,3}` | `{2,3}` |
-| 6 | `{2,6}` | `{2,6}` |
-| 7 | `{0,2}` | `P0 filiation` |
-| 8 | `{0,3}` | `P0 nom village` |
-| 9 | `IF ({2,5}=4,'####P0',IF ({2,5}=5,'#####P0',IF ({2,5}=6,'#...` | `IF ({2,5}=4,'####P0',IF ({2,5}=5,'#####P0',IF ({2,5}=6,'#...` |
-| 10 | `IF ({2,7}<>0,'N° de ligne ','')` | `IF ({2,7}<>0,'N° de ligne ','')` |
-| 11 | `IF ({2,7}<>0,{2,7},0)` | `IF ({2,7}<>0,{2,7},0)` |
-| 12 | `IF ({2,7}<>0,'6P0','6Z')` | `IF ({2,7}<>0,'6P0','6Z')` |
-| 13 | `IF ({2,8}<>'','Salle       :','')` | `IF ({2,8}<>'','Salle       :','')` |
-| 14 | `IF ({2,8}<>'',{2,8},'')` | `IF ({2,8}<>'',{2,8},'')` |
-| 15 | `IF ({2,9}<>'','Tel. direct :','')` | `IF ({2,9}<>'','Tel. direct :','')` |
-| 16 | `IF ({2,9}<>'',{2,9},'')` | `IF ({2,9}<>'',{2,9},'')` |
-| 17 | `GetParam ('VI_CLUB')` | `GetParam ('VI_CLUB')` |
-| 18 | `GetParam ('VI_NAME')` | `GetParam ('VI_NAME')` |
-| 19 | `GetParam ('VI_ADR1')` | `GetParam ('VI_ADR1')` |
-| 20 | `GetParam ('VI_ADR2')` | `GetParam ('VI_ADR2')` |
-| 21 | `GetParam ('VI_ZIPC')` | `GetParam ('VI_ZIPC')` |
-| 22 | `GetParam ('VI_PHON')` | `GetParam ('VI_PHON')` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 2 (0 W / 2 R) |
-| Parametres | 9 |
-| Variables locales | 9 |
-| Expressions | 247 |
-| Expressions 100% decodees | 157 (64%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 13 |
+| **Lignes logique** | 177 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N209[209 Affectation ]
+    N217[217 Menu telepho]
+    N1[1 Main Program]
+    N163[163 Menu caisse ]
+    T[208 Print Reu co]
+    N209 --> N217
+    N217 --> N1
+    N1 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N209 fill:#f59e0b
+    style N217 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 2 |
-| Expressions | 247 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 209 | Affectation code autocom | 1 |
+| 217 | Menu telephone | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[208 Programme]
+    C182[182 Raz Current ]
+    T --> C182
+    style T fill:#58a6ff,color:#000
+    style C182 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 182 | Raz Current Printer | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:23 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:49 | **DATA POPULATED** - Tables, Callgraph (6 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

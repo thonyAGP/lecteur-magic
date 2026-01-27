@@ -1,165 +1,161 @@
-﻿# ADH IDE 158 - Menu Great Member
+﻿# ADH IDE 158 - Menu Great Member
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_157.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 158 |
-| **Fichier XML** | Prg_157.xml |
-| **Description** | Menu Great Member |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 6 |
-| **Module** | ADH |
-| **Dossier IDE** | Identification |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_157.xml. L'ID XML (157) peut differer de la position IDE (158).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Menu Great Member |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-158.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (0 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 158 |
+| **Description** | Menu Great Member |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (6)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P. Societe | ALPHA | - |
-| P2 | P. Code GM | NUMERIC | - |
-| P3 | P. Filiation | NUMERIC | - |
-| P4 | P. Masque montant | ALPHA | - |
-| P5 | P. devise locale | ALPHA | - |
-| P6 | P. nom village | ALPHA | - |
-| P7 | W0 choix action | ALPHA | - |
-| P8 | v.fin | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| - | Aucune table | - | - | - |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 choix action | ALPHA | - |
-| v.fin | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `Date ()` | - |
+| 2 | `{32768,2}` | - |
+| 3 | `''` | - |
+| 4 | `{0,7}='1'` | - |
+| 5 | `{0,8}` | - |
+| 6 | `'TRUE'LOG` | - |
+| 7 | `'99'` | - |
+| 8 | `Left (Trim ({0,4}),Len (Trim ({0,4}))-1)` | - |
+| 9 | `{0,7}='2'` | - |
+| 10 | `'A'` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 10 expressions (affichees: 10)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 134 variables mappees
 
----
-
-## 5. EXPRESSIONS (10 total, 9 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `Date ()` | `Date ()` |
-| 2 | `{32768,2}` | `VG.Retour Chariot` |
-| 3 | `''` | `''` |
-| 4 | `{0,7}='1'` | `v.fin='1'` |
-| 5 | `{0,8}` | `{0,8}` |
-| 6 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 7 | `'99'` | `'99'` |
-| 8 | `Left (Trim ({0,4}),Len (Trim ({0,4}))-1)` | `Left (Trim (P. devise locale),Len (Trim (P. devise locale...` |
-| 9 | `{0,7}='2'` | `v.fin='2'` |
-| 10 | `'A'` | `'A'` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 0 (0 W / 0 R) |
-| Parametres | 6 |
-| Variables locales | 8 |
-| Expressions | 10 |
-| Expressions 100% decodees | 9 (90%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 35 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[158 Menu Great M]
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 0 |
-| Expressions | 10 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 163 | Menu caisse GM - scroll | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[158 Programme]
+    C44[44 Appel progra]
+    T --> C44
+    style T fill:#58a6ff,color:#000
+    style C44 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 44 | Appel programme | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (10 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

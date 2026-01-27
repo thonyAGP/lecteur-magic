@@ -1,291 +1,301 @@
-﻿# ADH IDE 28 - Fusion
+﻿# ADH IDE 28 - Fusion
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_28.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 28 |
-| **Fichier XML** | Prg_28.xml |
-| **Description** | Fusion |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 11 |
-| **Module** | ADH |
-| **Dossier IDE** | Changement Compte |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_28.xml. L'ID XML (28) peut differer de la position IDE (28).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Fusion |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-- **Qui**: Operateur caisse / Receptionniste
-- **Quoi**: Fusionner plusieurs comptes adherents en un seul
-- **Pourquoi**: Permettre le regroupement de comptes (mariage, famille recomposee, facturation groupee)
-### 1.2 Flux Utilisateur
-1. Selection du compte cible (destinataire)
-2. Selection du ou des comptes sources a fusionner
-3. Affichage des membres et operations de chaque compte
-4. Verification des soldes et depots
-5. Confirmation de la fusion
-6. Transfert des operations vers compte cible
-7. Cloture des comptes sources
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-- Programme ECF partage - appele depuis PBP et PVE
-- Manipulation transactionnelle de plusieurs tables
-- Transfert operations entre comptes
-- 1526 expressions - logique complexe
-- Gestion coherence referentielle post-fusion
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
-
-### 1.5 Tags
-`compte``, ``fusion``, ``ecf-shared``, ``cross-project``, ``critical`
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (62 tables - 60 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #15 | `bartransacent` | transac_entete_bar | **W** | 3x |
-| #19 | `bldetail` | bl_detail | **W** | 3x |
-| #23 | `cafil001_dat` | reseau_cloture___rec | **W** | 5x |
-| #29 | `cafil007_dat` | voyages__________voy | **W** | 3x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | **W** | 8x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | **W** | 2x |
-| #32 | `cafil010_dat` | prestations | **W** | 3x |
-| #33 | `cafil011_dat` | prestations______pre | **W** | 3x |
-| #34 | `cafil012_dat` | hebergement______heb | **W** | 3x |
-| #35 | `cafil013_dat` | personnel_go______go | **W** | 2x |
-| #36 | `cafil014_dat` | client_gm | **W** | 1x |
-| #37 | `cafil015_dat` | commentaire_gm_________acc | **W** | 3x |
-| #38 | `cafil016_dat` | comptable_gratuite | **W** | 3x |
-| #39 | `cafil017_dat` | depot_garantie___dga | **W** | 6x |
-| #40 | `cafil018_dat` | comptable________cte | **W** | 3x |
-| #41 | `cafil019_dat` | depot_objets_____doa | **W** | 3x |
-| #42 | `cafil020_dat` | depot_devises____dda | **W** | 3x |
-| #43 | `cafil021_dat` | solde_devises____sda | **W** | 2x |
-| #44 | `cafil022_dat` | change___________chg | **W** | 2x |
-| #46 | `cafil024_dat` | mvt_prestation___mpr | **W** | 3x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 12x |
-| #48 | `cafil026_dat` | lignes_de_solde__sld | **W** | 3x |
-| #51 | `cafil029_dat` | fusion_eclatementfec | **W** | 4x |
-| #79 | `cafil057_dat` | gratuites________gra | **W** | 3x |
-| #80 | `cafil058_dat` | codes_autocom____aut | **W** | 2x |
-| #93 | `cafil071_dat` | vendeurs_________ven | **W** | 1x |
-| #123 | `cafil101_dat` | fichier_messagerie | **W** | 2x |
-| #131 | `cafil109_dat` | fichier_validation | **W** | 3x |
-| #137 | `cafil115_dat` | fichier_histotel | **W** | 3x |
-| #147 | `cafil125_dat` | change_vente_____chg | **W** | 2x |
-| #148 | `cafil126_dat` | lignes_de_solde__sld | **W** | 3x |
-| #167 | `cafil145_dat` | troncon__________tro | **W** | 1x |
-| #168 | `cafil146_dat` | heb_circuit______hci | **W** | 3x |
-| #171 | `cafil149_dat` | commentaire______com | **W** | 1x |
-| #263 | `caisse_vente` | vente | **W** | 2x |
-| #266 | `cccompta` | cc_comptable | **W** | 4x |
-| #268 | `ccpartyp` | cc_total_par_type | **W** | 3x |
-| #271 | `cctotal` | cc_total | **W** | 3x |
-| #272 | `cctypdet` | cc_type_detail | **W** | 3x |
-| #285 | `email` | email | **W** | 1x |
-| #298 | `excupar_dat` | participants_____par | **W** | 3x |
-| #301 | `excupta_dat` | details_partici__dpa | **W** | 3x |
-| #307 | `excuveo_dat` | vente_option_veo | **W** | 3x |
-| #309 | `excuvepe_dat` | vente____________vep | **W** | 4x |
-| #312 | `ezcard` | ez_card | **W** | 2x |
-| #340 | `histo_fus_sep` | histo_fusionseparation | **W** | 5x |
-| #343 | `histo_fus_sep_saisie` | histo_fusionseparation_saisie | **W** | 9x |
-| #358 | `moddossier_dat` | import_mod | **W** | 3x |
-| #366 | `pmsprintparam` | pms_print_param | **W** | 3x |
-| #382 | `pv_discountlist_dat` | pv_discount_reasons | **W** | 1x |
-| #463 | `verifpool_dat` | heure_de_passage | **W** | 3x |
-| #786 | `qualite_avant_reprise` | qualite_avant_reprise | **W** | 2x |
-| #804 | `valeur_credit_bar_defaut` | valeur_credit_bar_defaut | **W** | 1x |
-| #805 | `vente_par_moyen_paiement` | vente_par_moyen_paiement | **W** | 3x |
-| #807 | `plafond_lit` | plafond_lit | **W** | 3x |
-| #831 | `import_go_erreur_affection` | import_go_erreur_affection | **W** | 3x |
-| #834 | `tpe_par_terminal` | tpe_par_terminal | **W** | 3x |
-| #837 | `##%club_user%_%term%_pv_customer` | ##_pv_customer_dat | **W** | 3x |
-| #947 | `Table_947` | Unknown | **W** | 3x |
-| #1059 | `Table_1059` | Unknown | **W** | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #342 | `histo_fus_sep_log` | histo__fusionseparation_log | R | 2x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 28 |
+| **Description** | Fusion |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (11)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 societe | ALPHA | - |
-| P2 | P0 code GM | NUMERIC | - |
-| P3 | P0 filiation | NUMERIC | - |
-| P4 | P0 masque montant | ALPHA | - |
-| P5 | P0 solde | NUMERIC | - |
-| P6 | P0 date limite solde | DATE | - |
-| P7 | P0 nom village | ALPHA | - |
-| P8 | P0 Bilateral | ALPHA | - |
-| P9 | W0 imprimante | NUMERIC | - |
-| P10 | W0 reseau | ALPHA | - |
-| P11 | W0 validation | ALPHA | - |
-| P12 | W0 filiation libre | NUMERIC | - |
-| P13 | W0 type operation | ALPHA | - |
-| P14 | W0 date operation | DATE | - |
-| P15 | W0 heure operation | TIME | - |
-| P16 | W0 qualite compte | ALPHA | - |
-| P17 | W0 fin tache | ALPHA | - |
-| P18 | W0 Existe ecriture | LOGICAL | - |
-| P19 | W0 normal | LOGICAL | - |
-| P20 | W0 reprise | LOGICAL | - |
-| P21 | W0 chrono reprise | NUMERIC | - |
-| P22 | W0 toDo | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 15 | transac_entete_bar | `bartransacent` | **W** | 3x |
+| 19 | bl_detail | `bldetail` | **W** | 3x |
+| 23 | reseau_cloture___rec | `cafil001_dat` | R | 1x |
+| 23 | reseau_cloture___rec | `cafil001_dat` | **W** | 4x |
+| 29 | voyages__________voy | `cafil007_dat` | **W** | 3x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | L | 1x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 6x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | **W** | 1x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | R | 1x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | **W** | 1x |
+| 32 | prestations | `cafil010_dat` | R | 1x |
+| 32 | prestations | `cafil010_dat` | **W** | 2x |
+| 33 | prestations______pre | `cafil011_dat` | R | 1x |
+| 33 | prestations______pre | `cafil011_dat` | **W** | 2x |
+| 34 | hebergement______heb | `cafil012_dat` | **W** | 3x |
+| 35 | personnel_go______go | `cafil013_dat` | R | 1x |
+| 35 | personnel_go______go | `cafil013_dat` | **W** | 1x |
+| 36 | client_gm | `cafil014_dat` | **W** | 1x |
+| 37 | commentaire_gm_________acc | `cafil015_dat` | R | 1x |
+| 37 | commentaire_gm_________acc | `cafil015_dat` | **W** | 2x |
+| 38 | comptable_gratuite | `cafil016_dat` | **W** | 3x |
+| 39 | depot_garantie___dga | `cafil017_dat` | L | 3x |
+| 39 | depot_garantie___dga | `cafil017_dat` | R | 1x |
+| 39 | depot_garantie___dga | `cafil017_dat` | **W** | 2x |
+| 40 | comptable________cte | `cafil018_dat` | R | 1x |
+| 40 | comptable________cte | `cafil018_dat` | **W** | 2x |
+| 41 | depot_objets_____doa | `cafil019_dat` | **W** | 3x |
+| 42 | depot_devises____dda | `cafil020_dat` | **W** | 3x |
+| 43 | solde_devises____sda | `cafil021_dat` | **W** | 2x |
+| 44 | change___________chg | `cafil022_dat` | R | 1x |
+| 44 | change___________chg | `cafil022_dat` | **W** | 1x |
+| 46 | mvt_prestation___mpr | `cafil024_dat` | R | 1x |
+| 46 | mvt_prestation___mpr | `cafil024_dat` | **W** | 2x |
+| 47 | compte_gm________cgm | `cafil025_dat` | R | 1x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 11x |
+| 48 | lignes_de_solde__sld | `cafil026_dat` | **W** | 3x |
+| 51 | fusion_eclatementfec | `cafil029_dat` | R | 1x |
+| 51 | fusion_eclatementfec | `cafil029_dat` | **W** | 3x |
+| 70 | date_comptable___dat | `cafil048_dat` | R | 1x |
+| 79 | gratuites________gra | `cafil057_dat` | R | 1x |
+| 79 | gratuites________gra | `cafil057_dat` | **W** | 2x |
+| 80 | codes_autocom____aut | `cafil058_dat` | R | 1x |
+| 80 | codes_autocom____aut | `cafil058_dat` | **W** | 1x |
+| 93 | vendeurs_________ven | `cafil071_dat` | **W** | 1x |
+| 123 | fichier_messagerie | `cafil101_dat` | R | 1x |
+| 123 | fichier_messagerie | `cafil101_dat` | **W** | 1x |
+| 131 | fichier_validation | `cafil109_dat` | R | 1x |
+| 131 | fichier_validation | `cafil109_dat` | **W** | 2x |
+| 137 | fichier_histotel | `cafil115_dat` | R | 1x |
+| 137 | fichier_histotel | `cafil115_dat` | **W** | 2x |
+| 147 | change_vente_____chg | `cafil125_dat` | R | 1x |
+| 147 | change_vente_____chg | `cafil125_dat` | **W** | 1x |
+| 148 | lignes_de_solde__sld | `cafil126_dat` | **W** | 3x |
+| 167 | troncon__________tro | `cafil145_dat` | **W** | 1x |
+| 168 | heb_circuit______hci | `cafil146_dat` | **W** | 3x |
+| 171 | commentaire______com | `cafil149_dat` | **W** | 1x |
+| 263 | vente | `caisse_vente` | **W** | 2x |
+| 266 | cc_comptable | `cccompta` | **W** | 4x |
+| 268 | cc_total_par_type | `ccpartyp` | **W** | 3x |
+| 271 | cc_total | `cctotal` | **W** | 3x |
+| 272 | cc_type_detail | `cctypdet` | **W** | 3x |
+| 285 | email | `email` | **W** | 1x |
+| 298 | participants_____par | `excupar_dat` | **W** | 3x |
+| 301 | details_partici__dpa | `excupta_dat` | **W** | 3x |
+| 307 | vente_option_veo | `excuveo_dat` | **W** | 3x |
+| 309 | vente____________vep | `excuvepe_dat` | **W** | 4x |
+| 312 | ez_card | `ezcard` | R | 1x |
+| 312 | ez_card | `ezcard` | **W** | 1x |
+| 340 | histo_fusionseparation | `histo_fus_sep` | L | 1x |
+| 340 | histo_fusionseparation | `histo_fus_sep` | R | 2x |
+| 340 | histo_fusionseparation | `histo_fus_sep` | **W** | 2x |
+| 342 | histo__fusionseparation_log | `histo_fus_sep_log` | L | 1x |
+| 342 | histo__fusionseparation_log | `histo_fus_sep_log` | R | 1x |
+| 343 | histo_fusionseparation_saisie | `histo_fus_sep_saisie` | L | 6x |
+| 343 | histo_fusionseparation_saisie | `histo_fus_sep_saisie` | R | 2x |
+| 343 | histo_fusionseparation_saisie | `histo_fus_sep_saisie` | **W** | 1x |
+| 358 | import_mod | `moddossier_dat` | **W** | 3x |
+| 366 | pms_print_param | `pmsprintparam` | **W** | 3x |
+| 382 | pv_discount_reasons | `pv_discountlist_dat` | **W** | 1x |
+| 463 | heure_de_passage | `verifpool_dat` | **W** | 3x |
+| 786 | qualite_avant_reprise | `qualite_avant_reprise` | R | 1x |
+| 786 | qualite_avant_reprise | `qualite_avant_reprise` | **W** | 1x |
+| 804 | valeur_credit_bar_defaut | `valeur_credit_bar_defaut` | **W** | 1x |
+| 805 | vente_par_moyen_paiement | `vente_par_moyen_paiement` | R | 1x |
+| 805 | vente_par_moyen_paiement | `vente_par_moyen_paiement` | **W** | 2x |
+| 807 | plafond_lit | `plafond_lit` | R | 1x |
+| 807 | plafond_lit | `plafond_lit` | **W** | 2x |
+| 831 | import_go_erreur_affection | `import_go_erreur_affection` | R | 1x |
+| 831 | import_go_erreur_affection | `import_go_erreur_affection` | **W** | 2x |
+| 834 | tpe_par_terminal | `tpe_par_terminal` | R | 1x |
+| 834 | tpe_par_terminal | `tpe_par_terminal` | **W** | 2x |
+| 837 | ##_pv_customer_dat | `##%club_user%_%term%_pv_customer` | R | 1x |
+| 837 | ##_pv_customer_dat | `##%club_user%_%term%_pv_customer` | **W** | 2x |
+| 947 | Table_947 | - | **W** | 3x |
+| 1059 | Table_1059 | - | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 imprimante | NUMERIC | - |
-| W0 reseau | ALPHA | - |
-| W0 validation | ALPHA | - |
-| W0 filiation libre | NUMERIC | - |
-| W0 type operation | ALPHA | - |
-| W0 date operation | DATE | - |
-| W0 heure operation | TIME | - |
-| W0 qualite compte | ALPHA | - |
-| W0 fin tache | ALPHA | - |
-| W0 Existe ecriture | LOGICAL | - |
-| W0 normal | LOGICAL | - |
-| W0 reprise | LOGICAL | - |
-| W0 chrono reprise | NUMERIC | - |
-| W0 toDo | LOGICAL | - |
-| W0 Log | LOGICAL | - |
-| W0 chrono histo | NUMERIC | - |
-| W0 code LOG existe | LOGICAL | - |
-| W0 chrono du LOG | NUMERIC | - |
-| W0 reprise confirmee | NUMERIC | - |
-| W0 Compte garantie à conserver | NUMERIC | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,1}` | - |
+| 2 | `{0,13}<>'R'` | - |
+| 3 | `{0,14}='V'` | - |
+| 4 | `{0,14}<>'V'` | - |
+| 5 | `'F'` | - |
+| 6 | `{0,27}='F'` | - |
+| 7 | `{0,27}<>'F'` | - |
+| 8 | `'F'` | - |
+| 9 | `Date ()` | - |
+| 10 | `Time ()` | - |
+| 11 | `{0,2}` | - |
+| 12 | `{0,3}` | - |
+| 13 | `28` | - |
+| 14 | `{0,28}` | - |
+| 15 | `NOT ({0,28})` | - |
+| 16 | `''` | - |
+| 17 | `0` | - |
+| 18 | `'MERGE'` | - |
+| 19 | `'FALSE'LOG` | - |
+| 20 | `{0,30}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 81 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 190 variables mappees
 
----
-
-## 5. EXPRESSIONS (1526 total, 512 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,1}` | `P0 code GM` |
-| 2 | `{0,13}<>'R'` | `W0 validation<>'R'` |
-| 3 | `{0,14}='V'` | `W0 filiation libre='V'` |
-| 4 | `{0,14}<>'V'` | `W0 filiation libre<>'V'` |
-| 5 | `'F'` | `'F'` |
-| 6 | `{0,27}='F'` | `W0 code LOG existe='F'` |
-| 7 | `{0,27}<>'F'` | `W0 code LOG existe<>'F'` |
-| 8 | `'F'` | `'F'` |
-| 9 | `Date ()` | `Date ()` |
-| 10 | `Time ()` | `Time ()` |
-| 11 | `{0,2}` | `P0 filiation` |
-| 12 | `{0,3}` | `P0 masque montant` |
-| 13 | `28` | `28` |
-| 14 | `{0,28}` | `W0 chrono du LOG` |
-| 15 | `NOT ({0,28})` | `NOT (W0 chrono du LOG)` |
-| 16 | `''` | `''` |
-| 17 | `0` | `0` |
-| 18 | `'MERGE'` | `'MERGE'` |
-| 19 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 20 | `{0,30}` | `W0 Compte garantie à conserver` |
-| 21 | `{0,32}` | `W0 Garantie Club à conserver?` |
-| 22 | `0` | `0` |
-| 23 | `'1F'` | `'1F'` |
-| 24 | `'2T'` | `'2T'` |
-| 25 | `'3E'` | `'3E'` |
-| 26 | `10` | `10` |
-| 27 | `20` | `20` |
-| 28 | `30` | `30` |
-| 29 | `40` | `40` |
-| 30 | `50` | `50` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 62 (60 W / 2 R) |
-| Parametres | 11 |
-| Variables locales | 36 |
-| Expressions | 1526 |
-| Expressions 100% decodees | 512 (34%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 192 |
+| **Lignes logique** | 3494 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N37[37 Menu changem]
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[28 Fusion]
+    N37 --> N163
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N37 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 62 |
-| Expressions | 1526 |
-| Complexite | Eleve |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 37 | Menu changement compte | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[28 Programme]
+    C35[35 Write histoF]
+    T --> C35
+    C30[30 Read histo F]
+    T --> C30
+    C31[31 Write histoF]
+    T --> C31
+    C29[29 Write histo ]
+    T --> C29
+    C32[32 Write histoF]
+    T --> C32
+    C33[33 Delete histo]
+    T --> C33
+    C43[43 Recuperation]
+    T --> C43
+    C34[34 Read histoFu]
+    T --> C34
+    style T fill:#58a6ff,color:#000
+    style C35 fill:#3fb950
+    style C30 fill:#3fb950
+    style C31 fill:#3fb950
+    style C29 fill:#3fb950
+    style C32 fill:#3fb950
+    style C33 fill:#3fb950
+    style C43 fill:#3fb950
+    style C34 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 35 | Write histo_Fus_Sep_Log | 13 |
+| 1 | 30 | Read histo Fus_Sep_Det | 10 |
+| 1 | 31 | Write histo_Fus_Sep_Det | 10 |
+| 1 | 29 | Write histo Fus_Sep | 6 |
+| 1 | 32 | Write histo_Fus_Sep_Saisie | 4 |
+| 1 | 33 | Delete histo_Fus_Sep_Saisie | 2 |
+| 1 | 43 | Recuperation du titre | 2 |
+| 1 | 34 | Read histo_Fus_Sep_Log | 1 |
+| 1 | 36 | Print Separation ou fusion | 1 |
+| 1 | 179 | Get Printer | 1 |
+| 1 | 180 | Printer choice | 1 |
+| 1 | 181 | Set Listing Number | 1 |
+| 1 | 182 | Raz Current Printer | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:44 | **DATA POPULATED** - Tables, Callgraph (81 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

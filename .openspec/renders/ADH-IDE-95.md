@@ -1,182 +1,174 @@
-﻿# ADH IDE 95 - Facture - Sejour archive
+﻿# ADH IDE 95 - Facture - Sejour archive
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_95.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 95 |
-| **Fichier XML** | Prg_95.xml |
-| **Description** | Facture - Sejour archive |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 4 |
-| **Module** | ADH |
-| **Dossier IDE** | Factures |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_95.xml. L'ID XML (95) peut differer de la position IDE (95).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Facture - Sejour archive |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-95.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (6 tables - 2 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #868 | `affectation_gift_pass` | Affectation_Gift_Pass | **W** | 4x |
-| #870 | `rayons_boutique` | Rayons_Boutique | **W** | 2x |
-| #744 | `pv_lieux_vente` | pv_lieux_vente | R | 1x |
-| #746 | `version` | projet | R | 1x |
-| #756 | `cafil_country_iso` | Country_ISO | R | 2x |
-| #871 | `activite` | Activite | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 95 |
+| **Description** | Facture - Sejour archive |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (4)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 744 | pv_lieux_vente | `pv_lieux_vente` | L | 1x |
+| 746 | projet | `version` | L | 1x |
+| 756 | Country_ISO | `cafil_country_iso` | L | 2x |
+| 868 | Affectation_Gift_Pass | `affectation_gift_pass` | R | 1x |
+| 868 | Affectation_Gift_Pass | `affectation_gift_pass` | **W** | 3x |
+| 870 | Rayons_Boutique | `rayons_boutique` | **W** | 2x |
+| 871 | Activite | `activite` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| V.Lien Hebergement_Pro | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,1}` | - |
+| 2 | `{0,2}` | - |
+| 3 | `{0,3}` | - |
+| 4 | `{0,4}` | - |
+| 5 | `{0,8}` | - |
+| 6 | `{0,9}` | - |
+| 7 | `NOT({0,11})` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 7 expressions (affichees: 7)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 128 variables mappees
 
----
-
-## 5. EXPRESSIONS (106 total, 17 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,1}` | `P.i.Num compte` |
-| 2 | `{0,2}` | `P.i.Fliliation` |
-| 3 | `{0,3}` | `P.i.Date Purge` |
-| 4 | `{0,4}` | `V.Lien Hebergement_Pro` |
-| 5 | `{0,8}` | `{0,8}` |
-| 6 | `{0,9}` | `{0,9}` |
-| 7 | `NOT({0,11})` | `NOT({0,11})` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{1,3}` | `{1,3}` |
-| 4 | `{1,8}` | `{1,8}` |
-| 5 | `{1,9}` | `{1,9}` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{1,4}` | `{1,4}` |
-| 4 | `{0,23}` | `{0,23}` |
-| 5 | `{0,19}` | `{0,19}` |
-| 6 | `'COMPT'` | `'COMPT'` |
-| 7 | `{0,1}` | `P.i.Num compte` |
-| 8 | `{0,2}` | `P.i.Fliliation` |
-| 9 | `{0,3}` | `P.i.Date Purge` |
-| 10 | `{0,4}` | `V.Lien Hebergement_Pro` |
-| 11 | `{0,5}` | `{0,5}` |
-| 12 | `{0,8}` | `{0,8}` |
-| 13 | `{0,9}` | `{0,9}` |
-| 14 | `{0,10}` | `{0,10}` |
-| 15 | `{0,11}` | `{0,11}` |
-| 16 | `{0,12}` | `{0,12}` |
-| 17 | `{0,13}` | `{0,13}` |
-| 18 | `{0,14}` | `{0,14}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 6 (2 W / 4 R) |
-| Parametres | 4 |
-| Variables locales | 5 |
-| Expressions | 106 |
-| Expressions 100% decodees | 17 (16%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 6 |
+| **Lignes logique** | 261 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N190[190 Menu solde d]
+    N163[163 Menu caisse ]
+    N193[193 Solde compte]
+    N1[1 Main Program]
+    N174[174 VersementRet]
+    T[95 Facture   Se]
+    N190 --> N163
+    N163 --> N193
+    N193 --> N1
+    N1 --> N174
+    N174 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N190 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N193 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N174 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 6 |
-| Expressions | 106 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 89 | Factures (Tble Compta&Vent | 1 |
+| 97 | Factures (Tble Compta&Vent) V3 | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[95 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:20 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:46 | **DATA POPULATED** - Tables, Callgraph (7 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

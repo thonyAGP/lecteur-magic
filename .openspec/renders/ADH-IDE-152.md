@@ -1,164 +1,180 @@
-﻿# ADH IDE 152 - Recup Classe et Lib du MOP
+﻿# ADH IDE 152 - Recup Classe et Lib du MOP
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_152.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 152 |
-| **Fichier XML** | Prg_152.xml |
-| **Description** | Recup Classe et Lib du MOP |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 6 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_152.xml. L'ID XML (152) peut differer de la position IDE (152).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Recup Classe et Lib du MOP |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-152.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (3 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #50 | `cafil028_dat` | moyens_reglement_mor | R | 1x |
-| #89 | `cafil067_dat` | moyen_paiement___mop | R | 1x |
-| #140 | `cafil118_dat` | moyen_paiement___mop | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 152 |
+| **Description** | Recup Classe et Lib du MOP |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (6)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param societe | ALPHA | - |
-| P2 | Param MOP | ALPHA | - |
-| P3 | Param Classe MOP | ALPHA | - |
-| P4 | Param UNI/BI | ALPHA | - |
-| P5 | Param Libelle MOP | ALPHA | - |
-| P6 | Param existence MOP | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 50 | moyens_reglement_mor | `cafil028_dat` | R | 1x |
+| 89 | moyen_paiement___mop | `cafil067_dat` | L | 1x |
+| 140 | moyen_paiement___mop | `cafil118_dat` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,4}<>'B'` | - |
+| 2 | `{0,4}='B'` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 2 expressions (affichees: 2)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 130 variables mappees
 
----
-
-## 5. EXPRESSIONS (10 total, 6 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,4}<>'B'` | `Param Libelle MOP<>'B'` |
-| 2 | `{0,4}='B'` | `Param Libelle MOP='B'` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{0,3}` | `Param UNI/BI` |
-| 4 | `{0,4}` | `Param Libelle MOP` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{0,3}` | `Param UNI/BI` |
-| 4 | `{0,4}` | `Param Libelle MOP` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 3 (0 W / 3 R) |
-| Parametres | 6 |
-| Variables locales | 6 |
-| Expressions | 10 |
-| Expressions 100% decodees | 6 (60%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 3 |
+| **Lignes logique** | 29 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N316[316 Saisie trans]
+    N310[310 Saisie trans]
+    N298[298 Gestion cais]
+    N233[233 Appel Print ]
+    N299[299 Fermeture ca]
+    T[152 Recup Classe]
+    M --> N316
+    N316 --> N310
+    N310 --> N298
+    N298 --> N233
+    N233 --> N299
+    N299 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N316 fill:#f59e0b
+    style N310 fill:#f59e0b
+    style N298 fill:#f59e0b
+    style N233 fill:#f59e0b
+    style N299 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 3 |
-| Expressions | 10 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 234 |  Print ticket vente | 5 |
+| 235 |  Print ticket vente LEX | 5 |
+| 236 |  Print ticket vente PMS-584 | 5 |
+| 285 |  Print ticket vente LEX | 5 |
+| 323 |  Print ticket vente | 5 |
+| 237 | Transaction Nouv vente avec GP | 4 |
+| 238 | Transaction Nouv vente PMS-584 | 4 |
+| 239 | Transaction Nouv vente PMS-721 | 4 |
+| 240 | Transaction Nouv vente PMS-710 | 4 |
+| 307 | Saisie transaction 154  N.U | 4 |
+| 310 | Saisie transaction Nouv vente | 4 |
+| 316 | Saisie transaction Nouv vente | 4 |
+| 155 | Controle fermeture caisse WS | 3 |
+| 300 | Saisie transaction 154 N.U | 2 |
+| 306 | Print ticket vente/OD N.U | 2 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[152 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (2 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

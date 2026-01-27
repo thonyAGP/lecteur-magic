@@ -1,184 +1,180 @@
-﻿# ADH IDE 56 - Récap Trait Easy Check-Out
+﻿# ADH IDE 56 - Récap Trait Easy Check-Out
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_56.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 56 |
-| **Fichier XML** | Prg_56.xml |
-| **Description** | Récap Trait Easy Check-Out |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 0 |
-| **Module** | ADH |
-| **Dossier IDE** | Easy Check Out |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_56.xml. L'ID XML (56) peut differer de la position IDE (56).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Récap Trait Easy Check-Out |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-56.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (6 tables -  en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #934 | `selection_enregistrement_div` | selection enregistrement diver | **W** | 2x |
-| #34 | `cafil012_dat` | hebergement______heb | R | 2x |
-| #39 | `cafil017_dat` | depot_garantie___dga | R | 2x |
-| #47 | `cafil025_dat` | compte_gm________cgm | R | 2x |
-| #48 | `cafil026_dat` | lignes_de_solde__sld | R | 2x |
-| #372 | `pv_budget_dat` | pv_budget | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 56 |
+| **Description** | Récap Trait Easy Check-Out |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (0)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 34 | hebergement______heb | `cafil012_dat` | R | 2x |
+| 39 | depot_garantie___dga | `cafil017_dat` | L | 2x |
+| 47 | compte_gm________cgm | `cafil025_dat` | L | 2x |
+| 48 | lignes_de_solde__sld | `cafil026_dat` | L | 2x |
+| 372 | pv_budget | `pv_budget_dat` | L | 1x |
+| 934 | selection enregistrement diver | `selection_enregistrement_div` | L | 2x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v.Deja edité ? | LOGICAL | - |
-| v.Reponse | NUMERIC | - |
-| v.Erreurs seules | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `'Quitter'` | - |
+| 2 | `'Imprimer'` | - |
+| 3 | `Date()` | - |
+| 4 | `'C'` | - |
+| 5 | `{0,2}` | - |
+| 6 | `{0,3}` | - |
+| 7 | `'Z'` | - |
+| 8 | `IF({0,11}<>0,179,174)` | - |
+| 9 | `NOT {0,6}` | - |
+| 10 | `{0,29}` | - |
+| 11 | `{0,30}=6` | - |
+| 12 | `{32768,22}` | - |
+| 13 | `'FALSE'LOG` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 13 expressions (affichees: 13)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 128 variables mappees
 
----
-
-## 5. EXPRESSIONS (32 total, 19 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `'Quitter'` | `'Quitter'` |
-| 2 | `'Imprimer'` | `'Imprimer'` |
-| 3 | `Date()` | `Date()` |
-| 4 | `'C'` | `'C'` |
-| 5 | `{0,2}` | `v.Deja edité ?` |
-| 6 | `{0,3}` | `v.Reponse` |
-| 7 | `'Z'` | `'Z'` |
-| 8 | `IF({0,11}<>0,179,174)` | `IF({0,11}<>0,179,174)` |
-| 9 | `NOT {0,6}` | `NOT {0,6}` |
-| 10 | `{0,29}` | `{0,29}` |
-| 11 | `{0,30}=6` | `{0,30}=6` |
-| 12 | `{32768,22}` | `VG.MASQUE MONTANT` |
-| 13 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 1 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 2 | `Date()` | `Date()` |
-| 3 | `Translate('%club_exportdata%')&'Easy_Check_Out\EASY_CHECK...` | `Translate('%club_exportdata%')&'Easy_Check_Out\EASY_CHECK...` |
-| 4 | `'C'` | `'C'` |
-| 5 | `{0,2}` | `v.Deja edité ?` |
-| 6 | `{0,3}` | `v.Reponse` |
-| 7 | `'Z'` | `'Z'` |
-| 8 | `{32768,22}` | `VG.MASQUE MONTANT` |
-| 9 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 10 | `CndRange({1,31}='TRUE'LOG,'FALSE'LOG)` | `CndRange({1,31}='TRUE'LOG,'FALSE'LOG)` |
-| 11 | `NOT {0,6}` | `NOT {0,6}` |
-| 12 | `Trim({0,17})` | `Trim({0,17})` |
-| 13 | `Trim({0,22})` | `Trim({0,22})` |
-| 14 | `Date()` | `Date()` |
-| 15 | `{0,35}+{0,33}` | `{0,35}+{0,33}` |
-| 16 | `{0,36}+{0,33}` | `{0,36}+{0,33}` |
-| 17 | `{0,34}='VISA'` | `{0,34}='VISA'` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 6 ( W / 5 R) |
-| Parametres | 0 |
-| Variables locales | 5 |
-| Expressions | 32 |
-| Expressions 100% decodees | 19 (59%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 2 |
+| **Lignes logique** | 103 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N55[55 Easy Check O]
+    N63[63 Test Easy Ch]
+    N283[283 Easy Check O]
+    N313[313 Easy Check O]
+    T[56 Rcap Trait E]
+    M --> N55
+    N55 --> N63
+    N63 --> N283
+    N283 --> N313
+    N313 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N55 fill:#f59e0b
+    style N63 fill:#f59e0b
+    style N283 fill:#f59e0b
+    style N313 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 6 |
-| Expressions | 32 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 55 | Easy Check-Out === V2.00 | 1 |
+| 63 | Test Easy Check-Out Online | 1 |
+| 283 | Easy Check-Out === V2.00 | 1 |
+| 313 | Easy Check-Out === V2.00 | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[56 Programme]
+    C65[65 Edition  Mai]
+    T --> C65
+    style T fill:#58a6ff,color:#000
+    style C65 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 65 | Edition & Mail Easy Check Out | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:19 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:45 | **DATA POPULATED** - Tables, Callgraph (13 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

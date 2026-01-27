@@ -1,219 +1,216 @@
-﻿# ADH IDE 155 - Controle fermeture caisse WS
+﻿# ADH IDE 155 - Controle fermeture caisse WS
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_155.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 155 |
-| **Fichier XML** | Prg_155.xml |
-| **Description** | Controle fermeture caisse WS |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 19 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_155.xml. L'ID XML (155) peut differer de la position IDE (155).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Controle fermeture caisse WS |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-155.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (21 tables - 7 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #232 | `caisse_devise` | gestion_devise_session | **W** | 7x |
-| #241 | `caisse_pointage_apprem` | pointage_appro_remise | **W** | 18x |
-| #242 | `caisse_pointage_article` | pointage_article | **W** | 18x |
-| #243 | `caisse_pointage_devise` | pointage_devise | **W** | 22x |
-| #246 | `caisse_session` | histo_sessions_caisse | **W** | 19x |
-| #505 | `%club_user%_pv_cafil18_dat` | pv_comptable | **W** | 6x |
-| #510 | `%club_user%_pv_disctmp_dat` | pv_discounts | **W** | 1x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | R | 4x |
-| #40 | `cafil018_dat` | comptable________cte | R | 3x |
-| #44 | `cafil022_dat` | change___________chg | R | 1x |
-| #77 | `cafil055_dat` | articles_________art | R | 2x |
-| #90 | `cafil068_dat` | devises__________dev | R | 4x |
-| #147 | `cafil125_dat` | change_vente_____chg | R | 1x |
-| #197 | `caisse_artstock` | articles_en_stock | R | 2x |
-| #247 | `caisse_session_article` | histo_sessions_caisse_article | R | 2x |
-| #248 | `caisse_session_coffre2` | sessions_coffre2 | R | 5x |
-| #249 | `caisse_session_detail` | histo_sessions_caisse_detail | R | 25x |
-| #250 | `caisse_session_devise` | histo_sessions_caisse_devise | R | 11x |
-| #251 | `caisse_session_remise` | histo_sessions_caisse_remise | R | 1x |
-| #263 | `caisse_vente` | vente | R | 1x |
-| #697 | `droits` | droits_applications | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 155 |
+| **Description** | Controle fermeture caisse WS |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (19)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param K/T | ALPHA | - |
-| P2 | Param societe | ALPHA | - |
-| P3 | Param devise locale | ALPHA | - |
-| P4 | Param date comptable | DATE | - |
-| P5 | Param masque montant | ALPHA | - |
-| P6 | Param nombre decimale | NUMERIC | - |
-| P7 | Param chrono session | NUMERIC | - |
-| P8 | Param montant | NUMERIC | - |
-| P9 | Param montant monnaie | NUMERIC | - |
-| P10 | Param montant produits | NUMERIC | - |
-| P11 | Param montant cartes | NUMERIC | - |
-| P12 | Param montant cheques | NUMERIC | - |
-| P13 | Param montant od | NUMERIC | - |
-| P14 | Param nbre devise | NUMERIC | - |
-| P15 | Param UNI/BI | ALPHA | - |
-| P16 | p.i.Terminal coffre2 | NUMERIC | - |
-| P17 | Date debut session | DATE | - |
-| P18 | Time debut session | TIME | - |
-| P19 | V parametre 2 caisses | ALPHA | - |
-| P20 | v montant inter | NUMERIC | - |
-| P21 | v montant monnaie inter | NUMERIC | - |
-| P22 | v montant produit inter | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 31 | gm-complet_______gmc | `cafil009_dat` | R | 4x |
+| 40 | comptable________cte | `cafil018_dat` | L | 3x |
+| 44 | change___________chg | `cafil022_dat` | R | 1x |
+| 77 | articles_________art | `cafil055_dat` | L | 2x |
+| 90 | devises__________dev | `cafil068_dat` | R | 4x |
+| 147 | change_vente_____chg | `cafil125_dat` | R | 1x |
+| 197 | articles_en_stock | `caisse_artstock` | L | 2x |
+| 232 | gestion_devise_session | `caisse_devise` | R | 5x |
+| 232 | gestion_devise_session | `caisse_devise` | **W** | 2x |
+| 241 | pointage_appro_remise | `caisse_pointage_apprem` | L | 8x |
+| 241 | pointage_appro_remise | `caisse_pointage_apprem` | R | 2x |
+| 241 | pointage_appro_remise | `caisse_pointage_apprem` | **W** | 8x |
+| 242 | pointage_article | `caisse_pointage_article` | L | 4x |
+| 242 | pointage_article | `caisse_pointage_article` | R | 4x |
+| 242 | pointage_article | `caisse_pointage_article` | **W** | 10x |
+| 243 | pointage_devise | `caisse_pointage_devise` | L | 12x |
+| 243 | pointage_devise | `caisse_pointage_devise` | R | 4x |
+| 243 | pointage_devise | `caisse_pointage_devise` | **W** | 6x |
+| 246 | histo_sessions_caisse | `caisse_session` | R | 18x |
+| 246 | histo_sessions_caisse | `caisse_session` | **W** | 1x |
+| 247 | histo_sessions_caisse_article | `caisse_session_article` | L | 2x |
+| 248 | sessions_coffre2 | `caisse_session_coffre2` | L | 5x |
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | L | 2x |
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | R | 23x |
+| 250 | histo_sessions_caisse_devise | `caisse_session_devise` | L | 2x |
+| 250 | histo_sessions_caisse_devise | `caisse_session_devise` | R | 9x |
+| 251 | histo_sessions_caisse_remise | `caisse_session_remise` | R | 1x |
+| 263 | vente | `caisse_vente` | L | 1x |
+| 505 | pv_comptable | `%club_user%_pv_cafil18_dat` | L | 1x |
+| 505 | pv_comptable | `%club_user%_pv_cafil18_dat` | **W** | 5x |
+| 510 | pv_discounts | `%club_user%_pv_disctmp_dat` | **W** | 1x |
+| 697 | droits_applications | `droits` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v.Caisse COFFRE 2 ? | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,15}='B'` | - |
+| 2 | `{0,22}='O' AND ({0,18} AND NOT {0,19} OR {0,43}...` | - |
+| 3 | `{0,1}='K'` | - |
+| 4 | `{0,1}='T'` | - |
+| 5 | `{0,8}` | - |
+| 6 | `{0,9}` | - |
+| 7 | `{0,10}` | - |
+| 8 | `{32768,1}` | - |
+| 9 | `{0,7}` | - |
+| 10 | `'I'` | - |
+| 11 | `'O'` | - |
+| 12 | `IF({32768,78}, Val({0,41}, '3')={0,16}, {0,42}=...` | - |
+| 13 | `NOT {32768,78}` | - |
+| 14 | `{32768,78}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 14 expressions (affichees: 14)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 190 variables mappees
 
----
-
-## 5. EXPRESSIONS (1313 total, 758 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,15}='B'` | `p.i.Terminal coffre2='B'` |
-| 2 | `{0,22}='O' AND ({0,18} AND NOT {0,19} OR {0,43} AND {0,19})` | `v montant inter='O' AND (Param session ouverte VIL ? AND ...` |
-| 3 | `{0,1}='K'` | `Param societe='K'` |
-| 4 | `{0,1}='T'` | `Param societe='T'` |
-| 5 | `{0,8}` | `Param montant monnaie` |
-| 6 | `{0,9}` | `Param montant produits` |
-| 7 | `{0,10}` | `Param montant cartes` |
-| 8 | `{32768,1}` | `VG.USER` |
-| 9 | `{0,7}` | `Param montant` |
-| 10 | `'I'` | `'I'` |
-| 11 | `'O'` | `'O'` |
-| 12 | `IF({32768,78}, Val({0,41}, '3')={0,16}, {0,42}={0,17})` | `IF(VG.Hostname au lieu de Term, Val({0,41}, '3')=p.i.Host...` |
-| 13 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 14 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 1 | `'CAISSE'` | `'CAISSE'` |
-| 2 | `{0,2}` | `Param devise locale` |
-| 1 | `0` | `0` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `IF({1,32},{1,33},{1,7})` | `IF({1,32},{1,33},{1,7})` |
-| 3 | `'L'` | `'L'` |
-| 4 | `'I'` | `'I'` |
-| 5 | `{1,8}+{0,7}` | `{1,8}+Param montant` |
-| 6 | `{1,9}+{0,8}` | `{1,9}+Param montant monnaie` |
-| 7 | `{1,10}+{0,9}` | `{1,10}+Param montant produits` |
-| 8 | `{1,11}+{0,10}` | `{1,11}+Param montant cartes` |
-| 9 | `{1,12}+{0,11}` | `{1,12}+Param montant cheques` |
-| 10 | `{1,13}+{0,12}` | `{1,13}+Param montant od` |
-| 11 | `{1,14}+{0,13}` | `{1,14}+Param nbre devise` |
-| 12 | `{0,5}` | `Param nombre decimale` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 21 (7 W / 14 R) |
-| Parametres | 19 |
-| Variables locales | 36 |
-| Expressions | 1313 |
-| Expressions 100% decodees | 758 (58%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 147 |
+| **Lignes logique** | 3366 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N121[121 Gestion cais]
+    N131[131 Fermeture ca]
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    N281[281 Fermeture Se]
+    T[155 Controle fer]
+    N121 --> N131
+    N131 --> N163
+    N163 --> N1
+    N1 --> N281
+    N281 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N121 fill:#f59e0b
+    style N131 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N281 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 21 |
-| Expressions | 1313 |
-| Complexite | Eleve |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 131 | Fermeture caisse | 3 |
+| 298 | Gestion caisse 142 | 3 |
+| 299 | Fermeture caisse 144 | 3 |
+| 121 | Gestion caisse | 2 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[155 Programme]
+    C135[135 Generation t]
+    T --> C135
+    C142[142 Devise updat]
+    T --> C142
+    C152[152 Recup Classe]
+    T --> C152
+    style T fill:#58a6ff,color:#000
+    style C135 fill:#3fb950
+    style C142 fill:#3fb950
+    style C152 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 135 | Generation tableau recap WS | 13 |
+| 1 | 142 | Devise update session WS | 11 |
+| 1 | 152 | Recup Classe et Lib du MOP | 3 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (14 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

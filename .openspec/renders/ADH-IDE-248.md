@@ -1,199 +1,194 @@
-﻿# ADH IDE 248 - Choix PYR (plusieurs chambres)
+﻿# ADH IDE 248 - Choix PYR (plusieurs chambres)
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-26
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_244.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 248 |
-| **Fichier XML** | Prg_244.xml |
-| **Description** | Choix PYR (plusieurs chambres) |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 4 |
-| **Module** | ADH |
-| **Dossier IDE** | Ventes |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_244.xml. L'ID XML (244) peut differer de la position IDE (248).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Choix PYR (plusieurs chambres) |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-248.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (3 tables -  en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #34 | `cafil012_dat` | hebergement______heb | **W** | 2x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 1x |
-| #36 | `cafil014_dat` | client_gm | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 248 |
+| **Description** | Choix PYR (plusieurs chambres) |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (4)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | p.Societe | UNICODE | - |
-| P2 | p.Compte | NUMERIC | - |
-| P3 | p.Nb Chambres | NUMERIC | - |
-| P4 | p.PYR Finalisé | LOGICAL | - |
-| P5 | gmr_nom__30_ | UNICODE | - |
-| P6 | gmr_prenom__8_ | UNICODE | - |
-| P7 | gmr_debut_sejour | ALPHA | - |
-| P8 | gmr_fin_sejour | ALPHA | - |
-| P9 | heb_nom_logement | UNICODE | - |
-| P10 | heb_code_logement | UNICODE | - |
-| P11 | heb_filiation | NUMERIC | - |
-| P12 | v.gestion communicante | LOGICAL | - |
-| P13 | v.chambre communicante | UNICODE | - |
-| P14 | v.liste chambres | UNICODE | - |
-| P15 | v.erreur message | ALPHA | - |
-| P16 | v.nb chambres affectées | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 34 | hebergement______heb | `cafil012_dat` | R | 1x |
+| 34 | hebergement______heb | `cafil012_dat` | **W** | 1x |
+| 36 | client_gm | `cafil014_dat` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v.gestion communicante | LOGICAL | - |
-| v.chambre communicante | UNICODE | - |
-| v.liste chambres | UNICODE | - |
-| v.erreur message | ALPHA | - |
-| v.nb chambres affectées | NUMERIC | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `DVal({0,7},'YYYYMMDD')` | - |
+| 2 | `DVal({0,8},'YYYYMMDD')` | - |
+| 3 | `DVal({0,7},'YYYYMMDD')+1` | - |
+| 4 | `DVal({0,8},'YYYYMMDD')-1` | - |
+| 5 | `Date()` | - |
+| 6 | `Range(InStr({0,10},'+'),2,Len(Trim({0,10}))-1) ...` | - |
+| 7 | `Trim({0,14})=''` | - |
+| 8 | `Trim({0,9})&','&Trim({0,13})` | - |
+| 9 | `{0,12} AND Trim({0,14})=''` | - |
+| 10 | `{0,12} AND LastClicked()='heb_nom_logement'` | - |
+| 11 | `'FALSE'LOG` | - |
+| 12 | `''` | - |
+| 13 | `NOT({0,12}) OR NOT(Range(InStr({0,10},'+'),2,Le...` | - |
+| 14 | `Trim({0,15})` | - |
+| 15 | `Trim({0,15})<>''` | - |
+| 16 | `Trim(Str({0,16},'2'))&' '&MlsTrans('chambres af...` | - |
+| 17 | `{0,3}<>{0,16}` | - |
+| 18 | `'TRUE'LOG` | - |
+| 19 | `NOT({0,4})` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 19 expressions (affichees: 19)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 150 variables mappees
 
----
-
-## 5. EXPRESSIONS (45 total, 31 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `DVal({0,7},'YYYYMMDD')` | `DVal(gmr_fin_sejour,'YYYYMMDD')` |
-| 2 | `DVal({0,8},'YYYYMMDD')` | `DVal(heb_nom_logement,'YYYYMMDD')` |
-| 3 | `DVal({0,7},'YYYYMMDD')+1` | `DVal(gmr_fin_sejour,'YYYYMMDD')+1` |
-| 4 | `DVal({0,8},'YYYYMMDD')-1` | `DVal(heb_nom_logement,'YYYYMMDD')-1` |
-| 5 | `Date()` | `Date()` |
-| 6 | `Range(InStr({0,10},'+'),2,Len(Trim({0,10}))-1) AND Trim({...` | `Range(InStr(heb_filiation,'+'),2,Len(Trim(heb_filiation))...` |
-| 7 | `Trim({0,14})=''` | `Trim(v.erreur message)=''` |
-| 8 | `Trim({0,9})&','&Trim({0,13})` | `Trim(heb_code_logement)&','&Trim(v.liste chambres)` |
-| 9 | `{0,12} AND Trim({0,14})=''` | `v.chambre communicante AND Trim(v.erreur message)=''` |
-| 10 | `{0,12} AND LastClicked()='heb_nom_logement'` | `v.chambre communicante AND LastClicked()='heb_nom_logement'` |
-| 11 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 12 | `''` | `''` |
-| 13 | `NOT({0,12}) OR NOT(Range(InStr({0,10},'+'),2,Len(Trim({0,...` | `NOT(v.chambre communicante) OR NOT(Range(InStr(heb_filiat...` |
-| 14 | `Trim({0,15})` | `Trim(v.nb chambres affectées)` |
-| 15 | `Trim({0,15})<>''` | `Trim(v.nb chambres affectées)<>''` |
-| 16 | `Trim(Str({0,16},'2'))&' '&MlsTrans('chambres affectées po...` | `Trim(Str({0,16},'2'))&' '&MlsTrans('chambres affectées po...` |
-| 17 | `{0,3}<>{0,16}` | `p.PYR Finalisé<>{0,16}` |
-| 18 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 19 | `NOT({0,4})` | `NOT(gmr_nom__30_)` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{1,11}` | `{1,11}` |
-| 4 | `{0,4}` | `gmr_nom__30_` |
-| 5 | `{0,5}` | `gmr_prenom__8_` |
-| 6 | `{0,4}<>0` | `gmr_nom__30_<>0` |
-| 1 | `{2,1}` | `{2,1}` |
-| 2 | `{0,1}` | `p.Compte` |
-| 3 | `{0,2}` | `p.Nb Chambres` |
-| 4 | `'H'` | `'H'` |
-| 5 | `{2,9}` | `{2,9}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 3 ( W / 2 R) |
-| Parametres | 4 |
-| Variables locales | 16 |
-| Expressions | 45 |
-| Expressions 100% decodees | 31 (69%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-26 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 6 |
+| **Lignes logique** | 102 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N0[0 Transaction ]
+    N0[0 Histo ventes]
+    N0[0 Histo ventes]
+    N0[0 Histo ventes]
+    N0[0 Histo ventes]
+    T[248 Choix PYR pl]
+    M --> N0
+    N0 --> N0
+    N0 --> N0
+    N0 --> N0
+    N0 --> N0
+    N0 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 3 |
-| Expressions | 45 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 0 | Appel Print ticket vente PMS28 | 1 |
+| 237 | Transaction Nouv vente avec GP | 1 |
+| 238 | Transaction Nouv vente PMS-584 | 1 |
+| 239 | Transaction Nouv vente PMS-721 | 1 |
+| 240 | Transaction Nouv vente PMS-710 | 1 |
+| 250 | Lancement Choix Chambre | 1 |
+| 316 | Saisie transaction Nouv vente | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[248 Programme]
+    C249[249 Reinit Aff P]
+    T --> C249
+    C274[274 Zoom Logemen]
+    T --> C274
+    style T fill:#58a6ff,color:#000
+    style C249 fill:#3fb950
+    style C274 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 249 | Reinit Aff PYR | 2 |
+| 1 | 274 | Zoom Logements | 2 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:24 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:50 | **DATA POPULATED** - Tables, Callgraph (19 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

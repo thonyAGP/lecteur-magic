@@ -1,156 +1,173 @@
-﻿# ADH IDE 178 - Set Village Address
+﻿# ADH IDE 178 - Set Village Address
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_177.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 178 |
-| **Fichier XML** | Prg_177.xml |
-| **Description** | Set Village Address |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 0 |
-| **Module** | ADH |
-| **Dossier IDE** | Printer Management |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_177.xml. L'ID XML (177) peut differer de la position IDE (178).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Set Village Address |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-178.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (1 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #372 | `pv_budget_dat` | pv_budget | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 178 |
+| **Description** | Set Village Address |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (0)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 372 | pv_budget | `pv_budget_dat` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `SetParam ('VI_CLUB',{0,2})` | - |
+| 2 | `SetParam ('VI_NAME',{0,3})` | - |
+| 3 | `SetParam ('VI_ADR1',{0,4})` | - |
+| 4 | `SetParam ('VI_ADR2',{0,5})` | - |
+| 5 | `SetParam ('VI_ZIPC',Trim({0,6}))` | - |
+| 6 | `SetParam ('VI_PHON',Trim({0,7}))` | - |
+| 7 | `SetParam ('VI_FAXN',Trim({0,8}))` | - |
+| 8 | `SetParam ('VI_MAIL',Trim({0,9}))` | - |
+| 9 | `SetParam ('VI_SIRE',Trim({0,10}))` | - |
+| 10 | `SetParam ('VI_VATN',Trim({0,11}))` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 10 expressions (affichees: 10)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 118 variables mappees
 
----
-
-## 5. EXPRESSIONS (10 total, 0 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetParam ('VI_CLUB',{0,2})` | `SetParam ('VI_CLUB',{0,2})` |
-| 2 | `SetParam ('VI_NAME',{0,3})` | `SetParam ('VI_NAME',{0,3})` |
-| 3 | `SetParam ('VI_ADR1',{0,4})` | `SetParam ('VI_ADR1',{0,4})` |
-| 4 | `SetParam ('VI_ADR2',{0,5})` | `SetParam ('VI_ADR2',{0,5})` |
-| 5 | `SetParam ('VI_ZIPC',Trim({0,6}))` | `SetParam ('VI_ZIPC',Trim({0,6}))` |
-| 6 | `SetParam ('VI_PHON',Trim({0,7}))` | `SetParam ('VI_PHON',Trim({0,7}))` |
-| 7 | `SetParam ('VI_FAXN',Trim({0,8}))` | `SetParam ('VI_FAXN',Trim({0,8}))` |
-| 8 | `SetParam ('VI_MAIL',Trim({0,9}))` | `SetParam ('VI_MAIL',Trim({0,9}))` |
-| 9 | `SetParam ('VI_SIRE',Trim({0,10}))` | `SetParam ('VI_SIRE',Trim({0,10}))` |
-| 10 | `SetParam ('VI_VATN',Trim({0,11}))` | `SetParam ('VI_VATN',Trim({0,11}))` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 1 (0 W /  R) |
-| Parametres | 0 |
-| Variables locales | 0 |
-| Expressions | 10 |
-| Expressions 100% decodees | 0 (0%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 30 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N283[283 Easy Check O]
+    N66[66 Lancement So]
+    N55[55 Easy Check O]
+    N37[37 Menu changem]
+    N163[163 Menu caisse ]
+    T[178 Set Village ]
+    M --> N283
+    N283 --> N66
+    N66 --> N55
+    N55 --> N37
+    N37 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N283 fill:#f59e0b
+    style N66 fill:#f59e0b
+    style N55 fill:#f59e0b
+    style N37 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 1 |
-| Expressions | 10 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 53 | Extrait Easy Check Out à J+1 | 1 |
+| 179 | Get Printer | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[178 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:22 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:48 | **DATA POPULATED** - Tables, Callgraph (10 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

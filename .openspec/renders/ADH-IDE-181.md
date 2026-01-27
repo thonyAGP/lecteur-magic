@@ -1,151 +1,186 @@
-﻿# ADH IDE 181 - Set Listing Number
+﻿# ADH IDE 181 - Set Listing Number
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_180.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 181 |
-| **Fichier XML** | Prg_180.xml |
-| **Description** | Set Listing Number |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 1 |
-| **Module** | ADH |
-| **Dossier IDE** | Printer Management |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_180.xml. L'ID XML (180) peut differer de la position IDE (181).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Set Listing Number |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-181.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (0 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 181 |
+| **Description** | Set Listing Number |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (1)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param Listing number | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| - | Aucune table | - | - | - |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `SetParam ('CURRENTLISTINGNUM',{0,1})` | - |
+| 2 | `SetParam ('CURRENTPRINTERNUM',0)` | - |
+| 3 | `SetParam ('CURRENTPRINTERNAME','VOID')` | - |
+| 4 | `SetParam ('NUMBERCOPIES',0)` | - |
+| 5 | `GetParam ('SPECIFICPRINT')='VOID'` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 5 expressions (affichees: 5)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 120 variables mappees
 
----
-
-## 5. EXPRESSIONS (5 total, 4 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetParam ('CURRENTLISTINGNUM',{0,1})` | `SetParam ('CURRENTLISTINGNUM',{0,1})` |
-| 2 | `SetParam ('CURRENTPRINTERNUM',0)` | `SetParam ('CURRENTPRINTERNUM',0)` |
-| 3 | `SetParam ('CURRENTPRINTERNAME','VOID')` | `SetParam ('CURRENTPRINTERNAME','VOID')` |
-| 4 | `SetParam ('NUMBERCOPIES',0)` | `SetParam ('NUMBERCOPIES',0)` |
-| 5 | `GetParam ('SPECIFICPRINT')='VOID'` | `GetParam ('SPECIFICPRINT')='VOID'` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 0 (0 W / 0 R) |
-| Parametres | 1 |
-| Variables locales | 1 |
-| Expressions | 5 |
-| Expressions 100% decodees | 4 (80%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 11 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N283[283 Easy Check O]
+    N66[66 Lancement So]
+    N163[163 Menu caisse ]
+    N55[55 Easy Check O]
+    N37[37 Menu changem]
+    T[181 Set Listing ]
+    M --> N283
+    N283 --> N66
+    N66 --> N163
+    N163 --> N55
+    N55 --> N37
+    N37 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N283 fill:#f59e0b
+    style N66 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N55 fill:#f59e0b
+    style N37 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 0 |
-| Expressions | 5 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 69 | Extrait de compte | 7 |
+| 193 | Solde compte fin sejour | 5 |
+| 217 | Menu telephone | 5 |
+| 111 | Garantie sur compte | 4 |
+| 112 | Garantie sur compte PMS-584 | 4 |
+| 174 | Versement/Retrait | 4 |
+| 288 | Garantie sur compte | 4 |
+| 40 | Comptes de depôt | 3 |
+| 255 | VAD validés à imprimer | 3 |
+| 79 | Balance Credit de conso | 2 |
+| 173 | Gestion forfait TAI LOCAL | 2 |
+| 25 | Change GM | 1 |
+| 27 | Separation | 1 |
+| 28 | Fusion | 1 |
+| 64 | Solde Easy Check Out | 1 |
+| 70 | Print extrait compte /Nom | 1 |
+| 71 | Print extrait compte /Date | 1 |
+| 72 | Print extrait compte /Cum | 1 |
+| 73 | Print extrait compte /Imp | 1 |
+| 76 | Print extrait compte /Service | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[181 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:22 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:48 | **DATA POPULATED** - Tables, Callgraph (5 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

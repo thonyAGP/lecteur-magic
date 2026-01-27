@@ -1,191 +1,176 @@
-﻿# ADH IDE 82 -    Select affilies
+﻿# ADH IDE 82 -    Select affilies
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_82.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 82 |
-| **Fichier XML** | Prg_82.xml |
-| **Description** |    Select affilies |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 4 |
-| **Module** | ADH |
-| **Dossier IDE** | EzCard |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_82.xml. L'ID XML (82) peut differer de la position IDE (82).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** |    Select affilies |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-82.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (3 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 1x |
-| #47 | `cafil025_dat` | compte_gm________cgm | R | 1x |
-| #312 | `ezcard` | ez_card | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 82 |
+| **Description** |    Select affilies |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (4)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | p. societe | ALPHA | - |
-| P2 | p. code adherent | NUMERIC | - |
-| P3 | p. filiation | NUMERIC | - |
-| P4 | p.flag ok | LOGICAL | - |
-| P5 | < solde compte | NUMERIC | - |
-| P6 | < etat compte | ALPHA | - |
-| P7 | < date solde | DATE | - |
-| P8 | < garanti O/N | ALPHA | - |
-| P9 | v. titre | ALPHA | - |
-| P10 | v. nom & prenom | ALPHA | - |
-| P11 | r.EZ card | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 47 | compte_gm________cgm | `cafil025_dat` | R | 1x |
+| 312 | ez_card | `ezcard` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v. titre | ALPHA | - |
-| v. nom & prenom | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `IF ({0,25},143,110)` | - |
+| 2 | `NOT ({0,25})` | - |
+| 3 | `NOT ({0,25})` | - |
+| 4 | `{0,25}` | - |
+| 5 | `{0,18}` | - |
+| 6 | `'TRUE'LOG` | - |
+| 7 | `{0,1}=''` | - |
+| 8 | `'C'` | - |
+| 9 | `Trim ({0,9})` | - |
+| 10 | `Date ()` | - |
+| 11 | `{32768,2}` | - |
+| 12 | `{0,1}` | - |
+| 13 | `{0,2}` | - |
+| 14 | `{0,18}` | - |
+| 15 | `'V'` | - |
+| 16 | `Stat (0,'C'MODE)` | - |
+| 17 | `Trim ({0,12})&' '&{0,13}` | - |
+| 18 | `IF ({0,23}>0,Str ({0,23},'###'),IF ({0,24}=0,''...` | - |
+| 19 | `IF ({0,23}>0,'ans',IF ({0,24}=0,'','mois'))` | - |
+| 20 | `'-'` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 27 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 140 variables mappees
 
----
-
-## 5. EXPRESSIONS (33 total, 20 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `IF ({0,25},143,110)` | `IF ({0,25},143,110)` |
-| 2 | `NOT ({0,25})` | `NOT ({0,25})` |
-| 3 | `NOT ({0,25})` | `NOT ({0,25})` |
-| 4 | `{0,25}` | `{0,25}` |
-| 5 | `{0,18}` | `{0,18}` |
-| 6 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 7 | `{0,1}=''` | `p. code adherent=''` |
-| 8 | `'C'` | `'C'` |
-| 9 | `Trim ({0,9})` | `Trim (v. nom & prenom)` |
-| 10 | `Date ()` | `Date ()` |
-| 11 | `{32768,2}` | `VG.Retour Chariot` |
-| 12 | `{0,1}` | `p. code adherent` |
-| 13 | `{0,2}` | `p. filiation` |
-| 14 | `{0,18}` | `{0,18}` |
-| 15 | `'V'` | `'V'` |
-| 16 | `Stat (0,'C'MODE)` | `Stat (0,'C'MODE)` |
-| 17 | `Trim ({0,12})&' '&{0,13}` | `Trim ({0,12})&' '&{0,13}` |
-| 18 | `IF ({0,23}>0,Str ({0,23},'###'),IF ({0,24}=0,'',Str ({0,2...` | `IF ({0,23}>0,Str ({0,23},'###'),IF ({0,24}=0,'',Str ({0,2...` |
-| 19 | `IF ({0,23}>0,'ans',IF ({0,24}=0,'','mois'))` | `IF ({0,23}>0,'ans',IF ({0,24}=0,'','mois'))` |
-| 20 | `'-'` | `'-'` |
-| 21 | `IF ({0,22}<Date (),MlsTrans ('dernier sejour :'),IF ({0,2...` | `IF ({0,22}<Date (),MlsTrans ('dernier sejour :'),IF ({0,2...` |
-| 22 | `MlsTrans ('du')` | `MlsTrans ('du')` |
-| 23 | `MlsTrans ('au')` | `MlsTrans ('au')` |
-| 24 | `1` | `1` |
-| 25 | `{0,18}=0` | `{0,18}=0` |
-| 26 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 27 | `NOT(Stat(0,'M'MODE))` | `NOT(Stat(0,'M'MODE))` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{0,3}` | `p.flag ok` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 3 (0 W / 3 R) |
-| Parametres | 4 |
-| Variables locales | 11 |
-| Expressions | 33 |
-| Expressions 100% decodees | 20 (61%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 2 |
+| **Lignes logique** | 61 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N77[77 Club Med Pas]
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[82    Select af]
+    N77 --> N163
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N77 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 3 |
-| Expressions | 33 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 77 | Club Med Pass menu | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[82 Programme]
+    C43[43 Recuperation]
+    T --> C43
+    style T fill:#58a6ff,color:#000
+    style C43 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 43 | Recuperation du titre | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:19 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:45 | **DATA POPULATED** - Tables, Callgraph (27 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*
