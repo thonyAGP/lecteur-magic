@@ -1856,12 +1856,12 @@
           return;
         }
 
-        // Check for spec tabs (<!-- TAB:xxx --> markers)
-        if (isSpec && text.includes('<!-- TAB:')) {
+        // Check for spec tabs (<!-- TAB:xxx --> markers) - works for both specs/ and renders/
+        if ((isSpec || isRender) && text.includes('<!-- TAB:')) {
           const renderedContent = renderSpecWithTabs(text, headerHtml);
           content.innerHTML = backLinkHtml + renderedContent;
         } else if (isRender) {
-          // V2.1 renders
+          // V2.1 renders without TAB markers
           content.innerHTML = backLinkHtml + headerHtml + tabsHtml + marked.parse(text);
         } else {
           content.innerHTML = headerHtml + tabsHtml + marked.parse(text);
