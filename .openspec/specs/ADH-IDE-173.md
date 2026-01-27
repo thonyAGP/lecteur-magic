@@ -1,160 +1,137 @@
-﻿# ADH IDE 173 - Gestion forfait TAI LOCAL
+﻿# ADH IDE 173 - Gestion forfait TAI LOCAL
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_172.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Gestion forfait TAI LOCAL |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 173 |
-| **Fichier XML** | Prg_172.xml |
-| **Description** | Gestion forfait TAI LOCAL |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 17 |
+| **Description** | Gestion forfait TAI LOCAL |
 | **Module** | ADH |
-| **Dossier IDE** | Operations GM |
 
-> **Note**: Ce programme est Prg_172.xml. L'ID XML (172) peut differer de la position IDE (173).
+### 2.2 Tables
 
----
 
-## 2. TABLES (11 tables - 6 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #23 | `cafil001_dat` | reseau_cloture___rec | **W** | 8x |
-| #40 | `cafil018_dat` | comptable________cte | **W** | 2x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 4x |
-| #173 | `cafil181_dat` | intermed_compta__ite | **W** | 2x |
-| #463 | `verifpool_dat` | heure_de_passage | **W** | 7x |
-| #596 | `%club_user%tmp_ecrpolice_dat` | tempo_ecran_police | **W** | 4x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 3x |
-| #34 | `cafil012_dat` | hebergement______heb | R | 1x |
-| #39 | `cafil017_dat` | depot_garantie___dga | R | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 2x |
-| #77 | `cafil055_dat` | articles_________art | R | 3x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (17)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P.SOCIETE | ALPHA | - |
-| P2 | P.DEVISE LOCALE | ALPHA | - |
-| P3 | P.MASQUE MONTANT | ALPHA | - |
-| P4 | P.SOLDE COMPTE | NUMERIC | - |
-| P5 | P.COMPTE | NUMERIC | - |
-| P6 | P.FILIATION | NUMERIC | - |
-| P7 | P.DATE DEB SEJOUR | DATE | - |
-| P8 | P.DATE FIN SEJOUR | DATE | - |
-| P9 | P.ETAT COMPTE | ALPHA | - |
-| P10 | P.DATE SOLDE | DATE | - |
-| P11 | P.GARANTIE O/N | ALPHA | - |
-| P12 | P.NOM PRENOM | ALPHA | - |
-| P13 | P.AGE | ALPHA | - |
-| P14 | P.VILLAGE TAI | ALPHA | - |
-| P15 | P.TAI OBLIGATOIRE | ALPHA | - |
-| P16 | V date deb 1er | DATE | - |
-| P17 | V date fin 1er | DATE | - |
-| P18 | V sortie | LOGICAL | - |
-| P19 | bouton SORTIE | ALPHA | - |
-| P20 | V Titre | ALPHA | - |
-| P21 | V Choix | ALPHA | - |
-| P22 | V Existe Forfait pour le GM | LOGICAL | - |
+### 2.4 Algorigramme
+
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
+
+### 2.5 Expressions cles
+
+
+
+### 2.6 Variables importantes
+
+
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 4. VARIABLES PRINCIPALES
+<!-- TAB:Cartographie -->
 
-### 4.1 Variables de travail (W0/V0)
+## CARTOGRAPHIE APPLICATIVE
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
+### 3.1 Chaine d'appels depuis Main
 
-### 4.2 Variables globales (VG)
+```mermaid
+graph LR
+    M[1 Main]
+    T[173 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
+### 3.2 Callers directs
 
-> Total: 170 variables mappees
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
 
----
+### 3.3 Callees
 
-## 5. EXPRESSIONS (350 total, 183 decodees)
+```mermaid
+graph LR
+    T[173 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{32768,2}` | `VG.Retour Chariot` |
-| 2 | `Date ()` | `Date ()` |
-| 3 | `{0,23}='A'` | `V Existe Forfait pour le GM='A'` |
-| 4 | `InStr ('BC',{0,23})<>0` | `InStr ('BC',V Existe Forfait pour le GM)<>0` |
-| 5 | `{0,24}` | `V creation validee` |
-| 6 | `{0,23}='B'` | `V Existe Forfait pour le GM='B'` |
-| 7 | `{0,23}='C'` | `V Existe Forfait pour le GM='C'` |
-| 8 | `NOT ({0,24}) AND NOT ({0,20})` | `NOT (V creation validee) AND NOT (bouton SORTIE)` |
-| 9 | `''` | `''` |
-| 10 | `136` | `136` |
-| 11 | `Trim ({0,22})` | `Trim (V Choix)` |
-| 12 | `'AUTO'` | `'AUTO'` |
-| 13 | `'MANU'` | `'MANU'` |
-| 14 | `{0,25}` | `V suppression validee` |
-| 15 | `{0,26}` | `{0,26}` |
-| 16 | `{0,8}<Date () AND NOT ({0,20})` | `P.ETAT COMPTE<Date () AND NOT (bouton SORTIE)` |
-| 17 | `{0,8}>=Date ()` | `P.ETAT COMPTE>=Date ()` |
-| 18 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 19 | `{0,15}='1'` | `P.Age num='1'` |
-| 20 | `{0,1}` | `P.DEVISE LOCALE` |
-| 21 | `{0,5}` | `P.FILIATION` |
-| 22 | `{0,6}` | `P.DATE DEB SEJOUR` |
-| 23 | `Date ()` | `Date ()` |
-| 24 | `'H'` | `'H'` |
-| 25 | `ASCIIChr (33)` | `ASCIIChr (33)` |
-| 1 | `MlsTrans ('Verifier que l''OD est bien pour')&' '&Trim ({...` | `MlsTrans ('Verifier que l''OD est bien pour')&' '&Trim (P...` |
-| 2 | `'C'` | `'C'` |
-| 3 | `Trim ({0,53})` | `Trim ({0,53})` |
-| 4 | `137` | `137` |
-| 5 | `{0,1}` | `P.DEVISE LOCALE` |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 6. STATISTIQUES
-
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 11 (6 W / 5 R) |
-| Parametres | 17 |
-| Variables locales | 26 |
-| Expressions | 350 |
-| Expressions 100% decodees | 183 (52%) |
-
----
-
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*

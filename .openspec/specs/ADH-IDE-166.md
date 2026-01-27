@@ -1,141 +1,137 @@
-﻿# ADH IDE 166 - Start
+﻿# ADH IDE 166 - Start
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_165.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Start |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 166 |
-| **Fichier XML** | Prg_165.xml |
-| **Description** | Start |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 0 |
+| **Description** | Start |
 | **Module** | ADH |
-| **Dossier IDE** | Menus |
 
-> **Note**: Ce programme est Prg_165.xml. L'ID XML (165) peut differer de la position IDE (166).
+### 2.2 Tables
 
----
 
-## 2. TABLES (8 tables -  en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #878 | `categorie_operation_mw` | categorie_operation_mw | **W** | 2x |
-| #67 | `cafil045_dat` | tables___________tab | R | 1x |
-| #69 | `cafil047_dat` | initialisation___ini | R | 1x |
-| #81 | `cafil059_dat` | societe__________soc | R | 1x |
-| #118 | `cafil096_dat` | tables_imports | R | 1x |
-| #219 | `caisse_com_ims` | communication_ims | R | 1x |
-| #728 | `arc_cctotal` | arc_cc_total | R | 1x |
-| #740 | `pv_stockmvt_dat` | pv_stock_movements | R | 1x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (0)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | W0 connection ? | LOGICAL | - |
-| P2 | FROM_IMS | ALPHA | - |
-| P3 | L Contrôle date OK | LOGICAL | - |
+### 2.4 Algorigramme
 
----
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-## 4. VARIABLES PRINCIPALES
+### 2.5 Expressions cles
 
-### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
-| `{0,-114}` | W0 connection ? | LOGICAL | - |
-| `{0,-108}` | v.Tpt_interface ? | LOGICAL | - |
-| `{0,-107}` | v.Code TPE | UNICODE | - |
 
-### 4.2 Variables globales (VG)
+### 2.6 Variables importantes
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
 
-> Total: 128 variables mappees
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 5. EXPRESSIONS (59 total, 52 decodees)
+<!-- TAB:Cartographie -->
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetParam ('VERIF_USERB','O')` | `SetParam ('VERIF_USERB','O')` |
-| 2 | `{0,1}` | `FROM_IMS` |
-| 3 | `IF({0,8}<>0,'N11.'&Trim(Str({0,8},'#'))&'CZ','N13CZ')` | `IF({0,8}<>0,'N11.'&Trim(Str({0,8},'#'))&'CZ','N13CZ')` |
-| 4 | `NOT ({0,1}) AND NOT(IsComponent())` | `NOT (FROM_IMS) AND NOT(IsComponent())` |
-| 5 | `SetParam ('SPECIFICPRINT','VOID')` | `SetParam ('SPECIFICPRINT','VOID')` |
-| 6 | `SetParam ('CURRENTPRINTERNUM',0)` | `SetParam ('CURRENTPRINTERNUM',0)` |
-| 7 | `SetParam ('CURRENTPRINTERNAME','VOID')` | `SetParam ('CURRENTPRINTERNAME','VOID')` |
-| 8 | `SetParam ('NUMBERCOPIES',0)` | `SetParam ('NUMBERCOPIES',0)` |
-| 9 | `SetParam ('LISTINGNUMPRINTERCHOICE',0)` | `SetParam ('LISTINGNUMPRINTERCHOICE',0)` |
-| 10 | `SetParam ('CHAINEDLISTING','NO')` | `SetParam ('CHAINEDLISTING','NO')` |
-| 11 | `NOT ({32768,4} OR IsComponent() OR INIGet ('[MAGIC_LOGICA...` | `NOT (VG.DROIT ACCES CAISSE ? OR IsComponent() OR INIGet (...` |
-| 12 | `Trim(INIGet('[MAGIC_LOGICAL_NAMES]RunMode'))<>'B'` | `Trim(INIGet('[MAGIC_LOGICAL_NAMES]RunMode'))<>'B'` |
-| 13 | `'CA'` | `'CA'` |
-| 14 | `{32768,17}` | `VG.CALCUL EFFECTIF 2 ACTIF?` |
-| 15 | `{32768,23}` | `VG.PROJ.INTERF.TPE ACTIF` |
-| 16 | `{0,4}` | `v.Code TPE` |
-| 17 | `Trim({0,5})` | `Trim({0,5})` |
-| 18 | `{32768,8}` | `VG.ECI ACTIF ?` |
-| 19 | `NOT(IsComponent())` | `NOT(IsComponent())` |
-| 30 | `NOT(IsComponent()) AND {32768,111} AND Range(Term(),430,450)` | `NOT(IsComponent()) AND VG. Interface Galaxy Grèce AND Ran...` |
-| 20 | `'cmd /c mkdir '&Translate('%club_exportdata%')&'Easy_Chec...` | `'cmd /c mkdir '&Translate('%club_exportdata%')&'Easy_Chec...` |
-| 21 | `NOT(FileExist(Translate('%club_exportdata%')&'Easy_Check_...` | `NOT(FileExist(Translate('%club_exportdata%')&'Easy_Check_...` |
-| 22 | `MnuShow('ID_CMP',{32768,3} OR {32768,74})` | `MnuShow('ID_CMP',VG.DROIT ACCES IT ? OR VG.Identification...` |
-| 23 | `Val({0,10}, '3')` | `Val({0,10}, '3')` |
-| 24 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 25 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 26 | `'BDEV'` | `'BDEV'` |
-| 27 | `{0,7}` | `{0,7}` |
-| 28 | `Str({0,13},'3')` | `Str({0,13},'3')` |
-| 29 | `{0,6}` | `{0,6}` |
+## CARTOGRAPHIE APPLICATIVE
 
----
+### 3.1 Chaine d'appels depuis Main
 
-## 6. STATISTIQUES
+```mermaid
+graph LR
+    M[1 Main]
+    T[166 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 8 ( W / 7 R) |
-| Parametres | 0 |
-| Variables locales | 5 |
-| Expressions | 59 |
-| Expressions 100% decodees | 52 (88%) |
+### 3.2 Callers directs
+
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
+
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[166 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*

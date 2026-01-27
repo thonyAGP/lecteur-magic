@@ -1,138 +1,137 @@
-﻿# ADH IDE 48 - Contrôles - Integrite dates
+﻿# ADH IDE 48 - Contrôles - Integrite dates
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_48.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Contrôles - Integrite dates |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 48 |
-| **Fichier XML** | Prg_48.xml |
-| **Description** | Contrôles - Integrite dates |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 3 |
+| **Description** | Contrôles - Integrite dates |
 | **Module** | ADH |
-| **Dossier IDE** | Divers |
 
-> **Note**: Ce programme est Prg_48.xml. L'ID XML (48) peut differer de la position IDE (48).
+### 2.2 Tables
 
----
 
-## 2. TABLES (7 tables - 0 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #40 | `cafil018_dat` | comptable________cte | R | 1x |
-| #44 | `cafil022_dat` | change___________chg | R | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #147 | `cafil125_dat` | change_vente_____chg | R | 1x |
-| #246 | `caisse_session` | histo_sessions_caisse | R | 1x |
-| #263 | `caisse_vente` | vente | R | 1x |
-| #728 | `arc_cctotal` | arc_cc_total | R | 1x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (3)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P. O/T/F | ALPHA | - |
-| P2 | P. Societe | ALPHA | - |
-| P3 | P. Contrôle OK | LOGICAL | - |
-| P4 | L Anomalie pour Fermeture | LOGICAL | - |
+### 2.4 Algorigramme
 
----
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-## 4. VARIABLES PRINCIPALES
+### 2.5 Expressions cles
 
-### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
 
-### 4.2 Variables globales (VG)
+### 2.6 Variables importantes
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
 
-> Total: 126 variables mappees
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 5. EXPRESSIONS (41 total, 19 decodees)
+<!-- TAB:Cartographie -->
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,2}` | `P. Contrôle OK` |
-| 2 | `{32768,1}` | `VG.USER` |
-| 3 | `{0,1}='O'` | `P. Societe='O'` |
-| 4 | `NOT (Date ()>{0,5}+Val ({0,7},'##')) OR {32768,3}` | `NOT (Date ()>{0,5}+Val ({0,7},'##')) OR VG.DROIT ACCES IT ?` |
-| 5 | `Date ()>{0,5}+Val ({0,7},'##') AND NOT({32768,3})` | `Date ()>{0,5}+Val ({0,7},'##') AND NOT(VG.DROIT ACCES IT ?)` |
-| 6 | `{0,1}='T'` | `P. Societe='T'` |
-| 7 | `Date ()*10^5+Time ()<{0,10}*10^5+{0,11}` | `Date ()*10^5+Time ()<{0,10}*10^5+{0,11}` |
-| 8 | `NOT (Date ()*10^5+Time ()<{0,10}*10^5+{0,11})` | `NOT (Date ()*10^5+Time ()<{0,10}*10^5+{0,11})` |
-| 9 | `{0,1}='F'` | `P. Societe='F'` |
-| 10 | `NOT ({0,12})` | `NOT ({0,12})` |
-| 11 | `{0,12}` | `{0,12}` |
-| 12 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 13 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `{1,5}` | `{1,5}` |
-| 3 | `Date ()` | `Date ()` |
-| 4 | `{1,12}` | `{1,12}` |
-| 5 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 6 | `{0,3}*10^5+{0,4}>Date ()*10^5+Time ()` | `L Anomalie pour Fermeture*10^5+{0,4}>Date ()*10^5+Time ()` |
-| 7 | `{32768,1}` | `VG.USER` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `{1,5}` | `{1,5}` |
-| 3 | `Date ()` | `Date ()` |
-| 4 | `{1,12}` | `{1,12}` |
-| 5 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 6 | `{0,3}*10^5+{0,4}>Date ()*10^5+Time ()` | `L Anomalie pour Fermeture*10^5+{0,4}>Date ()*10^5+Time ()` |
-| 7 | `{32768,1}` | `VG.USER` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `{1,5}` | `{1,5}` |
-| 3 | `Date ()` | `Date ()` |
+## CARTOGRAPHIE APPLICATIVE
 
----
+### 3.1 Chaine d'appels depuis Main
 
-## 6. STATISTIQUES
+```mermaid
+graph LR
+    M[1 Main]
+    T[48 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 7 (0 W / 7 R) |
-| Parametres | 3 |
-| Variables locales | 4 |
-| Expressions | 41 |
-| Expressions 100% decodees | 19 (46%) |
+### 3.2 Callers directs
+
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
+
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[48 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*

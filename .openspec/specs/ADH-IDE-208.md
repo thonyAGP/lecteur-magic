@@ -1,138 +1,137 @@
-﻿# ADH IDE 208 - Print Reçu code autocom
+﻿# ADH IDE 208 - Print Reçu code autocom
 
-> **Version spec** : 2.0
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_207.xml`
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
-## 1. IDENTIFICATION
+<!-- TAB:Fonctionnel -->
+
+## SPECIFICATION FONCTIONNELLE
+
+### 1.1 Objectif metier
+
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Print Reçu code autocom |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
+
+### 1.2 Regles metier
+
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
+
+### 1.3 Flux utilisateur
+
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
+
+### 1.4 Cas d'erreur
+
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
+
+---
+
+<!-- TAB:Technique -->
+
+## SPECIFICATION TECHNIQUE
+
+### 2.1 Identification
 
 | Attribut | Valeur |
 |----------|--------|
 | **Format IDE** | ADH IDE 208 |
-| **Fichier XML** | Prg_207.xml |
-| **Description** | Print Reçu code autocom |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 9 |
+| **Description** | Print Reçu code autocom |
 | **Module** | ADH |
-| **Dossier IDE** | Telephone |
 
-> **Note**: Ce programme est Prg_207.xml. L'ID XML (207) peut differer de la position IDE (208).
+### 2.2 Tables
 
----
 
-## 2. TABLES (2 tables - 0 en ecriture)
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 7x |
-| #80 | `cafil058_dat` | codes_autocom____aut | R | 7x |
+### 2.3 Parametres d'entree
 
----
 
-## 3. PARAMETRES D'ENTREE (9)
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 societe | ALPHA | - |
-| P2 | P0 code adherent | NUMERIC | - |
-| P3 | P0 filiation | NUMERIC | - |
-| P4 | P0 nom village | ALPHA | - |
-| P5 | P0 longueur code | NUMERIC | - |
-| P6 | P0 code autocom | NUMERIC | - |
-| P7 | P0 n° ligne | NUMERIC | - |
-| P8 | P0 salle seminaire | ALPHA | - |
-| P9 | P0 telephone direct | ALPHA | - |
+### 2.4 Algorigramme
 
----
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-## 4. VARIABLES PRINCIPALES
+### 2.5 Expressions cles
 
-### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
 
-### 4.2 Variables globales (VG)
+### 2.6 Variables importantes
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
 
-> Total: 136 variables mappees
+
+### 2.7 Statistiques
+
+
 
 ---
 
-## 5. EXPRESSIONS (247 total, 157 decodees)
+<!-- TAB:Cartographie -->
 
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `GetParam ('CURRENTPRINTERNUM')=1` | `GetParam ('CURRENTPRINTERNUM')=1` |
-| 2 | `GetParam ('CURRENTPRINTERNUM')=4` | `GetParam ('CURRENTPRINTERNUM')=4` |
-| 3 | `GetParam ('CURRENTPRINTERNUM')=6` | `GetParam ('CURRENTPRINTERNUM')=6` |
-| 4 | `GetParam ('CURRENTPRINTERNUM')=8` | `GetParam ('CURRENTPRINTERNUM')=8` |
-| 5 | `GetParam ('CURRENTPRINTERNUM')=9` | `GetParam ('CURRENTPRINTERNUM')=9` |
-| 6 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `Counter (0)>=GetParam ('NUMBERCOPIES')` | `Counter (0)>=GetParam ('NUMBERCOPIES')` |
-| 2 | `SetParam ('CURRENTPAGENUMBER',0)` | `SetParam ('CURRENTPAGENUMBER',0)` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `MlsTrans ('CODE TELEPHONE')` | `MlsTrans ('CODE TELEPHONE')` |
-| 3 | `{2,1}` | `{2,1}` |
-| 4 | `{2,2}` | `{2,2}` |
-| 5 | `{2,3}` | `{2,3}` |
-| 6 | `{2,6}` | `{2,6}` |
-| 7 | `{0,2}` | `P0 filiation` |
-| 8 | `{0,3}` | `P0 nom village` |
-| 9 | `IF ({2,5}=4,'####P0',IF ({2,5}=5,'#####P0',IF ({2,5}=6,'#...` | `IF ({2,5}=4,'####P0',IF ({2,5}=5,'#####P0',IF ({2,5}=6,'#...` |
-| 10 | `IF ({2,7}<>0,'N° de ligne ','')` | `IF ({2,7}<>0,'N° de ligne ','')` |
-| 11 | `IF ({2,7}<>0,{2,7},0)` | `IF ({2,7}<>0,{2,7},0)` |
-| 12 | `IF ({2,7}<>0,'6P0','6Z')` | `IF ({2,7}<>0,'6P0','6Z')` |
-| 13 | `IF ({2,8}<>'','Salle       :','')` | `IF ({2,8}<>'','Salle       :','')` |
-| 14 | `IF ({2,8}<>'',{2,8},'')` | `IF ({2,8}<>'',{2,8},'')` |
-| 15 | `IF ({2,9}<>'','Tel. direct :','')` | `IF ({2,9}<>'','Tel. direct :','')` |
-| 16 | `IF ({2,9}<>'',{2,9},'')` | `IF ({2,9}<>'',{2,9},'')` |
-| 17 | `GetParam ('VI_CLUB')` | `GetParam ('VI_CLUB')` |
-| 18 | `GetParam ('VI_NAME')` | `GetParam ('VI_NAME')` |
-| 19 | `GetParam ('VI_ADR1')` | `GetParam ('VI_ADR1')` |
-| 20 | `GetParam ('VI_ADR2')` | `GetParam ('VI_ADR2')` |
-| 21 | `GetParam ('VI_ZIPC')` | `GetParam ('VI_ZIPC')` |
-| 22 | `GetParam ('VI_PHON')` | `GetParam ('VI_PHON')` |
+## CARTOGRAPHIE APPLICATIVE
 
----
+### 3.1 Chaine d'appels depuis Main
 
-## 6. STATISTIQUES
+```mermaid
+graph LR
+    M[1 Main]
+    T[208 Programme]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 2 (0 W / 2 R) |
-| Parametres | 9 |
-| Variables locales | 9 |
-| Expressions | 247 |
-| Expressions 100% decodees | 157 (64%) |
+### 3.2 Callers directs
+
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | A analyser | - |
+
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[208 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-## 7. HISTORIQUE
+## HISTORIQUE
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
 
 ---
 
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
+*Specification V3.5 - Format avec TAB markers et Mermaid*
