@@ -299,20 +299,19 @@ git -C 'D:\Data\Migration\XPA\PMS' stash pop
 - Resolution de bugs
 - Amelioration continue
 
-**Inventaire des outils** (2026-01-26) :
+**Inventaire des outils** (2026-01-27 - Post AUDIT PDCA) :
 
-| Categorie | Outils | Etat | Cible | Action |
-|-----------|--------|------|-------|--------|
-| MCP Server | **44 outils** | **100%** | 100% | **+2 outils Regression Detection** |
-| Agents specialises | 5 agents | 100% | 100% | Maintenir |
-| Commandes Slash | 15 commandes | 100% | 100% | Maintenir |
-| Scripts PowerShell | **34 scripts** | 100% | 100% | **+Generate-MigrationBlueprint, Generate-TestsFromSpec** |
-| Parser TypeScript | 3 generateurs | **100%** | 100% | **COMPLET** |
-| Skill/References | **24 fichiers** | 100% | 100% | **+skill ticket-analyze** |
-| **Fonctions Magic** | **200/200** | **100%** | **100%** | **COMPLET** |
-| **Workflow Tickets** | **Orchestre v2.0** | **100%** | 100% | **6 phases, patterns KB, metrics** |
-| **Migration Specs** | **MigrationExtractor** | **100%** | 100% | **Cahier des charges auto** |
-| **Synergie Ecosysteme** | **Tiers 1-5** | **100%** | 100% | **40%→80% synergie, 762 ECF, Impact Analysis** |
+| Categorie | Outils | Etat | Cible | Score |
+|-----------|--------|------|-------|-------|
+| MCP Server | **93 outils** | **211%** | 44 | **A+** |
+| Agents specialises | 5 agents | 100% | 5 | **A** |
+| Scripts PowerShell | **127 scripts** | 47% doc | 100% | **B** |
+| Parser TypeScript | 3 generateurs | **100%** | 100% | **A** |
+| Fonctions Magic | **200/200** | **100%** | 200 | **A** |
+| Tests MCP | **88/88** | **100%** | 80% | **A+** |
+| Patterns KB | **16 patterns** | **80%** | 20+ | **B+** |
+| Specs generees | **323** | **92%** | 350 | **B+** |
+| Migration C# | **79 progs** | **22.6%** | 350 | **C** |
 
 ### Nouveaux outils MCP (2026-01-26) - Regression Detection
 
@@ -640,6 +639,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 - [x] **P1.1** Reparer connexion MCP magic-interpreter (en cours: 2026-01-10)
 
 ### Terminees
+- [x] **AUDIT PDCA Phase 1** (terminee: 2026-01-27) - Archive parsers v1-v4, README scripts (66), +4 patterns KB (16 total), Tests MCP 88/88. Scorecard global: MCP A+, Patterns B+, Migration C
 - [x] **Synergie Ecosysteme Tiers 1-5** (terminee: 2026-01-25) - Feedback loop, Pattern sync FTS5, Variable lineage, ECF Registry, Change Impact Analysis. 14 outils MCP, 5 commandes KbIndexRunner, Schema v5. 762 composants partagés
 - [x] **Amelioration Systeme Analyse Tickets + Migration Specs** (terminee: 2026-01-24) - Schema v2 (3 tables), ExpressionCacheService, auto-capitalize, track-metrics, MigrationExtractor, Generate-MigrationSpec
 - [x] **Form Controls + Discovery + Validation** (terminee: 2026-01-24) - magic_get_form_controls outil MCP, ProjectDiscoveryService, KbIndexRunner validate mode
@@ -783,7 +783,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 | CMDS-176521 | **Fermé** | 2026-01-08 | picture-format-mismatch |
 | CMDS-176818 | **Fermé** | 2026-01-13 | - |
 
-### Patterns KB (7 patterns)
+### Patterns KB (16 patterns - Post AUDIT 2026-01-27)
 
 | Pattern | Source | Type | Description |
 |---------|--------|------|-------------|
@@ -794,6 +794,15 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 | picture-format-mismatch | CMDS-176521 | Bug format | Mauvaise variable dans expression affichage |
 | ski-rental-duration-calc | PMS-1446 | Nouvelle fonction | Calcul conditionnel durée séjour |
 | table-link-missing | PMS-1451 | Bug données | Jointure table manquante |
+| empty-date-as-noend | PMS-1332 | Enhancement | Accepter 00/00/0000 sans limite |
+| report-column-enhancement | PMS-1400 | Enhancement | Ajouter colonnes/totaux rapport |
+| filter-not-implemented | PMS-1404 | Evolution | Filtres demandés non codés |
+| equipment-config-issue | CMDS-176818 | Diagnostic | Problème hardware vs code |
+| session-concurrency-check | PMS-1337 | Bug concurrence | Double ouverture session |
+| missing-dataview-column | - | Bug structure | Variable absente DataView |
+| missing-vv-condition | - | Bug logique | Virtual Variable sans condition |
+| missing-time-validation | - | Bug validation | Validation heure manquante |
+| extension-treated-as-arrival | - | Bug logique | Extension = nouvelle arrivée |
 
 ## Bases de donnees
 
@@ -811,6 +820,7 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 > Historique complet: `.openspec/history/changelog.md`
 
 **Derniers changements:**
+- 2026-01-27: **AUDIT PDCA Execute** - Phase 1 implementee: (1) Archive magic-logic-parser v1-v4 dans tools/_archive, (2) README tools/scripts (66 scripts documentes), (3) +4 patterns KB (16 total, 80%), (4) Tests MCP valides 88/88. Scorecard: MCP A+, Patterns B+, Migration C (22.6%)
 - 2026-01-26: **Spec Capitalization Implementation P1-P3** - (P1-A) auto-find-programs.ps1 spec context injection, (P1-D) sync-patterns-to-kb.ps1 bidirectional links + known_patterns_json, (P2-C) RegressionDetectionTool.cs (magic_detect_regression, magic_spec_drift_report), (P3-B) Generate-MigrationBlueprint.ps1 C# code skeleton, (P3-E) Generate-TestsFromSpec.ps1 xUnit/Vitest scaffolds
 - 2026-01-26: **Spec Capitalization Plan Complete** - 4 phases implementees: (1) SpecReaderTool + viewer search, (2) KB indexing + pattern-spec integration, (3) validation hook v3.1 + auto-regeneration pipeline, (4) magic_precheck_change + impact matrices. 6 nouveaux scripts, 3 MCP tools, CI/CD workflow
 - 2026-01-26: **Phase 0 Ecosystem Optimization** - PatternSyncService.cs (sync Markdown→KB), 2 outils MCP (magic_pattern_sync, magic_pattern_status), 5 tests unitaires, diagnostic ADH XML (360 fichiers valides)
@@ -841,4 +851,4 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 - 2026-01-22: Parser Magic V3 deterministe 100%
 
 ---
-*Derniere mise a jour: 2026-01-26*
+*Derniere mise a jour: 2026-01-27 (Post AUDIT PDCA)*
