@@ -1,7 +1,7 @@
 # ADH IDE 236 - Print ticket vente PMS-584
 
-> **Version spec**: 3.0
-> **Analyse**: 2026-01-26 22:44 → 22:50
+> **Version spec**: 3.1
+> **Analyse**: 2026-01-27 09:15 → 09:35
 > **Source**: `Prg_232.xml`
 
 ---
@@ -26,14 +26,17 @@
 | RM-001 | Impression multi-copies | Selon parametre `NUMBERCOPIES` |
 | RM-002 | Format selon imprimante | Adapte selon `CURRENTPRINTERNUM` (1,4,5,8,9) |
 | RM-003 | Gestion annulation | Affichage mention "ANNULATION" si flag active |
-| RM-004 | Mode PDF optionnel | Generation fichier PDF si parametre active |
+| RM-004 | Mode PDF optionnel | Generation fichier PDF si imprimante 1 ou 9 |
+| RM-005 | Compression PDF | `CompressPDF=Y`, `EmbedFonts=N` |
 
 ### 1.3 Flux utilisateur
 
 1. L'operateur valide une vente
-2. Le systeme appelle ce programme avec les donnees de vente
-3. Le ticket est imprime (ou genere en PDF)
-4. Le programme retourne au caller
+2. Le systeme determine l'imprimante cible
+3. Le ticket est formate selon le type d'imprimante
+4. Impression physique OU generation PDF
+5. Mise a jour du statut "Imprime"
+6. Repetition si multi-copies demandees
 
 ### 1.4 Cas d'erreur
 
@@ -41,6 +44,7 @@
 |--------|--------------|
 | Imprimante non disponible | Message d'erreur systeme |
 | Donnees manquantes | Ticket incomplet imprime |
+| Annulation en cours | Mention "OD" ajoutee au nom fichier PDF |
 
 ---
 
@@ -105,15 +109,80 @@
 | P20 | W0 copies | NUMERIC |
 | ... | (10 autres) | ... |
 
-### 2.4 Expressions cles
+### 2.4 Algorigramme
+
+```mermaid
+flowchart TD
+    START([START: Print Ticket<br/>Task ID=1])
+    LOAD[/"LOAD: DataView<br/>Charger donnees vente"/]
+    SELECT[/"SELECT: 50 champs<br/>Client, Montant, Flags"/]
+
+    PRINTER{"CURRENTPRINTERNUM ?"}
+
+    P1["Printer = 1<br/>Format A4"]
+    P4["Printer = 4<br/>Format A5"]
+    P5["Printer = 5<br/>Format SLIP 950"]
+    P8["Printer = 8<br/>Format custom"]
+    P9["Printer = 9<br/>Format custom"]
+
+    T2["Task 2: Printer 1<br/>Print A4 # Pages"]
+    T11["Task 11: Printer 4<br/>Print A5 # Pages"]
+    T17["Task 17: Printer 5<br/>Print 950 SLIP"]
+    T22["Task 22: Printer 8"]
+    T28["Task 28: Printer 9"]
+
+    PDF{"Printer = 1<br/>OR Printer = 9 ?"}
+
+    T41["Task 41: PDF Handler<br/>EmbedFonts=N<br/>CompressPDF=Y"]
+
+    PDFOK{"PDF genere ?"}
+
+    T37["Task 37: Update Status<br/>Marquer Imprime"]
+
+    COUNTER{"Counter >= COPIES<br/>OR Annulation ?"}
+
+    END([END: Ticket imprime])
+
+    START --> LOAD --> SELECT --> PRINTER
+
+    PRINTER -->|"1"| P1 --> T2
+    PRINTER -->|"4"| P4 --> T11
+    PRINTER -->|"5"| P5 --> T17
+    PRINTER -->|"8"| P8 --> T22
+    PRINTER -->|"9"| P9 --> T28
+
+    T2 --> PDF
+    T11 --> PDF
+    T17 --> PDF
+    T22 --> PDF
+    T28 --> PDF
+
+    PDF -->|OUI| T41 --> PDFOK
+    PDF -->|NON| COUNTER
+
+    PDFOK -->|OUI| T37 --> COUNTER
+    PDFOK -->|NON| COUNTER
+
+    COUNTER -->|NON| START
+    COUNTER -->|OUI| END
+
+    style START fill:#3fb950
+    style END fill:#f85149
+    style PDF fill:#58a6ff
+    style PDFOK fill:#58a6ff
+```
+
+### 2.5 Expressions cles
 
 | # | Expression | Signification |
 |---|------------|---------------|
 | 3 | `GetParam('CURRENTPRINTERNUM')=1` | Imprimante principale |
+| 4 | `GetParam('CURRENTPRINTERNUM')=4` | Imprimante A5 |
+| 5 | `GetParam('CURRENTPRINTERNUM')=5` | Imprimante SLIP |
 | 16 | `Translate('%TempDir%')&'ticket_vente_'...` | Chemin fichier PDF |
-| 18 | `ExpCalc('3'EXP) OR ExpCalc('7'EXP)` | Condition format special |
+| 18 | `ExpCalc('3'EXP) OR ExpCalc('7'EXP)` | Condition PDF (Printer 1 ou 9) |
 
-### 2.5 Statistiques
+### 2.6 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
@@ -121,6 +190,7 @@
 | Expressions | 705 |
 | Expressions decodees | 448 (64%) |
 | Variables locales | 39 |
+| Taches | 41+ (selon imprimante) |
 
 ---
 
@@ -128,49 +198,69 @@
 
 ## CARTOGRAPHIE APPLICATIVE
 
-### 3.1 Callers (programmes qui appellent ADH IDE 236)
-
-| IDE | Programme | Description | Nb appels | Dossier |
-|-----|-----------|-------------|-----------|---------|
-| 243 | ADH IDE 243 | Histo ventes payantes | 2 | Ventes |
-| 238 | ADH IDE 238 | Transaction Nouv vente PMS-584 | 4 | Ventes |
-| 244 | ADH IDE 244 | Histo ventes payantes /PMS-605 | 2 | Ventes |
-| 245 | ADH IDE 245 | Histo ventes payantes /PMS-623 | 2 | Ventes |
-
-> **Total**: 10 appels depuis 4 programmes actifs
-
-### 3.2 Callees (programmes appeles par ADH IDE 236)
-
-| IDE | Programme | Description | Contexte |
-|-----|-----------|-------------|----------|
-| - | Aucun | Ce programme n'appelle pas d'autres programmes | - |
-
-### 3.3 Diagramme de dependances
+### 3.1 Chaine d'appels depuis Main
 
 ```mermaid
-graph TD
-    subgraph Callers["Programmes appelants"]
-        C1[ADH IDE 243<br/>Histo ventes payantes]
-        C2[ADH IDE 238<br/>Transaction Nouv vente]
-        C3[ADH IDE 244<br/>Histo ventes /PMS-605]
-        C4[ADH IDE 245<br/>Histo ventes /PMS-623]
+graph LR
+    subgraph Main["Point d'entree"]
+        M[Main Program<br/>ADH IDE 1]
+    end
+
+    subgraph Menu["Menu Principal"]
+        M166[ADH IDE 166<br/>Menu caisse GM]
+    end
+
+    subgraph Ventes["Module Ventes"]
+        M238[ADH IDE 238<br/>Transaction Nouv vente]
+        M242[ADH IDE 242<br/>Menu Saisie/Annul]
+        M243[ADH IDE 243<br/>Histo ventes payantes]
+        M244[ADH IDE 244<br/>Histo ventes /PMS-605]
+        M245[ADH IDE 245<br/>Histo ventes /PMS-623]
     end
 
     subgraph Target["Programme cible"]
-        T[ADH IDE 236<br/>Print ticket vente PMS-584]
+        T[ADH IDE 236<br/>Print ticket vente]
     end
 
-    C1 -->|2 appels| T
-    C2 -->|4 appels| T
-    C3 -->|2 appels| T
-    C4 -->|2 appels| T
+    M --> M166
+    M166 --> M238
+    M166 --> M242
+    M242 --> M243
+    M242 --> M244
+    M242 --> M245
+    M238 --> T
+    M243 --> T
+    M244 --> T
+    M245 --> T
 
+    style M fill:#8b5cf6,color:#fff
+    style M166 fill:#f59e0b,color:#000
     style T fill:#58a6ff,color:#000
-    style C1 fill:#3fb950,color:#000
-    style C2 fill:#3fb950,color:#000
-    style C3 fill:#3fb950,color:#000
-    style C4 fill:#3fb950,color:#000
+    style M238 fill:#3fb950,color:#000
+    style M242 fill:#3fb950,color:#000
+    style M243 fill:#3fb950,color:#000
+    style M244 fill:#3fb950,color:#000
+    style M245 fill:#3fb950,color:#000
 ```
+
+> **Legende**: Violet = Main | Orange = Menu | Vert = Callers | Bleu = Cible
+
+### 3.2 Callers directs (programmes qui appellent ADH IDE 236)
+
+| IDE | Programme | Description | Nb appels | Chemin depuis Main |
+|-----|-----------|-------------|-----------|-------------------|
+| 238 | ADH IDE 238 | Transaction Nouv vente PMS-584 | 4 | Main → 166 → **238** → 236 |
+| 243 | ADH IDE 243 | Histo ventes payantes | 2 | Main → 166 → 242 → **243** → 236 |
+| 244 | ADH IDE 244 | Histo ventes payantes /PMS-605 | 2 | Main → 166 → 242 → **244** → 236 |
+| 245 | ADH IDE 245 | Histo ventes payantes /PMS-623 | 2 | Main → 166 → 242 → **245** → 236 |
+
+> **Total**: 10 appels depuis 4 programmes actifs
+
+### 3.3 Callees (programmes appeles par ADH IDE 236)
+
+| IDE | Programme | Description | Contexte |
+|-----|-----------|-------------|----------|
+| - | Aucun | Programme terminal (feuille) | Impression uniquement |
 
 ### 3.4 Verification orphelin
 
@@ -179,15 +269,26 @@ graph TD
 | Callers (TaskID obj="232") | **4 programmes** |
 | PublicName | Non |
 | Dossier | Ventes (actif) |
+| Distance depuis Main | 3-4 niveaux |
 | **Conclusion** | **Programme ACTIF - NON ORPHELIN** |
 
 ### 3.5 Impact modification
 
 | Type de changement | Programmes impactes | Severite |
 |--------------------|---------------------|----------|
-| Modification signature | 4 programmes | HAUTE |
+| Modification signature (params) | 4 programmes | CRITIQUE |
 | Changement format ticket | Aucun (sortie) | BASSE |
-| Ajout parametre | 4 programmes | MOYENNE |
+| Ajout imprimante | Aucun | BASSE |
+| Modification PDF settings | Aucun | BASSE |
+
+### 3.6 Dependances externes
+
+| Dependance | Type | Description |
+|------------|------|-------------|
+| `CURRENTPRINTERNUM` | GetParam | Parametre systeme imprimante |
+| `NUMBERCOPIES` | GetParam | Nombre de copies |
+| `%TempDir%` | Translate | Repertoire temporaire PDF |
+| Table #867 | Donnees | Log MAJ TPE |
 
 ---
 
@@ -197,8 +298,9 @@ graph TD
 |------|--------|--------|
 | 2026-01-26 | Creation specification v2.0 | Claude |
 | 2026-01-26 | Ajout section callers | Claude |
-| 2026-01-26 | **Upgrade v3.0**: 3 onglets, timing, cartographie Mermaid | Claude |
+| 2026-01-26 | Upgrade v3.0: 3 onglets, timing, cartographie Mermaid | Claude |
+| 2026-01-27 | **Upgrade v3.1**: Algorigramme, chaine Main complete | Claude |
 
 ---
 
-*Specification v3.0 - Format avec onglets Fonctionnel/Technique/Cartographie*
+*Specification v3.1 - Format avec Algorigramme et Chaine Main*
