@@ -1,0 +1,120 @@
+# ADH IDE 235 - Print ticket vente LEX
+# Programme d'impression de tickets de vente
+# Appele par ADH IDE 238 (Transaction vente) apres enregistrement
+
+program:
+  project: "ADH"
+  ide: 235
+
+functional:
+  objective:
+    who: "Systeme / Programme appelant (IDE 238)"
+    what: "Generer et imprimer le ticket de vente"
+    why: "Fournir un justificatif papier au client apres une transaction"
+
+  user_flow:
+    - Reception des parametres de vente (29 params)
+    - Lecture des donnees article et client (17 tables)
+    - Formatage du ticket selon type (VRL/VSL/TAI)
+    - Gestion du texte ANNULATION si applicable
+    - Selection imprimante selon configuration
+    - Generation PDF ou impression directe
+    - Gestion des copies multiples
+
+  error_cases:
+    - condition: Imprimante non disponible
+      message: "Imprimante non configuree"
+      severity: MEDIUM
+    - condition: Donnees article manquantes
+      message: "Article inexistant"
+      severity: LOW
+
+business_rules:
+  - code: RM-001
+    description: "Affichage ANNULATION si flag annulation actif"
+    expression_id: 4
+    rule_type: CONDITIONAL
+    severity: MEDIUM
+    validated: false
+  - code: RM-002
+    description: "Format special pour ventes VAD (Vente A Distance)"
+    expression_id: 5
+    rule_type: CONDITIONAL
+    severity: MEDIUM
+    validated: false
+  - code: RM-003
+    description: "Calcul duree sejour en nuits"
+    expression_id: 10
+    rule_type: VALIDATION
+    severity: LOW
+    validated: false
+  - code: RM-004
+    description: "Distinction CASH vs ACCOUNT selon mode paiement"
+    expression_id: 9
+    rule_type: VALIDATION
+    severity: MEDIUM
+    validated: false
+  - code: RM-005
+    description: "Selection fichier edition selon parametres"
+    expression_id: 31
+    rule_type: CONDITIONAL
+    severity: LOW
+    validated: false
+  - code: RM-006
+    description: "Distinction GIFT PASS vs RESORT CREDIT"
+    expression_id: 13
+    rule_type: CONDITIONAL
+    severity: MEDIUM
+    validated: false
+  - code: RM-007
+    description: "Format VRL different de VSL"
+    expression_id: 45
+    rule_type: CONDITIONAL
+    severity: MEDIUM
+    validated: false
+  - code: RM-008
+    description: "Tax invoice pour ABB (Australie)"
+    expression_id: 44
+    rule_type: CONDITIONAL
+    severity: LOW
+    validated: false
+
+migration:
+  complexity_override: LOW
+  target_architecture: CQRS
+  notes:
+    - "Programme de sortie - lecture seule (0 tables en ecriture)"
+    - "844 expressions - principalement formatage texte"
+    - "Gestion multi-imprimantes (GetParam CURRENTPRINTERNUM)"
+    - "Support PDF et impression directe"
+    - "Appele par IDE 238 apres transaction"
+
+  test_coverage:
+    unit_tests: 60
+    integration_tests: false
+    regression_patterns: true
+
+dependencies:
+  external:
+    - name: Imprimante ticket
+      type: Hardware
+      notes: "Via GetParam CURRENTPRINTERNUM (1,4,5,8,9)"
+  ecf_notes: "Appele depuis ADH IDE 238 (Transaction vente)"
+
+history:
+  - date: "2026-01-27"
+    author: "Claude"
+    change: "Creation annotation initiale"
+    ticket: null
+
+metadata:
+  author: "Claude"
+  created_at: "2026-01-27"
+  last_updated: "2026-01-27"
+  reviewers: []
+  tags:
+    - impression
+    - ticket
+    - ventes
+    - read-only
+    - batch
