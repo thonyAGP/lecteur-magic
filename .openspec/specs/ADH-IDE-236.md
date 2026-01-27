@@ -1,6 +1,6 @@
 # ADH IDE 236 - Print ticket vente PMS-584
 
-> **Version spec**: 3.1
+> **Version spec**: 3.2
 > **Analyse**: 2026-01-27 09:15 → 09:35
 > **Source**: `Prg_232.xml`
 
@@ -113,56 +113,42 @@
 
 ```mermaid
 flowchart TD
-    START([START: Print Ticket<br/>Task ID=1])
-    LOAD[/"LOAD: DataView<br/>Charger donnees vente"/]
-    SELECT[/"SELECT: 50 champs<br/>Client, Montant, Flags"/]
-
-    PRINTER{"CURRENTPRINTERNUM ?"}
-
-    P1["Printer = 1<br/>Format A4"]
-    P4["Printer = 4<br/>Format A5"]
-    P5["Printer = 5<br/>Format SLIP 950"]
-    P8["Printer = 8<br/>Format custom"]
-    P9["Printer = 9<br/>Format custom"]
-
-    T2["Task 2: Printer 1<br/>Print A4 # Pages"]
-    T11["Task 11: Printer 4<br/>Print A5 # Pages"]
-    T17["Task 17: Printer 5<br/>Print 950 SLIP"]
-    T22["Task 22: Printer 8"]
-    T28["Task 28: Printer 9"]
-
-    PDF{"Printer = 1<br/>OR Printer = 9 ?"}
-
-    T41["Task 41: PDF Handler<br/>EmbedFonts=N<br/>CompressPDF=Y"]
-
-    PDFOK{"PDF genere ?"}
-
-    T37["Task 37: Update Status<br/>Marquer Imprime"]
-
-    COUNTER{"Counter >= COPIES<br/>OR Annulation ?"}
-
-    END([END: Ticket imprime])
+    START([START Print Ticket])
+    LOAD[Charger DataView vente]
+    SELECT[Selectionner 50 champs]
+    PRINTER{CURRENTPRINTERNUM}
+    P1[Printer 1 - A4]
+    P4[Printer 4 - A5]
+    P5[Printer 5 - SLIP]
+    P8[Printer 8]
+    P9[Printer 9]
+    T2[Tache 2 Print A4]
+    T11[Tache 11 Print A5]
+    T17[Tache 17 Print SLIP]
+    T22[Tache 22 Print 8]
+    T28[Tache 28 Print 9]
+    PDF{PDF requis}
+    T41[Tache 41 PDF Handler]
+    PDFOK{PDF genere}
+    T37[Tache 37 Update Status]
+    COUNTER{Copies terminees}
+    END([END Ticket imprime])
 
     START --> LOAD --> SELECT --> PRINTER
-
-    PRINTER -->|"1"| P1 --> T2
-    PRINTER -->|"4"| P4 --> T11
-    PRINTER -->|"5"| P5 --> T17
-    PRINTER -->|"8"| P8 --> T22
-    PRINTER -->|"9"| P9 --> T28
-
+    PRINTER -->|1| P1 --> T2
+    PRINTER -->|4| P4 --> T11
+    PRINTER -->|5| P5 --> T17
+    PRINTER -->|8| P8 --> T22
+    PRINTER -->|9| P9 --> T28
     T2 --> PDF
     T11 --> PDF
     T17 --> PDF
     T22 --> PDF
     T28 --> PDF
-
     PDF -->|OUI| T41 --> PDFOK
     PDF -->|NON| COUNTER
-
     PDFOK -->|OUI| T37 --> COUNTER
     PDFOK -->|NON| COUNTER
-
     COUNTER -->|NON| START
     COUNTER -->|OUI| END
 
@@ -202,24 +188,21 @@ flowchart TD
 
 ```mermaid
 graph LR
-    subgraph Main["Point d'entree"]
-        M[Main Program<br/>ADH IDE 1]
+    subgraph Main
+        M[IDE 1 Main Program]
     end
-
-    subgraph Menu["Menu Principal"]
-        M166[ADH IDE 166<br/>Menu caisse GM]
+    subgraph Menu
+        M166[IDE 166 Menu caisse GM]
     end
-
-    subgraph Ventes["Module Ventes"]
-        M238[ADH IDE 238<br/>Transaction Nouv vente]
-        M242[ADH IDE 242<br/>Menu Saisie/Annul]
-        M243[ADH IDE 243<br/>Histo ventes payantes]
-        M244[ADH IDE 244<br/>Histo ventes /PMS-605]
-        M245[ADH IDE 245<br/>Histo ventes /PMS-623]
+    subgraph Ventes
+        M238[IDE 238 Transaction Nouv vente]
+        M242[IDE 242 Menu Saisie Annul]
+        M243[IDE 243 Histo ventes payantes]
+        M244[IDE 244 Histo ventes PMS-605]
+        M245[IDE 245 Histo ventes PMS-623]
     end
-
-    subgraph Target["Programme cible"]
-        T[ADH IDE 236<br/>Print ticket vente]
+    subgraph Cible
+        T[IDE 236 Print ticket vente]
     end
 
     M --> M166
@@ -299,8 +282,9 @@ graph LR
 | 2026-01-26 | Creation specification v2.0 | Claude |
 | 2026-01-26 | Ajout section callers | Claude |
 | 2026-01-26 | Upgrade v3.0: 3 onglets, timing, cartographie Mermaid | Claude |
-| 2026-01-27 | **Upgrade v3.1**: Algorigramme, chaine Main complete | Claude |
+| 2026-01-27 | Upgrade v3.1: Algorigramme, chaine Main complete | Claude |
+| 2026-01-27 | **v3.2** Correction syntaxe Mermaid, noms programmes dans diagrammes | Claude |
 
 ---
 
-*Specification v3.1 - Format avec Algorigramme et Chaine Main*
+*Specification v3.2 - Format avec Algorigramme et Chaine Main*
