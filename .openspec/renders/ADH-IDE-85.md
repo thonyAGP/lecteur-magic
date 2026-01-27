@@ -1,172 +1,166 @@
-﻿# ADH IDE 85 -     Determine Age Debut Sejour
+﻿# ADH IDE 85 -     Determine Age Debut Sejour
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_85.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 85 |
-| **Fichier XML** | Prg_85.xml |
-| **Description** |     Determine Age Debut Sejour |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 5 |
-| **Module** | ADH |
-| **Dossier IDE** | EzCard |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_85.xml. L'ID XML (85) peut differer de la position IDE (85).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** |     Determine Age Debut Sejour |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-85.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (0 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 85 |
+| **Description** |     Determine Age Debut Sejour |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (5)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0-Date de Naissance | DATE | - |
-| P2 | P0-Date debut Sejour | DATE | - |
-| P3 | P0-Age | NUMERIC | - |
-| P4 | P0-Age Codifie | ALPHA | - |
-| P5 | W0 Date debut sejour | DATE | - |
-| P6 | W0 Nb de Mois | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| - | Aucune table | - | - | - |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 Date debut sejour | DATE | - |
-| W0 Nb de Mois | NUMERIC | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `IF ({0,2}='00/00/0000'DATE,Date (),{0,2})` | - |
+| 2 | `{0,1}>0` | - |
+| 3 | `Year ({0,6})-Year ({0,1})` | - |
+| 4 | `Month ({0,6})<Month ({0,1})` | - |
+| 5 | `{0,3}-1` | - |
+| 6 | `Month ({0,6})=Month ({0,1}) AND Day ({0,6})<Day...` | - |
+| 7 | `{0,3}>0` | - |
+| 8 | `IF ({0,3}>100,ASCIIChr (200),ASCIIChr ({0,3}+100))` | - |
+| 9 | `{0,3}=0` | - |
+| 10 | `IF (Month ({0,6})<=Month ({0,1}),Month ({0,6})+...` | - |
+| 11 | `Day ({0,6})<Day ({0,1})` | - |
+| 12 | `{0,7}-1` | - |
+| 13 | `{0,7}=0 OR {0,7}=12` | - |
+| 14 | `1` | - |
+| 15 | `ASCIIChr (80+{0,7})` | - |
+| 16 | `{0,1}<=0` | - |
+| 17 | `0` | - |
+| 18 | `ASCIIChr (80)` | - |
+| 19 | `{0,7}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 19 expressions (affichees: 19)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 132 variables mappees
 
----
-
-## 5. EXPRESSIONS (19 total, 15 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `IF ({0,2}='00/00/0000'DATE,Date (),{0,2})` | `IF (P0-Age='00/00/0000'DATE,Date (),P0-Age)` |
-| 2 | `{0,1}>0` | `P0-Date debut Sejour>0` |
-| 3 | `Year ({0,6})-Year ({0,1})` | `Year (W0 Nb de Mois)-Year (P0-Date debut Sejour)` |
-| 4 | `Month ({0,6})<Month ({0,1})` | `Month (W0 Nb de Mois)<Month (P0-Date debut Sejour)` |
-| 5 | `{0,3}-1` | `P0-Age Codifie-1` |
-| 6 | `Month ({0,6})=Month ({0,1}) AND Day ({0,6})<Day ({0,1})` | `Month (W0 Nb de Mois)=Month (P0-Date debut Sejour) AND Da...` |
-| 7 | `{0,3}>0` | `P0-Age Codifie>0` |
-| 8 | `IF ({0,3}>100,ASCIIChr (200),ASCIIChr ({0,3}+100))` | `IF (P0-Age Codifie>100,ASCIIChr (200),ASCIIChr (P0-Age Co...` |
-| 9 | `{0,3}=0` | `P0-Age Codifie=0` |
-| 10 | `IF (Month ({0,6})<=Month ({0,1}),Month ({0,6})+12-Month (...` | `IF (Month (W0 Nb de Mois)<=Month (P0-Date debut Sejour),M...` |
-| 11 | `Day ({0,6})<Day ({0,1})` | `Day (W0 Nb de Mois)<Day (P0-Date debut Sejour)` |
-| 12 | `{0,7}-1` | `{0,7}-1` |
-| 13 | `{0,7}=0 OR {0,7}=12` | `{0,7}=0 OR {0,7}=12` |
-| 14 | `1` | `1` |
-| 15 | `ASCIIChr (80+{0,7})` | `ASCIIChr (80+{0,7})` |
-| 16 | `{0,1}<=0` | `P0-Date debut Sejour<=0` |
-| 17 | `0` | `0` |
-| 18 | `ASCIIChr (80)` | `ASCIIChr (80)` |
-| 19 | `{0,7}` | `{0,7}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 0 (0 W / 0 R) |
-| Parametres | 5 |
-| Variables locales | 7 |
-| Expressions | 19 |
-| Expressions 100% decodees | 15 (79%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 30 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    T[85     Determine Age Debut Sejour]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 0 |
-| Expressions | 19 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | **Aucun caller** (point d'entree ou orphelin) | - |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[85 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:19 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:45 | **DATA POPULATED** - Tables, Callgraph (19 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

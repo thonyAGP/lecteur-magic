@@ -1,222 +1,216 @@
-﻿# ADH IDE 121 - Gestion caisse
+﻿# ADH IDE 121 - Gestion caisse
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_121.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 121 |
-| **Fichier XML** | Prg_121.xml |
-| **Description** | Gestion caisse |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 17 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_121.xml. L'ID XML (121) peut differer de la position IDE (121).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Gestion caisse |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-- **Qui**: Operateur caisse
-- **Quoi**: Gerer les sessions et operations de caisse
-- **Pourquoi**: Point d'entree principal pour toutes les operations de caisse du village
-### 1.2 Flux Utilisateur
-1. Selection depuis menu principal caisse (ADH IDE 1)
-2. Verification session existante ou ouverture nouvelle session
-3. Affichage tableau de bord caisse avec soldes
-4. Acces aux sous-menus (ventes, change, depot, etc.)
-5. Gestion des coupures et devises
-6. Fermeture session avec validation ecarts
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-- Programme central - point d'entree caisse
-- 17 parametres d'entree a mapper
-- 12 tables dont 5 en ecriture
-- Gere concurrence sessions (table caisse_concurrences)
-- Interface avec coffre (caisse_session_coffre2)
-- Integration Galaxy Grece via VG.Interface Galaxy
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
-
-### 1.5 Tags
-`caisse``, ``ecf-shared``, ``cross-project``, ``critical``, ``session-management`
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (12 tables - 5 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #227 | `caisse_concurrences` | concurrence_sessions | **W** | 1x |
-| #244 | `caisse_saisie_appro_dev` | saisie_approvisionnement | **W** | 2x |
-| #246 | `caisse_session` | histo_sessions_caisse | **W** | 6x |
-| #248 | `caisse_session_coffre2` | sessions_coffre2 | **W** | 3x |
-| #249 | `caisse_session_detail` | histo_sessions_caisse_detail | **W** | 4x |
-| #23 | `cafil001_dat` | reseau_cloture___rec | R | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #197 | `caisse_artstock` | articles_en_stock | R | 1x |
-| #198 | `caisse_banknote` | coupures_monnaie_locale | R | 1x |
-| #232 | `caisse_devise` | gestion_devise_session | R | 1x |
-| #697 | `droits` | droits_applications | R | 2x |
-| #740 | `pv_stockmvt_dat` | pv_stock_movements | R | 2x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 121 |
+| **Description** | Gestion caisse |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (17)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param Libelle caisse | ALPHA | - |
-| P2 | Param Etat caisse | ALPHA | - |
-| P3 | Param societe | ALPHA | - |
-| P4 | Param devise locale | ALPHA | - |
-| P5 | Param nbre decimale | NUMERIC | - |
-| P6 | Param masque montant | ALPHA | - |
-| P7 | Param code village | ALPHA | - |
-| P8 | Param nom village | ALPHA | - |
-| P9 | Param masque cumul | ALPHA | - |
-| P10 | Param Uni/Bi | ALPHA | - |
-| P11 | Param Village TAI | ALPHA | - |
-| P12 | Param Mode consultation | LOGICAL | - |
-| P13 | p.i.Terminal coffre2 | NUMERIC | - |
-| P14 | Param VIL open sessions | ALPHA | - |
-| P15 | Param FROM_IMS | ALPHA | - |
-| P16 | V Date comptable | DATE | - |
-| P17 | V session active | LOGICAL | - |
-| P18 | V User ouverture | ALPHA | - |
-| P19 | V Date ouverture | DATE | - |
-| P20 | V Time ouverture | TIME | - |
-| P21 | V Date Fin session | DATE | - |
-| P22 | V Last Chrono | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 23 | reseau_cloture___rec | `cafil001_dat` | R | 1x |
+| 70 | date_comptable___dat | `cafil048_dat` | R | 1x |
+| 197 | articles_en_stock | `caisse_artstock` | L | 1x |
+| 198 | coupures_monnaie_locale | `caisse_banknote` | R | 1x |
+| 227 | concurrence_sessions | `caisse_concurrences` | **W** | 1x |
+| 232 | gestion_devise_session | `caisse_devise` | R | 1x |
+| 244 | saisie_approvisionnement | `caisse_saisie_appro_dev` | L | 1x |
+| 244 | saisie_approvisionnement | `caisse_saisie_appro_dev` | **W** | 1x |
+| 246 | histo_sessions_caisse | `caisse_session` | L | 1x |
+| 246 | histo_sessions_caisse | `caisse_session` | R | 1x |
+| 246 | histo_sessions_caisse | `caisse_session` | **W** | 4x |
+| 248 | sessions_coffre2 | `caisse_session_coffre2` | L | 1x |
+| 248 | sessions_coffre2 | `caisse_session_coffre2` | **W** | 2x |
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | L | 1x |
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | R | 3x |
+| 697 | droits_applications | `droits` | R | 2x |
+| 740 | pv_stock_movements | `pv_stockmvt_dat` | R | 2x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v.fin | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,14}='O'` | - |
+| 2 | `'FALSE'LOG` | - |
+| 3 | `'D'` | - |
+| 4 | `{0,31}` | - |
+| 5 | `'TRUE'LOG` | - |
+| 6 | `NOT({0,31})` | - |
+| 7 | `{32768,111}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 7 expressions (affichees: 7)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 180 variables mappees
 
----
-
-## 5. EXPRESSIONS (235 total, 184 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,14}='O'` | `Param FROM_IMS='O'` |
-| 2 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 3 | `'D'` | `'D'` |
-| 4 | `{0,31}` | `{0,31}` |
-| 5 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 6 | `NOT({0,31})` | `NOT({0,31})` |
-| 7 | `{32768,111}` | `VG. Interface Galaxy Grèce` |
-| 1 | `'CAISSE'` | `'CAISSE'` |
-| 2 | `SetParam ('MOPCMP',{0,2})` | `SetParam ('MOPCMP',Param societe)` |
-| 3 | `SetParam ('CLACMP',{0,3})` | `SetParam ('CLACMP',Param devise locale)` |
-| 1 | `{0,5}` | `Param masque montant` |
-| 2 | `{0,4}` | `Param nbre decimale` |
-| 3 | `'F'` | `'F'` |
-| 4 | `'F'` | `'F'` |
-| 5 | `MlsTrans ('Le coffre 2 est déjà ouvert par')&' '&{0,5}` | `MlsTrans ('Le coffre 2 est déjà ouvert par')&' '&Param ma...` |
-| 13 | `NOT ({0,6}) AND {0,1}` | `NOT (Param code village) AND Param Etat caisse` |
-| 11 | `{1,17} AND {32768,1}<>{0,5}` | `{1,17} AND VG.USER<>Param masque montant` |
-| 12 | `NOT {1,17} AND {32768,1}={0,5}` | `NOT {1,17} AND VG.USER=Param masque montant` |
-| 8 | `NOT ({0,6})` | `NOT (Param code village)` |
-| 9 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 10 | `NOT ({0,1})` | `NOT (Param Etat caisse)` |
-| 1 | `'CAISSE'` | `'CAISSE'` |
-| 2 | `{0,2}` | `Param societe` |
-| 3 | `{0,3}` | `Param devise locale` |
-| 4 | `{0,4}` | `Param nbre decimale` |
-| 5 | `{0,5}` | `Param masque montant` |
-| 1 | `{1,3}` | `{1,3}` |
-| 2 | `{0,2}` | `Param societe` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `{0,1} AND {0,6}='00/00/0000'DATE` | `Param Etat caisse AND Param code village='00/00/0000'DATE` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 12 (5 W / 7 R) |
-| Parametres | 17 |
-| Variables locales | 31 |
-| Expressions | 235 |
-| Expressions 100% decodees | 184 (78%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 32 |
+| **Lignes logique** | 678 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N281[281 Fermeture Se]
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[121 Gestion cais]
+    N281 --> N163
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N281 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 12 |
-| Expressions | 235 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 163 | Menu caisse GM - scroll | 2 |
+| 281 | Fermeture Sessions | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[121 Programme]
+    C116[116 Calcul concu]
+    T --> C116
+    C134[134 Mise  jour d]
+    T --> C134
+    C139[139 Ticket appro]
+    T --> C139
+    C48[48 Contrles   I]
+    T --> C48
+    C122[122 Ouverture ca]
+    T --> C122
+    C131[131 Fermeture ca]
+    T --> C131
+    C155[155 Controle fer]
+    T --> C155
+    C43[43 Recuperation]
+    T --> C43
+    style T fill:#58a6ff,color:#000
+    style C116 fill:#3fb950
+    style C134 fill:#3fb950
+    style C139 fill:#3fb950
+    style C48 fill:#3fb950
+    style C122 fill:#3fb950
+    style C131 fill:#3fb950
+    style C155 fill:#3fb950
+    style C43 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 116 | Calcul concurrence sessions | 12 |
+| 1 | 134 | Mise à jour detail session WS | 3 |
+| 1 | 139 | Ticket appro remise | 3 |
+| 1 | 48 | Contrôles - Integrite dates | 2 |
+| 1 | 122 | Ouverture caisse | 2 |
+| 1 | 131 | Fermeture caisse | 2 |
+| 1 | 155 | Controle fermeture caisse WS | 2 |
+| 1 | 43 | Recuperation du titre | 1 |
+| 1 | 119 | Affichage sessions | 1 |
+| 1 | 123 | Apport coffre | 1 |
+| 1 | 124 | Apport articles | 1 |
+| 1 | 125 | Remise en caisse | 1 |
+| 1 | 132 | Historique session | 1 |
+| 1 | 140 | Init apport article session WS | 1 |
+| 1 | 141 | Init devise session WS | 1 |
+| 1 | 151 | Reimpression tickets fermeture | 1 |
+| 1 | 156 | Verif session caisse ouverte2 | 1 |
+| 1 | 231 | Raisons utilisation ADH | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:20 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:43 | **DATA POPULATED** - Tables, Callgraph (7 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

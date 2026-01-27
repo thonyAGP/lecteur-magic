@@ -1,209 +1,200 @@
-﻿# ADH IDE 234 -  Print ticket vente
+﻿# ADH IDE 234 -  Print ticket vente
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-26
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_230.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 234 |
-| **Fichier XML** | Prg_230.xml |
-| **Description** |  Print ticket vente |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 27 |
-| **Module** | ADH |
-| **Dossier IDE** | Ventes |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_230.xml. L'ID XML (230) peut differer de la position IDE (234).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** |  Print ticket vente |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-234.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (8 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #67 | `cafil045_dat` | tables___________tab | R | 2x |
-| #69 | `cafil047_dat` | initialisation___ini | R | 1x |
-| #77 | `cafil055_dat` | articles_________art | R | 5x |
-| #596 | `%club_user%tmp_ecrpolice_dat` | tempo_ecran_police | R | 12x |
-| #728 | `arc_cctotal` | arc_cc_total | R | 1x |
-| #818 | `zcircafil146` | Circuit supprime | R | 1x |
-| #847 | `%club_user%_stat_lieu_vente_date` | stat_lieu_vente_date | R | 15x |
-| #867 | `log_maj_tpe` | log_maj_tpe | R | 5x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 234 |
+| **Description** |  Print ticket vente |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (27)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 od annulation | LOGICAL | - |
-| P2 | P0 Nom | ALPHA | - |
-| P3 | P0 Date | DATE | - |
-| P4 | P0 Article libelle 1 | ALPHA | - |
-| P5 | P0 Article complementaire | ALPHA | - |
-| P6 | P0 Qte | NUMERIC | - |
-| P7 | P0 Prix unitaire | NUMERIC | - |
-| P8 | P0 Total | NUMERIC | - |
-| P9 | P0 Devise locale | ALPHA | - |
-| P10 | P0 Masque | ALPHA | - |
-| P11 | P0 Chambre | ALPHA | - |
-| P12 | P0 mode de paiement | ALPHA | - |
-| P13 | P0 libelle paiement | ALPHA | - |
-| P14 | PO is TAI | LOGICAL | - |
-| P15 | P0 TAI Cash | ALPHA | - |
-| P16 | P0 TAI start date | DATE | - |
-| P17 | P0 TAI end date | DATE | - |
-| P18 | W0 en-tête ? | ALPHA | - |
-| P19 | W0 fin tâche | ALPHA | - |
-| P20 | W0 copies | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 67 | tables___________tab | `cafil045_dat` | R | 2x |
+| 69 | initialisation___ini | `cafil047_dat` | R | 1x |
+| 77 | articles_________art | `cafil055_dat` | L | 2x |
+| 77 | articles_________art | `cafil055_dat` | R | 3x |
+| 596 | tempo_ecran_police | `%club_user%tmp_ecrpolice_dat` | L | 5x |
+| 596 | tempo_ecran_police | `%club_user%tmp_ecrpolice_dat` | R | 7x |
+| 728 | arc_cc_total | `arc_cctotal` | L | 1x |
+| 818 | Circuit supprime | `zcircafil146` | L | 1x |
+| 847 | stat_lieu_vente_date | `%club_user%_stat_lieu_vente_date` | L | 10x |
+| 847 | stat_lieu_vente_date | `%club_user%_stat_lieu_vente_date` | R | 5x |
+| 867 | log_maj_tpe | `log_maj_tpe` | R | 5x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 en-tête ? | ALPHA | - |
-| W0 fin tâche | ALPHA | - |
-| W0 copies | NUMERIC | - |
-| v.Itération Compteur ticket | NUMERIC | - |
-| v.NumeroTicketsvg | NUMERIC | - |
-| v.Date Conso ou date séjour | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `SetCrsr (2)` | - |
+| 2 | `SetCrsr (1)` | - |
+| 3 | `GetParam ('CURRENTPRINTERNUM')=1` | - |
+| 4 | `GetParam ('CURRENTPRINTERNUM')=4` | - |
+| 5 | `GetParam ('CURRENTPRINTERNUM')=5` | - |
+| 6 | `GetParam ('CURRENTPRINTERNUM')=8` | - |
+| 7 | `GetParam ('CURRENTPRINTERNUM')=9` | - |
+| 8 | `'VRL'` | - |
+| 9 | `'VSL'` | - |
+| 10 | `{0,22}` | - |
+| 11 | `INIPut('EmbedFonts=N','FALSE'LOG)` | - |
+| 12 | `INIPut('CompressPDF =Y','FALSE'LOG)` | - |
+| 13 | `'TRUE'LOG` | - |
+| 14 | `GetParam ('NUMBERCOPIES')` | - |
+| 15 | `1` | - |
+| 16 | `{0,25}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 16 expressions (affichees: 16)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 184 variables mappees
 
----
-
-## 5. EXPRESSIONS (552 total, 364 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetCrsr (2)` | `SetCrsr (2)` |
-| 2 | `SetCrsr (1)` | `SetCrsr (1)` |
-| 3 | `GetParam ('CURRENTPRINTERNUM')=1` | `GetParam ('CURRENTPRINTERNUM')=1` |
-| 4 | `GetParam ('CURRENTPRINTERNUM')=4` | `GetParam ('CURRENTPRINTERNUM')=4` |
-| 5 | `GetParam ('CURRENTPRINTERNUM')=5` | `GetParam ('CURRENTPRINTERNUM')=5` |
-| 6 | `GetParam ('CURRENTPRINTERNUM')=8` | `GetParam ('CURRENTPRINTERNUM')=8` |
-| 7 | `GetParam ('CURRENTPRINTERNUM')=9` | `GetParam ('CURRENTPRINTERNUM')=9` |
-| 8 | `'VRL'` | `'VRL'` |
-| 9 | `'VSL'` | `'VSL'` |
-| 10 | `{0,22}` | `P.Document ticket` |
-| 11 | `INIPut('EmbedFonts=N','FALSE'LOG)` | `INIPut('EmbedFonts=N','FALSE'LOG)` |
-| 12 | `INIPut('CompressPDF =Y','FALSE'LOG)` | `INIPut('CompressPDF =Y','FALSE'LOG)` |
-| 13 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 14 | `GetParam ('NUMBERCOPIES')` | `GetParam ('NUMBERCOPIES')` |
-| 15 | `1` | `1` |
-| 16 | `{0,25}` | `p.Re_Print_Annulation` |
-| 1 | `Counter (0)>={1,40}` | `Counter (0)>={1,40}` |
-| 2 | `SetParam ('CURRENTPAGENUMBER',0)` | `SetParam ('CURRENTPAGENUMBER',0)` |
-| 3 | `DbDel('{867,4}'DSOURCE,'')` | `DbDel('{867,4}'DSOURCE,'')` |
-| 4 | `NOT {1,22}` | `NOT {1,22}` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `{2,10}` | `{2,10}` |
-| 3 | `{2,9}` | `{2,9}` |
-| 4 | `IF ({2,1} OR {2,26},MlsTrans ('ANNULATION')&' ','')&IF ({...` | `IF ({2,1} OR {2,26},MlsTrans ('ANNULATION')&' ','')&IF ({...` |
-| 5 | `{32768,2}` | `VG.Retour Chariot` |
-| 6 | `{0,10}+{0,5}` | `P0 Chambre+P0 Qte` |
-| 7 | `IF (NOT ({2,17}),{0,1},{0,1}&IF (Right ({0,1},4)='Nigh',I...` | `IF (NOT ({2,17}),P0 Nom,P0 Nom&IF (Right (P0 Nom,4)='Nigh...` |
-| 8 | `IF ({2,17},IF ({2,18}='O','CASH','ACCOUNT '&IF ({0,5}<0,'...` | `IF ({2,17},IF ({2,18}='O','CASH','ACCOUNT '&IF (P0 Qte<0,...` |
-| 9 | `Trim (Str ({2,20}-{2,19},'3'))&' Night'&IF (MID ({0,1},7,...` | `Trim (Str ({2,20}-{2,19},'3'))&' Night'&IF (MID (P0 Nom,7...` |
-| 10 | `{2,17}` | `{2,17}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 8 (0 W / 8 R) |
-| Parametres | 27 |
-| Variables locales | 33 |
-| Expressions | 552 |
-| Expressions 100% decodees | 364 (66%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-26 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 28 |
+| **Lignes logique** | 819 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N244[244 Histo ventes]
+    N243[243 Histo ventes]
+    N237[237 Transaction ]
+    N240[240 Transaction ]
+    N239[239 Transaction ]
+    T[234  Print ticke]
+    M --> N244
+    N244 --> N243
+    N243 --> N237
+    N237 --> N240
+    N240 --> N239
+    N239 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N244 fill:#f59e0b
+    style N243 fill:#f59e0b
+    style N237 fill:#f59e0b
+    style N240 fill:#f59e0b
+    style N239 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 8 |
-| Expressions | 552 |
-| Complexite | Eleve |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 318 | Historique des ventes P247 | 4 |
+| 307 | Saisie transaction 154  N.U | 2 |
+| 310 | Saisie transaction Nouv vente | 2 |
+| 316 | Saisie transaction Nouv vente | 2 |
+| 233 | Appel Print ticket vente PMS28 | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[234 Programme]
+    C152[152 Recup Classe]
+    T --> C152
+    C251[251 Creation pie]
+    T --> C251
+    C182[182 Raz Current ]
+    T --> C182
+    style T fill:#58a6ff,color:#000
+    style C152 fill:#3fb950
+    style C251 fill:#3fb950
+    style C182 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 152 | Recup Classe et Lib du MOP | 5 |
+| 1 | 251 | Creation pied Ticket | 5 |
+| 1 | 182 | Raz Current Printer | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:24 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:50 | **DATA POPULATED** - Tables, Callgraph (16 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

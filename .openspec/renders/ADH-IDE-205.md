@@ -1,177 +1,161 @@
-﻿# ADH IDE 205 - Verification pooling
+﻿# ADH IDE 205 - Verification pooling
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_204.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 205 |
-| **Fichier XML** | Prg_204.xml |
-| **Description** | Verification pooling |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 0 |
-| **Module** | ADH |
-| **Dossier IDE** | Telephone |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_204.xml. L'ID XML (204) peut differer de la position IDE (205).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Verification pooling |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-205.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (2 tables -  en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #476 | `%club_user%_caisse_cpte_chgt_act` | comptes_pour_changer_activite | **W** | 4x |
-| #63 | `cafil041_dat` | parametres___par | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 205 |
+| **Description** | Verification pooling |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (0)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 63 | parametres___par | `cafil041_dat` | R | 1x |
+| 476 | comptes_pour_changer_activite | `%club_user%_caisse_cpte_chgt_act` | R | 2x |
+| 476 | comptes_pour_changer_activite | `%club_user%_caisse_cpte_chgt_act` | **W** | 2x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `'C'` | - |
+| 2 | `1` | - |
+| 3 | `2` | - |
+| 4 | `{0,3}='O'` | - |
+| 5 | `{0,3}='O' OR {0,6}='O'` | - |
+| 6 | `{0,3}='N' AND {0,6}='N'` | - |
+| 7 | `NOT {32768,78}` | - |
+| 8 | `{32768,78}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 8 expressions (affichees: 8)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 118 variables mappees
 
----
-
-## 5. EXPRESSIONS (32 total, 22 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `'C'` | `'C'` |
-| 2 | `1` | `1` |
-| 3 | `2` | `2` |
-| 4 | `{0,3}='O'` | `{0,3}='O'` |
-| 5 | `{0,3}='O' OR {0,6}='O'` | `{0,3}='O' OR {0,6}='O'` |
-| 6 | `{0,3}='N' AND {0,6}='N'` | `{0,3}='N' AND {0,6}='N'` |
-| 7 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 8 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 1 | `'COM'` | `'COM'` |
-| 2 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 3 | `{32768,79}` | `VG.Numéro pseudo terminal` |
-| 1 | `'COM'` | `'COM'` |
-| 2 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 3 | `GetHostName ()` | `GetHostName ()` |
-| 1 | `{0,1}` | `{0,1}` |
-| 2 | `Time ()` | `Time ()` |
-| 3 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 4 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 1 | `{32768,79}` | `VG.Numéro pseudo terminal` |
-| 2 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 3 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 4 | `{0,1}` | `{0,1}` |
-| 5 | `Time ()-{1,2}>'00:00:30'TIME` | `Time ()-{1,2}>'00:00:30'TIME` |
-| 6 | `Time ()-{1,2}` | `Time ()-{1,2}` |
-| 7 | `MlsTrans ('Verification de connexion des Poolings')` | `MlsTrans ('Verification de connexion des Poolings')` |
-| 1 | `GetHostName ()` | `GetHostName ()` |
-| 2 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 3 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 4 | `{0,1}` | `{0,1}` |
-| 5 | `Time ()-{1,2}>'00:00:30'TIME` | `Time ()-{1,2}>'00:00:30'TIME` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 2 ( W /  R) |
-| Parametres | 0 |
-| Variables locales | 0 |
-| Expressions | 32 |
-| Expressions 100% decodees | 22 (69%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 6 |
+| **Lignes logique** | 67 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    T[205 Verification pooling]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 2 |
-| Expressions | 32 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | **Aucun caller** (point d'entree ou orphelin) | - |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[205 Programme]
+    C207[207 Suppression ]
+    T --> C207
+    C206[206 Visualisatio]
+    T --> C206
+    style T fill:#58a6ff,color:#000
+    style C207 fill:#3fb950
+    style C206 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 207 | Suppression demande verif pool | 2 |
+| 1 | 206 | Visualisation pooling | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:23 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:49 | **DATA POPULATED** - Tables, Callgraph (8 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

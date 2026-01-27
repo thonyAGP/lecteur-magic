@@ -1,168 +1,170 @@
-﻿# ADH IDE 175 - Transferts
+﻿# ADH IDE 175 - Transferts
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_174.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 175 |
-| **Fichier XML** | Prg_174.xml |
-| **Description** | Transferts |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 3 |
-| **Module** | ADH |
-| **Dossier IDE** | Operations GM |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_174.xml. L'ID XML (174) peut differer de la position IDE (175).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Transferts |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-175.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (3 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 1x |
-| #34 | `cafil012_dat` | hebergement______heb | R | 1x |
-| #473 | `%club_user%_caisse_compcais` | comptage_caisse | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 175 |
+| **Description** | Transferts |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (3)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 34 | hebergement______heb | `cafil012_dat` | L | 1x |
+| 473 | comptage_caisse | `%club_user%_caisse_compcais` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `42` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 1 expressions (affichees: 1)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 124 variables mappees
 
----
-
-## 5. EXPRESSIONS (20 total, 9 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `42` | `42` |
-| 1 | `Trim ({0,1})` | `Trim (p.i.Num compte adhérent)` |
-| 2 | `Date ()` | `Date ()` |
-| 3 | `{32768,2}` | `VG.Retour Chariot` |
-| 4 | `Stat (0,'C'MODE)` | `Stat (0,'C'MODE)` |
-| 5 | `Trim ({0,6})&' '&{0,5}` | `Trim ({0,6})&' '&{0,5}` |
-| 6 | `165` | `165` |
-| 7 | `NOT(Stat(0,'M'MODE))` | `NOT(Stat(0,'M'MODE))` |
-| 8 | `{1,1}` | `{1,1}` |
-| 9 | `{1,2}` | `{1,2}` |
-| 10 | `{0,4}` | `{0,4}` |
-| 11 | `'R'` | `'R'` |
-| 12 | `'Z'` | `'Z'` |
-| 13 | `{0,16}` | `{0,16}` |
-| 14 | `IF({0,17}, {0,14}, {0,25})` | `IF({0,17}, {0,14}, {0,25})` |
-| 15 | `IF({0,17}, {0,15}, {0,26})` | `IF({0,17}, {0,15}, {0,26})` |
-| 16 | `{0,22}` | `{0,22}` |
-| 17 | `Val({0,23}, '2')*60*60` | `Val({0,23}, '2')*60*60` |
-| 18 | `Val({0,24}, '2')*60*60` | `Val({0,24}, '2')*60*60` |
-| 19 | `{1,3}` | `{1,3}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 3 (0 W / 3 R) |
-| Parametres | 3 |
-| Variables locales | 3 |
-| Expressions | 20 |
-| Expressions 100% decodees | 9 (45%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 2 |
+| **Lignes logique** | 56 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[175 Transferts]
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 3 |
-| Expressions | 20 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 163 | Menu caisse GM - scroll | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[175 Programme]
+    C43[43 Recuperation]
+    T --> C43
+    C176[176 Print transf]
+    T --> C176
+    C179[179 Get Printer]
+    T --> C179
+    C180[180 Printer choi]
+    T --> C180
+    C181[181 Set Listing ]
+    T --> C181
+    style T fill:#58a6ff,color:#000
+    style C43 fill:#3fb950
+    style C176 fill:#3fb950
+    style C179 fill:#3fb950
+    style C180 fill:#3fb950
+    style C181 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 43 | Recuperation du titre | 1 |
+| 1 | 176 | Print transferts | 1 |
+| 1 | 179 | Get Printer | 1 |
+| 1 | 180 | Printer choice | 1 |
+| 1 | 181 | Set Listing Number | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:22 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:48 | **DATA POPULATED** - Tables, Callgraph (1 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

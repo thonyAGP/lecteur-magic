@@ -1,211 +1,211 @@
-﻿# ADH IDE 69 - Extrait de compte
+﻿# ADH IDE 69 - Extrait de compte
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_69.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 69 |
-| **Fichier XML** | Prg_69.xml |
-| **Description** | Extrait de compte |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 12 |
-| **Module** | ADH |
-| **Dossier IDE** | Extrait de Compte |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_69.xml. L'ID XML (69) peut differer de la position IDE (69).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Extrait de compte |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-- **Qui**: Operateur caisse / Reception
-- **Quoi**: Generer un extrait de compte pour un adherent
-- **Pourquoi**: Permettre consultation et impression des mouvements financiers du compte
-### 1.2 Flux Utilisateur
-1. Saisie ou selection du compte adherent (societe + code + filiation)
-2. Selection des criteres de filtre (dates, services)
-3. Affichage liste des mouvements avec cumul progressif
-4. Option impression extrait
-5. Retour au menu ou nouveau extrait
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-- Query simple - lecture seule sur operations
-- Calcul cumul progressif cote application
-- Integration avec EXTRAIT_IMP (IDE 73) pour impression
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
-
-### 1.5 Tags
-`extrait``, ``ecf-shared``, ``cross-project``, ``compte-adherent`
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (15 tables - 4 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #40 | `cafil018_dat` | comptable________cte | **W** | 3x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 3x |
-| #367 | `pmsprintparamdefault` | pms_print_param_default | **W** | 1x |
-| #911 | `log_booker` | log_booker | **W** | 1x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 1x |
-| #67 | `cafil045_dat` | tables___________tab | R | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #285 | `email` | email | R | 1x |
-| #377 | `pv_contracts_dat` | pv_contracts | R | 1x |
-| #395 | `pv_ownership_dat` | pv_ownership | R | 1x |
-| #396 | `pv_packages_dat` | pv_cust_packages | R | 2x |
-| #473 | `%club_user%_caisse_compcais` | comptage_caisse | R | 1x |
-| #728 | `arc_cctotal` | arc_cc_total | R | 1x |
-| #786 | `qualite_avant_reprise` | qualite_avant_reprise | R | 1x |
-| #945 | `Table_945` | Unknown | R | 2x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 69 |
+| **Description** | Extrait de compte |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (12)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | > societe | ALPHA | - |
-| P2 | > code_retour | ALPHA | - |
-| P3 | > code_adherent | NUMERIC | - |
-| P4 | > filiation | NUMERIC | - |
-| P5 | > masque mtt | ALPHA | - |
-| P6 | > nom village | ALPHA | - |
-| P7 | < solde compte | NUMERIC | - |
-| P8 | < etat compte | ALPHA | - |
-| P9 | < date solde | DATE | - |
-| P10 | < garanti O/N | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | L | 1x |
+| 40 | comptable________cte | `cafil018_dat` | R | 2x |
+| 40 | comptable________cte | `cafil018_dat` | **W** | 1x |
+| 47 | compte_gm________cgm | `cafil025_dat` | R | 2x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 1x |
+| 67 | tables___________tab | `cafil045_dat` | L | 1x |
+| 70 | date_comptable___dat | `cafil048_dat` | L | 1x |
+| 285 | email | `email` | L | 1x |
+| 367 | pms_print_param_default | `pmsprintparamdefault` | **W** | 1x |
+| 377 | pv_contracts | `pv_contracts_dat` | R | 1x |
+| 395 | pv_ownership | `pv_ownership_dat` | L | 1x |
+| 396 | pv_cust_packages | `pv_packages_dat` | L | 2x |
+| 473 | comptage_caisse | `%club_user%_caisse_compcais` | L | 1x |
+| 728 | arc_cc_total | `arc_cctotal` | L | 1x |
+| 786 | qualite_avant_reprise | `qualite_avant_reprise` | L | 1x |
+| 911 | log_booker | `log_booker` | **W** | 1x |
+| 945 | Table_945 | - | L | 1x |
+| 945 | Table_945 | - | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 Presence Recap Free Extra | LOGICAL | - |
-| W0 Print Recap Free Extra | LOGICAL | - |
-| W0 Mail Existe | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,1}=''` | - |
+| 2 | `'C'` | - |
+| 3 | `{0,1}` | - |
+| 4 | `{0,3}` | - |
+| 5 | `{0,4}` | - |
+| 6 | `NOT {0,11}` | - |
+| 7 | `{0,11}` | - |
+| 8 | `{32768,37}` | - |
+| 9 | `'TRUE'LOG` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 9 expressions (affichees: 9)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 148 variables mappees
 
----
-
-## 5. EXPRESSIONS (188 total, 98 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,1}=''` | `> code_retour=''` |
-| 2 | `'C'` | `'C'` |
-| 3 | `{0,1}` | `> code_retour` |
-| 4 | `{0,3}` | `> filiation` |
-| 5 | `{0,4}` | `> masque mtt` |
-| 6 | `NOT {0,11}` | `NOT >P.ViensDe` |
-| 7 | `{0,11}` | `>P.ViensDe` |
-| 8 | `{32768,37}` | `VG.VG FREE EXTRA` |
-| 9 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,3}` | `{1,3}` |
-| 3 | `1` | `1` |
-| 4 | `{0,5}+{0,3}` | `> nom village+> filiation` |
-| 1 | `{2,1}` | `{2,1}` |
-| 2 | `{1,2}` | `{1,2}` |
-| 3 | `{1,5}` | `{1,5}` |
-| 1 | `{1,1}` | `{1,1}` |
-| 2 | `{1,3}` | `{1,3}` |
-| 3 | `IF ({1,18},{1,14},'01/01/1900'DATE)` | `IF ({1,18},{1,14},'01/01/1900'DATE)` |
-| 4 | `IF ({1,18},{1,14},'01/01/2900'DATE)` | `IF ({1,18},{1,14},'01/01/2900'DATE)` |
-| 6 | `{0,4}<>0` | `> masque mtt<>0` |
-| 7 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 1 | `IF ({1,18},{1,14},'01/01/1900'DATE)` | `IF ({1,18},{1,14},'01/01/1900'DATE)` |
-| 2 | `IF ({1,18},{1,14},'01/01/2900'DATE)` | `IF ({1,18},{1,14},'01/01/2900'DATE)` |
-| 3 | `Trim ({0,73})` | `Trim ({0,73})` |
-| 4 | `Date ()` | `Date ()` |
-| 5 | `{32768,2}` | `VG.Retour Chariot` |
-| 6 | `{1,1}` | `{1,1}` |
-| 7 | `{1,3}` | `{1,3}` |
-| 8 | `{0,3}` | `> filiation` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 15 (4 W / 11 R) |
-| Parametres | 12 |
-| Variables locales | 15 |
-| Expressions | 188 |
-| Expressions 100% decodees | 98 (52%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 12 |
+| **Lignes logique** | 464 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[69 Extrait de c]
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 15 |
-| Expressions | 188 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 163 | Menu caisse GM - scroll | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[69 Programme]
+    C179[179 Get Printer]
+    T --> C179
+    C181[181 Set Listing ]
+    T --> C181
+    C183[183 Other Listin]
+    T --> C183
+    C71[71 Print extrai]
+    T --> C71
+    C43[43 Recuperation]
+    T --> C43
+    C44[44 Appel progra]
+    T --> C44
+    C70[70 Print extrai]
+    T --> C70
+    C72[72 Print extrai]
+    T --> C72
+    style T fill:#58a6ff,color:#000
+    style C179 fill:#3fb950
+    style C181 fill:#3fb950
+    style C183 fill:#3fb950
+    style C71 fill:#3fb950
+    style C43 fill:#3fb950
+    style C44 fill:#3fb950
+    style C70 fill:#3fb950
+    style C72 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 179 | Get Printer | 7 |
+| 1 | 181 | Set Listing Number | 7 |
+| 1 | 183 | Other Listing | 6 |
+| 1 | 71 | Print extrait compte /Date | 2 |
+| 1 | 43 | Recuperation du titre | 1 |
+| 1 | 44 | Appel programme | 1 |
+| 1 | 70 | Print extrait compte /Nom | 1 |
+| 1 | 72 | Print extrait compte /Cum | 1 |
+| 1 | 73 | Print extrait compte /Imp | 1 |
+| 1 | 74 | Print extrait DateImp /O | 1 |
+| 1 | 76 | Print extrait compte /Service | 1 |
+| 1 | 180 | Printer choice | 1 |
+| 1 | 182 | Raz Current Printer | 1 |
+| 1 | 226 | Recherche Adresse Mail | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:19 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:45 | **DATA POPULATED** - Tables, Callgraph (9 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

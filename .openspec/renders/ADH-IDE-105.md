@@ -1,172 +1,187 @@
-﻿# ADH IDE 105 - Maj des lignes saisies V3
+﻿# ADH IDE 105 - Maj des lignes saisies V3
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_105.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 105 |
-| **Fichier XML** | Prg_105.xml |
-| **Description** | Maj des lignes saisies V3 |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 8 |
-| **Module** | ADH |
-| **Dossier IDE** | Factures V3 |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_105.xml. L'ID XML (105) peut differer de la position IDE (105).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Maj des lignes saisies V3 |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-105.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (4 tables - 4 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #40 | `cafil018_dat` | comptable________cte | **W** | 1x |
-| #263 | `caisse_vente` | vente | **W** | 1x |
-| #866 | `maj_appli_tpe` | maj_appli_tpe | **W** | 1x |
-| #870 | `rayons_boutique` | Rayons_Boutique | **W** | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 105 |
+| **Description** | Maj des lignes saisies V3 |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (8)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 40 | comptable________cte | `cafil018_dat` | **W** | 1x |
+| 263 | vente | `caisse_vente` | L | 1x |
+| 866 | maj_appli_tpe | `maj_appli_tpe` | L | 1x |
+| 870 | Rayons_Boutique | `rayons_boutique` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,31}=0 AND NOT {0,8}` | - |
+| 2 | `{0,42}=0 AND NOT {0,8}` | - |
+| 3 | `{0,4}` | - |
+| 4 | `Date()` | - |
+| 5 | `Time()` | - |
+| 6 | `{0,5}` | - |
+| 7 | `{0,1}` | - |
+| 8 | `{0,2}` | - |
+| 9 | `Date()` | - |
+| 10 | `{0,14}` | - |
+| 11 | `{0,29} AND Trim({0,7})<>'D'` | - |
+| 12 | `{0,36} AND Trim({0,7})<>'I'` | - |
+| 13 | `{0,14}` | - |
+| 14 | `{0,22}` | - |
+| 15 | `{0,17} = 0 OR {0,31} = 0` | - |
+| 16 | `{0,6}` | - |
+| 17 | `IF(Trim({0,7})='','TRUE'LOG,IF(Trim({0,7})='I',...` | - |
+| 18 | `IF(Trim({0,7})='I',{0,29},{0,36})` | - |
+| 19 | `{0,12}` | - |
+| 20 | `'FALSE'LOG` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 23 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 142 variables mappees
 
----
-
-## 5. EXPRESSIONS (23 total, 10 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,31}=0 AND NOT {0,8}` | `{0,31}=0 AND NOT V retour Compta` |
-| 2 | `{0,42}=0 AND NOT {0,8}` | `{0,42}=0 AND NOT V retour Compta` |
-| 3 | `{0,4}` | `P.i.NomFacPDF` |
-| 4 | `Date()` | `Date()` |
-| 5 | `Time()` | `Time()` |
-| 6 | `{0,5}` | `P.i.SelectionManulle` |
-| 7 | `{0,1}` | `P.i.Compte` |
-| 8 | `{0,2}` | `P.i.Flague` |
-| 9 | `Date()` | `Date()` |
-| 10 | `{0,14}` | `{0,14}` |
-| 11 | `{0,29} AND Trim({0,7})<>'D'` | `{0,29} AND Trim(P.i.Facture ECO)<>'D'` |
-| 12 | `{0,36} AND Trim({0,7})<>'I'` | `{0,36} AND Trim(P.i.Facture ECO)<>'I'` |
-| 13 | `{0,14}` | `{0,14}` |
-| 14 | `{0,22}` | `{0,22}` |
-| 15 | `{0,17} = 0 OR {0,31} = 0` | `{0,17} = 0 OR {0,31} = 0` |
-| 16 | `{0,6}` | `P.i.TypeReglement` |
-| 17 | `IF(Trim({0,7})='','TRUE'LOG,IF(Trim({0,7})='I',{0,29},{0,...` | `IF(Trim(P.i.Facture ECO)='','TRUE'LOG,IF(Trim(P.i.Facture...` |
-| 18 | `IF(Trim({0,7})='I',{0,29},{0,36})` | `IF(Trim(P.i.Facture ECO)='I',{0,29},{0,36})` |
-| 19 | `{0,12}` | `{0,12}` |
-| 20 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 21 | `CndRange(Trim({0,7})='',{0,6})` | `CndRange(Trim(P.i.Facture ECO)='',P.i.TypeReglement)` |
-| 22 | `{0,35}` | `{0,35}` |
-| 23 | `{0,41}` | `{0,41}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 4 (4 W / 0 R) |
-| Parametres | 8 |
-| Variables locales | 12 |
-| Expressions | 23 |
-| Expressions 100% decodees | 10 (43%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 81 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N190[190 Menu solde d]
+    N163[163 Menu caisse ]
+    N313[313 Easy Check O]
+    N287[287 Solde Easy C]
+    N193[193 Solde compte]
+    T[105 Maj des lign]
+    M --> N190
+    N190 --> N163
+    N163 --> N313
+    N313 --> N287
+    N287 --> N193
+    N193 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N190 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N313 fill:#f59e0b
+    style N287 fill:#f59e0b
+    style N193 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 4 |
-| Expressions | 23 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 0 | Garantie sur compte PMS-584 | 2 |
+| 54 | Factures_Check_Out | 2 |
+| 97 | Factures (Tble Compta&Vent) V3 | 2 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[105 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:20 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:46 | **DATA POPULATED** - Tables, Callgraph (23 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

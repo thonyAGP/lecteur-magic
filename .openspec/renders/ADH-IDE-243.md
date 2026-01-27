@@ -1,242 +1,234 @@
-﻿# ADH IDE 243 - Histo ventes payantes
+﻿# ADH IDE 243 - Histo ventes payantes
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-26
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_239.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 243 |
-| **Fichier XML** | Prg_239.xml |
-| **Description** | Histo ventes payantes |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 14 |
-| **Module** | ADH |
-| **Dossier IDE** | Ventes |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_239.xml. L'ID XML (239) peut differer de la position IDE (243).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Histo ventes payantes |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-243.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (25 tables - 8 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #23 | `cafil001_dat` | reseau_cloture___rec | **W** | 5x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 2x |
-| #596 | `%club_user%tmp_ecrpolice_dat` | tempo_ecran_police | **W** | 3x |
-| #847 | `%club_user%_stat_lieu_vente_date` | stat_lieu_vente_date | **W** | 3x |
-| #899 | `Boo_ResultsRechercheHoraire` | Boo_ResultsRechercheHoraire | **W** | 2x |
-| #911 | `log_booker` | log_booker | **W** | 1x |
-| #933 | `taxe_add_vente` | taxe_add_vente | **W** | 6x |
-| #945 | `Table_945` | Unknown | **W** | 4x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 1x |
-| #34 | `cafil012_dat` | hebergement______heb | R | 3x |
-| #40 | `cafil018_dat` | comptable________cte | R | 3x |
-| #67 | `cafil045_dat` | tables___________tab | R | 1x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #77 | `cafil055_dat` | articles_________art | R | 1x |
-| #79 | `cafil057_dat` | gratuites________gra | R | 1x |
-| #89 | `cafil067_dat` | moyen_paiement___mop | R | 3x |
-| #197 | `caisse_artstock` | articles_en_stock | R | 3x |
-| #263 | `caisse_vente` | vente | R | 3x |
-| #285 | `email` | email | R | 1x |
-| #400 | `pv_rentals_dat` | pv_cust_rentals | R | 2x |
-| #473 | `%club_user%_caisse_compcais` | comptage_caisse | R | 3x |
-| #728 | `arc_cctotal` | arc_cc_total | R | 1x |
-| #804 | `valeur_credit_bar_defaut` | valeur_credit_bar_defaut | R | 3x |
-| #910 | `classification_memory` | classification_memory | R | 1x |
-| #1069 | `Table_1069` | Unknown | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 243 |
+| **Description** | Histo ventes payantes |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (14)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P.Societe | ALPHA | - |
-| P2 | P.Devise locale | ALPHA | - |
-| P3 | P.Masque montant | ALPHA | - |
-| P4 | P.Code GM | NUMERIC | - |
-| P5 | P.Date fin sejour | DATE | - |
-| P6 | P.Etat compte | ALPHA | - |
-| P7 | P.Date solde | DATE | - |
-| P8 | P.Garanti O/N | ALPHA | - |
-| P9 | P.Nom et prenom | ALPHA | - |
-| P10 | P.UNI/BI | ALPHA | - |
-| P11 | P.Date debut sejour | DATE | - |
-| P12 | P.Valide ? | NUMERIC | - |
-| P13 | P.Nb decimales | NUMERIC | - |
-| P14 | id | NUMERIC | - |
-| P15 | date | ALPHA | - |
-| P16 | heure | ALPHA | - |
-| P17 | imputation | NUMERIC | - |
-| P18 | sousimp | NUMERIC | - |
-| P19 | service | UNICODE | - |
-| P20 | paiement | UNICODE | - |
-| P21 | CPTE | NUMERIC | - |
-| P22 | FIL | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 23 | reseau_cloture___rec | `cafil001_dat` | R | 1x |
+| 23 | reseau_cloture___rec | `cafil001_dat` | **W** | 4x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 34 | hebergement______heb | `cafil012_dat` | R | 3x |
+| 40 | comptable________cte | `cafil018_dat` | L | 3x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 2x |
+| 67 | tables___________tab | `cafil045_dat` | L | 1x |
+| 70 | date_comptable___dat | `cafil048_dat` | R | 1x |
+| 77 | articles_________art | `cafil055_dat` | L | 1x |
+| 79 | gratuites________gra | `cafil057_dat` | R | 1x |
+| 89 | moyen_paiement___mop | `cafil067_dat` | L | 3x |
+| 197 | articles_en_stock | `caisse_artstock` | L | 3x |
+| 263 | vente | `caisse_vente` | L | 3x |
+| 285 | email | `email` | R | 1x |
+| 400 | pv_cust_rentals | `pv_rentals_dat` | L | 2x |
+| 473 | comptage_caisse | `%club_user%_caisse_compcais` | L | 3x |
+| 596 | tempo_ecran_police | `%club_user%tmp_ecrpolice_dat` | L | 3x |
+| 728 | arc_cc_total | `arc_cctotal` | L | 1x |
+| 804 | valeur_credit_bar_defaut | `valeur_credit_bar_defaut` | L | 3x |
+| 847 | stat_lieu_vente_date | `%club_user%_stat_lieu_vente_date` | L | 3x |
+| 899 | Boo_ResultsRechercheHoraire | `Boo_ResultsRechercheHoraire` | **W** | 2x |
+| 910 | classification_memory | `classification_memory` | L | 1x |
+| 911 | log_booker | `log_booker` | **W** | 1x |
+| 933 | taxe_add_vente | `taxe_add_vente` | L | 3x |
+| 933 | taxe_add_vente | `taxe_add_vente` | R | 3x |
+| 945 | Table_945 | - | L | 3x |
+| 945 | Table_945 | - | R | 1x |
+| 1069 | Table_1069 | - | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| V0.Date | DATE | - |
-| V0.Heure | TIME | - |
-| V0.Motif annulation | ALPHA | - |
-| V0.Confirmer annulation | NUMERIC | - |
-| V0.Erreur ? | LOGICAL | - |
-| V0.Nb type article | NUMERIC | - |
-| V0.Nb mode paiement | NUMERIC | - |
-| V0.Transaction Validee TPE | LOGICAL | - |
-| V0.Message erreur | ALPHA | - |
-| V0.VAD ? | LOGICAL | - |
-| V0.Montant carte | NUMERIC | - |
-| V0.Gratuite | ALPHA | - |
-| V0.Dossier PMS | ALPHA | - |
-| V0.Dossier AXIS | ALPHA | - |
-| V0.Transaction_Id | ALPHA | - |
-| V0.Deversement OK | LOGICAL | - |
-| V0.Cloture en cours | LOGICAL | - |
-| V0.Fin de tache ? | ALPHA | - |
-| V0.Code devise | NUMERIC | - |
-| V0.Reseau | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `MlsTrans('Liste des ventes du compte')` | - |
+| 2 | `{32768,2}` | - |
+| 3 | `Date()` | - |
+| 4 | `DVal({0,16},'YYYYMMDD')` | - |
+| 5 | `TVal({0,17},'HHMMSS')` | - |
+| 6 | `Trim({0,29})&' '&Trim({0,28})` | - |
+| 7 | `IF ({0,3}='','N15.2Z',{0,3})` | - |
+| 8 | `{0,30}` | - |
+| 9 | `{0,33}=0 AND {0,34}<>'A'` | - |
+| 10 | `IF({0,33}<>0 OR {0,34}='A',36,110)` | - |
+| 11 | `IF({0,34}='A',MlsTrans ('Annulation'),IF({0,33}...` | - |
+| 12 | `{0,54}<>0 OR {0,61}<>0` | - |
+| 13 | `Trim({0,40})<>''` | - |
+| 14 | `{0,41}=6` | - |
+| 15 | `Trim({0,40})=''` | - |
+| 16 | `IF({0,21}='OD','OD','')` | - |
+| 17 | `{0,15}` | - |
+| 18 | `{0,21}` | - |
+| 19 | `{0,43}` | - |
+| 20 | `{0,65}>1` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 72 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 272 variables mappees
 
----
-
-## 5. EXPRESSIONS (585 total, 227 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `MlsTrans('Liste des ventes du compte')` | `MlsTrans('Liste des ventes du compte')` |
-| 2 | `{32768,2}` | `VG.Retour Chariot` |
-| 3 | `Date()` | `Date()` |
-| 4 | `DVal({0,16},'YYYYMMDD')` | `DVal(heure,'YYYYMMDD')` |
-| 5 | `TVal({0,17},'HHMMSS')` | `TVal(imputation,'HHMMSS')` |
-| 6 | `Trim({0,29})&' '&Trim({0,28})` | `Trim(article)&' '&Trim(gmc_prenom_complet)` |
-| 7 | `IF ({0,3}='','N15.2Z',{0,3})` | `IF (P.Solde compte='','N15.2Z',P.Solde compte)` |
-| 8 | `{0,30}` | `GiftPass` |
-| 9 | `{0,33}=0 AND {0,34}<>'A'` | `annulation=0 AND Commentaire_Annulation<>'A'` |
-| 10 | `IF({0,33}<>0 OR {0,34}='A',36,110)` | `IF(annulation<>0 OR Commentaire_Annulation='A',36,110)` |
-| 11 | `IF({0,34}='A',MlsTrans ('Annulation'),IF({0,33}<>0,MlsTra...` | `IF(Commentaire_Annulation='A',MlsTrans ('Annulation'),IF(...` |
-| 12 | `{0,54}<>0 OR {0,61}<>0` | `V0.Transaction_Id<>0 OR V0.Chaine compte special<>0` |
-| 13 | `Trim({0,40})<>''` | `Trim(V0.Confirmer annulation)<>''` |
-| 14 | `{0,41}=6` | `L.Retour_Ticket=6` |
-| 15 | `Trim({0,40})=''` | `Trim(V0.Confirmer annulation)=''` |
-| 16 | `IF({0,21}='OD','OD','')` | `IF(CPTE='OD','OD','')` |
-| 17 | `{0,15}` | `date` |
-| 18 | `{0,21}` | `CPTE` |
-| 19 | `{0,43}` | `V0.Erreur ?` |
-| 20 | `{0,65}>1` | `V0.Existe ligne selectionnee ?>1` |
-| 21 | `{0,64}>1` | `V0.Exist ligne à annuler ?>1` |
-| 22 | `{0,65}=1` | `V0.Existe ligne selectionnee ?=1` |
-| 23 | `{0,64}=1` | `V0.Exist ligne à annuler ?=1` |
-| 24 | `DbDel('{596,4}'DSOURCE,'')` | `DbDel('{596,4}'DSOURCE,'')` |
-| 25 | `{32768,24} AND {0,69}<>0 AND NOT {0,68}` | `VG.TPE INTERFACE SUR TERMINAL AND v.Envoi ticket email<>0...` |
-| 26 | `DbDel('{847,4}'DSOURCE,'')` | `DbDel('{847,4}'DSOURCE,'')` |
-| 27 | `Trim({0,67})` | `Trim(V.N°Ticket Annulation)` |
-| 28 | `NOT {0,66} AND {0,67}<>''` | `NOT V0.Qte AND V.N°Ticket Annulation<>''` |
-| 29 | `NOT {0,66}` | `NOT V0.Qte` |
-| 30 | `{0,1}` | `P.Devise locale` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 25 (8 W / 17 R) |
-| Parametres | 14 |
-| Variables locales | 77 |
-| Expressions | 585 |
-| Expressions 100% decodees | 227 (39%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-26 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 22 |
+| **Lignes logique** | 1528 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N242[242 Menu Choix S]
+    N0[0 Transaction ]
+    N0[0 Transaction ]
+    N1[1 Main Program]
+    N163[163 Menu caisse ]
+    T[243 Histo ventes]
+    N242 --> N0
+    N0 --> N0
+    N0 --> N1
+    N1 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N242 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N0 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 25 |
-| Expressions | 585 |
-| Complexite | Eleve |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 0 | Transaction Nouv vente PMS-584 | 1 |
+| 0 | Transaction Nouv vente PMS-710 | 1 |
+| 0 | Transaction Nouv vente PMS-721 | 1 |
+| 242 | Menu Choix Saisie/Annul vente | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[243 Programme]
+    C233[233 Appel Print ]
+    T --> C233
+    C235[235  Print ticke]
+    T --> C235
+    C236[236  Print ticke]
+    T --> C236
+    C179[179 Get Printer]
+    T --> C179
+    C181[181 Set Listing ]
+    T --> C181
+    C182[182 Raz Current ]
+    T --> C182
+    C247[247 Deversement ]
+    T --> C247
+    style T fill:#58a6ff,color:#000
+    style C233 fill:#3fb950
+    style C235 fill:#3fb950
+    style C236 fill:#3fb950
+    style C179 fill:#3fb950
+    style C181 fill:#3fb950
+    style C182 fill:#3fb950
+    style C247 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 233 | Appel Print ticket vente PMS28 | 2 |
+| 1 | 235 |  Print ticket vente LEX | 2 |
+| 1 | 236 |  Print ticket vente PMS-584 | 2 |
+| 1 | 179 | Get Printer | 1 |
+| 1 | 181 | Set Listing Number | 1 |
+| 1 | 182 | Raz Current Printer | 1 |
+| 1 | 247 | Deversement Transaction | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:24 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:50 | **DATA POPULATED** - Tables, Callgraph (72 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

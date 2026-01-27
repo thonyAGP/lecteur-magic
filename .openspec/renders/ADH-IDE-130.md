@@ -1,204 +1,173 @@
-﻿# ADH IDE 130 - Ecart fermeture caisse
+﻿# ADH IDE 130 - Ecart fermeture caisse
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_130.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 130 |
-| **Fichier XML** | Prg_130.xml |
-| **Description** | Ecart fermeture caisse |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 30 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_130.xml. L'ID XML (130) peut differer de la position IDE (130).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Ecart fermeture caisse |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-130.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (7 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #50 | `cafil028_dat` | moyens_reglement_mor | R | 2x |
-| #90 | `cafil068_dat` | devises__________dev | R | 1x |
-| #139 | `cafil117_dat` | moyens_reglement_mor | R | 2x |
-| #141 | `cafil119_dat` | devises__________dev | R | 2x |
-| #232 | `caisse_devise` | gestion_devise_session | R | 4x |
-| #492 | `caisse_tabrecap` | edition_tableau_recap | R | 1x |
-| #706 | `paramcom_par` | parametre_port_serie | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 130 |
+| **Description** | Ecart fermeture caisse |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (30)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param societe | ALPHA | - |
-| P2 | Param chrono session | NUMERIC | - |
-| P3 | Param devise locale | ALPHA | - |
-| P4 | Param masque montant | ALPHA | - |
-| P5 | Param quand | ALPHA | - |
-| P6 | Param caisse comptee | NUMERIC | - |
-| P7 | Param caisse comptee monnaie | NUMERIC | - |
-| P8 | Param caisse comptee produits | NUMERIC | - |
-| P9 | Param caisse comptee cartes | NUMERIC | - |
-| P10 | Param caisse comptee cheques | NUMERIC | - |
-| P11 | Param caisse comptee od | NUMERIC | - |
-| P12 | Param caisse comptee nb devise | NUMERIC | - |
-| P13 | Param caisse calculee | NUMERIC | - |
-| P14 | Param caisse calculee monnaie | NUMERIC | - |
-| P15 | Param caisse calculee produits | NUMERIC | - |
-| P16 | Param caisse calculee cartes | NUMERIC | - |
-| P17 | Param caisse calculee cheques | NUMERIC | - |
-| P18 | Param caisse calculee od | NUMERIC | - |
-| P19 | Param caisse calculee nb devise | NUMERIC | - |
-| P20 | Param montant ecart | NUMERIC | - |
-| P21 | Param montant ecart monnaie | NUMERIC | - |
-| P22 | Param montant ecart produits | NUMERIC | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 50 | moyens_reglement_mor | `cafil028_dat` | R | 2x |
+| 90 | devises__________dev | `cafil068_dat` | L | 1x |
+| 139 | moyens_reglement_mor | `cafil117_dat` | R | 2x |
+| 141 | devises__________dev | `cafil119_dat` | L | 2x |
+| 232 | gestion_devise_session | `caisse_devise` | L | 4x |
+| 492 | edition_tableau_recap | `caisse_tabrecap` | L | 1x |
+| 706 | parametre_port_serie | `paramcom_par` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `'FALSE'LOG` | - |
+| 2 | `{0,31}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 2 expressions (affichees: 2)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 180 variables mappees
 
----
-
-## 5. EXPRESSIONS (97 total, 64 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 2 | `{0,31}` | `{0,31}` |
-| 1 | `149` | `149` |
-| 2 | `Trim ({0,2})` | `Trim (Param devise locale)` |
-| 3 | `{32768,1}` | `VG.USER` |
-| 4 | `Date ()` | `Date ()` |
-| 5 | `{1,4}` | `{1,4}` |
-| 6 | `{1,7}-{1,14}` | `{1,7}-{1,14}` |
-| 7 | `{1,8}-{1,15}` | `{1,8}-{1,15}` |
-| 8 | `{1,9}-{1,16}` | `{1,9}-{1,16}` |
-| 9 | `{1,10}-{1,17}` | `{1,10}-{1,17}` |
-| 10 | `{1,11}-{1,18}` | `{1,11}-{1,18}` |
-| 11 | `{1,6}-{1,13}` | `{1,6}-{1,13}` |
-| 12 | `{0,3}<>''` | `Param masque montant<>''` |
-| 13 | `{0,1}<>''` | `Param chrono session<>''` |
-| 14 | `{0,3}<>'' OR {1,15}<>{1,8} OR {1,16}<>{1,9} OR {1,17}<>{1...` | `Param masque montant<>'' OR {1,15}<>{1,8} OR {1,16}<>{1,9...` |
-| 15 | `NOT ({0,3}<>'' OR {1,15}<>{1,8} OR {1,16}<>{1,9} OR {1,17...` | `NOT (Param masque montant<>'' OR {1,15}<>{1,8} OR {1,16}<...` |
-| 16 | `{0,1}='' AND NOT ({0,3}<>'' OR {1,15}<>{1,8} OR {1,16}<>{...` | `Param chrono session='' AND NOT (Param masque montant<>''...` |
-| 17 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 18 | `{0,1}=''` | `Param chrono session=''` |
-| 19 | `0` | `0` |
-| 20 | `''` | `''` |
-| 21 | `{1,13}-{1,6}` | `{1,13}-{1,6}` |
-| 22 | `{1,14}-{1,7}` | `{1,14}-{1,7}` |
-| 23 | `{1,15}-{1,8}` | `{1,15}-{1,8}` |
-| 24 | `{1,16}-{1,9}` | `{1,16}-{1,9}` |
-| 25 | `{1,17}-{1,10}` | `{1,17}-{1,10}` |
-| 26 | `{1,18}-{1,11}` | `{1,18}-{1,11}` |
-| 27 | `{0,1}` | `Param chrono session` |
-| 28 | `{0,3}` | `Param masque montant` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 7 (0 W / 7 R) |
-| Parametres | 30 |
-| Variables locales | 31 |
-| Expressions | 97 |
-| Expressions 100% decodees | 64 (66%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 10 |
+| **Lignes logique** | 260 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N298[298 Gestion cais]
+    N121[121 Gestion cais]
+    N281[281 Fermeture Se]
+    N1[1 Main Program]
+    N163[163 Menu caisse ]
+    T[130 Ecart fermet]
+    N298 --> N121
+    N121 --> N281
+    N281 --> N1
+    N1 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N298 fill:#f59e0b
+    style N121 fill:#f59e0b
+    style N281 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 7 |
-| Expressions | 97 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 131 | Fermeture caisse | 1 |
+| 299 | Fermeture caisse 144 | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[130 Programme]
+    C142[142 Devise updat]
+    T --> C142
+    C43[43 Recuperation]
+    T --> C43
+    style T fill:#58a6ff,color:#000
+    style C142 fill:#3fb950
+    style C43 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 142 | Devise update session WS | 2 |
+| 1 | 43 | Recuperation du titre | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (2 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

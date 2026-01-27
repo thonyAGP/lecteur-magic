@@ -1,189 +1,180 @@
-﻿# ADH IDE 30 - Read histo Fus_Sep_Det
+﻿# ADH IDE 30 - Read histo Fus_Sep_Det
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_30.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 30 |
-| **Fichier XML** | Prg_30.xml |
-| **Description** | Read histo Fus_Sep_Det |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 8 |
-| **Module** | ADH |
-| **Dossier IDE** | Changement Compte |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_30.xml. L'ID XML (30) peut differer de la position IDE (30).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Read histo Fus_Sep_Det |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-30.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (5 tables - 2 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 2x |
-| #343 | `histo_fus_sep_saisie` | histo_fusionseparation_saisie | **W** | 2x |
-| #23 | `cafil001_dat` | reseau_cloture___rec | R | 4x |
-| #340 | `histo_fus_sep` | histo_fusionseparation | R | 1x |
-| #341 | `histo_fus_sep_detail` | histo_fusionseparation_detail | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 30 |
+| **Description** | Read histo Fus_Sep_Det |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (8)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | i type F/E | ALPHA | - |
-| P2 | i societe | ALPHA | - |
-| P3 | i chrono reprise | NUMERIC | - |
-| P4 | i position reprise | ALPHA | - |
-| P5 | i taskNumber | NUMERIC | - |
-| P6 | i compte reference | NUMERIC | - |
-| P7 | o toDo | LOGICAL | - |
-| P8 | o etat reseau | ALPHA | - |
-| P9 | exist | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 23 | reseau_cloture___rec | `cafil001_dat` | R | 4x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 2x |
+| 340 | histo_fusionseparation | `histo_fus_sep` | R | 1x |
+| 341 | histo_fusionseparation_detail | `histo_fus_sep_detail` | R | 1x |
+| 343 | histo_fusionseparation_saisie | `histo_fus_sep_saisie` | L | 1x |
+| 343 | histo_fusionseparation_saisie | `histo_fus_sep_saisie` | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `'TRUE'LOG` | - |
+| 2 | `{0,3}` | - |
+| 3 | `{0,4}` | - |
+| 4 | `{0,5}` | - |
+| 5 | `'FALSE'LOG` | - |
+| 6 | `{0,9}` | - |
+| 7 | `{0,7}` | - |
+| 8 | `{0,4}='1F' AND {0,5}=10` | - |
+| 9 | `{0,4}='1F' AND {0,5}=20` | - |
+| 10 | `{0,4}='1F' AND {0,5}=30` | - |
+| 11 | `{0,4}='3E' AND {0,5}=50` | - |
+| 12 | `{0,4}='3E' AND {0,5}=60` | - |
+| 13 | `NOT {32768,78}` | - |
+| 14 | `{32768,78}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 14 expressions (affichees: 14)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 136 variables mappees
 
----
-
-## 5. EXPRESSIONS (52 total, 36 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 2 | `{0,3}` | `i position reprise` |
-| 3 | `{0,4}` | `i taskNumber` |
-| 4 | `{0,5}` | `i compte reference` |
-| 5 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 6 | `{0,9}` | `{0,9}` |
-| 7 | `{0,7}` | `o etat reseau` |
-| 8 | `{0,4}='1F' AND {0,5}=10` | `i taskNumber='1F' AND i compte reference=10` |
-| 9 | `{0,4}='1F' AND {0,5}=20` | `i taskNumber='1F' AND i compte reference=20` |
-| 10 | `{0,4}='1F' AND {0,5}=30` | `i taskNumber='1F' AND i compte reference=30` |
-| 11 | `{0,4}='3E' AND {0,5}=50` | `i taskNumber='3E' AND i compte reference=50` |
-| 12 | `{0,4}='3E' AND {0,5}=60` | `i taskNumber='3E' AND i compte reference=60` |
-| 13 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 14 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `{32768,79}` | `VG.Numéro pseudo terminal` |
-| 3 | `'T'` | `'T'` |
-| 4 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 5 | `{0,1}` | `i societe` |
-| 1 | `{1,2}` | `{1,2}` |
-| 2 | `0` | `0` |
-| 3 | `'T'` | `'T'` |
-| 4 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 5 | `{0,1}` | `i societe` |
-| 6 | `GetHostName()` | `GetHostName()` |
-| 1 | `{2,2}` | `{2,2}` |
-| 2 | `{2,6}` | `{2,6}` |
-| 3 | `{0,4}` | `i taskNumber` |
-| 4 | `''` | `''` |
-| 1 | `{1,1}='F'` | `{1,1}='F'` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 5 (2 W / 3 R) |
-| Parametres | 8 |
-| Variables locales | 9 |
-| Expressions | 52 |
-| Expressions 100% decodees | 36 (69%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 11 |
+| **Lignes logique** | 116 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N27[27 Separation]
+    N28[28 Fusion]
+    N37[37 Menu changem]
+    N1[1 Main Program]
+    N163[163 Menu caisse ]
+    T[30 Read histo F]
+    N27 --> N28
+    N28 --> N37
+    N37 --> N1
+    N1 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N27 fill:#f59e0b
+    style N28 fill:#f59e0b
+    style N37 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 5 |
-| Expressions | 52 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 27 | Separation | 11 |
+| 28 | Fusion | 10 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[30 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:44 | **DATA POPULATED** - Tables, Callgraph (14 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

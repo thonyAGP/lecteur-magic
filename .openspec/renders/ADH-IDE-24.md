@@ -1,206 +1,187 @@
-﻿# ADH IDE 24 - Print reçu change vente
+﻿# ADH IDE 24 - Print reçu change vente
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_24.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 24 |
-| **Fichier XML** | Prg_24.xml |
-| **Description** | Print reçu change vente |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 14 |
-| **Module** | ADH |
-| **Dossier IDE** | Change |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_24.xml. L'ID XML (24) peut differer de la position IDE (24).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Print reçu change vente |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-24.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (5 tables - 0 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 7x |
-| #31 | `cafil009_dat` | gm-complet_______gmc | R | 1x |
-| #34 | `cafil012_dat` | hebergement______heb | R | 1x |
-| #147 | `cafil125_dat` | change_vente_____chg | R | 8x |
-| #368 | `pmsvillage` | pms_village | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 24 |
+| **Description** | Print reçu change vente |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (14)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | P0 societe | ALPHA | - |
-| P2 | P0 n° adherent | NUMERIC | - |
-| P3 | P0 filiation | NUMERIC | - |
-| P4 | P0 date | DATE | - |
-| P5 | P0 heure | TIME | - |
-| P6 | P0 devise locale | ALPHA | - |
-| P7 | P0 nb decimale | NUMERIC | - |
-| P8 | P0 masque montant | ALPHA | - |
-| P9 | P0 nom village | ALPHA | - |
-| P10 | P0 telephone | ALPHA | - |
-| P11 | P0 fax | ALPHA | - |
-| P12 | W0 en-tête ? | ALPHA | - |
-| P13 | W0 fin tâche | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 7x |
+| 31 | gm-complet_______gmc | `cafil009_dat` | R | 1x |
+| 34 | hebergement______heb | `cafil012_dat` | L | 1x |
+| 147 | change_vente_____chg | `cafil125_dat` | L | 7x |
+| 147 | change_vente_____chg | `cafil125_dat` | R | 1x |
+| 368 | pms_village | `pmsvillage` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| W0 en-tête ? | ALPHA | - |
-| W0 fin tâche | ALPHA | - |
-| v. Operation (Libelle) | ALPHA | - |
-| v. Mode paiement (Libelle) | ALPHA | - |
-| v. Taux (Libelle) | ALPHA | - |
-| v. Montant Devise Local Libelle | ALPHA | - |
-| v. Vente de devise (Libelle) | ALPHA | - |
-| v.Message (Libelle) | ALPHA | - |
-| v. Paiement (Libelle) | ALPHA | - |
-| v. Devise (Libelle) | ALPHA | - |
-| v.Existe ligne? | LOGICAL | - |
-| v.Montant Product | NUMERIC | - |
-| v.Nombre de copies | NUMERIC | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `SetCrsr (2)` | - |
+| 2 | `SetCrsr (1)` | - |
+| 3 | `GetParam ('CURRENTPRINTERNUM')=1` | - |
+| 4 | `GetParam ('CURRENTPRINTERNUM')=4` | - |
+| 5 | `GetParam ('CURRENTPRINTERNUM')=5` | - |
+| 6 | `GetParam ('CURRENTPRINTERNUM')=8` | - |
+| 7 | `GetParam ('CURRENTPRINTERNUM')=9` | - |
+| 8 | `{0,1}` | - |
+| 9 | `{0,2}` | - |
+| 10 | `{0,3}` | - |
+| 11 | `'A'` | - |
+| 12 | `'Z'` | - |
+| 13 | `IF ({0,28}='010','Opération N°','Transaction N°')` | - |
+| 14 | `IF ({0,28}='010','Mode de paiement','Payment me...` | - |
+| 15 | `IF ({0,28}='010','Taux','Rate')` | - |
+| 16 | `IF ({0,28}='010','Montant devise locale','Amoun...` | - |
+| 17 | `IF ({0,28}='010','VENTE DE DEVISES','CURRENCY S...` | - |
+| 18 | `IF ({0,28}='010','Merci de votre visite','Thank...` | - |
+| 19 | `IF ({0,28}='010','Paiement','Payment')` | - |
+| 20 | `IF ({0,28}='010','Devise','Currency')` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 22 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 172 variables mappees
 
----
-
-## 5. EXPRESSIONS (316 total, 224 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `SetCrsr (2)` | `SetCrsr (2)` |
-| 2 | `SetCrsr (1)` | `SetCrsr (1)` |
-| 3 | `GetParam ('CURRENTPRINTERNUM')=1` | `GetParam ('CURRENTPRINTERNUM')=1` |
-| 4 | `GetParam ('CURRENTPRINTERNUM')=4` | `GetParam ('CURRENTPRINTERNUM')=4` |
-| 5 | `GetParam ('CURRENTPRINTERNUM')=5` | `GetParam ('CURRENTPRINTERNUM')=5` |
-| 6 | `GetParam ('CURRENTPRINTERNUM')=8` | `GetParam ('CURRENTPRINTERNUM')=8` |
-| 7 | `GetParam ('CURRENTPRINTERNUM')=9` | `GetParam ('CURRENTPRINTERNUM')=9` |
-| 8 | `{0,1}` | `P0 n° adherent` |
-| 9 | `{0,2}` | `P0 filiation` |
-| 10 | `{0,3}` | `P0 date` |
-| 11 | `'A'` | `'A'` |
-| 12 | `'Z'` | `'Z'` |
-| 13 | `IF ({0,28}='010','Opération N°','Transaction N°')` | `IF ({0,28}='010','Opération N°','Transaction N°')` |
-| 14 | `IF ({0,28}='010','Mode de paiement','Payment method')` | `IF ({0,28}='010','Mode de paiement','Payment method')` |
-| 15 | `IF ({0,28}='010','Taux','Rate')` | `IF ({0,28}='010','Taux','Rate')` |
-| 16 | `IF ({0,28}='010','Montant devise locale','Amount local cu...` | `IF ({0,28}='010','Montant devise locale','Amount local cu...` |
-| 17 | `IF ({0,28}='010','VENTE DE DEVISES','CURRENCY SALES')` | `IF ({0,28}='010','VENTE DE DEVISES','CURRENCY SALES')` |
-| 18 | `IF ({0,28}='010','Merci de votre visite','Thank you for y...` | `IF ({0,28}='010','Merci de votre visite','Thank you for y...` |
-| 19 | `IF ({0,28}='010','Paiement','Payment')` | `IF ({0,28}='010','Paiement','Payment')` |
-| 20 | `IF ({0,28}='010','Devise','Currency')` | `IF ({0,28}='010','Devise','Currency')` |
-| 21 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 22 | `GetParam ('NUMBERCOPIES')` | `GetParam ('NUMBERCOPIES')` |
-| 1 | `Counter (0)>={1,40}` | `Counter (0)>={1,40}` |
-| 2 | `SetParam ('CURRENTPAGENUMBER',0)` | `SetParam ('CURRENTPAGENUMBER',0)` |
-| 3 | `IsFirstRecordCycle(0)` | `IsFirstRecordCycle(0)` |
-| 1 | `{32768,44}` | `VG.VG_FAX_VISIBLE` |
-| 2 | `{2,1}` | `{2,1}` |
-| 3 | `{2,2}` | `{2,2}` |
-| 4 | `{2,4}` | `{2,4}` |
-| 5 | `{2,5}` | `{2,5}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 5 (0 W / 5 R) |
-| Parametres | 14 |
-| Variables locales | 27 |
-| Expressions | 316 |
-| Expressions 100% decodees | 224 (71%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 14 |
+| **Lignes logique** | 417 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N25[25 Change GM]
+    N174[174 VersementRet]
+    N1[1 Main Program]
+    N163[163 Menu caisse ]
+    T[24 Print reu ch]
+    N25 --> N174
+    N174 --> N1
+    N1 --> N163
+    N163 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N25 fill:#f59e0b
+    style N174 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 5 |
-| Expressions | 316 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 25 | Change GM | 1 |
+| 174 | Versement/Retrait | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[24 Programme]
+    C22[22 Calcul equiv]
+    T --> C22
+    C182[182 Raz Current ]
+    T --> C182
+    style T fill:#58a6ff,color:#000
+    style C22 fill:#3fb950
+    style C182 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 22 | Calcul equivalent | 7 |
+| 1 | 182 | Raz Current Printer | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:44 | **DATA POPULATED** - Tables, Callgraph (22 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

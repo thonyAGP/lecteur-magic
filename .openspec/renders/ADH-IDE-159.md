@@ -1,185 +1,168 @@
-﻿# ADH IDE 159 - Selection Identification
+﻿# ADH IDE 159 - Selection Identification
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_158.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 159 |
-| **Fichier XML** | Prg_158.xml |
-| **Description** | Selection Identification |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 2 |
-| **Module** | ADH |
-| **Dossier IDE** | Identification |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_158.xml. L'ID XML (158) peut differer de la position IDE (159).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Selection Identification |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-159.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (2 tables - 2 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #602 | `%club_user%tmp_listsce_dat` | tempo_liste_service | **W** | 4x |
-| #844 | `%club_user%_stat_vendeur` | stat_vendeur | **W** | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 159 |
+| **Description** | Selection Identification |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (2)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 602 | tempo_liste_service | `%club_user%tmp_listsce_dat` | **W** | 4x |
+| 844 | stat_vendeur | `%club_user%_stat_vendeur` | L | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v.Type Liste | ALPHA | - |
-| v.Date | DATE | - |
-| v.Categorie | ALPHA | - |
-| v.Seminaire | ALPHA | - |
-| v.Lieu Sejour | ALPHA | - |
-| v.Tri | ALPHA | - |
-| v.Fidelisation | ALPHA | - |
-| v.SB Visible | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `'N'` | - |
+| 2 | `'1'` | - |
+| 3 | `Date()` | - |
+| 4 | `MlsTrans('Toutes')` | - |
+| 5 | `'T'` | - |
+| 6 | `'C'` | - |
+| 7 | `{0,2}` | - |
+| 8 | `ASCIIChr(33)` | - |
+| 9 | `'A'` | - |
+| 10 | `'M'` | - |
+| 11 | `0` | - |
+| 12 | `'TRUE'LOG` | - |
+| 13 | `{32768,21}` | - |
+| 14 | `DStr({0,2},'YYYYMMDD')` | - |
+| 15 | `'SB_LISTE_GM'` | - |
+| 16 | `{32768,20}>1` | - |
+| 17 | `{0,1}='S'` | - |
+| 18 | `'FALSE'LOG` | - |
+| 19 | `{0,12}` | - |
+| 20 | `CtrlGoto('SB_LISTE_GM',0,0)` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 26 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 146 variables mappees
 
----
-
-## 5. EXPRESSIONS (37 total, 32 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `'N'` | `'N'` |
-| 2 | `'1'` | `'1'` |
-| 3 | `Date()` | `Date()` |
-| 4 | `MlsTrans('Toutes')` | `MlsTrans('Toutes')` |
-| 5 | `'T'` | `'T'` |
-| 6 | `'C'` | `'C'` |
-| 7 | `{0,2}` | `v.Categorie` |
-| 8 | `ASCIIChr(33)` | `ASCIIChr(33)` |
-| 9 | `'A'` | `'A'` |
-| 10 | `'M'` | `'M'` |
-| 11 | `0` | `0` |
-| 12 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 13 | `{32768,21}` | `VG.COMBO LIEU SEJOUR` |
-| 14 | `DStr({0,2},'YYYYMMDD')` | `DStr(v.Categorie,'YYYYMMDD')` |
-| 15 | `'SB_LISTE_GM'` | `'SB_LISTE_GM'` |
-| 16 | `{32768,20}>1` | `VG.NB LIEU SEJOUR>1` |
-| 17 | `{0,1}='S'` | `v.Date='S'` |
-| 18 | `'FALSE'LOG` | `'FALSE'LOG` |
-| 19 | `{0,12}` | `CHG_REASON_v.Fidelisation` |
-| 20 | `CtrlGoto('SB_LISTE_GM',0,0)` | `CtrlGoto('SB_LISTE_GM',0,0)` |
-| 21 | `Trim({0,7})='C'` | `Trim(Nb Fid)='C'` |
-| 22 | `{0,7}` | `Nb Fid` |
-| 23 | `DbDel('{602,4}'DSOURCE,'')` | `DbDel('{602,4}'DSOURCE,'')` |
-| 24 | `DbDel('{612,4}'DSOURCE,'')` | `DbDel('{612,4}'DSOURCE,'')` |
-| 25 | `'Tri : '&{0,6}&' Date : '&DStr({0,2},'DD/MM/YYYY')` | `'Tri : '&v.Fidelisation&' Date : '&DStr(v.Categorie,'DD/M...` |
-| 26 | `IF({0,3}=MlsTrans('Toutes'),'',{0,3})` | `IF(v.Seminaire=MlsTrans('Toutes'),'',v.Seminaire)` |
-| 1 | `{32768,11}` | `VG.CODE LANGUE USER` |
-| 2 | `{0,2}` | `v.Categorie` |
-| 3 | `{0,3}` | `v.Seminaire` |
-| 4 | `'TRUE'LOG` | `'TRUE'LOG` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 2 (2 W / 0 R) |
-| Parametres | 2 |
-| Variables locales | 14 |
-| Expressions | 37 |
-| Expressions 100% decodees | 32 (86%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 5 |
+| **Lignes logique** | 73 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    T[159 Selection Identification]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 2 |
-| Expressions | 37 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | **Aucun caller** (point d'entree ou orphelin) | - |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[159 Programme]
+    C276[276 Selection Vo]
+    T --> C276
+    style T fill:#58a6ff,color:#000
+    style C276 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 276 | Selection Vols | 2 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (26 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

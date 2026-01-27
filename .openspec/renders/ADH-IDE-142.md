@@ -1,161 +1,181 @@
-﻿# ADH IDE 142 - Devise update session WS
+﻿# ADH IDE 142 - Devise update session WS
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_142.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 142 |
-| **Fichier XML** | Prg_142.xml |
-| **Description** | Devise update session WS |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 6 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_142.xml. L'ID XML (142) peut differer de la position IDE (142).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Devise update session WS |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-142.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (1 tables -  en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #232 | `caisse_devise` | gestion_devise_session | **W** | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 142 |
+| **Description** | Devise update session WS |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (6)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param Code devise | ALPHA | - |
-| P2 | Param mode paiement | ALPHA | - |
-| P3 | Param Quand | ALPHA | - |
-| P4 | Param Type | ALPHA | - |
-| P5 | Param Quantite | NUMERIC | - |
-| P6 | Param cumul OP change | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 232 | gestion_devise_session | `caisse_devise` | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{32768,1}` | - |
+| 2 | `{0,1}` | - |
+| 3 | `{0,2}` | - |
+| 4 | `{0,3}` | - |
+| 5 | `{0,4}` | - |
+| 6 | `{0,5}` | - |
+| 7 | `{0,12}+{0,5}` | - |
+| 8 | `NOT ({0,6})` | - |
+| 9 | `{0,6}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 9 expressions (affichees: 9)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 130 variables mappees
 
----
-
-## 5. EXPRESSIONS (9 total, 6 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `{0,1}` | `Param mode paiement` |
-| 3 | `{0,2}` | `Param Quand` |
-| 4 | `{0,3}` | `Param Type` |
-| 5 | `{0,4}` | `Param Quantite` |
-| 6 | `{0,5}` | `Param cumul OP change` |
-| 7 | `{0,12}+{0,5}` | `{0,12}+Param cumul OP change` |
-| 8 | `NOT ({0,6})` | `NOT ({0,6})` |
-| 9 | `{0,6}` | `{0,6}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 1 ( W / 0 R) |
-| Parametres | 6 |
-| Variables locales | 6 |
-| Expressions | 9 |
-| Expressions 100% decodees | 6 (67%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 1 |
+| **Lignes logique** | 22 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    N298[298 Gestion cais]
+    N121[121 Gestion cais]
+    N131[131 Fermeture ca]
+    N299[299 Fermeture ca]
+    N297[297 Ouverture ca]
+    T[142 Devise updat]
+    M --> N298
+    N298 --> N121
+    N121 --> N131
+    N131 --> N299
+    N299 --> N297
+    N297 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N298 fill:#f59e0b
+    style N121 fill:#f59e0b
+    style N131 fill:#f59e0b
+    style N299 fill:#f59e0b
+    style N297 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 1 |
-| Expressions | 9 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 155 | Controle fermeture caisse WS | 11 |
+| 131 | Fermeture caisse | 5 |
+| 126 | Calcul solde initial WS | 4 |
+| 298 | Gestion caisse 142 | 4 |
+| 120 | Saisie contenu caisse | 2 |
+| 122 | Ouverture caisse | 2 |
+| 127 | Calcul solde ouverture WS | 2 |
+| 129 | Ecart ouverture caisse | 2 |
+| 130 | Ecart fermeture caisse | 2 |
+| 299 | Fermeture caisse 144 | 2 |
+| 125 | Remise en caisse | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[142 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (9 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

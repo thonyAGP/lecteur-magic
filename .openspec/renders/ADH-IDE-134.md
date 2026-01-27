@@ -1,201 +1,194 @@
-﻿# ADH IDE 134 - Mise à jour detail session WS
+﻿# ADH IDE 134 - Mise à jour detail session WS
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_134.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 134 |
-| **Fichier XML** | Prg_134.xml |
-| **Description** | Mise à jour detail session WS |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 17 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_134.xml. L'ID XML (134) peut differer de la position IDE (134).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Mise à jour detail session WS |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-134.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (10 tables - 4 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #247 | `caisse_session_article` | histo_sessions_caisse_article | **W** | 2x |
-| #249 | `caisse_session_detail` | histo_sessions_caisse_detail | **W** | 1x |
-| #250 | `caisse_session_devise` | histo_sessions_caisse_devise | **W** | 4x |
-| #251 | `caisse_session_remise` | histo_sessions_caisse_remise | **W** | 1x |
-| #50 | `cafil028_dat` | moyens_reglement_mor | R | 1x |
-| #139 | `cafil117_dat` | moyens_reglement_mor | R | 1x |
-| #196 | `caisse_article` | gestion_article_session | R | 2x |
-| #232 | `caisse_devise` | gestion_devise_session | R | 2x |
-| #244 | `caisse_saisie_appro_dev` | saisie_approvisionnement | R | 2x |
-| #505 | `%club_user%_pv_cafil18_dat` | pv_comptable | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 134 |
+| **Description** | Mise à jour detail session WS |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (17)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | Param societe | ALPHA | - |
-| P2 | Param devise locale | ALPHA | - |
-| P3 | Param UNI/BI | ALPHA | - |
-| P4 | Param chrono session | NUMERIC | - |
-| P5 | Param Quand | ALPHA | - |
-| P6 | Param Quoi | ALPHA | - |
-| P7 | Param Type | ALPHA | - |
-| P8 | Param montant | NUMERIC | - |
-| P9 | Param montant monnaie | NUMERIC | - |
-| P10 | Param montant produits | NUMERIC | - |
-| P11 | Param montant cartes | NUMERIC | - |
-| P12 | Param montant cheques | NUMERIC | - |
-| P13 | Param montant od | NUMERIC | - |
-| P14 | Param Nbre devises | NUMERIC | - |
-| P15 | Param commentaire ecart | ALPHA | - |
-| P16 | Param commentaire ecart devise | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 50 | moyens_reglement_mor | `cafil028_dat` | R | 1x |
+| 139 | moyens_reglement_mor | `cafil117_dat` | R | 1x |
+| 196 | gestion_article_session | `caisse_article` | R | 2x |
+| 232 | gestion_devise_session | `caisse_devise` | R | 2x |
+| 244 | saisie_approvisionnement | `caisse_saisie_appro_dev` | R | 2x |
+| 247 | histo_sessions_caisse_article | `caisse_session_article` | **W** | 2x |
+| 249 | histo_sessions_caisse_detail | `caisse_session_detail` | **W** | 1x |
+| 250 | histo_sessions_caisse_devise | `caisse_session_devise` | **W** | 4x |
+| 251 | histo_sessions_caisse_remise | `caisse_session_remise` | **W** | 1x |
+| 505 | pv_comptable | `%club_user%_pv_cafil18_dat` | R | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{32768,1}` | - |
+| 2 | `{0,4}` | - |
+| 3 | `{0,20}+1` | - |
+| 4 | `{0,7}` | - |
+| 5 | `{0,5}` | - |
+| 6 | `Date ()` | - |
+| 7 | `Time ()` | - |
+| 8 | `{0,8}` | - |
+| 9 | `{0,9}` | - |
+| 10 | `{0,10}` | - |
+| 11 | `{0,11}` | - |
+| 12 | `{0,12}` | - |
+| 13 | `{0,13}` | - |
+| 14 | `{0,15}` | - |
+| 15 | `{0,14}` | - |
+| 16 | `{0,16}` | - |
+| 17 | `{0,7}='E'` | - |
+| 18 | `{0,14}<>0` | - |
+| 19 | `{0,7}='V'` | - |
+| 20 | `{0,7}='V' AND {0,10}<>0` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 25 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 152 variables mappees
 
----
-
-## 5. EXPRESSIONS (144 total, 52 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `{0,4}` | `Param Quand` |
-| 3 | `{0,20}+1` | `{0,20}+1` |
-| 4 | `{0,7}` | `Param montant` |
-| 5 | `{0,5}` | `Param Quoi` |
-| 6 | `Date ()` | `Date ()` |
-| 7 | `Time ()` | `Time ()` |
-| 8 | `{0,8}` | `Param montant monnaie` |
-| 9 | `{0,9}` | `Param montant produits` |
-| 10 | `{0,10}` | `Param montant cartes` |
-| 11 | `{0,11}` | `Param montant cheques` |
-| 12 | `{0,12}` | `Param montant od` |
-| 13 | `{0,13}` | `Param Nbre devises` |
-| 14 | `{0,15}` | `Param commentaire ecart devise` |
-| 15 | `{0,14}` | `Param commentaire ecart` |
-| 16 | `{0,16}` | `Param ouverture auto` |
-| 17 | `{0,7}='E'` | `Param montant='E'` |
-| 18 | `{0,14}<>0` | `Param commentaire ecart<>0` |
-| 19 | `{0,7}='V'` | `Param montant='V'` |
-| 20 | `{0,7}='V' AND {0,10}<>0` | `Param montant='V' AND Param montant cartes<>0` |
-| 21 | `{0,5}='O' AND {0,7}='I'` | `Param Quoi='O' AND Param montant='I'` |
-| 22 | `'REC'` | `'REC'` |
-| 23 | `Str ({32768,79},'3P0')` | `Str (VG.Numéro pseudo terminal,'3P0')` |
-| 24 | `GetHostName ()` | `GetHostName ()` |
-| 25 | `IF({0,17},'O','')` | `IF({0,17},'O','')` |
-| 1 | `{32768,1}` | `VG.USER` |
-| 2 | `{0,9}>0` | `Param montant produits>0` |
-| 3 | `{1,5}` | `{1,5}` |
-| 4 | `{1,6}` | `{1,6}` |
-| 1 | `{2,21}` | `{2,21}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 10 (4 W / 6 R) |
-| Parametres | 17 |
-| Variables locales | 17 |
-| Expressions | 144 |
-| Expressions 100% decodees | 52 (36%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 18 |
+| **Lignes logique** | 294 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N121[121 Gestion cais]
+    N298[298 Gestion cais]
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    N281[281 Fermeture Se]
+    T[134 Mise  jour d]
+    N121 --> N298
+    N298 --> N163
+    N163 --> N1
+    N1 --> N281
+    N281 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N121 fill:#f59e0b
+    style N298 fill:#f59e0b
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style N281 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 10 |
-| Expressions | 144 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 131 | Fermeture caisse | 14 |
+| 122 | Ouverture caisse | 7 |
+| 297 | Ouverture caisse 143 | 7 |
+| 299 | Fermeture caisse 144 | 7 |
+| 121 | Gestion caisse | 3 |
+| 298 | Gestion caisse 142 | 3 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[134 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:21 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:47 | **DATA POPULATED** - Tables, Callgraph (25 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

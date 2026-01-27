@@ -1,222 +1,225 @@
-﻿# ADH IDE 25 - Change GM
+﻿# ADH IDE 25 - Change GM
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_25.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:56
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 25 |
-| **Fichier XML** | Prg_25.xml |
-| **Description** | Change GM |
-| **Type** | B (O=Online, B=Batch) |
-| **Parametres** | 16 |
-| **Module** | ADH |
-| **Dossier IDE** | Change |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_25.xml. L'ID XML (25) peut differer de la position IDE (25).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Change GM |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-25.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (14 tables - 7 en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #23 | `cafil001_dat` | reseau_cloture___rec | **W** | 5x |
-| #44 | `cafil022_dat` | change___________chg | **W** | 4x |
-| #47 | `cafil025_dat` | compte_gm________cgm | **W** | 2x |
-| #68 | `cafil046_dat` | compteurs________cpt | **W** | 1x |
-| #147 | `cafil125_dat` | change_vente_____chg | **W** | 4x |
-| #474 | `%club_user%_caisse_compcais_devise` | comptage_caisse_devise | **W** | 3x |
-| #945 | `Table_945` | Unknown | **W** | 1x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 2x |
-| #35 | `cafil013_dat` | personnel_go______go | R | 1x |
-| #50 | `cafil028_dat` | moyens_reglement_mor | R | 2x |
-| #70 | `cafil048_dat` | date_comptable___dat | R | 1x |
-| #124 | `cafil102_dat` | type_taux_change | R | 1x |
-| #139 | `cafil117_dat` | moyens_reglement_mor | R | 3x |
-| #141 | `cafil119_dat` | devises__________dev | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 25 |
+| **Description** | Change GM |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (16)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | > societe | ALPHA | - |
-| P2 | > code GM | NUMERIC | - |
-| P3 | > filiation | NUMERIC | - |
-| P4 | >devise locale | ALPHA | - |
-| P5 | >nb decimale | NUMERIC | - |
-| P6 | >masque mtt | ALPHA | - |
-| P7 | > code retour | ALPHA | - |
-| P8 | > nom village | ALPHA | - |
-| P9 | > solde compte | NUMERIC | - |
-| P10 | > etat compte | ALPHA | - |
-| P11 | > date solde | DATE | - |
-| P12 | > garanti O/N | ALPHA | - |
-| P13 | > telephone | ALPHA | - |
-| P14 | > fax | ALPHA | - |
-| P15 | V0 choix action | ALPHA | - |
-| P16 | W0 date comptable | DATE | - |
-| P17 | W0 n° de change | NUMERIC | - |
-| P18 | W0 date operation | DATE | - |
-| P19 | W0 heure operation | TIME | - |
-| P20 | W0 pas d'enreg | ALPHA | - |
-| P21 | W0 user | ALPHA | - |
-| P22 | W0 reseau | ALPHA | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 23 | reseau_cloture___rec | `cafil001_dat` | R | 1x |
+| 23 | reseau_cloture___rec | `cafil001_dat` | **W** | 4x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | L | 1x |
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 35 | personnel_go______go | `cafil013_dat` | R | 1x |
+| 44 | change___________chg | `cafil022_dat` | L | 1x |
+| 44 | change___________chg | `cafil022_dat` | R | 1x |
+| 44 | change___________chg | `cafil022_dat` | **W** | 2x |
+| 47 | compte_gm________cgm | `cafil025_dat` | **W** | 2x |
+| 50 | moyens_reglement_mor | `cafil028_dat` | L | 1x |
+| 50 | moyens_reglement_mor | `cafil028_dat` | R | 1x |
+| 68 | compteurs________cpt | `cafil046_dat` | **W** | 1x |
+| 70 | date_comptable___dat | `cafil048_dat` | L | 1x |
+| 124 | type_taux_change | `cafil102_dat` | L | 1x |
+| 139 | moyens_reglement_mor | `cafil117_dat` | L | 3x |
+| 141 | devises__________dev | `cafil119_dat` | R | 1x |
+| 147 | change_vente_____chg | `cafil125_dat` | L | 2x |
+| 147 | change_vente_____chg | `cafil125_dat` | **W** | 2x |
+| 474 | comptage_caisse_devise | `%club_user%_caisse_compcais_devise` | R | 2x |
+| 474 | comptage_caisse_devise | `%club_user%_caisse_compcais_devise` | **W** | 1x |
+| 945 | Table_945 | - | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| V0 choix action | ALPHA | - |
-| W0 date comptable | DATE | - |
-| W0 n° de change | NUMERIC | - |
-| W0 date operation | DATE | - |
-| W0 heure operation | TIME | - |
-| W0 pas d'enreg | ALPHA | - |
-| W0 user | ALPHA | - |
-| W0 reseau | ALPHA | - |
-| V.Code retour go ? | LOGICAL | - |
-| V. titre | ALPHA | - |
-| V.Type operation | ALPHA | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,1}=''` | - |
+| 2 | `'C'` | - |
+| 3 | `Trim ({0,34})` | - |
+| 4 | `55` | - |
+| 5 | `'&Quitter'` | - |
+| 6 | `'&Annuler'` | - |
+| 7 | `'&Creer change'` | - |
+| 8 | `{0,1}` | - |
+| 9 | `{0,17}<>'F'` | - |
+| 10 | `{0,17}='F'` | - |
+| 11 | `{0,26}` | - |
+| 12 | `{32768,1}` | - |
+| 13 | `{0,24}<>'R'` | - |
+| 14 | `{0,15}='B'` | - |
+| 15 | `'A'` | - |
+| 16 | `{0,15}<>'B'` | - |
+| 17 | `'F'` | - |
+| 18 | `{0,36}=''` | - |
+| 19 | `{0,2}` | - |
+| 20 | `{0,3}` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 24 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 180 variables mappees
 
----
-
-## 5. EXPRESSIONS (285 total, 158 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,1}=''` | `> code GM=''` |
-| 2 | `'C'` | `'C'` |
-| 3 | `Trim ({0,34})` | `Trim ({0,34})` |
-| 4 | `55` | `55` |
-| 5 | `'&Quitter'` | `'&Quitter'` |
-| 6 | `'&Annuler'` | `'&Annuler'` |
-| 7 | `'&Creer change'` | `'&Creer change'` |
-| 8 | `{0,1}` | `> code GM` |
-| 9 | `{0,17}<>'F'` | `W0 date comptable<>'F'` |
-| 10 | `{0,17}='F'` | `W0 date comptable='F'` |
-| 11 | `{0,26}` | `Btn Annuler` |
-| 12 | `{32768,1}` | `VG.USER` |
-| 13 | `{0,24}<>'R'` | `V.Code retour go ?<>'R'` |
-| 14 | `{0,15}='B'` | `> Nouvelle caisse='B'` |
-| 15 | `'A'` | `'A'` |
-| 16 | `{0,15}<>'B'` | `> Nouvelle caisse<>'B'` |
-| 17 | `'F'` | `'F'` |
-| 18 | `{0,36}=''` | `{0,36}=''` |
-| 19 | `{0,2}` | `> filiation` |
-| 20 | `{0,3}` | `>devise locale` |
-| 21 | `{0,36}='A'` | `{0,36}='A'` |
-| 22 | `{0,36}='V'` | `{0,36}='V'` |
-| 23 | `NOT {32768,78}` | `NOT VG.Hostname au lieu de Term` |
-| 24 | `{32768,78}` | `VG.Hostname au lieu de Term` |
-| 1 | `{32768,2}` | `VG.Retour Chariot` |
-| 2 | `Date ()` | `Date ()` |
-| 3 | `Trim ({0,30})` | `Trim (V.Type operation)` |
-| 4 | `89` | `89` |
-| 5 | `{1,1}` | `{1,1}` |
-| 6 | `{1,2}` | `{1,2}` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 14 (7 W / 7 R) |
-| Parametres | 16 |
-| Variables locales | 31 |
-| Expressions | 285 |
-| Expressions 100% decodees | 158 (55%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 23 |
+| **Lignes logique** | 642 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    N163[163 Menu caisse ]
+    N1[1 Main Program]
+    T[25 Change GM]
+    N163 --> N1
+    N1 --> T
+    style M fill:#8b5cf6,color:#fff
+    style N163 fill:#f59e0b
+    style N1 fill:#f59e0b
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 14 |
-| Expressions | 285 |
-| Complexite | Moyen |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| 163 | Menu caisse GM - scroll | 1 |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[25 Programme]
+    C43[43 Recuperation]
+    T --> C43
+    C44[44 Appel progra]
+    T --> C44
+    C23[23 Print reu ch]
+    T --> C23
+    C24[24 Print reu ch]
+    T --> C24
+    C47[47 DateHeure se]
+    T --> C47
+    C153[153 Calcul du st]
+    T --> C153
+    C179[179 Get Printer]
+    T --> C179
+    C180[180 Printer choi]
+    T --> C180
+    style T fill:#58a6ff,color:#000
+    style C43 fill:#3fb950
+    style C44 fill:#3fb950
+    style C23 fill:#3fb950
+    style C24 fill:#3fb950
+    style C47 fill:#3fb950
+    style C153 fill:#3fb950
+    style C179 fill:#3fb950
+    style C180 fill:#3fb950
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| 1 | 43 | Recuperation du titre | 4 |
+| 1 | 44 | Appel programme | 3 |
+| 1 | 23 | Print reçu change achat | 1 |
+| 1 | 24 | Print reçu change vente | 1 |
+| 1 | 47 | Date/Heure session user | 1 |
+| 1 | 153 | Calcul du stock devise | 1 |
+| 1 | 179 | Get Printer | 1 |
+| 1 | 180 | Printer choice | 1 |
+| 1 | 181 | Set Listing Number | 1 |
+| 1 | 182 | Raz Current Printer | 1 |
+| 1 | 258 | Zoom mode paiement change GM | 1 |
+| 1 | 261 | Zoom des types de taux | 1 |
+| 1 | 265 | Zoom devise | 1 |
+| 1 | 270 | Zoom sur modes de paiement a/v | 1 |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:18 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:44 | **DATA POPULATED** - Tables, Callgraph (24 expr) | Script |
+| 2026-01-27 17:56 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*

@@ -1,181 +1,170 @@
-﻿# ADH IDE 115 - Création des Club Med Pass
+﻿# ADH IDE 115 - Création des Club Med Pass
 
-> **Version spec** : 2.1 (Enhanced)
-> **Genere le** : 2026-01-27
-> **Source** : `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_115.xml`
-
----
+> **Version spec**: 3.5
+> **Analyse**: 2026-01-27 17:57
+> **Source**: `Prg_XXX.xml`
 
 ---
 
 <!-- TAB:Fonctionnel -->
 
-## 1. IDENTIFICATION
+## SPECIFICATION FONCTIONNELLE
 
-| Attribut | Valeur |
-|----------|--------|
-| **Format IDE** | ADH IDE 115 |
-| **Fichier XML** | Prg_115.xml |
-| **Description** | Création des Club Med Pass |
-| **Type** | O (O=Online, B=Batch) |
-| **Parametres** | 3 |
-| **Module** | ADH |
-| **Dossier IDE** | Gestion Caisse |
+### 1.1 Objectif metier
 
-> **Note**: Ce programme est Prg_115.xml. L'ID XML (115) peut differer de la position IDE (115).
+| Element | Description |
+|---------|-------------|
+| **Qui** | Operateur |
+| **Quoi** | Création des Club Med Pass |
+| **Pourquoi** | A documenter |
+| **Declencheur** | A identifier |
 
+### 1.2 Regles metier
 
----
+| Code | Regle | Condition |
+|------|-------|-----------|
+| RM-001 | A documenter | - |
 
-## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
+### 1.3 Flux utilisateur
 
-### 1.1 Objectif Metier
-> A completer dans `.openspec/annotations/ADH-IDE-115.yaml`
-### 1.2 Flux Utilisateur
-> A completer dans annotations YAML
+1. Demarrage programme
+2. Traitement principal
+3. Fin programme
 
-### 1.3 Notes Migration
-> A completer dans annotations YAML
+### 1.4 Cas d'erreur
 
-### 1.4 Dependances ECF
-
-
-
-### 1.5 Tags
-> Aucun tag defini
-
----
+| Erreur | Comportement |
+|--------|--------------|
+| - | A documenter |
 
 ---
 
 <!-- TAB:Technique -->
 
-## 2. TABLES (3 tables -  en ecriture)
+## SPECIFICATION TECHNIQUE
 
-| IDE# | Nom Physique | Nom Logique | Access | Usage |
-|------|--------------|-------------|--------|-------|
-| #480 | `%club_user%_caisse_last_session_1` | tempo_caisses_1 | **W** | 2x |
-| #30 | `cafil008_dat` | gm-recherche_____gmr | R | 1x |
-| #312 | `ezcard` | ez_card | R | 1x |
+### 2.1 Identification
 
----
+| Attribut | Valeur |
+|----------|--------|
+| **Format IDE** | ADH IDE 115 |
+| **Description** | Création des Club Med Pass |
+| **Module** | ADH |
 
-## 3. PARAMETRES D'ENTREE (3)
+### 2.2 Tables
 
-| # | Nom | Type | Description |
-|---|-----|------|-------------|
-| P1 | p. societe | ALPHA | - |
-| P2 | p. code adherent | NUMERIC | - |
-| P3 | < solde compte | NUMERIC | - |
-| P4 | < etat compte | ALPHA | - |
-| P5 | < date solde | DATE | - |
-| P6 | < garanti O/N | ALPHA | - |
-| P7 | v. nom & prenom | ALPHA | - |
-| P8 | N° CMP Existe déjà ? | LOGICAL | - |
+| # | Nom logique | Nom physique | Acces | Usage |
+|---|-------------|--------------|-------|-------|
+| 30 | gm-recherche_____gmr | `cafil008_dat` | R | 1x |
+| 312 | ez_card | `ezcard` | L | 1x |
+| 480 | tempo_caisses_1 | `%club_user%_caisse_last_session_1` | L | 1x |
+| 480 | tempo_caisses_1 | `%club_user%_caisse_last_session_1` | **W** | 1x |
+### 2.3 Parametres d'entree
 
----
+| Variable | Nom | Type | Picture |
+|----------|-----|------|---------|
+| - | Aucun parametre | - | - |
+### 2.4 Algorigramme
 
-## 4. VARIABLES PRINCIPALES
+```mermaid
+flowchart TD
+    START([START])
+    PROCESS[Traitement]
+    ENDOK([END])
+    START --> PROCESS --> ENDOK
+    style START fill:#3fb950
+    style ENDOK fill:#f85149
+```
 
-### 4.1 Variables de travail (W0/V0)
+### 2.5 Expressions cles
 
-| Nom | Type | Role |
-|-----|------|------|
-| v. nom & prenom | ALPHA | - |
-| V.N° CMP Déjà Saisi ? | LOGICAL | - |
+| IDE | Expression | Commentaire |
+|-----|------------|-------------|
+| 1 | `{0,25}` | - |
+| 2 | `{0,16}` | - |
+| 3 | `Date ()` | - |
+| 4 | `{32768,2}` | - |
+| 5 | `{0,1}` | - |
+| 6 | `{0,2}` | - |
+| 7 | `Trim ({0,10})&' '&{0,11}` | - |
+| 8 | `IF ({0,21}>0,Str ({0,21},'###'),IF ({0,22}=0,''...` | - |
+| 9 | `IF ({0,21}>0,'ans',IF ({0,22}=0,'','mois'))` | - |
+| 10 | `'-'` | - |
+| 11 | `IF ({0,20}<Date (),MlsTrans ('dernier sejour :'...` | - |
+| 12 | `MlsTrans ('du')` | - |
+| 13 | `MlsTrans ('au')` | - |
+| 14 | `{0,16}=0` | - |
+| 15 | `Len(Trim({0,24}))<10` | - |
+| 16 | `{0,24}<>''` | - |
+| 17 | `{0,24}` | - |
+| 18 | `NOT({0,25})` | - |
+| 19 | `'TRUE'LOG` | - |
+| 20 | `CtrlGoto ('N° Club Med Pass',1,0)` | - |
 
-### 4.2 Variables globales (VG)
+> **Total**: 20 expressions (affichees: 20)
+### 2.6 Variables importantes
 
-| Variable | Role |
-|----------|------|
-| VG.LOGIN | - |
-| VG.USER | - |
-| VG.Retour Chariot | - |
-| VG.DROIT ACCES IT ? | - |
-| VG.DROIT ACCES CAISSE ? | - |
-| VG.BRAZIL DATACATCHING? | - |
-| VG.USE MDR | - |
-| VG.VRL ACTIF ? | - |
-| VG.ECI ACTIF ? | - |
-| VG.COMPTE CASH ACTIF ? | - |
-| VG.IND SEJ PAYE ACTIF ? | - |
-| VG.CODE LANGUE USER | - |
-| VG.EFFECTIF ACTIF ? | - |
-| VG.TAXE SEJOUR ACTIF ? | - |
-| VG.N° version | - |
 
-> Total: 138 variables mappees
 
----
-
-## 5. EXPRESSIONS (23 total, 10 decodees)
-
-| # | Expression brute | Decode |
-|---|------------------|--------|
-| 1 | `{0,25}` | `{0,25}` |
-| 2 | `{0,16}` | `{0,16}` |
-| 3 | `Date ()` | `Date ()` |
-| 4 | `{32768,2}` | `VG.Retour Chariot` |
-| 5 | `{0,1}` | `p. code adherent` |
-| 6 | `{0,2}` | `P.Ecran Validé ?` |
-| 7 | `Trim ({0,10})&' '&{0,11}` | `Trim ({0,10})&' '&{0,11}` |
-| 8 | `IF ({0,21}>0,Str ({0,21},'###'),IF ({0,22}=0,'',Str ({0,2...` | `IF ({0,21}>0,Str ({0,21},'###'),IF ({0,22}=0,'',Str ({0,2...` |
-| 9 | `IF ({0,21}>0,'ans',IF ({0,22}=0,'','mois'))` | `IF ({0,21}>0,'ans',IF ({0,22}=0,'','mois'))` |
-| 10 | `'-'` | `'-'` |
-| 11 | `IF ({0,20}<Date (),MlsTrans ('dernier sejour :'),IF ({0,1...` | `IF ({0,20}<Date (),MlsTrans ('dernier sejour :'),IF ({0,1...` |
-| 12 | `MlsTrans ('du')` | `MlsTrans ('du')` |
-| 13 | `MlsTrans ('au')` | `MlsTrans ('au')` |
-| 14 | `{0,16}=0` | `{0,16}=0` |
-| 15 | `Len(Trim({0,24}))<10` | `Len(Trim({0,24}))<10` |
-| 16 | `{0,24}<>''` | `{0,24}<>''` |
-| 17 | `{0,24}` | `{0,24}` |
-| 18 | `NOT({0,25})` | `NOT({0,25})` |
-| 19 | `'TRUE'LOG` | `'TRUE'LOG` |
-| 20 | `CtrlGoto ('N° Club Med Pass',1,0)` | `CtrlGoto ('N° Club Med Pass',1,0)` |
-| 1 | `Trim({1,24})` | `Trim({1,24})` |
-| 2 | `{0,2}<>{1,16}` | `P.Ecran Validé ?<>{1,16}` |
-| 3 | `'TRUE'LOG` | `'TRUE'LOG` |
-
----
-
-## 6. STATISTIQUES
+### 2.7 Statistiques
 
 | Metrique | Valeur |
 |----------|--------|
-| Tables | 3 ( W / 2 R) |
-| Parametres | 3 |
-| Variables locales | 10 |
-| Expressions | 23 |
-| Expressions 100% decodees | 10 (43%) |
-
----
-
-## 7. HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 | Creation specification v2.0 | Claude |
-
----
-
-*Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
-
+| **Taches** | 2 |
+| **Lignes logique** | 55 |
+| **Lignes desactivees** | 0 |
 ---
 
 <!-- TAB:Cartographie -->
 
-## CARTOGRAPHIE
+## CARTOGRAPHIE APPLICATIVE
 
-*Aucun callee identifie - programme terminal ou appels dynamiques*
+### 3.1 Chaine d'appels depuis Main
 
-### Metriques
+```mermaid
+graph LR
+    M[1 Main]
+    T[115 Création des Club Med Pass]
+    M --> T
+    style M fill:#8b5cf6,color:#fff
+    style T fill:#58a6ff,color:#000
+```
+### 3.2 Callers directs
 
-| Metrique | Valeur |
-|----------|--------|
-| Tables | 3 |
-| Expressions | 23 |
-| Complexite | Faible |
+| IDE | Programme | Nb appels |
+|-----|-----------|-----------|
+| - | **Aucun caller** (point d'entree ou orphelin) | - |
+### 3.3 Callees
+
+```mermaid
+graph LR
+    T[115 Programme]
+    NONE[Aucun callee]
+    T -.-> NONE
+    style T fill:#58a6ff,color:#000
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
+```
+
+| Niv | IDE | Programme | Nb appels |
+|-----|-----|-----------|-----------|
+| - | - | Programme terminal | - |
+### 3.4 Verification orphelin
+
+| Critere | Resultat |
+|---------|----------|
+| Callers actifs | A verifier |
+| **Conclusion** | A analyser |
 
 ---
 
-*Spec V2.1 avec marqueurs TAB - Genere automatiquement*
+## HISTORIQUE
+
+| Date | Action | Auteur |
+|------|--------|--------|
+| 2026-01-27 20:20 | **DATA V2** - Tables reelles, Expressions, Stats, CallChain | Script |
+| 2026-01-27 19:46 | **DATA POPULATED** - Tables, Callgraph (20 expr) | Script |
+| 2026-01-27 17:57 | **Upgrade V3.5** - TAB markers, Mermaid | Claude |
+
+---
+
+*Specification V3.5 - Format avec TAB markers et Mermaid*
