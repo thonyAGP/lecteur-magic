@@ -153,20 +153,23 @@ flowchart TD
 | Num | Expression | Signification |
 |-----|------------|---------------|
 | 265 | Message GP | Voulez-vous utiliser le Gift Pass |
-| 266 | VG38 AND Field33 gt 0 AND Field135 neq O | GP disponible et pas en opposition |
-| 267 | Field213 gt 0 AND VG63 | Solde GP superieur a 0 |
-| 268 | Field213 | Montant solde GP |
-| 269 | Field214 eq 6 | GP epuise |
-| 26 | Field23 eq VRL OR Field23 eq VSL | Service VRL ou VSL |
+| 266 | VG38 AND AG gt 0 AND EE neq O | GP disponible et pas en opposition |
+| 267 | HE gt 0 AND VG63 | Solde GP superieur a 0 |
+| 268 | HE | Montant solde GP |
+| 269 | HF eq 6 | GP epuise |
+| 26 | W eq VRL OR W eq VSL | Service VRL ou VSL |
 
 ### 2.6 Variables Gift Pass
 
-| Field | Nom | Type | Role |
-|-------|-----|------|------|
-| Field213 | Solde GP | NUMERIC | Solde Gift Pass disponible |
-| Field214 | Status GP | NUMERIC | 6 = epuise |
-| Field135 | Opposition | ALPHA | O = en opposition |
+| Var | Nom | Type | Role |
+|-----|-----|------|------|
+| HE | Solde GP | NUMERIC | Solde Gift Pass disponible |
+| HF | Status GP | NUMERIC | 6 = epuise |
+| EE | Opposition | ALPHA | O = en opposition |
+| AG | Montant facture | NUMERIC | Montant a payer |
+| W | Service | ALPHA | VRL, VSL, TRF |
 | VG38 | GP v2 actif | LOGICAL | Version GP |
+| VG63 | Condition GP | LOGICAL | Flag validation GP |
 
 ### 2.7 Statistiques
 
@@ -267,11 +270,11 @@ graph LR
 
 | Dependance | Type | Description |
 |------------|------|-------------|
-| VG38 | VG | Gift Pass v2.00 actif |
-| VG60 | VG | Flag utilisateur |
-| VG63 | VG | Condition GP |
-| Table 801 | Donnees | Moyens reglement complement |
-| Table 728 | Donnees | Archive CC total |
+| VG38 | Variable globale | Gift Pass v2.00 actif |
+| VG60 | Variable globale | Flag utilisateur |
+| VG63 | Variable globale | Condition GP |
+| Table #801 | Donnees | Moyens reglement complement |
+| Table #728 | Donnees | Archive CC total |
 
 ---
 
