@@ -154,48 +154,48 @@ PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
 
 ### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
-| `{0,-78}` | W0 imprimante | NUMERIC | - |
-| `{0,-77}` | W0 reseau | ALPHA | - |
-| `{0,-76}` | W0 validation | LOGICAL | - |
-| `{0,-75}` | W0 n° compteur | NUMERIC | - |
-| `{0,-74}` | W0 nbre filiation | NUMERIC | - |
-| `{0,-73}` | W0 date operation | DATE | - |
-| `{0,-72}` | W0 heure operation | TIME | - |
-| `{0,-71}` | W0 nom/prenom newcpt | ALPHA | - |
-| `{0,-70}` | W0 qualite compte | ALPHA | - |
-| `{0,-69}` | W0 fin tâche | ALPHA | - |
-| `{0,-68}` | W0 separation n compte unique | LOGICAL | - |
-| `{0,-67}` | W0 Existe ecriture | LOGICAL | - |
-| `{0,-66}` | W0 normal | LOGICAL | - |
-| `{0,-65}` | W0 reprise | LOGICAL | - |
-| `{0,-64}` | W0 chrono reprise | NUMERIC | - |
-| `{0,-63}` | W0 toDo | LOGICAL | - |
-| `{0,-62}` | W0 Log | LOGICAL | - |
-| `{0,-61}` | W0 chrono histo | NUMERIC | - |
-| `{0,-60}` | W0 code LOG existe | LOGICAL | - |
-| `{0,-59}` | W0 chrono du LOG | NUMERIC | - |
+| Nom | Type | Role |
+|-----|------|------|
+| W0 imprimante | NUMERIC | - |
+| W0 reseau | ALPHA | - |
+| W0 validation | LOGICAL | - |
+| W0 n° compteur | NUMERIC | - |
+| W0 nbre filiation | NUMERIC | - |
+| W0 date operation | DATE | - |
+| W0 heure operation | TIME | - |
+| W0 nom/prenom newcpt | ALPHA | - |
+| W0 qualite compte | ALPHA | - |
+| W0 fin tâche | ALPHA | - |
+| W0 separation n compte unique | LOGICAL | - |
+| W0 Existe ecriture | LOGICAL | - |
+| W0 normal | LOGICAL | - |
+| W0 reprise | LOGICAL | - |
+| W0 chrono reprise | NUMERIC | - |
+| W0 toDo | LOGICAL | - |
+| W0 Log | LOGICAL | - |
+| W0 chrono histo | NUMERIC | - |
+| W0 code LOG existe | LOGICAL | - |
+| W0 chrono du LOG | NUMERIC | - |
 
 ### 4.2 Variables globales (VG)
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
+| Variable | Role |
+|----------|------|
+| VG.LOGIN | - |
+| VG.USER | - |
+| VG.Retour Chariot | - |
+| VG.DROIT ACCES IT ? | - |
+| VG.DROIT ACCES CAISSE ? | - |
+| VG.BRAZIL DATACATCHING? | - |
+| VG.USE MDR | - |
+| VG.VRL ACTIF ? | - |
+| VG.ECI ACTIF ? | - |
+| VG.COMPTE CASH ACTIF ? | - |
+| VG.IND SEJ PAYE ACTIF ? | - |
+| VG.CODE LANGUE USER | - |
+| VG.EFFECTIF ACTIF ? | - |
+| VG.TAXE SEJOUR ACTIF ? | - |
+| VG.N° version | - |
 
 > Total: 188 variables mappees
 

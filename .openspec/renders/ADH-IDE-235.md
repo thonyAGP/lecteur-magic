@@ -109,48 +109,48 @@ Appele depuis ADH IDE 238 (Transaction vente)
 
 ### 4.1 Variables de travail (W0/V0)
 
-| Ref | Nom | Type | Role |
-|-----|-----|------|------|
-| `{0,-78}` | W0 en-tête ? | ALPHA | - |
-| `{0,-77}` | W0 fin tâche | ALPHA | - |
-| `{0,-76}` | W0 copies | NUMERIC | - |
-| `{0,-70}` | v.Itération Compteur ticket | NUMERIC | - |
-| `{0,-69}` | v.NumeroTicketsvg | NUMERIC | - |
-| `{0,-65}` | v.Date Conso ou date séjour | ALPHA | - |
-| `{0,-50}` | v.TPE ICMP | LOGICAL | - |
-| `{0,-47}` | v.Service Interne Club Med? | LOGICAL | - |
-| `{0,-45}` | v. nb erreur lignes inexistante | NUMERIC | - |
-| `{0,-44}` | v.Liste des TVA taux Réduit | UNICODE | - |
-| `{0,-42}` | v.Nombre de taux réduit | NUMERIC | - |
-| `{0,-41}` | v.N° Taux reduit en cours | NUMERIC | - |
-| `{0,-40}` | v.Taux réduit en cours | UNICODE | - |
-| `{0,-39}` | v.Text à éditer si pdt tx redu | UNICODE | - |
-| `{0,-38}` | v.Libelle TVA | UNICODE | - |
-| `{0,-37}` | v.Libelle Montant HT | UNICODE | - |
-| `{0,-34}` | v.Montant Service | NUMERIC | - |
-| `{0,-35}` | v.Montant Product | NUMERIC | - |
-| `{0,-25}` | v.ABS Montant Service | NUMERIC | - |
-| `{0,-24}` | v.ABS Montant Prod | NUMERIC | - |
+| Nom | Type | Role |
+|-----|------|------|
+| W0 en-tête ? | ALPHA | - |
+| W0 fin tâche | ALPHA | - |
+| W0 copies | NUMERIC | - |
+| v.Itération Compteur ticket | NUMERIC | - |
+| v.NumeroTicketsvg | NUMERIC | - |
+| v.Date Conso ou date séjour | ALPHA | - |
+| v.TPE ICMP | LOGICAL | - |
+| v.Service Interne Club Med? | LOGICAL | - |
+| v. nb erreur lignes inexistante | NUMERIC | - |
+| v.Liste des TVA taux Réduit | UNICODE | - |
+| v.Nombre de taux réduit | NUMERIC | - |
+| v.N° Taux reduit en cours | NUMERIC | - |
+| v.Taux réduit en cours | UNICODE | - |
+| v.Text à éditer si pdt tx redu | UNICODE | - |
+| v.Libelle TVA | UNICODE | - |
+| v.Libelle Montant HT | UNICODE | - |
+| v.Montant Service | NUMERIC | - |
+| v.Montant Product | NUMERIC | - |
+| v.ABS Montant Service | NUMERIC | - |
+| v.ABS Montant Prod | NUMERIC | - |
 
 ### 4.2 Variables globales (VG)
 
-| Ref | Decode | Role |
-|-----|--------|------|
-| `{32768,0}` | VG.LOGIN | - |
-| `{32768,1}` | VG.USER | - |
-| `{32768,2}` | VG.Retour Chariot | - |
-| `{32768,3}` | VG.DROIT ACCES IT ? | - |
-| `{32768,4}` | VG.DROIT ACCES CAISSE ? | - |
-| `{32768,5}` | VG.BRAZIL DATACATCHING? | - |
-| `{32768,6}` | VG.USE MDR | - |
-| `{32768,7}` | VG.VRL ACTIF ? | - |
-| `{32768,8}` | VG.ECI ACTIF ? | - |
-| `{32768,9}` | VG.COMPTE CASH ACTIF ? | - |
-| `{32768,10}` | VG.IND SEJ PAYE ACTIF ? | - |
-| `{32768,11}` | VG.CODE LANGUE USER | - |
-| `{32768,12}` | VG.EFFECTIF ACTIF ? | - |
-| `{32768,13}` | VG.TAXE SEJOUR ACTIF ? | - |
-| `{32768,14}` | VG.N° version | - |
+| Variable | Role |
+|----------|------|
+| VG.LOGIN | - |
+| VG.USER | - |
+| VG.Retour Chariot | - |
+| VG.DROIT ACCES IT ? | - |
+| VG.DROIT ACCES CAISSE ? | - |
+| VG.BRAZIL DATACATCHING? | - |
+| VG.USE MDR | - |
+| VG.VRL ACTIF ? | - |
+| VG.ECI ACTIF ? | - |
+| VG.COMPTE CASH ACTIF ? | - |
+| VG.IND SEJ PAYE ACTIF ? | - |
+| VG.CODE LANGUE USER | - |
+| VG.EFFECTIF ACTIF ? | - |
+| VG.TAXE SEJOUR ACTIF ? | - |
+| VG.N° version | - |
 
 > Total: 224 variables mappees
 

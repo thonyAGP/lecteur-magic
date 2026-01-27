@@ -282,10 +282,23 @@ if (-not (Test-Path $OutputPath)) {
 $outputFile = "$OutputPath\$Project-IDE-$IDE.md"
 $enhancedSpec | Out-File -FilePath $outputFile -Encoding UTF8
 
+# ============================================================================
+# STEP 5: Clean internal Magic references
+# ============================================================================
+Write-Host "`n[5/5] Cleaning internal references..." -ForegroundColor Yellow
+
+$cleanScript = "$projectRoot\tools\spec-generator\Clean-SpecReferences.ps1"
+if (Test-Path $cleanScript) {
+    & $cleanScript -InputPath $outputFile
+} else {
+    Write-Host "  Warning: Clean-SpecReferences.ps1 not found" -ForegroundColor DarkYellow
+}
+
 Write-Host "`n=== SPEC ENHANCED ===" -ForegroundColor Green
 Write-Host "Input:  $specFile"
 Write-Host "Output: $outputFile"
 Write-Host "Annotations: $($hasAnnotations)"
+Write-Host "Cleaned: True"
 
 [PSCustomObject]@{
     Project = $Project
