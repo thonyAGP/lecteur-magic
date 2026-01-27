@@ -16,16 +16,24 @@ $annotationsPath = "$projectRoot\.openspec\annotations"
 
 Write-Host "=== Generate Specs Index ===" -ForegroundColor Cyan
 
-# Parse spec metadata from V2.0 specs
+# Parse spec metadata from V2.1 renders (preferred) or V2.0 specs (fallback)
 $allSpecs = @()
 
-$specFiles = Get-ChildItem "$specsPath\ADH-IDE-*.md" | Sort-Object {
+# First try renders, then fall back to specs
+$renderFiles = Get-ChildItem "$rendersPath\ADH-IDE-*.md" -ErrorAction SilentlyContinue | Sort-Object {
     [int]([regex]::Match($_.BaseName, 'IDE-(\d+)').Groups[1].Value)
 }
 
-Write-Host "Parsing $($specFiles.Count) specs..." -ForegroundColor Yellow
+$specFiles = Get-ChildItem "$specsPath\ADH-IDE-*.md" -ErrorAction SilentlyContinue | Sort-Object {
+    [int]([regex]::Match($_.BaseName, 'IDE-(\d+)').Groups[1].Value)
+}
 
-foreach ($file in $specFiles) {
+$sourceFiles = if ($renderFiles.Count -gt 0) { $renderFiles } else { $specFiles }
+$sourcePath = if ($renderFiles.Count -gt 0) { "renders" } else { "specs" }
+
+Write-Host "Parsing $($sourceFiles.Count) specs from $sourcePath..." -ForegroundColor Yellow
+
+foreach ($file in $sourceFiles) {
     $content = Get-Content $file.FullName -Raw -Encoding UTF8
     $ide = [int]([regex]::Match($file.BaseName, 'IDE-(\d+)').Groups[1].Value)
 
@@ -40,7 +48,7 @@ foreach ($file in $specFiles) {
         $type = if ($Matches[1] -eq 'O') { 'Online' } else { 'Batch' }
     }
 
-    $folder = ""
+    $folder = "Unknown"
     if ($content -match '\| \*\*Dossier IDE\*\* \| (.+?) \|') {
         $folder = $Matches[1].Trim()
     }
@@ -61,9 +69,24 @@ foreach ($file in $specFiles) {
         $expressions = [int]$Matches[1]
     }
 
+    # Extract tasks/parameters count for "tasks" field
+    $tasks = 0
+    if ($content -match '\| Parametres \| (\d+)') {
+        $tasks = [int]$Matches[1]
+    }
+    elseif ($content -match '## \d+\. PARAMETRES D''ENTREE \((\d+)\)') {
+        $tasks = [int]$Matches[1]
+    }
+
     $xmlFile = ""
     if ($content -match '\| \*\*Fichier XML\*\* \| (Prg_\d+\.xml)') {
         $xmlFile = $Matches[1]
+    }
+
+    # Extract callees if present
+    $callees = @()
+    if ($content -match 'Appelle:\s*(.+)') {
+        $callees = $Matches[1] -split ',\s*' | ForEach-Object { $_.Trim() } | Where-Object { $_ }
     }
 
     $hasAnnotation = Test-Path "$annotationsPath\ADH-IDE-$ide.yaml"
@@ -84,8 +107,10 @@ foreach ($file in $specFiles) {
         Type = $type
         Folder = $folder
         Tables = $tables
+        Tasks = $tasks
         Expressions = $expressions
         XmlFile = $xmlFile
+        Callees = $callees
         Complexity = $complexity
         HasAnnotation = $hasAnnotation
         HasRender = $hasRender
@@ -170,7 +195,7 @@ foreach ($t in $templates) {
 
 # Add all ADH specs pointing to renders
 foreach ($s in ($allSpecs | Sort-Object IDE)) {
-    $newSpecs += [PSCustomObject]@{
+    $specObj = [PSCustomObject]@{
         id = "ADH-IDE-$($s.IDE)"
         title = $s.Title
         project = "ADH"
@@ -179,12 +204,18 @@ foreach ($s in ($allSpecs | Sort-Object IDE)) {
         type = $s.Type
         file = "renders/ADH-IDE-$($s.IDE).md"
         tables = $s.Tables
+        tasks = $s.Tasks
         expressions = $s.Expressions
         folder = $s.Folder
         complexity = $s.Complexity
         specVersion = "2.1"
         hasAnnotation = $s.HasAnnotation
     }
+    # Add callees if not empty
+    if ($s.Callees -and $s.Callees.Count -gt 0) {
+        $specObj | Add-Member -NotePropertyName callees -NotePropertyValue $s.Callees
+    }
+    $newSpecs += $specObj
 }
 
 $index.specs = $newSpecs

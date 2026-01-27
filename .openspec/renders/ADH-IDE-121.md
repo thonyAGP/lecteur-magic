@@ -6,6 +6,10 @@
 
 ---
 
+---
+
+<!-- TAB:Fonctionnel -->
+
 ## 1. IDENTIFICATION
 
 | Attribut | Valeur |
@@ -53,6 +57,10 @@ PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
 `caisse``, ``ecf-shared``, ``cross-project``, ``critical``, ``session-management`
 
 ---
+
+---
+
+<!-- TAB:Technique -->
 
 ## 2. TABLES (12 tables - 5 en ecriture)
 
@@ -193,3 +201,22 @@ PARTAGE via ADH.ecf (Sessions_Reprises) - Appele depuis PBP et PVE
 
 *Specification v2.0 - Generee automatiquement par Generate-ProgramSpecV2.ps1*
 
+---
+
+<!-- TAB:Cartographie -->
+
+## CARTOGRAPHIE
+
+*Aucun callee identifie - programme terminal ou appels dynamiques*
+
+### Metriques
+
+| Metrique | Valeur |
+|----------|--------|
+| Tables | 12 |
+| Expressions | 235 |
+| Complexite | Moyen |
+
+---
+
+*Spec V2.1 avec marqueurs TAB - Genere automatiquement*

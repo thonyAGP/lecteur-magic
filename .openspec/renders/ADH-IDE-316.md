@@ -6,25 +6,9 @@
 
 ---
 
-## NON ANALYSE - Programme orphelin
-
-| Critere | Valeur |
-|---------|--------|
-| **IDE** | 316 |
-| **Dossier** | Suppr |
-| **Raison** | Programme fantome - metadonnees supprimees |
-| **Callers** | Aucun depuis Main |
-| **PublicName** | Aucun |
-| **ECF** | Non partage |
-
-> Ce programme n'est pas accessible depuis le flux principal de l'application.
-> Il peut s'agir de code legacy, de tests, ou de programmes supprimes.
-
 ---
 
-*Specification orpheline - Non analyse*
-
----
+<!-- TAB:Fonctionnel -->
 
 ## PARTIE I: SPECIFICATION FONCTIONNELLE (Annotations)
 
@@ -43,3 +27,22 @@
 ### 1.5 Tags
 > Aucun tag defini
 
+---
+
+<!-- TAB:Cartographie -->
+
+## CARTOGRAPHIE
+
+*Aucun callee identifie - programme terminal ou appels dynamiques*
+
+### Metriques
+
+| Metrique | Valeur |
+|----------|--------|
+| Tables | 0 |
+| Expressions | 0 |
+| Complexite | Faible |
+
+---
+
+*Spec V2.1 avec marqueurs TAB - Genere automatiquement*

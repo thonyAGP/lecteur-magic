@@ -509,6 +509,58 @@
     .complexity-badge.moyen { background: var(--warning); color: #000; }
     .complexity-badge.eleve { background: var(--danger); color: #fff; }
 
+    /* Folder groups for specs */
+    .folder-group {
+      margin-bottom: 2px;
+    }
+    .folder-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .folder-header:hover {
+      background: var(--bg-hover);
+    }
+    .folder-icon {
+      font-size: 14px;
+    }
+    .folder-name {
+      flex: 1;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .folder-count {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+    }
+    .folder-toggle {
+      font-size: 10px;
+      color: var(--text-secondary);
+      transition: transform 0.2s;
+    }
+    .folder-items {
+      padding-left: 8px;
+      border-left: 2px solid var(--border);
+      margin-left: 16px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+    .folder-items.collapsed {
+      display: none;
+    }
+    .folder-items .nav-item {
+      padding: 6px 12px;
+    }
+
     /* Spec header */
     .spec-header {
       background: var(--bg-secondary);
@@ -1342,6 +1394,28 @@
 
     function buildSpecsSection(title, specs) {
       const count = specs.filter(s => !s.id.startsWith('TEMPLATE')).length;
+
+      // Group specs by folder
+      const byFolder = {};
+      const templates = [];
+
+      specs.forEach(spec => {
+        if (spec.type === 'Template' || spec.id.startsWith('TEMPLATE')) {
+          templates.push(spec);
+        } else {
+          const folder = spec.folder || 'Non classe';
+          if (!byFolder[folder]) byFolder[folder] = [];
+          byFolder[folder].push(spec);
+        }
+      });
+
+      // Sort folders alphabetically, "Non classe" and "Unknown" last
+      const sortedFolders = Object.keys(byFolder).sort((a, b) => {
+        if (a === 'Non classe' || a === 'Unknown') return 1;
+        if (b === 'Non classe' || b === 'Unknown') return -1;
+        return a.localeCompare(b);
+      });
+
       let html = `<nav class="nav-section">
         <div class="nav-section-title">
           <span class="collapse-icon">▼</span>
@@ -1350,39 +1424,80 @@
         </div>
         <div class="nav-items">`;
 
-      // Sort specs: templates last, then by project+IDE
-      const sorted = [...specs].sort((a, b) => {
-        if (a.type === 'Template') return 1;
-        if (b.type === 'Template') return -1;
-        if (a.project !== b.project) return a.project.localeCompare(b.project);
-        return a.ide - b.ide;
+      // Build folder groups
+      sortedFolders.forEach(folder => {
+        const folderSpecs = byFolder[folder].sort((a, b) => a.ide - b.ide);
+        const folderCount = folderSpecs.length;
+        const folderId = 'folder-' + folder.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+
+        html += `<div class="folder-group">
+          <div class="folder-header" onclick="toggleFolder('${folderId}')">
+            <span class="folder-icon">📁</span>
+            <span class="folder-name">${folder}</span>
+            <span class="folder-count">${folderCount}</span>
+            <span class="folder-toggle" id="toggle-${folderId}">▶</span>
+          </div>
+          <div class="folder-items collapsed" id="${folderId}">`;
+
+        folderSpecs.forEach(spec => {
+          const typeClass = spec.type.toLowerCase();
+          const complexityClass = spec.complexity ? spec.complexity.toLowerCase().replace('é', 'e').replace('-', '') : '';
+          const versionBadge = spec.specVersion ? `<span class="spec-badge" style="background:var(--purple)">v${spec.specVersion}</span>` : '';
+
+          html += `<a class="nav-item" data-file="${spec.file}" data-spec-id="${spec.id}">
+            <div class="row">
+              <span class="title">${spec.project} IDE ${spec.ide}</span>
+              ${versionBadge}
+              <span class="spec-badge ${typeClass}">${spec.type}</span>
+            </div>
+            <div class="subtitle">${spec.title}</div>
+            <div class="spec-meta">
+              <span><span class="icon">📊</span> ${spec.tables || 0} tables</span>
+              <span><span class="icon">📋</span> ${spec.tasks || 0} params</span>
+              ${spec.expressions ? `<span><span class="icon">⚡</span> ${spec.expressions} expr</span>` : ''}
+              ${spec.complexity && spec.complexity !== '-' ? `<span class="complexity-badge ${complexityClass}">${spec.complexity}</span>` : ''}
+            </div>
+          </a>`;
+        });
+
+        html += '</div></div>';
       });
 
-      sorted.forEach(spec => {
-        const typeClass = spec.type.toLowerCase();
-        const complexityClass = spec.complexity ? spec.complexity.toLowerCase().replace('é', 'e').replace('-', '') : '';
-        const versionBadge = spec.specVersion ? `<span class="spec-badge" style="background:var(--purple)">v${spec.specVersion}</span>` : '';
-        const xmlInfo = spec.xmlFile ? `<span style="color:var(--text-secondary);font-size:10px;">${spec.xmlFile}</span>` : '';
+      // Add templates at the end
+      if (templates.length > 0) {
+        html += `<div class="folder-group templates-group">
+          <div class="folder-header" onclick="toggleFolder('folder-templates')">
+            <span class="folder-icon">📄</span>
+            <span class="folder-name">Templates</span>
+            <span class="folder-count">${templates.length}</span>
+            <span class="folder-toggle" id="toggle-folder-templates">▶</span>
+          </div>
+          <div class="folder-items collapsed" id="folder-templates">`;
 
-        html += `<a class="nav-item" data-file="${spec.file}" data-spec-id="${spec.id}">
-          <div class="row">
-            <span class="title">${spec.project} IDE ${spec.ide}</span>
-            ${versionBadge}
-            <span class="spec-badge ${typeClass}">${spec.type}</span>
-          </div>
-          <div class="subtitle">${spec.title}</div>
-          <div class="spec-meta">
-            <span><span class="icon">📊</span> ${spec.tables || 0} tables</span>
-            <span><span class="icon">📋</span> ${spec.tasks || 0} params</span>
-            ${spec.expressions ? `<span><span class="icon">⚡</span> ${spec.expressions} expr</span>` : ''}
-            ${spec.complexity && spec.complexity !== '-' ? `<span class="complexity-badge ${complexityClass}">${spec.complexity}</span>` : ''}
-          </div>
-          ${xmlInfo ? `<div style="margin-top:2px;">${xmlInfo}</div>` : ''}
-        </a>`;
-      });
+        templates.forEach(spec => {
+          html += `<a class="nav-item" data-file="${spec.file}" data-spec-id="${spec.id}">
+            <div class="row">
+              <span class="title">${spec.id}</span>
+              <span class="spec-badge template">Template</span>
+            </div>
+            <div class="subtitle">${spec.title}</div>
+          </a>`;
+        });
+
+        html += '</div></div>';
+      }
 
       html += '</div></nav>';
       return html;
+    }
+
+    function toggleFolder(folderId) {
+      const folderItems = document.getElementById(folderId);
+      const toggleIcon = document.getElementById('toggle-' + folderId);
+      if (folderItems && toggleIcon) {
+        folderItems.classList.toggle('collapsed');
+        toggleIcon.textContent = folderItems.classList.contains('collapsed') ? '▶' : '▼';
+      }
     }
 
     function sortTickets(tickets, sortBy) {
