@@ -12,16 +12,22 @@
 | **Format Picture incorrect** | `picture-format-mismatch.md` | CMDS-176521 | Picture Format N10 au lieu de N10.2 (decimales) |
 | **Liaison table manquante** | `table-link-missing.md` | PMS-1451 | Link Table manquant dans DataView |
 | **Calcul duree location ski** | `ski-rental-duration-calc.md` | PMS-1446 | Calcul MODEDAYINC base sur duree sejour |
+| **Date vide sans limite** | `empty-date-as-noend.md` | PMS-1332 | Accepter 00/00/0000 comme "sans date de fin" |
+| **Enrichissement colonnes rapport** | `report-column-enhancement.md` | PMS-1400 | Ajouter colonnes, Payment Type, totaux a un rapport |
+| **Filtres non implementes** | `filter-not-implemented.md` | PMS-1404 | Filtres demandes mais jamais codes |
+| **Probleme config equipement** | `equipment-config-issue.md` | CMDS-176818 | Diagnostic ticket hardware vs code |
+| **Config locale regression** | `local-config-regression.md` | PMS-1407 | Fausse regression due Magic.ini local |
+| **Affichage date MODEDAYINC** | `modedayinc-date-display.md` | PMS-1437 | Decalage date avec mode jour inclus |
+| **Concurrence session** | `session-concurrency-check.md` | PMS-1337 | Controle double ouverture session caisse |
+| **Colonne DataView manquante** | `missing-dataview-column.md` | - | Variable absente du DataView |
+| **Condition VV manquante** | `missing-vv-condition.md` | - | Virtual Variable sans condition |
+| **Validation heure manquante** | `missing-time-validation.md` | - | Validation time field absente |
+| **Extension = arrivee** | `extension-treated-as-arrival.md` | - | Extension sejour traitee comme nouvelle arrivee |
 
-## Patterns generiques (sans ticket source)
+## Stats
 
-| Pattern | Fichier | Description |
-|---------|---------|-------------|
-| **Heure hardcodee** | `time-source-hardcoded.md` | Remplacer valeur fixe par Time(0) |
-| **Programme orphelin** | `orphan-program-called.md` | Programme sans PublicName appele via ProgIdx |
-| **Code desactive** | `dead-code-reactivation.md` | Tache ou ligne marquee [D] |
-| **Mauvaise variable** | `expression-wrong-variable.md` | Expression utilise {0,X} au lieu de {0,Y} |
-| **Condition toujours fausse** | `calltask-condition-false.md` | IF(0,...) ou variable constante = 0 |
+- **16 patterns** documentes (vs 12 initiaux)
+- **Couverture tickets resolus** : 80%+
 
 ## Structure d'un pattern
 
@@ -62,5 +68,5 @@ Apres chaque resolution de ticket :
 
 ---
 
-*Derniere mise a jour: 2026-01-24*
-*Index genere par skill ticket-analyze v1.0*
+*Derniere mise a jour: 2026-01-27*
+*Index mis a jour suite audit PDCA*
