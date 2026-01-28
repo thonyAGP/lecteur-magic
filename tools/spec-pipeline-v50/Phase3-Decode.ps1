@@ -41,7 +41,11 @@ $ErrorActionPreference = "Stop"
 
 $ProjectsPath = if ($Config) { $Config.ProjectsPath } else { "D:\Data\Migration\XPA\PMS" }
 $KbPath = Join-Path $env:USERPROFILE ".magic-kb\knowledge.db"
-$Sqlite3 = "sqlite3"
+# Utiliser chemin complet pour sqlite3 (installe dans C:\Tools\sqlite)
+$Sqlite3 = "C:\Tools\sqlite\sqlite3.exe"
+if (!(Test-Path $Sqlite3)) {
+    $Sqlite3 = "sqlite3"  # Fallback si dans PATH
+}
 
 # Charger les fichiers precedents
 $Discovery = Get-Content $DiscoveryFile -Raw | ConvertFrom-Json
@@ -62,19 +66,20 @@ function Write-Warning2 {
     Write-Host "  [!!] $Message" -ForegroundColor Yellow
 }
 
-# Fonction pour convertir FieldN en lettre IDE
+# Fonction pour convertir FieldN en lettre IDE (A, B, ..., Z, AA, AB, ...)
 function Convert-FieldToLetter {
     param([int]$FieldNumber)
 
     if ($FieldNumber -le 0) { return "?" }
 
     $Result = ""
-    $N = $FieldNumber
+    $N = [int]$FieldNumber
 
     while ($N -gt 0) {
         $N--
-        $Result = [char](65 + ($N % 26)) + $Result
-        $N = [math]::Floor($N / 26)
+        $CharCode = [int](65 + ($N % 26))
+        $Result = [char]$CharCode + $Result
+        $N = [int][math]::Floor($N / 26)
     }
 
     return $Result
@@ -184,106 +189,102 @@ $Expressions = @{
 if ($Discovery.Identification.XmlPath -and (Test-Path $Discovery.Identification.XmlPath)) {
     $Xml = [xml](Get-Content $Discovery.Identification.XmlPath -Encoding UTF8 -Raw)
 
-    # Extraire les expressions depuis ExpressionTable
-    $ExprTable = $Xml.ProgramContent.ExpressionTable
-    if ($ExprTable -and $ExprTable.Expression) {
-        $ExprIndex = 0
-        foreach ($Expr in $ExprTable.Expression) {
-            $ExprIndex++
+    # Structure XML Magic: Les expressions sont dans //Expression/ExpSyntax[@val]
+    # Chaque Expression a un id, et le ExpSyntax contient l'expression decodable
+    $AllExpSyntax = @($Xml.SelectNodes("//Expression/ExpSyntax[@val]"))
+    Write-Step "3.1" "Analyse de $($AllExpSyntax.Count) expressions..."
 
-            $ExprText = if ($Expr.InnerText) { $Expr.InnerText.Trim() } else { "" }
-            $ExprISN = if ($Expr.ISN) { [int]$Expr.ISN } else { $ExprIndex }
+    $ExprIndex = 0
+    $TaskExpressionsMap = @{}
 
-            if ([string]::IsNullOrWhiteSpace($ExprText)) { continue }
+    foreach ($ExpSyntax in $AllExpSyntax) {
+        if (!$ExpSyntax) { continue }
 
-            # Determiner le type d'expression
-            $ExprType = "Other"
-            if ($ExprText -match "^IF\s*\(") { $ExprType = "Condition" }
-            elseif ($ExprText -match "^CASE\s*\(") { $ExprType = "Condition" }
-            elseif ($ExprText -match "=") { $ExprType = "Assignment" }
+        $ExprText = $ExpSyntax.val
+        if ([string]::IsNullOrWhiteSpace($ExprText)) { continue }
 
-            # Decoder l'expression (offset 0 pour expressions globales)
-            $DecodedExpr = Decode-Expression -Expression $ExprText -TaskOffset 0 -GlobalVars @{}
+        # Recuperer l'ID de l'Expression parent
+        $ExpressionNode = $ExpSyntax.ParentNode
+        $ExprId = if ($ExpressionNode.id) { $ExpressionNode.id } else { "?" }
 
-            $ExprEntry = @{
-                ISN         = $ExprISN
-                Index       = $ExprIndex
-                Raw         = $ExprText
-                Decoded     = $DecodedExpr
-                Type        = $ExprType
-                HasBrackets = $ExprText -match '\{\d+,\d+\}'
+        # Trouver la Task parente (remonter jusqu'au noeud Task)
+        $TaskNode = $ExpressionNode
+        $TaskISN2 = 1
+        $TaskName = "Main"
+        while ($TaskNode -and $TaskNode.Name -ne "Task") {
+            $TaskNode = $TaskNode.ParentNode
+        }
+        if ($TaskNode) {
+            if ($TaskNode.Header -and $TaskNode.Header.ISN_2) {
+                $TaskISN2 = [int]$TaskNode.Header.ISN_2
+                $TaskName = if ($TaskNode.Header.Description) { $TaskNode.Header.Description } else { "Task_$TaskISN2" }
             }
-
-            $Expressions.All += $ExprEntry
-
-            switch ($ExprType) {
-                "Condition" { $Expressions.Conditions += $ExprEntry }
-                "Assignment" { $Expressions.Assignments += $ExprEntry }
+            elseif ($TaskNode.MainProgram) {
+                $TaskISN2 = 1
+                $TaskName = "Main"
             }
+        }
+
+        # Calculer l'offset pour cette tache (simplifie - utiliser 0 pour Main)
+        $TaskOffset = 0
+
+        $ExprIndex++
+
+        # Decoder l'expression
+        $DecodedExpr = Decode-Expression -Expression $ExprText -TaskOffset $TaskOffset -GlobalVars @{}
+
+        # Determiner le type
+        $ExprType = "Other"
+        if ($ExprText -match "IF\s*\(|If\s*\(") { $ExprType = "Condition" }
+        elseif ($ExprText -match "CASE\s*\(") { $ExprType = "Condition" }
+        elseif ($ExprText -match "MsgBox\s*\(") { $ExprType = "Message" }
+        elseif ($ExprText -match "DbRecs\s*\(") { $ExprType = "Database" }
+        elseif ($ExprText -match "=") { $ExprType = "Assignment" }
+
+        # Detecter expressions critiques (Gift Pass, validation, calculs importants)
+        $IsCritical = $false
+        if ($ExprText -match "Gift|Pass|GP|solde|validation|MsgBox") { $IsCritical = $true }
+        if ($ExprText -match "VG\d+|VG38|VG60") { $IsCritical = $true }
+        if ($ExprText -match "IF.*AND.*AND") { $IsCritical = $true }
+
+        $ExprEntry = @{
+            ISN         = $ExprId
+            Index       = $ExprIndex
+            TaskISN2    = $TaskISN2
+            TaskName    = $TaskName
+            Raw         = $ExprText
+            Decoded     = $DecodedExpr
+            Type        = $ExprType
+            IsCritical  = $IsCritical
+            HasBrackets = ($ExprText -match '\{\d+,\d+\}')
+        }
+
+        $Expressions.All += $ExprEntry
+
+        switch ($ExprType) {
+            "Condition" { $Expressions.Conditions += $ExprEntry }
+            "Assignment" { $Expressions.Assignments += $ExprEntry }
+        }
+
+        if ($IsCritical) {
+            $Expressions.Critical += $ExprEntry
+        }
+
+        # Grouper par tache (cle = string pour JSON serialization)
+        $TaskKey = "Task_$TaskISN2"
+        if (!$TaskExpressionsMap.ContainsKey($TaskKey)) {
+            $TaskExpressionsMap[$TaskKey] = @()
+        }
+        $TaskExpressionsMap[$TaskKey] += @{
+            ExprId   = $ExprId
+            Raw      = $ExprText
+            Decoded  = $DecodedExpr
+            Type     = $ExprType
         }
     }
 
-    # Extraire expressions par tache depuis Logic
-    $AllTasks = $Xml.ProgramContent.TaskTable.Task
-
-    foreach ($Task in $AllTasks) {
-        $TaskISN2 = [int]$Task.ISN_2
-        $TaskName = if ($Task.Name) { $Task.Name.InnerText } else { "Task_$TaskISN2" }
-
-        # Calculer l'offset pour cette tache
-        $TaskOffset = Get-TaskOffset -Xml $Xml -TaskISN2 $TaskISN2
-
-        $TaskExpressions = @()
-
-        # Parcourir les LogicUnits (handlers)
-        if ($Task.LogicUnit) {
-            foreach ($Handler in $Task.LogicUnit) {
-                $HandlerType = if ($Handler.Type) { $Handler.Type } else { "Unknown" }
-
-                if ($Handler.LogicLine) {
-                    $LineNum = 0
-                    foreach ($Line in $Handler.LogicLine) {
-                        $LineNum++
-
-                        # Extraire les expressions de chaque ligne
-                        if ($Line.Expression) {
-                            foreach ($ExprRef in $Line.Expression) {
-                                $ExprId = if ($ExprRef.ISN) { [int]$ExprRef.ISN } else { 0 }
-                                $ExprText = if ($ExprRef.InnerText) { $ExprRef.InnerText.Trim() } else { "" }
-
-                                if ([string]::IsNullOrWhiteSpace($ExprText)) { continue }
-
-                                $DecodedExpr = Decode-Expression -Expression $ExprText -TaskOffset $TaskOffset -GlobalVars @{}
-
-                                $TaskExpressions += @{
-                                    Handler     = $HandlerType
-                                    Line        = $LineNum
-                                    ExprId      = $ExprId
-                                    Raw         = $ExprText
-                                    Decoded     = $DecodedExpr
-                                    TaskOffset  = $TaskOffset
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if ($TaskExpressions.Count -gt 0) {
-            $Expressions.ByTask["Task_$TaskISN2"] = @{
-                TaskISN2    = $TaskISN2
-                TaskName    = $TaskName
-                Offset      = $TaskOffset
-                Expressions = $TaskExpressions
-            }
-        }
-    }
-
-    # Identifier les expressions critiques (avec {N,Y} non decodees ou complexes)
-    $Expressions.Critical = $Expressions.All | Where-Object {
-        $_.HasBrackets -or $_.Type -eq "Condition"
-    } | Select-Object -First 20
+    # Stocker les expressions par tache
+    $Expressions.ByTask = $TaskExpressionsMap
 
     Write-Success "$($Expressions.All.Count) expressions, $($Expressions.Conditions.Count) conditions, $($Expressions.Critical.Count) critiques"
 }
@@ -482,7 +483,7 @@ $MermaidLines += "    START([START - $ParamCount params])"
 
 # Noeuds pour chaque tache principale
 $TaskIndex = 0
-foreach ($Task in $Discovery.Structure.Tasks) {
+foreach ($Task in $Discovery.TaskStructure.Tasks) {
     $TaskIndex++
     if ($Task.IsDisabled) { continue }
 
@@ -509,7 +510,7 @@ $MermaidLines += "    ENDOK([END])"
 # Edges
 $PrevNode = "START"
 $TaskIndex = 0
-foreach ($Task in $Discovery.Structure.Tasks) {
+foreach ($Task in $Discovery.TaskStructure.Tasks) {
     if ($Task.IsDisabled) { continue }
     $TaskId = "T$($Task.ISN2)"
 

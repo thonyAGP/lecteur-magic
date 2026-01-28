@@ -38,7 +38,11 @@ $ErrorActionPreference = "Stop"
 
 $ProjectsPath = if ($Config) { $Config.ProjectsPath } else { "D:\Data\Migration\XPA\PMS" }
 $KbPath = Join-Path $env:USERPROFILE ".magic-kb\knowledge.db"
-$Sqlite3 = "sqlite3"
+# Utiliser chemin complet pour sqlite3 (installe dans C:\Tools\sqlite)
+$Sqlite3 = "C:\Tools\sqlite\sqlite3.exe"
+if (!(Test-Path $Sqlite3)) {
+    $Sqlite3 = "sqlite3"  # Fallback si dans PATH
+}
 
 # Charger discovery.json
 $Discovery = Get-Content $DiscoveryFile -Raw | ConvertFrom-Json
@@ -96,20 +100,24 @@ $Tables = @{
     }
 }
 
-# Query KB pour les tables
+# Query KB pour les tables - Schema corrige:
+# table_usage(task_id, table_id, usage_type) -> tasks(program_id) -> programs(project_id) -> projects(name)
+# tables(xml_id) pour jointure avec table_usage.table_id
 $TablesQuery = @"
 SELECT DISTINCT
-    t.table_id,
-    t.physical_name,
-    t.logical_name,
-    tu.access_mode,
+    tu.table_id,
+    COALESCE(tbl.physical_name, 'Table_' || tu.table_id) as physical_name,
+    COALESCE(tbl.logical_name, '') as logical_name,
+    tu.usage_type as access_mode,
     COUNT(*) as usage_count
 FROM table_usage tu
-JOIN tables t ON tu.table_id = t.id
-JOIN programs p ON tu.program_id = p.id
-WHERE p.project = '$Project' AND p.ide_position = $IdePosition
-GROUP BY t.table_id, t.physical_name, t.logical_name, tu.access_mode
-ORDER BY t.table_id
+JOIN tasks tsk ON tu.task_id = tsk.id
+JOIN programs p ON tsk.program_id = p.id
+JOIN projects pr ON p.project_id = pr.id
+LEFT JOIN tables tbl ON tu.table_id = tbl.xml_id
+WHERE pr.name = '$Project' AND p.ide_position = $IdePosition
+GROUP BY tu.table_id, tbl.physical_name, tbl.logical_name, tu.usage_type
+ORDER BY tu.table_id
 "@
 
 try {
@@ -178,62 +186,131 @@ if ($Tables.All.Count -eq 0 -and $Discovery.Identification.XmlPath) {
 
     $Xml = [xml](Get-Content $Discovery.Identification.XmlPath -Encoding UTF8 -Raw)
 
-    # Structure XML: Application.ProgramsRepository.Programs.Task.Resource.DB
-    $AllTasks = @($Xml.Application.ProgramsRepository.Programs.Task)
+    # IMPORTANT: Utiliser SelectNodes pour obtenir TOUTES les taches (y compris nested)
+    $AllTasks = @($Xml.SelectNodes("//Task"))
+    Write-Step "2.1b" "Analyse de $($AllTasks.Count) taches pour extraction tables..."
+
+    # Compteur pour usage_count par table/mode
+    $TableUsageCount = @{}
 
     foreach ($Task in $AllTasks) {
-        if (!$Task -or !$Task.Resource -or !$Task.Resource.DB) { continue }
+        if (!$Task -or !$Task.Resource) { continue }
 
-        # IMPORTANT: $Task.Resource.DB peut etre un tableau si plusieurs <DB>
-        $DBList = @($Task.Resource.DB)
+        # Collecter tous les DB (peuvent etre a differents niveaux)
+        $DBNodes = @($Task.SelectNodes(".//DB"))
+        if ($DBNodes.Count -eq 0 -and $Task.Resource.DB) {
+            $DBNodes = @($Task.Resource.DB)
+        }
 
-        foreach ($DB in $DBList) {
+        foreach ($DB in $DBNodes) {
             if (!$DB) { continue }
 
-            $TableObj = $DB.DataObject
             $TableId = 0
 
-            if ($TableObj -and $TableObj.obj) {
-                # S'assurer que obj est un scalaire, pas un tableau
-                $ObjVal = if ($TableObj.obj -is [Array]) { $TableObj.obj[0] } else { $TableObj.obj }
+            # Methode 1: DataObject.obj
+            if ($DB.DataObject -and $DB.DataObject.obj) {
+                $ObjVal = if ($DB.DataObject.obj -is [Array]) { $DB.DataObject.obj[0] } else { $DB.DataObject.obj }
                 $TableId = [int]$ObjVal
             }
-
-            $Access = if ($DB.Access) { $DB.Access.val } else { "R" }
-
-            $AccessMode = switch ($Access) {
-                "R" { "R" }  # Read
-                "W" { "W" }  # Write
-                "L" { "L" }  # Link
-                default { "R" }
+            # Methode 2: attribut obj direct
+            elseif ($DB.obj) {
+                $TableId = [int]$DB.obj
             }
 
-            # Nom physique par defaut
-            $PhysicalName = "Table_$TableId"
-            $LogicalName = ""
+            if ($TableId -le 0) { continue }
 
-            # Eviter les doublons
-            $Existing = $Tables.All | Where-Object { $_.TableId -eq $TableId -and $_.AccessMode -eq $AccessMode }
-            if (!$Existing -and $TableId -gt 0) {
-                $TableEntry = @{
-                    TableId      = $TableId
-                    PhysicalName = $PhysicalName
-                    LogicalName  = $LogicalName
-                    AccessMode   = $AccessMode
-                    UsageCount   = 1
-                }
-                $Tables.All += $TableEntry
+            # Extraire le mode d'acces - plusieurs formats possibles
+            $AccessMode = "READ"  # Defaut
 
-                switch ($AccessMode) {
-                    "R" { $Tables.Read += $TableEntry; $Tables.ByAccess.R++ }
-                    "W" { $Tables.Write += $TableEntry; $Tables.ByAccess.W++ }
-                    "L" { $Tables.Link += $TableEntry; $Tables.ByAccess.L++ }
+            # Format 1: Access.val
+            if ($DB.Access -and $DB.Access.val) {
+                $AccessVal = $DB.Access.val
+                $AccessMode = switch ($AccessVal) {
+                    "R" { "READ" }
+                    "W" { "WRITE" }
+                    "L" { "LINK" }
+                    "D" { "WRITE" }  # Direct = Write
+                    default { "READ" }
                 }
+            }
+            # Format 2: attribut access direct
+            elseif ($DB.access) {
+                $AccessVal = $DB.access
+                $AccessMode = switch ($AccessVal) {
+                    "R" { "READ" }
+                    "W" { "WRITE" }
+                    "L" { "LINK" }
+                    "D" { "WRITE" }
+                    default { "READ" }
+                }
+            }
+            # Format 3: DataObject.access
+            elseif ($DB.DataObject -and $DB.DataObject.access) {
+                $AccessVal = $DB.DataObject.access
+                $AccessMode = switch ($AccessVal) {
+                    "R" { "READ" }
+                    "W" { "WRITE" }
+                    "L" { "LINK" }
+                    "D" { "WRITE" }
+                    default { "READ" }
+                }
+            }
+
+            # Cle unique table+mode
+            $Key = "$TableId|$AccessMode"
+
+            if ($TableUsageCount.ContainsKey($Key)) {
+                $TableUsageCount[$Key]++
+            }
+            else {
+                $TableUsageCount[$Key] = 1
             }
         }
     }
 
-    Write-Success "Fallback: $($Tables.All.Count) tables extraites du XML"
+    # Construire la liste des tables avec noms depuis KB
+    foreach ($Key in $TableUsageCount.Keys) {
+        $Parts = $Key -split '\|'
+        $TableId = [int]$Parts[0]
+        $AccessMode = $Parts[1]
+        $UsageCount = $TableUsageCount[$Key]
+
+        # Chercher le nom dans la KB
+        $PhysicalName = "Table_$TableId"
+        $LogicalName = ""
+
+        if (Test-Path $KbPath) {
+            try {
+                $NameQuery = "SELECT physical_name, logical_name FROM tables WHERE xml_id = $TableId LIMIT 1"
+                $NameResult = & $Sqlite3 $KbPath $NameQuery 2>$null
+                if ($NameResult) {
+                    $NameParts = $NameResult -split '\|'
+                    if ($NameParts[0]) { $PhysicalName = $NameParts[0] }
+                    if ($NameParts.Count -gt 1 -and $NameParts[1]) { $LogicalName = $NameParts[1] }
+                }
+            }
+            catch {
+                # Garder le nom par defaut
+            }
+        }
+
+        $TableEntry = @{
+            TableId      = $TableId
+            PhysicalName = $PhysicalName
+            LogicalName  = $LogicalName
+            AccessMode   = $AccessMode
+            UsageCount   = $UsageCount
+        }
+        $Tables.All += $TableEntry
+
+        switch ($AccessMode) {
+            "READ" { $Tables.Read += $TableEntry; $Tables.ByAccess.R++ }
+            "WRITE" { $Tables.Write += $TableEntry; $Tables.ByAccess.W++ }
+            "LINK" { $Tables.Link += $TableEntry; $Tables.ByAccess.L++ }
+        }
+    }
+
+    Write-Success "Fallback XML: $($Tables.All.Count) tables ($($Tables.ByAccess.R) R, $($Tables.ByAccess.W) W, $($Tables.ByAccess.L) L)"
 }
 
 # ============================================================================

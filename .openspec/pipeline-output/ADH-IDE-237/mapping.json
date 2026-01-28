@@ -3,198 +3,588 @@
                   "Parameters":  20,
                   "GlobalVars":  0,
                   "Forms":  0,
-                  "TablesLink":  0,
+                  "TablesLink":  18,
                   "ParamsOut":  0,
                   "LocalVars":  103,
-                  "TotalTables":  12,
-                  "TablesRead":  12,
+                  "TotalTables":  40,
+                  "TablesRead":  13,
                   "ParamsIn":  20,
                   "TableVars":  48,
-                  "TablesWrite":  0
+                  "TablesWrite":  9
               },
     "Tables":  {
                    "All":  [
                                {
-                                   "TableId":  103,
+                                   "TableId":  23,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_103",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "reseau_cloture___rec",
+                                   "PhysicalName":  "cafil001_dat",
+                                   "AccessMode":  "READ"
                                },
                                {
-                                   "TableId":  70,
-                                   "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_70",
-                                   "AccessMode":  "R"
+                                   "TableId":  23,
+                                   "UsageCount":  4,
+                                   "LogicalName":  "reseau_cloture___rec",
+                                   "PhysicalName":  "cafil001_dat",
+                                   "AccessMode":  "WRITE"
                                },
                                {
                                    "TableId":  26,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_26",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "comptes_speciaux_spc",
+                                   "PhysicalName":  "cafil004_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  30,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "gm-recherche_____gmr",
+                                   "PhysicalName":  "cafil008_dat",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  30,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_30",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "gm-recherche_____gmr",
+                                   "PhysicalName":  "cafil008_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  32,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "prestations",
+                                   "PhysicalName":  "cafil010_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  32,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "prestations",
+                                   "PhysicalName":  "cafil010_dat",
+                                   "AccessMode":  "WRITE"
                                },
                                {
                                    "TableId":  34,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_34",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "hebergement______heb",
+                                   "PhysicalName":  "cafil012_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  39,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "depot_garantie___dga",
+                                   "PhysicalName":  "cafil017_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  46,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "mvt_prestation___mpr",
+                                   "PhysicalName":  "cafil024_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  46,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "mvt_prestation___mpr",
+                                   "PhysicalName":  "cafil024_dat",
+                                   "AccessMode":  "WRITE"
+                               },
+                               {
+                                   "TableId":  47,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "compte_gm________cgm",
+                                   "PhysicalName":  "cafil025_dat",
+                                   "AccessMode":  "WRITE"
+                               },
+                               {
+                                   "TableId":  50,
+                                   "UsageCount":  3,
+                                   "LogicalName":  "moyens_reglement_mor",
+                                   "PhysicalName":  "cafil028_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  67,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "tables___________tab",
+                                   "PhysicalName":  "cafil045_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  68,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "compteurs________cpt",
+                                   "PhysicalName":  "cafil046_dat",
+                                   "AccessMode":  "WRITE"
+                               },
+                               {
+                                   "TableId":  70,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "date_comptable___dat",
+                                   "PhysicalName":  "cafil048_dat",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  77,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "articles_________art",
+                                   "PhysicalName":  "cafil055_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  77,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "articles_________art",
+                                   "PhysicalName":  "cafil055_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  79,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_77",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "gratuites________gra",
+                                   "PhysicalName":  "cafil057_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  89,
+                                   "UsageCount":  4,
+                                   "LogicalName":  "moyen_paiement___mop",
+                                   "PhysicalName":  "cafil067_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  89,
+                                   "UsageCount":  4,
+                                   "LogicalName":  "moyen_paiement___mop",
+                                   "PhysicalName":  "cafil067_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  96,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "table_prestation_pre",
+                                   "PhysicalName":  "cafil074_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  103,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "logement_client__loc",
+                                   "PhysicalName":  "cafil081_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  109,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "table_utilisateurs",
+                                   "PhysicalName":  "cafil087_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  139,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "moyens_reglement_mor",
+                                   "PhysicalName":  "cafil117_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  140,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "moyen_paiement___mop",
+                                   "PhysicalName":  "cafil118_dat",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  197,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_197",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "articles_en_stock",
+                                   "PhysicalName":  "caisse_artstock",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  372,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_372",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "pv_budget",
+                                   "PhysicalName":  "pv_budget_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  596,
+                                   "UsageCount":  4,
+                                   "LogicalName":  "tempo_ecran_police",
+                                   "PhysicalName":  "%club_user%tmp_ecrpolice_dat",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  596,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "tempo_ecran_police",
+                                   "PhysicalName":  "%club_user%tmp_ecrpolice_dat",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  596,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "tempo_ecran_police",
+                                   "PhysicalName":  "%club_user%tmp_ecrpolice_dat",
+                                   "AccessMode":  "WRITE"
                                },
                                {
                                    "TableId":  697,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_697",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "droits_applications",
+                                   "PhysicalName":  "droits",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  728,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "arc_cc_total",
+                                   "PhysicalName":  "arc_cctotal",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  801,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_801",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "moyens_reglement_complem",
+                                   "PhysicalName":  "moyens_reglement_complem",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  818,
                                    "UsageCount":  1,
-                                   "LogicalName":  "",
-                                   "PhysicalName":  "Table_818",
-                                   "AccessMode":  "R"
+                                   "LogicalName":  "Circuit supprime",
+                                   "PhysicalName":  "zcircafil146",
+                                   "AccessMode":  "LINK"
                                },
                                {
                                    "TableId":  847,
-                                   "UsageCount":  1,
+                                   "UsageCount":  10,
+                                   "LogicalName":  "stat_lieu_vente_date",
+                                   "PhysicalName":  "%club_user%_stat_lieu_vente_date",
+                                   "AccessMode":  "LINK"
+                               },
+                               {
+                                   "TableId":  847,
+                                   "UsageCount":  3,
+                                   "LogicalName":  "stat_lieu_vente_date",
+                                   "PhysicalName":  "%club_user%_stat_lieu_vente_date",
+                                   "AccessMode":  "WRITE"
+                               },
+                               {
+                                   "TableId":  899,
+                                   "UsageCount":  2,
+                                   "LogicalName":  "Boo_ResultsRechercheHoraire",
+                                   "PhysicalName":  "Boo_ResultsRechercheHoraire",
+                                   "AccessMode":  "READ"
+                               },
+                               {
+                                   "TableId":  899,
+                                   "UsageCount":  6,
+                                   "LogicalName":  "Boo_ResultsRechercheHoraire",
+                                   "PhysicalName":  "Boo_ResultsRechercheHoraire",
+                                   "AccessMode":  "WRITE"
+                               },
+                               {
+                                   "TableId":  1037,
+                                   "UsageCount":  3,
                                    "LogicalName":  "",
-                                   "PhysicalName":  "Table_847",
-                                   "AccessMode":  "R"
+                                   "PhysicalName":  "Table_1037",
+                                   "AccessMode":  "WRITE"
                                }
                            ],
                    "Read":  [
                                 {
-                                    "TableId":  103,
+                                    "TableId":  23,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_103",
-                                    "AccessMode":  "R"
-                                },
-                                {
-                                    "TableId":  70,
-                                    "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_70",
-                                    "AccessMode":  "R"
-                                },
-                                {
-                                    "TableId":  26,
-                                    "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_26",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "reseau_cloture___rec",
+                                    "PhysicalName":  "cafil001_dat",
+                                    "AccessMode":  "READ"
                                 },
                                 {
                                     "TableId":  30,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_30",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "gm-recherche_____gmr",
+                                    "PhysicalName":  "cafil008_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  32,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "prestations",
+                                    "PhysicalName":  "cafil010_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  39,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "depot_garantie___dga",
+                                    "PhysicalName":  "cafil017_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  50,
+                                    "UsageCount":  3,
+                                    "LogicalName":  "moyens_reglement_mor",
+                                    "PhysicalName":  "cafil028_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  77,
+                                    "UsageCount":  2,
+                                    "LogicalName":  "articles_________art",
+                                    "PhysicalName":  "cafil055_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  79,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "gratuites________gra",
+                                    "PhysicalName":  "cafil057_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  89,
+                                    "UsageCount":  4,
+                                    "LogicalName":  "moyen_paiement___mop",
+                                    "PhysicalName":  "cafil067_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  103,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "logement_client__loc",
+                                    "PhysicalName":  "cafil081_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  109,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "table_utilisateurs",
+                                    "PhysicalName":  "cafil087_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  139,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "moyens_reglement_mor",
+                                    "PhysicalName":  "cafil117_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  596,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "tempo_ecran_police",
+                                    "PhysicalName":  "%club_user%tmp_ecrpolice_dat",
+                                    "AccessMode":  "READ"
+                                },
+                                {
+                                    "TableId":  899,
+                                    "UsageCount":  2,
+                                    "LogicalName":  "Boo_ResultsRechercheHoraire",
+                                    "PhysicalName":  "Boo_ResultsRechercheHoraire",
+                                    "AccessMode":  "READ"
+                                }
+                            ],
+                   "ByAccess":  {
+                                    "W":  9,
+                                    "R":  13,
+                                    "L":  18
+                                },
+                   "Link":  [
+                                {
+                                    "TableId":  26,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "comptes_speciaux_spc",
+                                    "PhysicalName":  "cafil004_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  30,
+                                    "UsageCount":  2,
+                                    "LogicalName":  "gm-recherche_____gmr",
+                                    "PhysicalName":  "cafil008_dat",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  34,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_34",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "hebergement______heb",
+                                    "PhysicalName":  "cafil012_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  46,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "mvt_prestation___mpr",
+                                    "PhysicalName":  "cafil024_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  67,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "tables___________tab",
+                                    "PhysicalName":  "cafil045_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  70,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "date_comptable___dat",
+                                    "PhysicalName":  "cafil048_dat",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  77,
+                                    "UsageCount":  2,
+                                    "LogicalName":  "articles_________art",
+                                    "PhysicalName":  "cafil055_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  89,
+                                    "UsageCount":  4,
+                                    "LogicalName":  "moyen_paiement___mop",
+                                    "PhysicalName":  "cafil067_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  96,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_77",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "table_prestation_pre",
+                                    "PhysicalName":  "cafil074_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  140,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "moyen_paiement___mop",
+                                    "PhysicalName":  "cafil118_dat",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  197,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_197",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "articles_en_stock",
+                                    "PhysicalName":  "caisse_artstock",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  372,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_372",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "pv_budget",
+                                    "PhysicalName":  "pv_budget_dat",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  596,
+                                    "UsageCount":  4,
+                                    "LogicalName":  "tempo_ecran_police",
+                                    "PhysicalName":  "%club_user%tmp_ecrpolice_dat",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  697,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_697",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "droits_applications",
+                                    "PhysicalName":  "droits",
+                                    "AccessMode":  "LINK"
+                                },
+                                {
+                                    "TableId":  728,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "arc_cc_total",
+                                    "PhysicalName":  "arc_cctotal",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  801,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_801",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "moyens_reglement_complem",
+                                    "PhysicalName":  "moyens_reglement_complem",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  818,
                                     "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_818",
-                                    "AccessMode":  "R"
+                                    "LogicalName":  "Circuit supprime",
+                                    "PhysicalName":  "zcircafil146",
+                                    "AccessMode":  "LINK"
                                 },
                                 {
                                     "TableId":  847,
-                                    "UsageCount":  1,
-                                    "LogicalName":  "",
-                                    "PhysicalName":  "Table_847",
-                                    "AccessMode":  "R"
+                                    "UsageCount":  10,
+                                    "LogicalName":  "stat_lieu_vente_date",
+                                    "PhysicalName":  "%club_user%_stat_lieu_vente_date",
+                                    "AccessMode":  "LINK"
                                 }
                             ],
-                   "ByAccess":  {
-                                    "W":  0,
-                                    "R":  12,
-                                    "L":  0
-                                },
-                   "Link":  [
-
-                            ],
                    "Write":  [
-
+                                 {
+                                     "TableId":  23,
+                                     "UsageCount":  4,
+                                     "LogicalName":  "reseau_cloture___rec",
+                                     "PhysicalName":  "cafil001_dat",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  32,
+                                     "UsageCount":  2,
+                                     "LogicalName":  "prestations",
+                                     "PhysicalName":  "cafil010_dat",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  46,
+                                     "UsageCount":  1,
+                                     "LogicalName":  "mvt_prestation___mpr",
+                                     "PhysicalName":  "cafil024_dat",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  47,
+                                     "UsageCount":  2,
+                                     "LogicalName":  "compte_gm________cgm",
+                                     "PhysicalName":  "cafil025_dat",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  68,
+                                     "UsageCount":  1,
+                                     "LogicalName":  "compteurs________cpt",
+                                     "PhysicalName":  "cafil046_dat",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  596,
+                                     "UsageCount":  2,
+                                     "LogicalName":  "tempo_ecran_police",
+                                     "PhysicalName":  "%club_user%tmp_ecrpolice_dat",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  847,
+                                     "UsageCount":  3,
+                                     "LogicalName":  "stat_lieu_vente_date",
+                                     "PhysicalName":  "%club_user%_stat_lieu_vente_date",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  899,
+                                     "UsageCount":  6,
+                                     "LogicalName":  "Boo_ResultsRechercheHoraire",
+                                     "PhysicalName":  "Boo_ResultsRechercheHoraire",
+                                     "AccessMode":  "WRITE"
+                                 },
+                                 {
+                                     "TableId":  1037,
+                                     "UsageCount":  3,
+                                     "LogicalName":  "",
+                                     "PhysicalName":  "Table_1037",
+                                     "AccessMode":  "WRITE"
+                                 }
                              ]
                },
     "Forms":  {
@@ -1761,5 +2151,5 @@
 
                                  ]
                    },
-    "GeneratedAt":  "2026-01-28T14:31:10"
+    "GeneratedAt":  "2026-01-28T15:36:46"
 }
