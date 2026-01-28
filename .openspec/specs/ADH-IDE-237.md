@@ -1,8 +1,8 @@
-﻿# ADH IDE 237 - Solde Gift Pass
+﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
 > **Version spec**: 5.0
-> **Analyse**: 2026-01-28 13:14
-> **Source**: `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_237.xml`
+> **Analyse**: 2026-01-28 14:31
+> **Source**: `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_233.xml`
 > **Methode**: V5.0 Pipeline 4-Phase (Discovery-Mapping-Decode-Synthesis)
 
 ---
@@ -16,7 +16,7 @@
 | Element | Description |
 |---------|-------------|
 | **Qui** | Operateur (utilisateur connecte) |
-| **Quoi** | Solde Gift Pass |
+| **Quoi** | Transaction Nouv vente avec GP |
 | **Pourquoi** | Fonction metier du module ADH |
 | **Declencheur** | Appel depuis programme parent ou menu |
 | **Resultat** | Traitement effectue selon logique programme |
@@ -29,9 +29,9 @@
 
 ### 1.3 Flux utilisateur
 
-1. Reception des parametres d'entree (4 params)
+1. Reception des parametres d'entree (20 params)
 2. Initialisation et verification conditions
-3. Traitement principal (1 taches)
+3. Traitement principal (49 taches)
 4. Appels sous-programmes (0 callees)
 5. Retour resultats
 
@@ -58,35 +58,62 @@ Programme partage via **Aucune dependance ECF identifiee**
 | Attribut | Valeur |
 |----------|--------|
 | **IDE Position** | 237 |
-| **Fichier XML** | `Prg_237.xml` |
-| **Description** | Solde Gift Pass |
+| **Fichier XML** | `Prg_233.xml` |
+| **Description** | Transaction Nouv vente avec GP |
 | **Module** | ADH |
-| **Nombre taches** | 1 |
-| **Lignes logique** | 12 |
+| **Nombre taches** | 49 |
+| **Lignes logique** | 1818 |
 | **Expressions** | 0 |
 
-### 2.2 Tables - 1 tables dont 0 en ecriture
+### 2.2 Tables - 12 tables dont 0 en ecriture
 
 | IDE# | Nom Physique | Nom Logique | Access | Usage |
 |------|--------------|-------------|--------|-------|
-| #268 | `Table_268` |  | **READ** | 1x |
+| #103 | `Table_103` |  | **READ** | 1x |
+| #70 | `Table_70` |  | **READ** | 1x |
+| #26 | `Table_26` |  | **READ** | 1x |
+| #30 | `Table_30` |  | **READ** | 1x |
+| #34 | `Table_34` |  | **READ** | 1x |
+| #77 | `Table_77` |  | **READ** | 1x |
+| #197 | `Table_197` |  | **READ** | 1x |
+| #372 | `Table_372` |  | **READ** | 1x |
+| #697 | `Table_697` |  | **READ** | 1x |
+| #801 | `Table_801` |  | **READ** | 1x |
+| #818 | `Table_818` |  | **READ** | 1x |
+| #847 | `Table_847` |  | **READ** | 1x |
 
 > *Liste limitee aux 20 tables principales*
 
-### 2.3 Parametres d'entree - 4 parametres
+### 2.3 Parametres d'entree - 20 parametres
 
 | Var | Nom | Type | Direction | Picture |
 |-----|-----|------|-----------|---------
-| A | p.Societe | Alpha | INOUT | 1 |
-| B | p.Compte | Numeric | IN | 8 |
-| C | p.Filiation | Numeric | IN | 3L |
-| D | P.solde_credit_conso | Numeric | IN | 10.3 |
+| A | P0 societe | Alpha | IN | U |
+| B | P0 devise locale | Alpha | IN | U3 |
+| C | P0 masque montant | Alpha | IN | 16 |
+| D | P0 solde compte | Numeric | IN | N## ### ### ###.###Z |
+| E | P0 code GM | Numeric | IN | ########P0 |
+| F | P0 filiation | Numeric | IN | 3L |
+| G | P0 date fin sejour | Date | IN | ##/##/##Z |
+| H | P0 etat compte | Alpha | IN | U |
+| I | P0 date solde | Date | IN | ##/##/##Z |
+| J | P0 garanti O/N | Alpha | IN | U |
+| K | P0 Nom & prenom | Alpha | IN | 60 |
+| L | P0 UNI/BI | Alpha | IN | U |
+| M | P0.Date debut sejour | Date | IN | ##/##/##Z |
+| N | P0.Valide ? | Numeric | IN | 1 |
+| O | P0.Nb decimales | Numeric | IN | 1 |
+| P | Bouton IDENTITE | Alpha | IN | 20 |
+| Q | Bouton ABANDON | Alpha | IN | 20 |
+| R | W0 FIN SAISIE OD | Logical | IN |  |
+| S | Bouton FIN SAISIE OD | Alpha | IN | 20 |
+| T | W0 Cloture en cours | Logical | IN |  |
 
 ### 2.4 Algorigramme
 
 ```mermaid
 flowchart TD
-    START([START - 4 params])
+    START([START - 20 params])
     ENDOK([END])
     START --> ENDOK
 
@@ -106,11 +133,11 @@ flowchart TD
 
 | Metrique | Valeur |
 |----------|--------|
-| **Taches** | 1 |
-| **Lignes logique** | 12 |
+| **Taches** | 49 |
+| **Lignes logique** | 1818 |
 | **Expressions** | 0 |
-| **Parametres** | 4 |
-| **Tables accedees** | 1 |
+| **Parametres** | 20 |
+| **Tables accedees** | 12 |
 | **Tables en ecriture** | 0 |
 | **Callees niveau 1** | 0 |
 
@@ -124,7 +151,7 @@ flowchart TD
 
 ```mermaid
 graph LR
-    T[237 Solde Gift Pass]
+    T[237 Transaction N...]
     ORPHAN([ORPHELIN ou Main])
     T -.-> ORPHAN
     style T fill:#58a6ff,color:#000
@@ -140,7 +167,7 @@ graph LR
 
 ```mermaid
 graph LR
-    T[237 Solde Gift Pass]
+    T[237 Transaction N...]
     TERM([TERMINAL])
     T -.-> TERM
     style TERM fill:#6b7280,stroke-dasharray: 5 5
@@ -174,10 +201,10 @@ graph LR
 
 | Critere | Score | Detail |
 |---------|-------|--------|
-| Taches | 1 | Standard |
-| Tables | 1 | Lecture majoritaire |
+| Taches | 49 | Complexe |
+| Tables | 12 | Lecture majoritaire |
 | Callees | 0 | Faible couplage |
-| **Score global** | **30** | **FAIBLE** |
+| **Score global** | **730** | **HAUTE** |
 
 ### Points d'attention migration
 
@@ -194,7 +221,7 @@ graph LR
 
 | Date | Action | Auteur |
 |------|--------|--------|
-| 2026-01-28 13:14 | **V5.0 Pipeline** - Generation automatique 4 phases | Script |
+| 2026-01-28 14:31 | **V5.0 Pipeline** - Generation automatique 4 phases | Script |
 
 ---
 

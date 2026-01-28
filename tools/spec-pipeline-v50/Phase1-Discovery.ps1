@@ -78,6 +78,7 @@ $Identification = @{
     IdePosition  = $IdePosition
     XmlFile      = $null
     XmlPath      = $null
+    XmlId        = $null  # Le numero dans Prg_X.xml (different de IdePosition!)
     Name         = $null
     PublicName   = $null
     Type         = "Batch"
@@ -88,21 +89,48 @@ $Identification = @{
 
 $PrgPath = Join-Path $ProjectsPath "$Project\Source"
 
-# METHODE 1: Lire ProgramHeaders.xml pour obtenir les metadata
+# ETAPE CRITIQUE: Lire Progs.xml pour obtenir le mapping IDE Position -> XML File ID
+# La position dans la liste (1-based) = IDE Position
+# L'attribut 'id' = numero du fichier Prg_X.xml
+$ProgsPath = Join-Path $PrgPath "Progs.xml"
+$XmlFileId = $null
+
+if (Test-Path $ProgsPath) {
+    try {
+        [xml]$ProgsXml = Get-Content $ProgsPath -Encoding UTF8 -Raw
+        $AllPrograms = @($ProgsXml.Application.ProgramsRepositoryOutLine.Programs.Program)
+
+        # La position dans la liste est 1-based, donc IdePosition 237 = index 236
+        $Index = $IdePosition - 1
+
+        if ($Index -ge 0 -and $Index -lt $AllPrograms.Count) {
+            $XmlFileId = [int]$AllPrograms[$Index].id
+            $Identification.XmlId = $XmlFileId
+            $Identification.XmlFile = "Prg_$XmlFileId.xml"
+            Write-Success "Mapping Progs.xml: IDE $IdePosition -> Prg_$XmlFileId.xml"
+        }
+        else {
+            Write-Warning2 "IDE $IdePosition hors limites (max: $($AllPrograms.Count))"
+        }
+    }
+    catch {
+        Write-Warning2 "Erreur lecture Progs.xml: $_"
+    }
+}
+
+# Lire ProgramHeaders.xml pour obtenir les metadata (en utilisant XmlFileId)
 $HeadersPath = Join-Path $PrgPath "ProgramHeaders.xml"
-if (Test-Path $HeadersPath) {
+if ($XmlFileId -and (Test-Path $HeadersPath)) {
     try {
         [xml]$Headers = Get-Content $HeadersPath -Encoding UTF8 -Raw
         $ProgHeader = $Headers.Application.ProgramsRepositoryHeaders.Program | Where-Object {
-            [int]$_.Header.id -eq $IdePosition
+            [int]$_.Header.id -eq $XmlFileId
         }
 
         if ($ProgHeader) {
             $Identification.Name = $ProgHeader.Header.Description
             $Identification.PublicName = if ($ProgHeader.Header.PublicName) { $ProgHeader.Header.PublicName } else { $null }
-            $Identification.XmlFile = "Prg_$IdePosition.xml"
-
-            Write-Success "Programme trouve dans ProgramHeaders: $($Identification.Name)"
+            Write-Success "Metadata ProgramHeaders: $($Identification.Name)"
         }
     }
     catch {
@@ -110,11 +138,13 @@ if (Test-Path $HeadersPath) {
     }
 }
 
-# METHODE 2: Chercher directement le fichier Prg_{IdePosition}.xml
+# FALLBACK: Si pas de Progs.xml, essayer directement (ancien comportement)
 if (!$Identification.XmlFile) {
+    Write-Warning2 "Progs.xml non trouve, fallback sur Prg_$IdePosition.xml"
     $DirectXmlPath = Join-Path $PrgPath "Prg_$IdePosition.xml"
     if (Test-Path $DirectXmlPath) {
         $Identification.XmlFile = "Prg_$IdePosition.xml"
+        $Identification.XmlId = $IdePosition
     }
 }
 
@@ -176,8 +206,9 @@ $TaskStructure = @{
 if ($Identification.XmlPath -and (Test-Path $Identification.XmlPath)) {
     $Xml = [xml](Get-Content $Identification.XmlPath -Encoding UTF8 -Raw)
 
-    # Structure XML: Application.ProgramsRepository.Programs.Task
-    $AllTasks = @($Xml.Application.ProgramsRepository.Programs.Task)
+    # IMPORTANT: Les taches sont IMBRIQUEES dans Magic XPA
+    # Utiliser SelectNodes pour obtenir TOUTES les taches (y compris nested)
+    $AllTasks = @($Xml.SelectNodes("//Task"))
 
     foreach ($Task in $AllTasks) {
         if (!$Task) { continue }

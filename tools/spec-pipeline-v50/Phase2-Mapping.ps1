@@ -69,7 +69,9 @@ function Convert-FieldToLetter {
 
     while ($N -gt 0) {
         $N--
-        $Result = [char](65 + ($N % 26)) + $Result
+        # Cast explicite en int pour eviter l'erreur Decimal -> Char
+        $CharCode = [int](65 + ($N % 26))
+        $Result = [char]$CharCode + $Result
         $N = [math]::Floor($N / 26)
     }
 
@@ -182,43 +184,51 @@ if ($Tables.All.Count -eq 0 -and $Discovery.Identification.XmlPath) {
     foreach ($Task in $AllTasks) {
         if (!$Task -or !$Task.Resource -or !$Task.Resource.DB) { continue }
 
-        $DB = $Task.Resource.DB
-        $TableObj = $DB.DataObject
-        $TableId = 0
+        # IMPORTANT: $Task.Resource.DB peut etre un tableau si plusieurs <DB>
+        $DBList = @($Task.Resource.DB)
 
-        if ($TableObj) {
-            $TableId = if ($TableObj.obj) { [int]$TableObj.obj } else { 0 }
-        }
+        foreach ($DB in $DBList) {
+            if (!$DB) { continue }
 
-        $Access = if ($DB.Access) { $DB.Access.val } else { "R" }
+            $TableObj = $DB.DataObject
+            $TableId = 0
 
-        $AccessMode = switch ($Access) {
-            "R" { "R" }  # Read
-            "W" { "W" }  # Write
-            "L" { "L" }  # Link
-            default { "R" }
-        }
-
-        # Nom physique par defaut
-        $PhysicalName = "Table_$TableId"
-        $LogicalName = ""
-
-        # Eviter les doublons
-        $Existing = $Tables.All | Where-Object { $_.TableId -eq $TableId -and $_.AccessMode -eq $AccessMode }
-        if (!$Existing -and $TableId -gt 0) {
-            $TableEntry = @{
-                TableId      = $TableId
-                PhysicalName = $PhysicalName
-                LogicalName  = $LogicalName
-                AccessMode   = $AccessMode
-                UsageCount   = 1
+            if ($TableObj -and $TableObj.obj) {
+                # S'assurer que obj est un scalaire, pas un tableau
+                $ObjVal = if ($TableObj.obj -is [Array]) { $TableObj.obj[0] } else { $TableObj.obj }
+                $TableId = [int]$ObjVal
             }
-            $Tables.All += $TableEntry
 
-            switch ($AccessMode) {
-                "R" { $Tables.Read += $TableEntry; $Tables.ByAccess.R++ }
-                "W" { $Tables.Write += $TableEntry; $Tables.ByAccess.W++ }
-                "L" { $Tables.Link += $TableEntry; $Tables.ByAccess.L++ }
+            $Access = if ($DB.Access) { $DB.Access.val } else { "R" }
+
+            $AccessMode = switch ($Access) {
+                "R" { "R" }  # Read
+                "W" { "W" }  # Write
+                "L" { "L" }  # Link
+                default { "R" }
+            }
+
+            # Nom physique par defaut
+            $PhysicalName = "Table_$TableId"
+            $LogicalName = ""
+
+            # Eviter les doublons
+            $Existing = $Tables.All | Where-Object { $_.TableId -eq $TableId -and $_.AccessMode -eq $AccessMode }
+            if (!$Existing -and $TableId -gt 0) {
+                $TableEntry = @{
+                    TableId      = $TableId
+                    PhysicalName = $PhysicalName
+                    LogicalName  = $LogicalName
+                    AccessMode   = $AccessMode
+                    UsageCount   = 1
+                }
+                $Tables.All += $TableEntry
+
+                switch ($AccessMode) {
+                    "R" { $Tables.Read += $TableEntry; $Tables.ByAccess.R++ }
+                    "W" { $Tables.Write += $TableEntry; $Tables.ByAccess.W++ }
+                    "L" { $Tables.Link += $TableEntry; $Tables.ByAccess.L++ }
+                }
             }
         }
     }
