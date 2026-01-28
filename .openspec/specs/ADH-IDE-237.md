@@ -1,6 +1,6 @@
 ﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
-> **Analyse**: 2026-01-28 18:59
+> **Analyse**: 2026-01-28 19:42
 > **Pipeline**: V6.0 Deep Analysis
 > **Niveau**: DETAILED (Migration)
 
@@ -18,7 +18,26 @@
 
 ## 2. OBJECTIF METIER
 
-Transaction Nouv vente avec GP
+**Transaction Nouv vente avec GP** - Programme de gestion des transactions et operations metier.
+
+### Fonctionnalites principales
+
+- **Saisie transaction** (Tache 1)
+- **Reglements suite a refus TPE** (Tache 2)
+- **Saisie Bilaterale** (Tache 7)
+- **Saisie mode de règlement** (Tache 8)
+- **Saisie Commentaires** (Tache 10)
+- **Affiche saisie** (Tache 30)
+- **Type transfert** (Tache 38)
+
+### Regles metier cles
+
+- [RM-001] Si Trim(W0 service village [BA])='1' alors 'ALLER' sinon IF(Trim(W0 service v...
+- [RM-002] Si V.RC utilisé [GA]=0 alors IF(W0 imputation [W]='VSL' sinon P0.Date debut s...
+- [RM-003] Si P0 masque montant [C]='' alors '15.2' sinon P0 masque montant [C])
+- [RM-004] Si VG7 OR VG35 OR VG87 alors 'P0 masque montant [C]'FORM sinon 'P0 devise loc...
+- [RM-005] Si NOT W0 Motif de non enreg NA [CL] alors W0.Date fin sejour [CK] sinon W0 T...
+
 
 ### Contexte d'utilisation
 
@@ -386,4 +405,4 @@ graph LR
 - Expressions conditionnelles: 31
 
 ---
-*Spec DETAILED generee par Pipeline V6.0 - 2026-01-28 18:59*
+*Spec DETAILED generee par Pipeline V6.0 - 2026-01-28 19:42*

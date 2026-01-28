@@ -384,6 +384,61 @@ $callGraphMermaid = Generate-MermaidCallGraph -Discovery $discovery -Project $Pr
 # Build algorigramme (flowchart)
 $algorigrammeMermaid = Generate-Algorigramme -UIForms $uiForms -Decoded $decoded -ProgramName $programName
 
+# Build OBJECTIF METIER enrichi
+$objectifMetier = @()
+
+# 1. Description fonctionnelle basee sur les taches principales
+if ($uiForms -and $uiForms.forms.Count -gt 0) {
+    $mainTasks = @($uiForms.forms | Where-Object {
+        $_.dimensions.width -gt 0 -and $_.window_type_str -match "Modal|SDI|Type6"
+    } | Select-Object -First 8)
+
+    if ($mainTasks.Count -gt 0) {
+        $objectifMetier += "### Fonctionnalites principales"
+        $objectifMetier += ""
+        foreach ($task in $mainTasks) {
+            $taskName = $task.name -replace '[^\w\s\-]', ''
+            if ($taskName.Trim()) {
+                $objectifMetier += "- **$taskName** (Tache $($task.task_isn2))"
+            }
+        }
+        $objectifMetier += ""
+    }
+}
+
+# 2. Operations sur les donnees (tables WRITE)
+$writeTables = @()
+if ($discovery.tables) {
+    $writeTables = @($discovery.tables | Where-Object { $_.access_mode -eq 'W' })
+}
+if ($writeTables.Count -gt 0) {
+    $objectifMetier += "### Operations sur les donnees"
+    $objectifMetier += ""
+    $objectifMetier += "Ce programme **modifie** les tables suivantes:"
+    foreach ($tbl in ($writeTables | Select-Object -First 6)) {
+        $objectifMetier += "- ``$($tbl.logical_name)`` ($($tbl.physical_name))"
+    }
+    if ($writeTables.Count -gt 6) {
+        $objectifMetier += "- ... et $($writeTables.Count - 6) autres tables"
+    }
+    $objectifMetier += ""
+}
+
+# 3. Regles metier principales (si decoded disponible)
+if ($decoded -and $decoded.business_rules -and $decoded.business_rules.all.Count -gt 0) {
+    $objectifMetier += "### Regles metier cles"
+    $objectifMetier += ""
+    $topRules = @($decoded.business_rules.all | Select-Object -First 5)
+    foreach ($rule in $topRules) {
+        $ruleDesc = $rule.natural_language
+        if ($ruleDesc.Length -gt 80) { $ruleDesc = $ruleDesc.Substring(0, 77) + "..." }
+        $objectifMetier += "- [$($rule.id)] $ruleDesc"
+    }
+    $objectifMetier += ""
+}
+
+$objectifMetierText = $objectifMetier -join "`n"
+
 $detailedSpec = @"
 # $Project IDE $IdePosition - $programName
 
@@ -405,7 +460,9 @@ $detailedSpec = @"
 
 ## 2. OBJECTIF METIER
 
-$programName
+**$programName** - Programme de gestion des transactions et operations metier.
+
+$objectifMetierText
 
 ### Contexte d'utilisation
 
