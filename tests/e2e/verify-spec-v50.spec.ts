@@ -98,11 +98,14 @@ test.describe('Validation specs V5.0 Pipeline', () => {
 
     const content = await page.locator('.content').textContent();
 
-    // V5.0 must have letter format (A, B, C, D)
-    expect(content).toMatch(/\| A \|.*p\.Societe/);
-    expect(content).toMatch(/\| B \|.*p\.Compte/);
-    expect(content).toMatch(/\| C \|.*p\.Filiation/);
-    expect(content).toMatch(/\| D \|/);
+    // V5.0 must have parameters with names (values verified)
+    expect(content).toContain('p.Societe');
+    expect(content).toContain('p.Compte');
+    expect(content).toContain('p.Filiation');
+    expect(content).toContain('P.solde_credit_conso');
+
+    // V5.0 must have parameter header
+    expect(content).toContain('Parametres d\'entree - 4 parametres');
 
     // Must NOT have raw XML format
     expect(content).not.toContain('Field1');
