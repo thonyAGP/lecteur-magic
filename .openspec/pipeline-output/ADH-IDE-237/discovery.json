@@ -1,0 +1,75 @@
+﻿{
+    "Stats":  {
+                  "CrossProject":  0,
+                  "CalleesLvl1":  0,
+                  "CalleesLvl2":  0,
+                  "Callers":  0,
+                  "DisabledTasks":  0,
+                  "TotalLogicLines":  12,
+                  "TotalTasks":  1,
+                  "CalleesLvl3":  0
+              },
+    "TaskStructure":  {
+                          "TotalLogicLines":  12,
+                          "DisabledLines":  0,
+                          "TotalTasks":  1,
+                          "DisabledTasks":  0,
+                          "Tasks":  [
+                                        {
+                                            "Name":  "Solde Gift Pass",
+                                            "IsDisabled":  false,
+                                            "LogicLines":  12,
+                                            "DisabledLines":  0,
+                                            "Tables":  1,
+                                            "ISN2":  1,
+                                            "Parameters":  4
+                                        }
+                                    ]
+                      },
+    "CallGraph":  {
+                      "CalleesLvl2":  [
+
+                                      ],
+                      "Callees":  [
+
+                                  ],
+                      "Callers":  [
+
+                                  ],
+                      "ChainFromMain":  [
+
+                                        ],
+                      "CalleesLvl3":  [
+
+                                      ],
+                      "CrossProject":  [
+
+                                       ]
+                  },
+    "Pipeline":  "V5.0",
+    "OrphanStatus":  {
+                         "Criteria":  {
+                                          "HasPublicName":  false,
+                                          "IsMainProgram":  false,
+                                          "IsEcfMember":  false,
+                                          "HasCallers":  false
+                                      },
+                         "Conclusion":  "ORPHELIN CONFIRME - Aucun des 4 criteres satisfait",
+                         "IsOrphan":  true,
+                         "EcfName":  null
+                     },
+    "Phase":  "1-DISCOVERY",
+    "Identification":  {
+                           "PublicName":  null,
+                           "XmlPath":  "D:\\Data\\Migration\\XPA\\PMS\\ADH\\Source\\Prg_237.xml",
+                           "Description":  null,
+                           "Type":  "Batch",
+                           "IdePosition":  237,
+                           "XmlFile":  "Prg_237.xml",
+                           "Project":  "ADH",
+                           "IsEmpty":  false,
+                           "Name":  "Solde Gift Pass",
+                           "Folder":  "Unknown"
+                       },
+    "GeneratedAt":  "2026-01-28T13:14:24"
+}

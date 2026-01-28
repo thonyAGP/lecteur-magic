@@ -1,0 +1,148 @@
+﻿{
+    "Stats":  {
+                  "Parameters":  4,
+                  "GlobalVars":  0,
+                  "Forms":  0,
+                  "TablesLink":  0,
+                  "ParamsOut":  0,
+                  "LocalVars":  0,
+                  "TotalTables":  1,
+                  "TablesRead":  1,
+                  "ParamsIn":  3,
+                  "TableVars":  0,
+                  "TablesWrite":  0
+              },
+    "Tables":  {
+                   "All":  [
+                               {
+                                   "TableId":  268,
+                                   "UsageCount":  1,
+                                   "LogicalName":  "",
+                                   "PhysicalName":  "Table_268",
+                                   "AccessMode":  "R"
+                               }
+                           ],
+                   "Read":  [
+                                {
+                                    "TableId":  268,
+                                    "UsageCount":  1,
+                                    "LogicalName":  "",
+                                    "PhysicalName":  "Table_268",
+                                    "AccessMode":  "R"
+                                }
+                            ],
+                   "ByAccess":  {
+                                    "W":  0,
+                                    "R":  1,
+                                    "L":  0
+                                },
+                   "Link":  [
+
+                            ],
+                   "Write":  [
+
+                             ]
+               },
+    "Forms":  {
+                  "Controls":  [
+
+                               ],
+                  "All":  [
+
+                          ]
+              },
+    "Pipeline":  "V5.0",
+    "Phase":  "2-MAPPING",
+    "Variables":  {
+                      "Local":  [
+
+                                ],
+                      "Global":  [
+
+                                 ],
+                      "GlobalUnique":  null,
+                      "Table":  [
+
+                                ],
+                      "Working":  [
+
+                                  ]
+                  },
+    "Parameters":  {
+                       "Input":  [
+                                     {
+                                         "Name":  "p.Compte",
+                                         "Picture":  "8",
+                                         "Type":  "Numeric",
+                                         "Direction":  "IN",
+                                         "FieldIndex":  2,
+                                         "Letter":  "B"
+                                     },
+                                     {
+                                         "Name":  "p.Filiation",
+                                         "Picture":  "3L",
+                                         "Type":  "Numeric",
+                                         "Direction":  "IN",
+                                         "FieldIndex":  3,
+                                         "Letter":  "C"
+                                     },
+                                     {
+                                         "Name":  "P.solde_credit_conso",
+                                         "Picture":  "10.3",
+                                         "Type":  "Numeric",
+                                         "Direction":  "IN",
+                                         "FieldIndex":  4,
+                                         "Letter":  "D"
+                                     }
+                                 ],
+                       "All":  [
+                                   {
+                                       "Name":  "p.Societe",
+                                       "Picture":  "1",
+                                       "Type":  "Alpha",
+                                       "Direction":  "INOUT",
+                                       "FieldIndex":  1,
+                                       "Letter":  "A"
+                                   },
+                                   {
+                                       "Name":  "p.Compte",
+                                       "Picture":  "8",
+                                       "Type":  "Numeric",
+                                       "Direction":  "IN",
+                                       "FieldIndex":  2,
+                                       "Letter":  "B"
+                                   },
+                                   {
+                                       "Name":  "p.Filiation",
+                                       "Picture":  "3L",
+                                       "Type":  "Numeric",
+                                       "Direction":  "IN",
+                                       "FieldIndex":  3,
+                                       "Letter":  "C"
+                                   },
+                                   {
+                                       "Name":  "P.solde_credit_conso",
+                                       "Picture":  "10.3",
+                                       "Type":  "Numeric",
+                                       "Direction":  "IN",
+                                       "FieldIndex":  4,
+                                       "Letter":  "D"
+                                   }
+                               ],
+                       "Output":  [
+
+                                  ],
+                       "Count":  4,
+                       "InOut":  [
+                                     {
+                                         "Name":  "p.Societe",
+                                         "Picture":  "1",
+                                         "Type":  "Alpha",
+                                         "Direction":  "INOUT",
+                                         "FieldIndex":  1,
+                                         "Letter":  "A"
+                                     }
+                                 ]
+                   },
+    "GeneratedAt":  "2026-01-28T13:14:24"
+}
