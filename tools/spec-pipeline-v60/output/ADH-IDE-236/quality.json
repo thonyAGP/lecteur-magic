@@ -1,15 +1,15 @@
 ﻿{
     "metadata":  {
                      "pipeline_version":  "6.0",
-                     "generated_at":  "2026-01-28 17:48:01",
-                     "ide_position":  237,
-                     "duration_seconds":  0.1,
-                     "program_name":  "Transaction Nouv vente avec GP",
+                     "generated_at":  "2026-01-28 17:46:19",
+                     "ide_position":  236,
+                     "duration_seconds":  0.2,
+                     "program_name":  " Print ticket vente PMS-584",
                      "project":  "ADH"
                  },
     "files_generated":  [
-                            "ADH-IDE-237-summary.md",
-                            "ADH-IDE-237.md"
+                            "ADH-IDE-236-summary.md",
+                            "ADH-IDE-236.md"
                         ],
     "quality_score":  90,
     "comparison_v35":  {
