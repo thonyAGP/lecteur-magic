@@ -59,26 +59,62 @@ Write-Host ""
 # Step 2: Build variable mapping dictionary (for expression decoding)
 Write-Host "[2/3] Building variable mapping dictionary..." -ForegroundColor Yellow
 
+# Function: Convert Letter to Field ID (inverse of FieldToLetter)
+function Convert-LetterToField {
+    param([string]$Letter)
+    if ([string]::IsNullOrWhiteSpace($Letter) -or $Letter -eq "?") { return 0 }
+    if ($Letter.StartsWith("VG")) { return 0 }
+    if ($Letter.StartsWith("Field")) { return 0 }
+
+    # Convert letters like A=1, Z=26, AA=27, BA=53
+    $fieldId = 0
+    $Letter = $Letter.ToUpper()
+
+    for ($i = 0; $i -lt $Letter.Length; $i++) {
+        [char]$char = $Letter[$i]
+        [int]$charCode = [int]$char
+        # A=65, Z=90
+        if ($charCode -ge 65 -and $charCode -le 90) {
+            $fieldId = $fieldId * 26 + ($charCode - 64)  # A=1, B=2, etc.
+        } else {
+            return 0  # Invalid character
+        }
+    }
+    return $fieldId
+}
+
 $variableMapping = @{}
 
 foreach ($v in $varData.variables.local) {
-    if ($v.field_id -gt 0) {
-        $key = "{0,$($v.field_id)}"
-        $variableMapping[$key] = @{
-            letter = $v.letter
-            name = $v.name
-            type = "local"
+    # Use the letter to compute field_id
+    $letter = $v.letter
+    $computedFieldId = Convert-LetterToField -Letter $letter
+
+    if ($computedFieldId -gt 0) {
+        $key = "{0,$computedFieldId}"
+        # Only add if not already present (first occurrence wins)
+        if (-not $variableMapping.ContainsKey($key)) {
+            $variableMapping[$key] = @{
+                letter = $letter
+                name = $v.name
+                type = "local"
+            }
         }
     }
 }
 
 foreach ($v in $varData.variables.global) {
-    if ($v.field_id -gt 0) {
-        $key = "{32768,$($v.field_id)}"
-        $variableMapping[$key] = @{
-            display = "VG$($v.field_id)"
-            name = $v.name
-            type = "global"
+    # For global variables, extract VG number from letter (e.g., "VG38" -> 38)
+    $letter = $v.letter
+    if ($letter -match '^VG(\d+)$') {
+        $vgNum = [int]$Matches[1]
+        $key = "{32768,$vgNum}"
+        if (-not $variableMapping.ContainsKey($key)) {
+            $variableMapping[$key] = @{
+                display = "VG$vgNum"
+                name = $v.name
+                type = "global"
+            }
         }
     }
 }
