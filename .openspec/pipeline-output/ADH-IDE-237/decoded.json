@@ -1,0 +1,72 @@
+﻿{
+    "Flowchart":  {
+                      "Mermaid":  "flowchart TD\n    START([START - 4 params])\n    ENDOK([END])\n    START --\u003e ENDOK\n\n    style START fill:#3fb950\n    style ENDOK fill:#f85149",
+                      "Edges":  [
+
+                                ],
+                      "Nodes":  [
+
+                                ]
+                  },
+    "Expressions":  {
+                        "Assignments":  [
+
+                                        ],
+                        "ByTask":  {
+
+                                   },
+                        "All":  [
+
+                                ],
+                        "Critical":  null,
+                        "Conditions":  [
+
+                                       ]
+                    },
+    "LogicFlow":  {
+                      "Handlers":  [
+
+                                   ],
+                      "FlowGraph":  [
+
+                                    ],
+                      "Branches":  [
+
+                                   ],
+                      "Calls":  [
+
+                                ]
+                  },
+    "Pipeline":  "V5.0",
+    "Phase":  "3-DECODE",
+    "Stats":  {
+                  "Branches":  0,
+                  "FlowchartNodes":  0,
+                  "Calls":  0,
+                  "TotalExpressions":  0,
+                  "Handlers":  0,
+                  "CriticalExpr":  0,
+                  "BusinessRules":  0,
+                  "Conditions":  0
+              },
+    "BusinessRules":  {
+                          "All":  [
+
+                                  ],
+                          "ByType":  {
+                                         "Navigation":  [
+
+                                                        ],
+                                         "Validation":  [
+
+                                                        ],
+                                         "Display":  [
+
+                                                     ],
+                                         "Calculation":  [
+
+                                                         ]
+                                     }
+                      },
+    "GeneratedAt":  "2026-01-28T13:14:25"
+}
