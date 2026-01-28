@@ -35,7 +35,11 @@ $ErrorActionPreference = "Stop"
 
 $ProjectsPath = if ($Config) { $Config.ProjectsPath } else { "D:\Data\Migration\XPA\PMS" }
 $KbPath = Join-Path $env:USERPROFILE ".magic-kb\knowledge.db"
-$Sqlite3 = "sqlite3"
+# Utiliser chemin complet pour sqlite3 (installe dans C:\Tools\sqlite)
+$Sqlite3 = "C:\Tools\sqlite\sqlite3.exe"
+if (!(Test-Path $Sqlite3)) {
+    $Sqlite3 = "sqlite3"  # Fallback si dans PATH
+}
 
 # ECF Programs ADH (ne sont jamais orphelins)
 $AdhEcfPrograms = @{
@@ -280,12 +284,16 @@ $CallGraph = @{
 }
 
 # 1.3.1 - Callers (qui m'appelle?)
+# NOTE: program_calls table est vide dans la KB actuelle, mais on garde la requete correcte
 $CallersQuery = @"
-SELECT DISTINCT p.ide_position, p.name, p.project
+SELECT DISTINCT p.ide_position, p.name, pr.name as project_name
 FROM program_calls pc
-JOIN programs p ON pc.caller_program_id = p.id
+JOIN tasks t ON pc.caller_task_id = t.id
+JOIN programs p ON t.program_id = p.id
+JOIN projects pr ON p.project_id = pr.id
 JOIN programs target ON pc.callee_program_id = target.id
-WHERE target.project = '$Project' AND target.ide_position = $IdePosition
+JOIN projects target_pr ON target.project_id = target_pr.id
+WHERE target_pr.name = '$Project' AND target.ide_position = $IdePosition
 ORDER BY p.ide_position
 "@
 
@@ -303,7 +311,7 @@ try {
             }
         }
     }
-    Write-Success "$($CallGraph.Callers.Count) callers trouves"
+    Write-Success "$($CallGraph.Callers.Count) callers trouves (KB)"
 }
 catch {
     Write-Warning2 "Erreur extraction callers: $_"
@@ -311,12 +319,15 @@ catch {
 
 # 1.3.2 - Callees niveau 1 (qui j'appelle?)
 $CalleesQuery = @"
-SELECT DISTINCT p.ide_position, p.name, p.project
+SELECT DISTINCT target.ide_position, target.name, target_pr.name as project_name
 FROM program_calls pc
-JOIN programs caller ON pc.caller_program_id = caller.id
-JOIN programs p ON pc.callee_program_id = p.id
-WHERE caller.project = '$Project' AND caller.ide_position = $IdePosition
-ORDER BY p.ide_position
+JOIN tasks t ON pc.caller_task_id = t.id
+JOIN programs caller ON t.program_id = caller.id
+JOIN projects caller_pr ON caller.project_id = caller_pr.id
+JOIN programs target ON pc.callee_program_id = target.id
+JOIN projects target_pr ON target.project_id = target_pr.id
+WHERE caller_pr.name = '$Project' AND caller.ide_position = $IdePosition
+ORDER BY target.ide_position
 "@
 
 try {
@@ -334,21 +345,24 @@ try {
             }
         }
     }
-    Write-Success "$($CallGraph.Callees.Count) callees niveau 1"
+    Write-Success "$($CallGraph.Callees.Count) callees niveau 1 (KB)"
 }
 catch {
     Write-Warning2 "Erreur extraction callees: $_"
 }
 
-# 1.3.2b - Callees niveau 2
+# 1.3.2b - Callees niveau 2 (KB vide actuellement, mais requete preparee)
 foreach ($Callee in $CallGraph.Callees) {
     $Lvl2Query = @"
-SELECT DISTINCT p.ide_position, p.name, p.project
+SELECT DISTINCT target.ide_position, target.name, target_pr.name as project_name
 FROM program_calls pc
-JOIN programs caller ON pc.caller_program_id = caller.id
-JOIN programs p ON pc.callee_program_id = p.id
-WHERE caller.project = '$($Callee.Project)' AND caller.ide_position = $($Callee.IDE)
-ORDER BY p.ide_position
+JOIN tasks t ON pc.caller_task_id = t.id
+JOIN programs caller ON t.program_id = caller.id
+JOIN projects caller_pr ON caller.project_id = caller_pr.id
+JOIN programs target ON pc.callee_program_id = target.id
+JOIN projects target_pr ON target.project_id = target_pr.id
+WHERE caller_pr.name = '$($Callee.Project)' AND caller.ide_position = $($Callee.IDE)
+ORDER BY target.ide_position
 "@
     try {
         $Lvl2Result = & $Sqlite3 $KbPath $Lvl2Query 2>$null
@@ -370,15 +384,18 @@ ORDER BY p.ide_position
     catch { }
 }
 
-# 1.3.2c - Callees niveau 3
+# 1.3.2c - Callees niveau 3 (KB vide actuellement, mais requete preparee)
 foreach ($Callee in $CallGraph.CalleesLvl2) {
     $Lvl3Query = @"
-SELECT DISTINCT p.ide_position, p.name, p.project
+SELECT DISTINCT target.ide_position, target.name, target_pr.name as project_name
 FROM program_calls pc
-JOIN programs caller ON pc.caller_program_id = caller.id
-JOIN programs p ON pc.callee_program_id = p.id
-WHERE caller.project = '$($Callee.Project)' AND caller.ide_position = $($Callee.IDE)
-ORDER BY p.ide_position
+JOIN tasks t ON pc.caller_task_id = t.id
+JOIN programs caller ON t.program_id = caller.id
+JOIN projects caller_pr ON caller.project_id = caller_pr.id
+JOIN programs target ON pc.callee_program_id = target.id
+JOIN projects target_pr ON target.project_id = target_pr.id
+WHERE caller_pr.name = '$($Callee.Project)' AND caller.ide_position = $($Callee.IDE)
+ORDER BY target.ide_position
 LIMIT 10
 "@
     try {
@@ -402,6 +419,99 @@ LIMIT 10
 }
 
 Write-Success "$($CallGraph.CalleesLvl2.Count) callees niveau 2, $($CallGraph.CalleesLvl3.Count) niveau 3"
+
+# 1.3.2d - FALLBACK: Si KB vide, extraire callees depuis XML
+if ($CallGraph.Callees.Count -eq 0 -and $Identification.XmlPath -and (Test-Path $Identification.XmlPath)) {
+    Write-Step "1.3b" "Fallback: extraction callees depuis XML..."
+
+    $Xml = [xml](Get-Content $Identification.XmlPath -Encoding UTF8 -Raw)
+
+    # Chercher les operations CallProgram dans les LogicLines
+    $CallProgNodes = $Xml.SelectNodes("//LogicLine[contains(@operation, 'Call')]")
+    $CalleeXmlIds = @{}
+
+    foreach ($Node in $CallProgNodes) {
+        $Operation = $Node.operation
+        if ($Operation -ne "CallProgram" -and $Operation -ne "CallProg") { continue }
+
+        # Le programme appele peut etre dans differents attributs
+        $TargetId = $null
+
+        # Format 1: attribut prog
+        if ($Node.prog) {
+            $TargetId = $Node.prog
+        }
+        # Format 2: dans parameters JSON
+        elseif ($Node.parameters) {
+            try {
+                $Params = $Node.parameters | ConvertFrom-Json
+                if ($Params.ProgIdx) { $TargetId = $Params.ProgIdx }
+                elseif ($Params.prog) { $TargetId = $Params.prog }
+            }
+            catch { }
+        }
+        # Format 3: attribut target
+        elseif ($Node.target) {
+            $TargetId = $Node.target
+        }
+
+        if ($TargetId -and $TargetId -match '^\d+$') {
+            $CalleeXmlIds[[int]$TargetId] = $true
+        }
+    }
+
+    # Aussi chercher dans CallTask qui pointe vers un programme externe
+    # (les CallTask internes pointent vers des taches du meme programme)
+
+    # Resoudre les noms des callees depuis la KB
+    foreach ($XmlId in $CalleeXmlIds.Keys) {
+        $CalleeName = "Program_$XmlId"
+        $CalleeIde = $XmlId
+
+        # Chercher dans la KB
+        if (Test-Path $KbPath) {
+            try {
+                $NameQuery = "SELECT ide_position, name FROM programs WHERE project_id = (SELECT id FROM projects WHERE name = '$Project') AND xml_id = $XmlId LIMIT 1"
+                $NameResult = & $Sqlite3 $KbPath $NameQuery 2>$null
+                if ($NameResult) {
+                    $Parts = $NameResult -split '\|'
+                    if ($Parts[0]) { $CalleeIde = [int]$Parts[0] }
+                    if ($Parts.Count -gt 1 -and $Parts[1]) { $CalleeName = $Parts[1] }
+                }
+            }
+            catch { }
+        }
+
+        # Aussi chercher dans ProgramHeaders.xml
+        if ($CalleeName -eq "Program_$XmlId") {
+            $HeadersPath = Join-Path $PrgPath "ProgramHeaders.xml"
+            if (Test-Path $HeadersPath) {
+                try {
+                    [xml]$Headers = Get-Content $HeadersPath -Encoding UTF8 -Raw
+                    $ProgHeader = $Headers.Application.ProgramsRepositoryHeaders.Program | Where-Object {
+                        [int]$_.Header.id -eq $XmlId
+                    }
+                    if ($ProgHeader -and $ProgHeader.Header.Description) {
+                        $CalleeName = $ProgHeader.Header.Description
+                    }
+                }
+                catch { }
+            }
+        }
+
+        $CallGraph.Callees += @{
+            IDE     = $CalleeIde
+            Name    = $CalleeName
+            Project = $Project
+            Level   = 1
+            Source  = "XML"
+        }
+    }
+
+    if ($CallGraph.Callees.Count -gt 0) {
+        Write-Success "Fallback XML: $($CallGraph.Callees.Count) callees trouves"
+    }
+}
 
 # 1.3.3 - Chaine depuis Main
 $ChainQuery = @"
