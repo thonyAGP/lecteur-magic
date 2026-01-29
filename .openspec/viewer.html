@@ -1316,6 +1316,10 @@
       try {
         const response = await fetch('index.json?t=' + Date.now());
         indexData = await response.json();
+
+        // Load tickets from separate tickets/index.json
+        await loadTicketsIndex();
+
         buildNavigation();
         buildSearchIndex();
         updateLastUpdated();
@@ -1330,6 +1334,35 @@
       }
     }
 
+    async function loadTicketsIndex() {
+      const ARCHIVED_STATUSES = ['fermé', 'recette-ok'];
+      try {
+        const resp = await fetch('tickets/index.json?t=' + Date.now());
+        if (!resp.ok) throw new Error('tickets/index.json not found');
+        const ticketsData = await resp.json();
+        const localTickets = ticketsData.localTickets || [];
+
+        const mapped = localTickets
+          .filter(t => t.hasLocalData)
+          .map(t => ({
+            id: t.key,
+            title: t.summary,
+            status: t.status || 'en-cours',
+            file: 'tickets/' + t.key + '/analysis.md',
+            program: t.program || '',
+            lastAnalysis: t.lastAnalysis || '',
+            createdDate: t.createdDate || ''
+          }));
+
+        const active = mapped.filter(t => !ARCHIVED_STATUSES.includes(t.status));
+        const archived = mapped.filter(t => ARCHIVED_STATUSES.includes(t.status));
+
+        indexData.tickets = { active, archived };
+      } catch (e) {
+        indexData.tickets = { active: [], archived: [] };
+      }
+    }
+
     function updateLastUpdated() {
       const date = new Date(indexData.lastUpdated);
       lastUpdatedEl.textContent = `Maj: ${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
@@ -1338,16 +1371,21 @@
     function buildNavigation() {
       let html = '';
 
-      const principal = indexData.reports.filter(r => r.category === 'principal');
-      html += buildSection('Principal', principal.map(r => ({ title: r.title, file: r.file })), principal.length);
+      const allReports = indexData.reports || [];
+      const principal = allReports.filter(r => r.category === 'principal');
+      if (principal.length > 0) {
+        html += buildSection('Principal', principal.map(r => ({ title: r.title, file: r.file })), principal.length);
+      }
 
       // Specs section
       if (indexData.specs && indexData.specs.length > 0) {
         html += buildSpecsSection('Specifications Programmes', indexData.specs);
       }
 
-      const reports = indexData.reports.filter(r => r.category === 'reports');
-      html += buildSection('Rapports', reports.map(r => ({ title: r.title, file: r.file })), reports.length);
+      const reports = allReports.filter(r => r.category === 'reports');
+      if (reports.length > 0) {
+        html += buildSection('Rapports', reports.map(r => ({ title: r.title, file: r.file })), reports.length);
+      }
 
       html += buildTicketSection('Tickets en cours', indexData.tickets.active, false);
       html += buildTicketSection('Archives', indexData.tickets.archived, true);
