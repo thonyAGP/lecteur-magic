@@ -36,6 +36,7 @@ jobs:
           cp .openspec/viewer.html _site/index.html
           cp .openspec/index.json _site/
           cp -r .openspec/specs _site/
+          cp -r .openspec/tickets _site/
           echo "OpenSpec Viewer deployed at $(date)" > _site/deploy-info.txt
 
       - name: Upload artifact

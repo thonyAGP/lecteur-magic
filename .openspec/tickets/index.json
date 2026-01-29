@@ -142,6 +142,24 @@
                              "summary":  "Caution forfait ski automatique St Moritz - 25 CHF cloture nuit",
                              "lastAnalysis":  "2026-01-22",
                              "program":  "REF IDE 621"
+                         },
+                         {
+                             "hasLocalData":  true,
+                             "status":  "en-cours",
+                             "key":  "PMS-1427",
+                             "summary":  "POS Edition Income - Ventes GP multi-services absentes de la table tempo",
+                             "lastAnalysis":  "2026-01-29",
+                             "program":  "PVE IDE 379",
+                             "createdDate":  "2025-12-01"
+                         },
+                         {
+                             "hasLocalData":  true,
+                             "status":  "en-cours",
+                             "key":  "PMS-1419",
+                             "summary":  "Validation qualites GO - Comptage JH selon heure pays (14h seuil)",
+                             "lastAnalysis":  "2026-01-29",
+                             "program":  "PBG IDE 56",
+                             "createdDate":  "2025-11-24"
                          }
                      ],
     "tickets":  [
