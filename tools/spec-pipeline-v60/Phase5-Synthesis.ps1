@@ -1,4 +1,4 @@
-# Phase5-Synthesis.ps1 - V7.0 Pipeline (4 Onglets)
+# Phase5-Synthesis.ps1 - V7.1 Pipeline (4 Onglets)
 # TAB 1: Resume (Fiche + Description + Blocs + Flux + Regles FR + Stats)
 # TAB 2: Ecrans & Flux (Mockups + Navigation + Algorigramme)
 # TAB 3: Donnees (Tables R/W/L + Variables Top20/Annexe + Expressions)
@@ -19,6 +19,11 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
 
+# Helper: singular/plural French
+function Pluralize([int]$count, [string]$singular, [string]$plural) {
+    if ($count -le 1) { "$count $singular" } else { "$count $plural" }
+}
+
 if (-not $OutputPath) {
     $OutputPath = Join-Path $ScriptDir "output\$Project-IDE-$IdePosition"
 }
@@ -29,7 +34,7 @@ if (-not (Test-Path $SpecsOutputPath)) {
     New-Item -ItemType Directory -Path $SpecsOutputPath -Force | Out-Null
 }
 
-Write-Host "=== Phase 5: SYNTHESIS (V7.0 - 4 Onglets) ===" -ForegroundColor Cyan
+Write-Host "=== Phase 5: SYNTHESIS (V7.1 - 4 Onglets) ===" -ForegroundColor Cyan
 Write-Host "Project: $Project | IDE: $IdePosition"
 
 # ============================================================
@@ -385,7 +390,7 @@ foreach ($typeName in ($exprByType.Keys | Sort-Object)) {
 $calleesCtx = @()
 foreach ($callee in $discovery.call_graph.callees) {
     $cn = $callee.name.ToLower()
-    $ctx = if ($cn -match 'print|ticket|edition') { "Impression ticket/document" }
+    $ctx = if ($cn -match 'print|ticket|edition|imprim') { "Impression ticket/document" }
     elseif ($cn -match 'stock|calc') { "Calcul de donnees" }
     elseif ($cn -match 'recup|get') { "Recuperation donnees" }
     elseif ($cn -match 'zoom|select|choix') { "Selection/consultation" }
@@ -397,7 +402,16 @@ foreach ($callee in $discovery.call_graph.callees) {
     elseif ($cn -match 'cheque|gestion') { "Gestion moyens paiement" }
     elseif ($cn -match 'fidel|remise') { "Programme fidelite" }
     elseif ($cn -match 'matric') { "Identification operateur" }
-    else { "[Phase 2]" }
+    elseif ($cn -match 'mise.{0,3}jour|maj|update') { "Mise a jour donnees" }
+    elseif ($cn -match 'controle|verif') { "Controle/validation" }
+    elseif ($cn -match 'ouverture|open') { "Ouverture session" }
+    elseif ($cn -match 'fermeture|close|cloture') { "Fermeture session" }
+    elseif ($cn -match 'affich|display') { "Affichage donnees" }
+    elseif ($cn -match 'apport|approv') { "Approvisionnement" }
+    elseif ($cn -match 'histo') { "Historique/consultation" }
+    elseif ($cn -match 'session') { "Gestion session" }
+    elseif ($cn -match 'raison') { "Parametrage" }
+    else { "Sous-programme" }
     $calleesCtx += @{ ide = $callee.ide; name = $callee.name; calls_count = $callee.calls_count; context = $ctx }
 }
 
@@ -427,7 +441,7 @@ $summarySpec = @"
 # $Project IDE $IdePosition - $programName
 
 > **Analyse**: $($startTime.ToString("yyyy-MM-dd HH:mm"))
-> **Pipeline**: V7.0 Deep Analysis
+> **Pipeline**: V7.1 Deep Analysis
 
 ## RESUME EXECUTIF
 
@@ -464,7 +478,7 @@ $(($programName -split ' ' | Where-Object { $_.Length -gt 3 }) -join ', ')
 | Tables | $($discovery.statistics.table_count) |
 
 ---
-*Spec SUMMARY generee par Pipeline V7.0*
+*Spec SUMMARY generee par Pipeline V7.1*
 "@
 
 # ============================================================
@@ -480,7 +494,7 @@ function Add-Line { param([string]$Text = "") $null = $L.Add($Text) }
 Add-Line "# $Project IDE $IdePosition - $programName"
 Add-Line
 Add-Line "> **Analyse**: Phases 1-4 $($pipelineFirstPhase.ToString('yyyy-MM-dd HH:mm')) -> $($pipelineLastPhase.ToString('HH:mm')) ($pipelineDurationStr) | Assemblage $($startTime.ToString('HH:mm'))"
-Add-Line "> **Pipeline**: V7.0 Deep Analysis"
+Add-Line "> **Pipeline**: V7.1 Deep Analysis"
 Add-Line "> **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)"
 Add-Line
 
@@ -569,7 +583,7 @@ if ($sigBlocs.Count -gt 0) {
             "Initialisation" { "reinitialisation d'etats et de variables de travail" }
             default          { "traitements metier divers" }
         }
-        $descParts += "- **$bn** ($bc taches) : $blocDesc"
+        $descParts += "- **$bn** ($(Pluralize $bc 'tache' 'taches')) : $blocDesc"
     }
 }
 
@@ -577,7 +591,7 @@ if ($sigBlocs.Count -gt 0) {
 $ctxGroups = @{}
 foreach ($c in $calleesCtx) {
     $ctx = $c.context
-    if ($ctx -eq "[Phase 2]") { continue }
+    if ($ctx -eq "Sous-programme") { continue }
     if (-not $ctxGroups.ContainsKey($ctx)) { $ctxGroups[$ctx] = @() }
     $ctxGroups[$ctx] += $c.name
 }
@@ -651,7 +665,7 @@ if ($blocMap.Count -gt 0) {
         $vis = @($blocForms | Where-Object { $_.dimensions.width -gt 0 })
         $invis = @($blocForms | Where-Object { $_.dimensions.width -le 0 })
 
-        Add-Line "### 3.$bIdx $blocName ($($blocForms.Count) taches)"
+        Add-Line "### 3.$bIdx $blocName ($(Pluralize $blocForms.Count 'tache' 'taches'))"
         Add-Line
 
         # Narrative description per bloc (contextual paragraph)
@@ -659,42 +673,42 @@ if ($blocMap.Count -gt 0) {
             "Saisie" {
                 $visNames = ($vis | ForEach-Object { $_.name }) -join ', '
                 if ($vis.Count -gt 0) {
-                    "L'operateur saisit les donnees de la transaction via $($vis.Count) ecran(s) ($visNames). Les champs de saisie sont valides en temps reel avant enregistrement."
+                    "L'operateur saisit les donnees de la transaction via $(Pluralize $vis.Count 'ecran' 'ecrans') ($visNames). Les champs de saisie sont valides en temps reel avant enregistrement."
                 } else {
-                    "Ce bloc traite la saisie des donnees de la transaction. $($blocForms.Count) tache(s) interne(s) gerent la collecte et la preparation des informations."
+                    "Ce bloc traite la saisie des donnees de la transaction. $(Pluralize $blocForms.Count 'tache interne gere' 'taches internes gerent') la collecte et la preparation des informations."
                 }
             }
             "Reglement" {
-                "Gestion des moyens de paiement : le programme traite $($blocForms.Count) tache(s) de reglement couvrant le choix du mode de paiement, le calcul des montants et la validation du paiement."
+                "Gestion des moyens de paiement : le programme traite $(Pluralize $blocForms.Count 'tache' 'taches') de reglement couvrant le choix du mode de paiement, le calcul des montants et la validation du paiement."
             }
             "Validation" {
-                "Controles de coherence et de conformite : $($blocForms.Count) tache(s) verifient les donnees saisies, les droits de l'operateur et les conditions prealables au traitement."
+                "Controles de coherence et de conformite : $(Pluralize $blocForms.Count 'tache verifie' 'taches verifient') les donnees saisies, les droits de l'operateur et les conditions prealables au traitement."
             }
             "Impression" {
-                "Generation des documents et tickets : $($blocForms.Count) tache(s) gerent l'impression des recus, tickets et documents associes a l'operation."
+                "Generation des documents et tickets : $(Pluralize $blocForms.Count 'tache gere' 'taches gerent') l'impression des recus, tickets et documents associes a l'operation."
             }
             "Calcul" {
-                "Calculs metier : $($blocForms.Count) tache(s) effectuent les calculs de montants, stocks, compteurs ou statistiques necessaires au traitement."
+                "Calculs metier : $(Pluralize $blocForms.Count 'tache effectue' 'taches effectuent') les calculs de montants, stocks, compteurs ou statistiques necessaires au traitement."
             }
             "Transfert" {
-                "Transfert de donnees entre modules : $($blocForms.Count) tache(s) gerent le deversement ou le transfert d'informations vers d'autres programmes ou modules."
+                "Transfert de donnees entre modules : $(Pluralize $blocForms.Count 'tache gere' 'taches gerent') le deversement ou le transfert d'informations vers d'autres programmes ou modules."
             }
             "Consultation" {
                 $visNames = ($vis | ForEach-Object { $_.name }) -join ', '
                 if ($vis.Count -gt 0) {
                     "Ecrans de recherche et consultation ($visNames) : l'operateur peut rechercher, filtrer et selectionner des donnees existantes."
                 } else {
-                    "Consultation de donnees : $($blocForms.Count) tache(s) permettent l'acces aux informations existantes."
+                    "Consultation de donnees : $(Pluralize $blocForms.Count 'tache permet' 'taches permettent') l'acces aux informations existantes."
                 }
             }
             "Creation" {
-                "Insertion de nouveaux enregistrements : $($blocForms.Count) tache(s) creent des mouvements, prestations ou autres donnees en base."
+                "Insertion de nouveaux enregistrements : $(Pluralize $blocForms.Count 'tache cree' 'taches creent') des mouvements, prestations ou autres donnees en base."
             }
             "Initialisation" {
-                "Reinitialisation d'etats : $($blocForms.Count) tache(s) preparent les variables de travail et remettent les compteurs a zero."
+                "Reinitialisation d'etats : $(Pluralize $blocForms.Count 'tache prepare' 'taches preparent') les variables de travail et remettent les compteurs a zero."
             }
             default {
-                "Traitements internes : $($blocForms.Count) tache(s) de traitement metier."
+                "Traitements internes : $(Pluralize $blocForms.Count 'tache' 'taches') de traitement metier."
             }
         }
         Add-Line $blocNarrative
@@ -703,11 +717,12 @@ if ($blocMap.Count -gt 0) {
         # Ecrans visibles
         if ($vis.Count -gt 0) {
             foreach ($f in $vis) {
-                Add-Line "- **$($f.name)** (T$($f.task_isn2), $($f.window_type_str), $($f.dimensions.width)x$($f.dimensions.height))"
+                $fdn = if ($f.name -and $f.name.Trim()) { $f.name.Trim() } else { "(sans nom)" }
+                Add-Line "- **$fdn** (T$($f.task_isn2), $($f.window_type_str), $($f.dimensions.width)x$($f.dimensions.height))"
             }
         }
         if ($invis.Count -gt 0) {
-            $iNames = ($invis | ForEach-Object { "$($_.name) (T$($_.task_isn2))" }) -join ', '
+            $iNames = ($invis | ForEach-Object { $n = if ($_.name -and $_.name.Trim()) { $_.name.Trim() } else { "(sans nom)" }; "$n (T$($_.task_isn2))" }) -join ', '
             Add-Line "- *Internes*: $iNames"
         }
 
@@ -873,7 +888,8 @@ if ($visibleForms.Count -gt 0) {
     Add-Line "|---|-------|-----|------|---------|---------|"
     $fIdx = 1
     foreach ($form in $visibleForms) {
-        Add-Line "| $fIdx | $($form.task_isn2) | $($form.name) | $($form.window_type_str) | $($form.dimensions.width) | $($form.dimensions.height) |"
+        $fName = if ($form.name -and $form.name.Trim()) { $form.name.Trim() } else { "(sans nom)" }
+        Add-Line "| $fIdx | $($form.task_isn2) | $fName | $($form.window_type_str) | $($form.dimensions.width) | $($form.dimensions.height) |"
         $fIdx++
     }
     Add-Line
@@ -883,7 +899,7 @@ if ($visibleForms.Count -gt 0) {
     Add-Line
     Add-Line '```'
     foreach ($form in $visibleForms) {
-        $title = $form.name
+        $title = if ($form.name -and $form.name.Trim()) { $form.name.Trim() } else { "(sans nom)" }
         $w = $form.dimensions.width
         $h = $form.dimensions.height
         $type = $form.window_type_str
@@ -1027,10 +1043,10 @@ if ($visibleForms.Count -gt 1) {
         $bForms = $blocMap[$bn]
         $bVis = @($bForms | Where-Object { $_.dimensions.width -gt 0 })
         if ($bVis.Count -gt 0) {
-            $screenNames = ($bVis | ForEach-Object { "$($_.name) (T$($_.task_isn2))" }) -join ', '
+            $screenNames = ($bVis | ForEach-Object { $sn = if ($_.name -and $_.name.Trim()) { $_.name.Trim() } else { "(sans nom)" }; "$sn (T$($_.task_isn2))" }) -join ', '
             Add-Line "- **$bn**: $screenNames"
         } else {
-            Add-Line "- **$bn**: traitement interne ($($bForms.Count) taches)"
+            Add-Line "- **$bn**: traitement interne ($(Pluralize $bForms.Count 'tache' 'taches'))"
         }
         $bIdx2++
     }
@@ -1129,7 +1145,7 @@ if ($businessRules.Count -gt 0) {
 }
 
 # Hierarchical task structure: grouped by bloc with parent.child numbering
-Add-Line "### 9.3 Structure hierarchique ($($allForms.Count) taches)"
+Add-Line "### 9.3 Structure hierarchique ($(Pluralize $allForms.Count 'tache' 'taches'))"
 Add-Line
 
 # Build hierarchical view: group tasks by functional bloc
@@ -1657,7 +1673,7 @@ foreach ($blocName in $blocMap.Keys) {
     $blocVis = @($blocForms | Where-Object { $_.dimensions.width -gt 0 })
     $blocInvis = @($blocForms | Where-Object { $_.dimensions.width -le 0 })
 
-    Add-Line "#### $blocName ($($blocForms.Count) taches: $($blocVis.Count) ecrans, $($blocInvis.Count) traitements)"
+    Add-Line "#### $blocName ($(Pluralize $blocForms.Count 'tache' 'taches'): $(Pluralize $blocVis.Count 'ecran' 'ecrans'), $(Pluralize $blocInvis.Count 'traitement' 'traitements'))"
     Add-Line
 
     # Specific enriched recommendations based on actual data
@@ -1665,14 +1681,14 @@ foreach ($blocName in $blocMap.Keys) {
     switch ($blocName) {
         "Saisie" {
             if ($blocVis.Count -gt 0) {
-                $recoms += "Reproduire $($blocVis.Count) ecran(s) de saisie: $(($blocVis | ForEach-Object { $_.name }) -join ', ')"
+                $recoms += "Reproduire $(Pluralize $blocVis.Count 'ecran' 'ecrans') de saisie: $(($blocVis | ForEach-Object { $_.name }) -join ', ')"
             }
             $recoms += "Implementer les validations cote client et serveur"
         }
         "Reglement" {
             $recoms += "Logique multi-moyens de paiement a implementer"
             $recoms += "Integration TPE si applicable"
-            if ($blocInvis.Count -gt 0) { $recoms += "$($blocInvis.Count) traitement(s) internes de reglement" }
+            if ($blocInvis.Count -gt 0) { $recoms += "$(Pluralize $blocInvis.Count 'traitement interne' 'traitements internes') de reglement" }
         }
         "Validation" {
             $recoms += "Transformer les conditions en validators (FluentValidation ou equivalent)"
@@ -1683,7 +1699,7 @@ foreach ($blocName in $blocMap.Keys) {
         }
         "Consultation" {
             $recoms += "Ecrans de recherche/selection en modales ou composants"
-            if ($blocVis.Count -gt 0) { $recoms += "$($blocVis.Count) ecran(s) de consultation: $(($blocVis | ForEach-Object { $_.name }) -join ', ')" }
+            if ($blocVis.Count -gt 0) { $recoms += "$(Pluralize $blocVis.Count 'ecran' 'ecrans') de consultation: $(($blocVis | ForEach-Object { $_.name }) -join ', ')" }
         }
         "Transfert" { $recoms += "Logique de deversement/transfert entre modules" }
         "Calcul" { $recoms += "Migrer la logique de calcul (stock, compteurs, montants)" }
@@ -1715,7 +1731,7 @@ Add-Line
 
 # Footer
 Add-Line "---"
-Add-Line "*Spec DETAILED generee par Pipeline V7.0 - $(Get-Date -Format 'yyyy-MM-dd HH:mm')*"
+Add-Line "*Spec DETAILED generee par Pipeline V7.1 - $(Get-Date -Format 'yyyy-MM-dd HH:mm')*"
 
 $detailedSpec = $L -join "`n"
 
@@ -1764,7 +1780,7 @@ if ($specRuleMatches -lt $jsonRuleCount) {
     $auditResults += @{ check = "RULES_COUNT"; status = "PASS"; expected = $jsonRuleCount; actual = $specRuleMatches; detail = "$specRuleMatches/$jsonRuleCount regles presentes" }
 }
 
-# AUDIT 3: Tables WRITE count matches (V7.0 uses unified table with **W** marker)
+# AUDIT 3: Tables WRITE count matches (V7.1 uses unified table with **W** marker)
 $jsonWriteCount = ($discovery.tables.by_access.WRITE | Measure-Object).Count
 $specWriteRows = ([regex]::Matches($specContent, '\*\*W\*\*')).Count
 if ($specWriteRows -lt $jsonWriteCount -and $jsonWriteCount -gt 0) {
@@ -1830,7 +1846,7 @@ if ($tabMarkers -ne 4) {
     $auditResults += @{ check = "TAB_STRUCTURE"; status = "FAIL"; expected = 4; actual = $tabMarkers; detail = "$tabMarkers onglets sur 4 attendus" }
     $auditFailed = $true
 } else {
-    $auditResults += @{ check = "TAB_STRUCTURE"; status = "PASS"; expected = 4; actual = 4; detail = "4 onglets V7.0 presents" }
+    $auditResults += @{ check = "TAB_STRUCTURE"; status = "PASS"; expected = 4; actual = 4; detail = "4 onglets V7.1 presents" }
 }
 
 # AUDIT 10: Pipeline timing is realistic (not just assembly)
@@ -1924,7 +1940,7 @@ $quality = @{
         program_name = $programName
         generated_at = $endTime.ToString("yyyy-MM-dd HH:mm:ss")
         duration_seconds = [math]::Round($duration.TotalSeconds, 1)
-        pipeline_version = "7.0"
+        pipeline_version = "7.1"
     }
     quality_score = 0
     extraction_coverage = @{
@@ -1941,7 +1957,7 @@ $quality = @{
         tab_names = @("Resume", "Ecrans", "Donnees", "Connexions")
         functional_blocks = $blocMap.Count
         business_rules_fr = $businessRules.Count
-        callees_with_context = ($calleesCtx | Where-Object { $_.context -ne "[Phase 2]" }).Count
+        callees_with_context = ($calleesCtx | Where-Object { $_.context -ne "Sous-programme" }).Count
     }
     files_generated = @($summaryFileName, $detailedFileName)
     validation = @{
@@ -1981,7 +1997,7 @@ $qualityPath = Join-Path $OutputPath "quality.json"
 $quality | ConvertTo-Json -Depth 10 | Set-Content -Path $qualityPath -Encoding UTF8
 
 Write-Host ""
-Write-Host "=== Phase 5 COMPLETE (V7.0) ===" -ForegroundColor Green
+Write-Host "=== Phase 5 COMPLETE (V7.1) ===" -ForegroundColor Green
 Write-Host "Pipeline: $pipelineDurationStr (Phases 1-4) + $([math]::Round($duration.TotalSeconds, 1))s (assemblage) | Quality: $score/100 | Audit: $passCount/$($auditResults.Count) OK"
 Write-Host ""
 Write-Host "STRUCTURE:" -ForegroundColor Cyan

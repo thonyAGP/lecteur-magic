@@ -1,7 +1,7 @@
 ﻿# ADH IDE 236 - Print ticket vente PMS-584
 
-> **Analyse**: Phases 1-4 2026-01-29 19:45 -> 19:45 (9s) | Assemblage 19:45
-> **Pipeline**: V7.0 Deep Analysis
+> **Analyse**: Phases 1-4 2026-01-29 20:09 -> 20:09 (13s) | Assemblage 20:09
+> **Pipeline**: V7.1 Deep Analysis
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
 <!-- TAB:Resume -->
@@ -39,7 +39,7 @@ Le programme delegue des operations a **2 sous-programmes** couvrant :
 
 ### 3.1 Traitement (16 taches)
 
-Traitements internes : 16 tache(s) de traitement metier.
+Traitements internes : 16 taches de traitement metier.
 
 - **Veuillez patienter ...** (T1, MDI, 422x56)
 - **Impression reçu change** (T3, MDI, 333x86)
@@ -47,19 +47,19 @@ Traitements internes : 16 tache(s) de traitement metier.
 - **Veuillez patienter ...** (T23, MDI, 424x56)
 - **Veuillez patienter ...** (T29, MDI, 435x63)
 - **Errors** (T37, Type0, 600x259)
-- **** (T41, Type0, 725x303)
+- **(sans nom)** (T41, Type0, 725x303)
 - *Internes*: Counter (T2), Impression reçu change (T5), Counter (T11), Impression reçu change (T12), Impression reçu change (T13), Récup. dates de séjour /PMS28/ (T24), Récup. dates de séjour /PMS28/ (T31), recup terminal (T35), recup terminal (T36)
 
 ### 3.2 Consultation (2 taches)
 
-Consultation de donnees : 2 tache(s) permettent l'acces aux informations existantes.
+Consultation de donnees : 2 taches permettent l'acces aux informations existantes.
 
 - *Internes*: Recherche dates de séjour (T4), Recherche dates de séjour (T9)
 - **Sous-programmes**: Recup Classe et Lib du MOP (IDE 152)
 
 ### 3.3 Impression (15 taches)
 
-Generation des documents et tickets : 15 tache(s) gerent l'impression des recus, tickets et documents associes a l'operation.
+Generation des documents et tickets : 15 taches gerent l'impression des recus, tickets et documents associes a l'operation.
 
 - **Print Tva** (T8, Type0, 506x0)
 - **Print Tva** (T15, Type0, 506x0)
@@ -75,7 +75,7 @@ Generation des documents et tickets : 15 tache(s) gerent l'impression des recus,
 
 ### 3.4 Reglement (5 taches)
 
-Gestion des moyens de paiement : le programme traite 5 tache(s) de reglement couvrant le choix du mode de paiement, le calcul des montants et la validation du paiement.
+Gestion des moyens de paiement : le programme traite 5 taches de reglement couvrant le choix du mode de paiement, le calcul des montants et la validation du paiement.
 
 - *Internes*: Edition Multi Moyen Paiement (T7), Edition Multi Moyen Paiement (T16), Edition Multi Moyen Paiement (T19), Edition Multi Moyen Paiement (T25), Edition Multi Moyen Paiement (T33)
 - **Sous-programmes**: Recup Classe et Lib du MOP (IDE 152)
@@ -112,7 +112,7 @@ Gestion des moyens de paiement : le programme traite 5 tache(s) de reglement cou
 | 12 | 29 | Veuillez patienter ... | MDI | 435 | 63 |
 | 13 | 34 | Print Tva | Type0 | 565 | 0 |
 | 14 | 37 | Errors | Type0 | 600 | 259 |
-| 15 | 41 |  | Type0 | 725 | 303 |
+| 15 | 41 | (sans nom) | Type0 | 725 | 303 |
 
 ### 8.2 Mockups Ecrans
 
@@ -245,7 +245,7 @@ Gestion des moyens de paiement : le programme traite 5 tache(s) de reglement cou
 +============================+
 
 +==================================+
-|  [Type0] 725x303 - Tache 41      |
+| (sans nom) [Type0] 725x303 - T... |
 +----------------------------------+
 |  [P0 od annulation (A)]  [P0 N...|
 |  [W0 en-tête ? (BE) ____]  [W0...|
@@ -279,7 +279,7 @@ flowchart LR
 
 **Detail par bloc:**
 
-- **Traitement**: Veuillez patienter ... (T1), Impression reçu change (T3), Veuillez patienter ... (T18), Veuillez patienter ... (T23), Veuillez patienter ... (T29), Errors (T37),  (T41)
+- **Traitement**: Veuillez patienter ... (T1), Impression reçu change (T3), Veuillez patienter ... (T18), Veuillez patienter ... (T23), Veuillez patienter ... (T29), Errors (T37), (sans nom) (T41)
 - **Consultation**: traitement interne (2 taches)
 - **Impression**: Print Tva (T8), Print Tva (T15), Printer 5 (T17), Print Tva (T21), Printer 5 (T22), Print Tva (T27), Printer 9 (T28), Print Tva (T34)
 - **Reglement**: traitement interne (5 taches)
@@ -643,7 +643,7 @@ graph LR
 
 - Traitement standard a migrer
 
-#### Consultation (2 taches: 0 ecrans, 2 traitements)
+#### Consultation (2 taches: 0 ecran, 2 traitements)
 
 - Ecrans de recherche/selection en modales ou composants
 
@@ -652,11 +652,11 @@ graph LR
 - Remplacer par generation PDF/HTML
 - Configurer le systeme d'impression
 
-#### Reglement (5 taches: 0 ecrans, 5 traitements)
+#### Reglement (5 taches: 0 ecran, 5 traitements)
 
 - Logique multi-moyens de paiement a implementer
 - Integration TPE si applicable
-- 5 traitement(s) internes de reglement
+- 5 traitements internes de reglement
 
 ### 14.3 Dependances critiques
 
@@ -666,4 +666,4 @@ graph LR
 | IDE 152 - Recup Classe et Lib du MOP | Sous-programme | 5x | **CRITIQUE** - Recuperation donnees |
 
 ---
-*Spec DETAILED generee par Pipeline V7.0 - 2026-01-29 19:45*
+*Spec DETAILED generee par Pipeline V7.1 - 2026-01-29 20:09*

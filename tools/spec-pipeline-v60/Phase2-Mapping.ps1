@@ -1,4 +1,4 @@
-# Phase2-Mapping.ps1 - V6.0 Pipeline
+# Phase2-Mapping.ps1 - V7.1 Pipeline
 # Extraction des variables avec conversion FieldID -> Lettres via CLI
 
 param(
@@ -23,7 +23,7 @@ if (-not (Test-Path $OutputPath)) {
     New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
 }
 
-Write-Host "=== Phase 2: MAPPING (V6.0) ===" -ForegroundColor Cyan
+Write-Host "=== Phase 2: MAPPING (V7.1) ===" -ForegroundColor Cyan
 Write-Host "Project: $Project"
 Write-Host "IDE Position: $IdePosition"
 Write-Host ""
@@ -158,7 +158,7 @@ $mapping = @{
         ide_position = $IdePosition
         program_name = $varData.program
         generated_at = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-        pipeline_version = "7.0"
+        pipeline_version = "7.1"
     }
 
     variables = $varData.variables

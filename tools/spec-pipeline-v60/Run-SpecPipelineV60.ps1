@@ -1,4 +1,4 @@
-# Run-SpecPipelineV60.ps1 - V6.0 Pipeline Orchestrator
+# Run-SpecPipelineV60.ps1 - V7.1 Pipeline Orchestrator
 # Pipeline d'analyse approfondie utilisant les outils MCP via KbIndexRunner CLI
 
 param(
@@ -25,7 +25,7 @@ if (-not $OutputPath) {
 # Banner
 Write-Host ""
 Write-Host "=================================================================" -ForegroundColor Cyan
-Write-Host "         MAGIC SPEC PIPELINE V6.0 - DEEP ANALYSIS               " -ForegroundColor Cyan
+Write-Host "         MAGIC SPEC PIPELINE V7.1 - DEEP ANALYSIS               " -ForegroundColor Cyan
 Write-Host "=================================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Target: $Project IDE $IdePosition"
@@ -140,7 +140,7 @@ $totalDuration = $endTime - $startTime
 
 Write-Host ""
 Write-Host "=================================================================" -ForegroundColor Green
-Write-Host "                    PIPELINE V6.0 COMPLETE                       " -ForegroundColor Green
+Write-Host "                    PIPELINE V7.1 COMPLETE                       " -ForegroundColor Green
 Write-Host "=================================================================" -ForegroundColor Green
 Write-Host ""
 
@@ -199,7 +199,7 @@ $report = @{
     project = $Project
     ide_position = $IdePosition
     duration_seconds = [math]::Round($totalDuration.TotalSeconds, 1)
-    pipeline_version = "7.0"
+    pipeline_version = "7.1"
 }
 
 $reportPath = Join-Path $OutputPath "pipeline-report.json"

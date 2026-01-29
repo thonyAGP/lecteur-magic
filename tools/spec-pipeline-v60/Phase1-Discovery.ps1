@@ -1,4 +1,4 @@
-# Phase1-Discovery.ps1 - V6.0 Pipeline
+# Phase1-Discovery.ps1 - V7.1 Pipeline
 # Utilise KbIndexRunner CLI "spec-data" pour extraire les donnees depuis la KB
 # Objectif: Resoudre les regressions V5.0 (callers/callees vides)
 
@@ -24,7 +24,7 @@ if (-not (Test-Path $OutputPath)) {
     New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
 }
 
-Write-Host "=== Phase 1: DISCOVERY (V6.0) ===" -ForegroundColor Cyan
+Write-Host "=== Phase 1: DISCOVERY (V7.1) ===" -ForegroundColor Cyan
 Write-Host "Project: $Project"
 Write-Host "IDE Position: $IdePosition"
 Write-Host ""
@@ -65,7 +65,7 @@ $discovery = @{
         ide_position = $IdePosition
         program_name = $specData.program
         generated_at = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-        pipeline_version = "7.0"
+        pipeline_version = "7.1"
     }
 
     call_graph = @{

@@ -1,7 +1,7 @@
 ﻿# ADH IDE 121 - Gestion caisse
 
-> **Analyse**: Phases 1-4 2026-01-29 19:45 -> 19:45 (7s) | Assemblage 19:45
-> **Pipeline**: V7.0 Deep Analysis
+> **Analyse**: Phases 1-4 2026-01-29 20:09 -> 20:09 (13s) | Assemblage 20:09
+> **Pipeline**: V7.1 Deep Analysis
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
 <!-- TAB:Resume -->
@@ -29,14 +29,22 @@ Le flux de traitement s'organise en **7 blocs fonctionnels** :
 - **Creation** (2 taches) : insertion d'enregistrements en base (mouvements, prestations)
 - **Saisie** (2 taches) : ecrans de saisie utilisateur (formulaires, champs, donnees)
 - **Validation** (2 taches) : controles et verifications de coherence
-- **Initialisation** (1 taches) : reinitialisation d'etats et de variables de travail
-- **Impression** (1 taches) : generation de tickets et documents
-- **Calcul** (1 taches) : calculs de montants, stocks ou compteurs
+- **Initialisation** (1 tache) : reinitialisation d'etats et de variables de travail
+- **Impression** (1 tache) : generation de tickets et documents
+- **Calcul** (1 tache) : calculs de montants, stocks ou compteurs
 
 Le programme delegue des operations a **18 sous-programmes** couvrant :
 
+- **Affichage donnees** : Affichage sessions
+- **Approvisionnement** : Apport coffre, Apport articles
 - **Calcul de donnees** : Calcul concurrence sessions
+- **Controle/validation** : Controle fermeture caisse WS, Verif session caisse ouverte2
+- **Fermeture session** : Fermeture caisse
+- **Historique/consultation** : Historique session
 - **Impression ticket/document** : Ticket appro remise, Reimpression tickets fermeture
+- **Mise a jour donnees** : Mise à jour detail session WS
+- **Ouverture session** : Ouverture caisse
+- **Parametrage** : Raisons utilisation ADH
 - **Programme fidelite** : Remise en caisse
 - **Recuperation donnees** : Recuperation du titre
 - **Reinitialisation** : Init apport article session WS, Init devise session WS
@@ -47,7 +55,7 @@ Le programme delegue des operations a **18 sous-programmes** couvrant :
 
 ### 3.1 Traitement (23 taches)
 
-Traitements internes : 23 tache(s) de traitement metier.
+Traitements internes : 23 taches de traitement metier.
 
 - **Gestion de la caisse** (T7, MDI, 939x178)
 - **Concurrence sessions for devel** (T32, MDI, 524x236)
@@ -56,14 +64,14 @@ Traitements internes : 23 tache(s) de traitement metier.
 
 ### 3.2 Validation (2 taches)
 
-Controles de coherence et de conformite : 2 tache(s) verifient les donnees saisies, les droits de l'operateur et les conditions prealables au traitement.
+Controles de coherence et de conformite : 2 taches verifient les donnees saisies, les droits de l'operateur et les conditions prealables au traitement.
 
 - *Internes*: Controle COFFRE2 (T3), Controle monnaie/produit (T11)
 - **Sous-programmes**: Controle fermeture caisse WS (IDE 155), Verif session caisse ouverte2 (IDE 156)
 
-### 3.3 Calcul (1 taches)
+### 3.3 Calcul (1 tache)
 
-Calculs metier : 1 tache(s) effectuent les calculs de montants, stocks, compteurs ou statistiques necessaires au traitement.
+Calculs metier : 1 tache effectue les calculs de montants, stocks, compteurs ou statistiques necessaires au traitement.
 
 - *Internes*: Date comptable (T5)
 - **Sous-programmes**: Calcul concurrence sessions (IDE 116)
@@ -71,27 +79,27 @@ Calculs metier : 1 tache(s) effectuent les calculs de montants, stocks, compteur
 
 ### 3.4 Creation (2 taches)
 
-Insertion de nouveaux enregistrements : 2 tache(s) creent des mouvements, prestations ou autres donnees en base.
+Insertion de nouveaux enregistrements : 2 taches creent des mouvements, prestations ou autres donnees en base.
 
 - *Internes*: Creation histo session (T12), Creation histo session (T30)
 - **Tables modifiees**: histo_sessions_caisse
 
 ### 3.5 Saisie (2 taches)
 
-Ce bloc traite la saisie des donnees de la transaction. 2 tache(s) interne(s) gerent la collecte et la preparation des informations.
+Ce bloc traite la saisie des donnees de la transaction. 2 taches internes gerent la collecte et la preparation des informations.
 
 - *Internes*: init tempo saisie dev (T14), RAZ Saisie devises P/V (T20)
 
-### 3.6 Impression (1 taches)
+### 3.6 Impression (1 tache)
 
-Generation des documents et tickets : 1 tache(s) gerent l'impression des recus, tickets et documents associes a l'operation.
+Generation des documents et tickets : 1 tache gere l'impression des recus, tickets et documents associes a l'operation.
 
 - *Internes*: reimprimer tickets (T23)
 - **Sous-programmes**: Ticket appro remise (IDE 139), Reimpression tickets fermeture (IDE 151)
 
-### 3.7 Initialisation (1 taches)
+### 3.7 Initialisation (1 tache)
 
-Reinitialisation d'etats : 1 tache(s) preparent les variables de travail et remettent les compteurs a zero.
+Reinitialisation d'etats : 1 tache prepare les variables de travail et remettent les compteurs a zero.
 
 - *Internes*: Ligne Initiale (T29)
 - **Sous-programmes**: Init apport article session WS (IDE 140), Init devise session WS (IDE 141)
@@ -172,11 +180,11 @@ flowchart LR
 
 - **Traitement**: Gestion de la caisse (T7), Concurrence sessions for devel (T32)
 - **Validation**: traitement interne (2 taches)
-- **Calcul**: traitement interne (1 taches)
+- **Calcul**: traitement interne (1 tache)
 - **Creation**: traitement interne (2 taches)
 - **Saisie**: traitement interne (2 taches)
-- **Impression**: traitement interne (1 taches)
-- **Initialisation**: traitement interne (1 taches)
+- **Impression**: traitement interne (1 tache)
+- **Initialisation**: traitement interne (1 tache)
 
 ### 9.2 Logique decisionnelle
 
@@ -517,23 +525,23 @@ graph LR
 | IDE | Nom Programme | Appels | Contexte |
 |-----|---------------|--------|----------|
 | 116 | Calcul concurrence sessions | 12 | Calcul de donnees |
-| 134 | Mise à jour detail session WS | 3 | [Phase 2] |
+| 134 | Mise à jour detail session WS | 3 | Mise a jour donnees |
 | 139 | Ticket appro remise | 3 | Impression ticket/document |
-| 48 | Contrôles - Integrite dates | 2 | [Phase 2] |
-| 122 | Ouverture caisse | 2 | [Phase 2] |
-| 131 | Fermeture caisse | 2 | [Phase 2] |
-| 155 | Controle fermeture caisse WS | 2 | [Phase 2] |
+| 48 | Contrôles - Integrite dates | 2 | Sous-programme |
+| 122 | Ouverture caisse | 2 | Ouverture session |
+| 131 | Fermeture caisse | 2 | Fermeture session |
+| 155 | Controle fermeture caisse WS | 2 | Controle/validation |
 | 43 | Recuperation du titre | 1 | Recuperation donnees |
-| 119 | Affichage sessions | 1 | [Phase 2] |
-| 123 | Apport coffre | 1 | [Phase 2] |
-| 124 | Apport articles | 1 | [Phase 2] |
+| 119 | Affichage sessions | 1 | Affichage donnees |
+| 123 | Apport coffre | 1 | Approvisionnement |
+| 124 | Apport articles | 1 | Approvisionnement |
 | 125 | Remise en caisse | 1 | Programme fidelite |
-| 132 | Historique session | 1 | [Phase 2] |
+| 132 | Historique session | 1 | Historique/consultation |
 | 140 | Init apport article session WS | 1 | Reinitialisation |
 | 141 | Init devise session WS | 1 | Reinitialisation |
 | 151 | Reimpression tickets fermeture | 1 | Impression ticket/document |
-| 156 | Verif session caisse ouverte2 | 1 | [Phase 2] |
-| 231 | Raisons utilisation ADH | 1 | [Phase 2] |
+| 156 | Verif session caisse ouverte2 | 1 | Controle/validation |
+| 231 | Raisons utilisation ADH | 1 | Parametrage |
 
 ## 14. RECOMMANDATIONS MIGRATION
 
@@ -555,28 +563,28 @@ graph LR
 
 - Traitement standard a migrer
 
-#### Validation (2 taches: 0 ecrans, 2 traitements)
+#### Validation (2 taches: 0 ecran, 2 traitements)
 
 - Transformer les conditions en validators (FluentValidation ou equivalent)
 
-#### Calcul (1 taches: 0 ecrans, 1 traitements)
+#### Calcul (1 tache: 0 ecran, 1 traitement)
 
 - Migrer la logique de calcul (stock, compteurs, montants)
 
-#### Creation (2 taches: 0 ecrans, 2 traitements)
+#### Creation (2 taches: 0 ecran, 2 traitements)
 
 - Insertion de donnees via repository pattern
 
-#### Saisie (2 taches: 0 ecrans, 2 traitements)
+#### Saisie (2 taches: 0 ecran, 2 traitements)
 
 - Implementer les validations cote client et serveur
 
-#### Impression (1 taches: 0 ecrans, 1 traitements)
+#### Impression (1 tache: 0 ecran, 1 traitement)
 
 - Remplacer par generation PDF/HTML
 - Configurer le systeme d'impression
 
-#### Initialisation (1 taches: 0 ecrans, 1 traitements)
+#### Initialisation (1 tache: 0 ecran, 1 traitement)
 
 - Reinitialisation dans le constructeur ou methode Init()
 
@@ -590,14 +598,14 @@ graph LR
 | sessions_coffre2 | Table WRITE (Database) | 2x | Schema + repository |
 | IDE 116 - Calcul concurrence sessions | Sous-programme | 12x | **CRITIQUE** - Calcul de donnees |
 | IDE 139 - Ticket appro remise | Sous-programme | 3x | **CRITIQUE** - Impression ticket/document |
-| IDE 134 - Mise à jour detail session WS | Sous-programme | 3x | **CRITIQUE** - [Phase 2] |
-| IDE 131 - Fermeture caisse | Sous-programme | 2x | Haute - [Phase 2] |
-| IDE 155 - Controle fermeture caisse WS | Sous-programme | 2x | Haute - [Phase 2] |
-| IDE 48 - Contrôles - Integrite dates | Sous-programme | 2x | Haute - [Phase 2] |
-| IDE 122 - Ouverture caisse | Sous-programme | 2x | Haute - [Phase 2] |
+| IDE 134 - Mise à jour detail session WS | Sous-programme | 3x | **CRITIQUE** - Mise a jour donnees |
+| IDE 131 - Fermeture caisse | Sous-programme | 2x | Haute - Fermeture session |
+| IDE 155 - Controle fermeture caisse WS | Sous-programme | 2x | Haute - Controle/validation |
+| IDE 48 - Contrôles - Integrite dates | Sous-programme | 2x | Haute - Sous-programme |
+| IDE 122 - Ouverture caisse | Sous-programme | 2x | Haute - Ouverture session |
 | IDE 141 - Init devise session WS | Sous-programme | 1x | Normale - Reinitialisation |
 | IDE 140 - Init apport article session WS | Sous-programme | 1x | Normale - Reinitialisation |
 | IDE 151 - Reimpression tickets fermeture | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.0 - 2026-01-29 19:45*
+*Spec DETAILED generee par Pipeline V7.1 - 2026-01-29 20:09*

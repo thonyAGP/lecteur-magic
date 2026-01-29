@@ -1,4 +1,4 @@
-# Critères de Qualité des Specs V6.0
+# Critères de Qualité des Specs V7.1
 
 > Ce document définit les critères MESURABLES pour chaque section d'une spec.
 > Les tests E2E valident ces critères automatiquement.

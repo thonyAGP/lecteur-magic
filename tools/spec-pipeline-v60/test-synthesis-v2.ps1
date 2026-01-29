@@ -93,7 +93,7 @@ Write-Host ""
 Write-Host "=== Section 1: IDENTIFICATION ===" -ForegroundColor Yellow
 
 Assert-Contains $spec237 "## 1. IDENTIFICATION" "S1: Section header exists"
-Assert-Contains $spec237 "| Pipeline | V6.0 |" "S1: Pipeline version line"
+Assert-Contains $spec237 "| Pipeline | V7.1 |" "S1: Pipeline version line"
 Assert-Regex $spec237 "Complexite \| \*\*HAUTE\*\*" "S1: Complexite line with level"
 Assert-Regex $spec237 "\(85/100\)" "S1: Complexity score"
 Assert-Contains $spec237 "Menu caisse GM - scroll (IDE 163)" "S1: Enriched Raison with program names"
@@ -352,7 +352,7 @@ Write-Host "=== Cross-Program: IDE 121 ===" -ForegroundColor Yellow
 
 Assert-Contains $spec121 "## 1. IDENTIFICATION" "S1-121: Section 1 exists"
 Assert-Contains $spec121 "Gestion caisse" "S1-121: Program name"
-Assert-Contains $spec121 "| Pipeline | V6.0 |" "S1-121: Pipeline version"
+Assert-Contains $spec121 "| Pipeline | V7.1 |" "S1-121: Pipeline version"
 Assert-Contains $spec121 "### Criteres Orphelin" "S1-121: Orphan criteria"
 
 # IDE 121 has forms but most are invisible (width=0), only 2 with dimensions

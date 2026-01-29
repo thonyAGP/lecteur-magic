@@ -1,7 +1,7 @@
 ﻿# ADH IDE 121 - Gestion caisse
 
-> **Analyse**: 2026-01-29 19:45
-> **Pipeline**: V7.0 Deep Analysis
+> **Analyse**: 2026-01-29 20:09
+> **Pipeline**: V7.1 Deep Analysis
 
 ## RESUME EXECUTIF
 
@@ -38,4 +38,4 @@ Gestion, caisse
 | Tables | 12 |
 
 ---
-*Spec SUMMARY generee par Pipeline V7.0*
+*Spec SUMMARY generee par Pipeline V7.1*

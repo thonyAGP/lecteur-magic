@@ -1,4 +1,4 @@
-# Phase3-Decode.ps1 - V6.0 Pipeline
+# Phase3-Decode.ps1 - V7.1 Pipeline
 # Decodage 100% des expressions avec conversion {N,Y} -> Lettres Variables
 # Extraction des regles metier en langage naturel via CLI
 
@@ -26,7 +26,7 @@ if (-not (Test-Path $OutputPath)) {
     New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
 }
 
-Write-Host "=== Phase 3: DECODE (V6.0) ===" -ForegroundColor Cyan
+Write-Host "=== Phase 3: DECODE (V7.1) ===" -ForegroundColor Cyan
 Write-Host "Project: $Project"
 Write-Host "IDE Position: $IdePosition"
 Write-Host ""
@@ -279,7 +279,7 @@ $decoded = @{
         ide_position = $IdePosition
         program_name = $exprData.program
         generated_at = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-        pipeline_version = "7.0"
+        pipeline_version = "7.1"
     }
 
     statistics = @{
