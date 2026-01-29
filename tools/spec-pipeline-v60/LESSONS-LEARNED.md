@@ -1,4 +1,4 @@
-# Lessons Learned - Pipeline V6.0
+# Lessons Learned - Pipeline V7.1
 
 > Ce fichier documente les erreurs commises et les solutions validees pour eviter de les repeter.
 

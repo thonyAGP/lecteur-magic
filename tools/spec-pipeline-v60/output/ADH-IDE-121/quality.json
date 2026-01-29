@@ -1,9 +1,9 @@
 ﻿{
     "pipeline_timing":  {
-                            "phases_start":  "2026-01-29 19:45:29",
-                            "assembly_start":  "2026-01-29 19:45:37",
-                            "phases_duration":  "7s",
-                            "phases_end":  "2026-01-29 19:45:37"
+                            "phases_start":  "2026-01-29 20:09:42",
+                            "assembly_start":  "2026-01-29 20:09:56",
+                            "phases_duration":  "13s",
+                            "phases_end":  "2026-01-29 20:09:56"
                         },
     "audit":  {
                   "checks":  [
@@ -66,7 +66,7 @@
                                  {
                                      "expected":  4,
                                      "status":  "PASS",
-                                     "detail":  "4 onglets V7.0 presents",
+                                     "detail":  "4 onglets V7.1 presents",
                                      "actual":  4,
                                      "check":  "TAB_STRUCTURE"
                                  },
@@ -119,10 +119,10 @@
                   "all_passed":  true
               },
     "metadata":  {
-                     "pipeline_version":  "7.0",
-                     "generated_at":  "2026-01-29 19:45:37",
+                     "pipeline_version":  "7.1",
+                     "generated_at":  "2026-01-29 20:09:56",
                      "ide_position":  121,
-                     "duration_seconds":  0.5,
+                     "duration_seconds":  0.3,
                      "program_name":  "Gestion caisse",
                      "project":  "ADH"
                  },
@@ -144,7 +144,7 @@
     "quality_score":  100,
     "structure":  {
                       "tabs":  4,
-                      "callees_with_context":  7,
+                      "callees_with_context":  17,
                       "business_rules_fr":  0,
                       "functional_blocks":  7,
                       "tab_names":  [

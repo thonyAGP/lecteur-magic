@@ -1,4 +1,4 @@
-# Phase4-UIForms.ps1 - V6.0 Pipeline
+# Phase4-UIForms.ps1 - V7.1 Pipeline
 # Extraction des Forms (ecrans) et Controls (boutons, champs, tables) via CLI
 # Generation de mockup ASCII de l'interface
 
@@ -24,7 +24,7 @@ if (-not (Test-Path $OutputPath)) {
     New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
 }
 
-Write-Host "=== Phase 4: UI FORMS (V6.0) ===" -ForegroundColor Cyan
+Write-Host "=== Phase 4: UI FORMS (V7.1) ===" -ForegroundColor Cyan
 Write-Host "Project: $Project"
 Write-Host "IDE Position: $IdePosition"
 Write-Host ""
@@ -132,7 +132,7 @@ $uiForms = @{
         ide_position = $IdePosition
         program_name = $programName
         generated_at = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-        pipeline_version = "7.0"
+        pipeline_version = "7.1"
     }
 
     forms = @($forms | ForEach-Object {

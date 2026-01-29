@@ -1,7 +1,7 @@
 ﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
-> **Analyse**: Phases 1-4 2026-01-29 19:42 -> 19:43 (8s) | Assemblage 19:44
-> **Pipeline**: V7.0 Deep Analysis
+> **Analyse**: Phases 1-4 2026-01-29 20:08 -> 20:09 (14s) | Assemblage 20:09
+> **Pipeline**: V7.1 Deep Analysis
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
 <!-- TAB:Resume -->
@@ -32,9 +32,9 @@ Le flux de traitement s'organise en **10 blocs fonctionnels** :
 - **Transfert** (4 taches) : transferts de donnees entre modules ou deversements
 - **Reglement** (4 taches) : gestion des moyens de paiement et reglements
 - **Initialisation** (3 taches) : reinitialisation d'etats et de variables de travail
-- **Validation** (1 taches) : controles et verifications de coherence
-- **Impression** (1 taches) : generation de tickets et documents
-- **Consultation** (1 taches) : ecrans de recherche, selection et consultation
+- **Validation** (1 tache) : controles et verifications de coherence
+- **Impression** (1 tache) : generation de tickets et documents
+- **Consultation** (1 tache) : ecrans de recherche, selection et consultation
 
 Le programme delegue des operations a **20 sous-programmes** couvrant :
 
@@ -57,7 +57,7 @@ Le programme delegue des operations a **20 sous-programmes** couvrant :
 
 ### 3.1 Saisie (7 taches)
 
-L'operateur saisit les donnees de la transaction via 7 ecran(s) (Saisie transaction, Saisie Bilaterale, Saisie mode de règlement, Saisie Commentaires, VRL : Saisie identité, Saisie dates forfait, Affiche saisie). Les champs de saisie sont valides en temps reel avant enregistrement.
+L'operateur saisit les donnees de la transaction via 7 ecrans (Saisie transaction, Saisie Bilaterale, Saisie mode de règlement, Saisie Commentaires, VRL : Saisie identité, Saisie dates forfait, Affiche saisie). Les champs de saisie sont valides en temps reel avant enregistrement.
 
 - **Saisie transaction** (T1, Modal, 1112x279)
 - **Saisie Bilaterale** (T7, Type6, 326x249)
@@ -73,7 +73,7 @@ L'operateur saisit les donnees de la transaction via 7 ecran(s) (Saisie transact
 
 ### 3.2 Reglement (4 taches)
 
-Gestion des moyens de paiement : le programme traite 4 tache(s) de reglement couvrant le choix du mode de paiement, le calcul des montants et la validation du paiement.
+Gestion des moyens de paiement : le programme traite 4 taches de reglement couvrant le choix du mode de paiement, le calcul des montants et la validation du paiement.
 
 - **Reglements suite a refus TPE** (T2, Type6, 708x256)
 - *Internes*: Verif reglement tpe (T5), Creation reglement (T28), Changement MOP multi paiement (T34)
@@ -82,9 +82,9 @@ Gestion des moyens de paiement : le programme traite 4 tache(s) de reglement cou
 - **Regles metier**: 4 regles associees
 - **Variables cles**: B (P0 devise locale), C (P0 masque montant), D (P0 solde compte), I (P0 date solde), CF (W0 montant avant reduction)
 
-### 3.3 Validation (1 taches)
+### 3.3 Validation (1 tache)
 
-Controles de coherence et de conformite : 1 tache(s) verifient les donnees saisies, les droits de l'operateur et les conditions prealables au traitement.
+Controles de coherence et de conformite : 1 tache verifie les donnees saisies, les droits de l'operateur et les conditions prealables au traitement.
 
 - *Internes*: verif reg restant (T3)
 - **Sous-programmes**:     SP Caractères Interdits (IDE 84)
@@ -93,16 +93,16 @@ Controles de coherence et de conformite : 1 tache(s) verifient les donnees saisi
 
 ### 3.4 Creation (5 taches)
 
-Insertion de nouveaux enregistrements : 5 tache(s) creent des mouvements, prestations ou autres donnees en base.
+Insertion de nouveaux enregistrements : 5 taches creent des mouvements, prestations ou autres donnees en base.
 
 - *Internes*: creation règlement (T4), Creation prestation (T22), Creation Tempo (T27), Creation (T29), Creation_heure_liberation (T47)
 - **Tables modifiees**: mvt_prestation___mpr
 
 ### 3.5 Traitement (18 taches)
 
-Traitements internes : 18 tache(s) de traitement metier.
+Traitements internes : 18 taches de traitement metier.
 
-- **** (T18, Modal, 116x32)
+- **(sans nom)** (T18, Modal, 116x32)
 - **Libération du logement** (T46, Type0, 123x149)
 - **Récup nb chambre /LCO** (T49, Type0, 123x89)
 - *Internes*: Dé-Affecition (T6), Test si cloture en cours (T12), Blocage cloture v1 (T13), Blocage cloture v1 (T14), Test reseau (T16), Forfait (T17), Effacement forfait (T20), Effacement mvt forfait (T21), Deblocage cloture v1 (T23), Deblocage cloture (T24), Gratuite ? (T25), garantie? (T31), Supprime enregs non affectés (T41), Affectation Auto (T44), MaJ Num Chèque (T45)
@@ -110,14 +110,14 @@ Traitements internes : 18 tache(s) de traitement metier.
 
 ### 3.6 Initialisation (3 taches)
 
-Reinitialisation d'etats : 3 tache(s) preparent les variables de travail et remettent les compteurs a zero.
+Reinitialisation d'etats : 3 taches preparent les variables de travail et remettent les compteurs a zero.
 
 - *Internes*: RAZ 269 (T9), RAZ 269 (T32), RAZ LCO liberation (T48)
 - **Sous-programmes**: Reinit Aff PYR (IDE 249)
 
 ### 3.7 Calcul (5 taches)
 
-Calculs metier : 5 tache(s) effectuent les calculs de montants, stocks, compteurs ou statistiques necessaires au traitement.
+Calculs metier : 5 taches effectuent les calculs de montants, stocks, compteurs ou statistiques necessaires au traitement.
 
 - *Internes*: Reaffichage infos compte (T15), calcul nombre carte (T35), Compte Enregs affectés (T37), Compte Enregs affectés (T42), Compte Enregs affectés (T43)
 - **Sous-programmes**: Calcul stock produit WS (IDE 149), Solde Gift Pass (IDE 241), Solde Resort Credit (IDE 254)
@@ -125,16 +125,16 @@ Calculs metier : 5 tache(s) effectuent les calculs de montants, stocks, compteur
 - **Regles metier**: 1 regles associees
 - **Variables cles**: D (P0 solde compte), H (P0 etat compte), CG (W0 Pourcentage reduction), DE (W0 Stock produit), EH (W0 Compte garanti)
 
-### 3.8 Consultation (1 taches)
+### 3.8 Consultation (1 tache)
 
-Consultation de donnees : 1 tache(s) permettent l'acces aux informations existantes.
+Consultation de donnees : 1 tache permet l'acces aux informations existantes.
 
 - *Internes*: Recherche imputation/ssimput (T26)
 - **Sous-programmes**: Recup Classe et Lib du MOP (IDE 152), Selection Vols /t Ville à côté (IDE 277), Recuperation du titre (IDE 43), Get Fidelisation et Remise (IDE 225), Get Matricule (IDE 227), Choix PYR (plusieurs chambres) (IDE 248), Zoom articles (IDE 257), Zoom services village (IDE 269)
 
-### 3.9 Impression (1 taches)
+### 3.9 Impression (1 tache)
 
-Generation des documents et tickets : 1 tache(s) gerent l'impression des recus, tickets et documents associes a l'operation.
+Generation des documents et tickets : 1 tache gere l'impression des recus, tickets et documents associes a l'operation.
 
 - *Internes*: Increment Num. Ticket(VRL/VSL) (T33)
 - **Sous-programmes**: Appel Print ticket vente PMS28 (IDE 233), Get Printer (IDE 179), Printer choice (IDE 180), Set Listing Number (IDE 181), Raz Current Printer (IDE 182)
@@ -142,7 +142,7 @@ Generation des documents et tickets : 1 tache(s) gerent l'impression des recus, 
 
 ### 3.10 Transfert (4 taches)
 
-Transfert de donnees entre modules : 4 tache(s) gerent le deversement ou le transfert d'informations vers d'autres programmes ou modules.
+Transfert de donnees entre modules : 4 taches gerent le deversement ou le transfert d'informations vers d'autres programmes ou modules.
 
 - **Type transfert** (T38, Type6, 722x292)
 - **Affiche Transfert A/R** (T39, Type6, 681x205)
@@ -200,7 +200,7 @@ Transfert de donnees entre modules : 4 tache(s) gerent le deversement ou le tran
 | 4 | 8 | Saisie mode de règlement | Type6 | 506 | 250 |
 | 5 | 10 | Saisie Commentaires | Type6 | 772 | 169 |
 | 6 | 11 | VRL : Saisie identité | MDI | 699 | 157 |
-| 7 | 18 |  | Modal | 116 | 32 |
+| 7 | 18 | (sans nom) | Modal | 116 | 32 |
 | 8 | 19 | Saisie dates forfait | MDI | 528 | 121 |
 | 9 | 30 | Affiche saisie | Modal | 427 | 124 |
 | 10 | 38 | Type transfert | Type6 | 722 | 292 |
@@ -279,7 +279,7 @@ Transfert de donnees entre modules : 4 tache(s) gerent le deversement ou le tran
 +=================================+
 
 +============================+
-|  [Modal] 116x32 - Tache 18 |
+| (sans nom) [Modal] 116x3... |
 +----------------------------+
 |  [P0 societe (A)]  [P0 d...|
 |  [W0 FIN SAISIE OD (R) _...|
@@ -405,13 +405,13 @@ flowchart LR
 
 - **Saisie**: Saisie transaction (T1), Saisie Bilaterale (T7), Saisie mode de règlement (T8), Saisie Commentaires (T10), VRL : Saisie identité (T11), Saisie dates forfait (T19), Affiche saisie (T30)
 - **Reglement**: Reglements suite a refus TPE (T2)
-- **Validation**: traitement interne (1 taches)
+- **Validation**: traitement interne (1 tache)
 - **Creation**: traitement interne (5 taches)
-- **Traitement**:  (T18), Libération du logement (T46), Récup nb chambre /LCO (T49)
+- **Traitement**: (sans nom) (T18), Libération du logement (T46), Récup nb chambre /LCO (T49)
 - **Initialisation**: traitement interne (3 taches)
 - **Calcul**: traitement interne (5 taches)
-- **Consultation**: traitement interne (1 taches)
-- **Impression**: traitement interne (1 taches)
+- **Consultation**: traitement interne (1 tache)
+- **Impression**: traitement interne (1 tache)
 - **Transfert**: Type transfert (T38), Affiche Transfert A/R (T39), Affectation PAX / Transfert (T40)
 
 ### 9.2 Logique decisionnelle
@@ -1532,22 +1532,22 @@ graph LR
 
 ### 14.2 Plan de migration par bloc
 
-#### Saisie (7 taches: 7 ecrans, 0 traitements)
+#### Saisie (7 taches: 7 ecrans, 0 traitement)
 
-- Reproduire 7 ecran(s) de saisie: Saisie transaction, Saisie Bilaterale, Saisie mode de règlement, Saisie Commentaires, VRL : Saisie identité, Saisie dates forfait, Affiche saisie
+- Reproduire 7 ecrans de saisie: Saisie transaction, Saisie Bilaterale, Saisie mode de règlement, Saisie Commentaires, VRL : Saisie identité, Saisie dates forfait, Affiche saisie
 - Implementer les validations cote client et serveur
 
-#### Reglement (4 taches: 1 ecrans, 3 traitements)
+#### Reglement (4 taches: 1 ecran, 3 traitements)
 
 - Logique multi-moyens de paiement a implementer
 - Integration TPE si applicable
-- 3 traitement(s) internes de reglement
+- 3 traitements internes de reglement
 
-#### Validation (1 taches: 0 ecrans, 1 traitements)
+#### Validation (1 tache: 0 ecran, 1 traitement)
 
 - Transformer les conditions en validators (FluentValidation ou equivalent)
 
-#### Creation (5 taches: 0 ecrans, 5 traitements)
+#### Creation (5 taches: 0 ecran, 5 traitements)
 
 - Insertion de donnees via repository pattern
 
@@ -1555,24 +1555,24 @@ graph LR
 
 - Traitement standard a migrer
 
-#### Initialisation (3 taches: 0 ecrans, 3 traitements)
+#### Initialisation (3 taches: 0 ecran, 3 traitements)
 
 - Reinitialisation dans le constructeur ou methode Init()
 
-#### Calcul (5 taches: 0 ecrans, 5 traitements)
+#### Calcul (5 taches: 0 ecran, 5 traitements)
 
 - Migrer la logique de calcul (stock, compteurs, montants)
 
-#### Consultation (1 taches: 0 ecrans, 1 traitements)
+#### Consultation (1 tache: 0 ecran, 1 traitement)
 
 - Ecrans de recherche/selection en modales ou composants
 
-#### Impression (1 taches: 0 ecrans, 1 traitements)
+#### Impression (1 tache: 0 ecran, 1 traitement)
 
 - Remplacer par generation PDF/HTML
 - Configurer le systeme d'impression
 
-#### Transfert (4 taches: 3 ecrans, 1 traitements)
+#### Transfert (4 taches: 3 ecrans, 1 traitement)
 
 - Logique de deversement/transfert entre modules
 
@@ -1601,4 +1601,4 @@ graph LR
 | IDE 269 - Zoom services village | Sous-programme | 1x | Normale - Selection/consultation |
 
 ---
-*Spec DETAILED generee par Pipeline V7.0 - 2026-01-29 19:44*
+*Spec DETAILED generee par Pipeline V7.1 - 2026-01-29 20:09*

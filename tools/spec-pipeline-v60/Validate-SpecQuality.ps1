@@ -3,7 +3,7 @@
     Valide la qualité d'une spec générée contre des critères attendus (Golden File)
 
 .DESCRIPTION
-    Ce script compare la sortie du pipeline V6.0 avec un fichier de référence
+    Ce script compare la sortie du pipeline V7.1 avec un fichier de référence
     pour détecter les régressions AVANT le déploiement.
 
 .PARAMETER Project
