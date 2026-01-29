@@ -759,12 +759,22 @@
     .spec-tab { padding: 10px 20px; font-size: 13px; font-weight: 600; background: transparent; border: none; border-bottom: 3px solid transparent; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; margin-bottom: -2px; }
     .spec-tab:hover { color: var(--text-primary); background: var(--bg-tertiary); }
     .spec-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    /* V6.0 tabs */
     .spec-tab.fonctionnel { }
     .spec-tab.fonctionnel.active { color: var(--success); border-bottom-color: var(--success); }
     .spec-tab.technique { }
     .spec-tab.technique.active { color: var(--accent); border-bottom-color: var(--accent); }
     .spec-tab.cartographie { }
     .spec-tab.cartographie.active { color: var(--purple); border-bottom-color: var(--purple); }
+    /* V7.0 tabs */
+    .spec-tab.resume { }
+    .spec-tab.resume.active { color: var(--success); border-bottom-color: var(--success); }
+    .spec-tab.ecrans { }
+    .spec-tab.ecrans.active { color: #f59e0b; border-bottom-color: #f59e0b; }
+    .spec-tab.donnees { }
+    .spec-tab.donnees.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .spec-tab.connexions { }
+    .spec-tab.connexions.active { color: var(--purple); border-bottom-color: var(--purple); }
     .spec-section { display: none; }
     .spec-section.active { display: block; }
 
@@ -1920,30 +1930,32 @@
     }
 
     function renderSpecWithTabs(markdown, headerHtml) {
-      // Extract timing info from header if present
-      const timingMatch = markdown.match(/>\s*\*\*Analyse\*\*:\s*(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s*→\s*(\d{2}:\d{2})/);
+      // Extract timing info from header - supports V6.0 (start → end) and V7.0 (date only)
       let timingHtml = '';
-      if (timingMatch) {
-        const [_, date, startTime, endTime] = timingMatch;
+      const timingMatchV6 = markdown.match(/>\s*\*\*Analyse\*\*:\s*(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s*→\s*(\d{2}:\d{2})/);
+      const timingMatchV7 = markdown.match(/>\s*\*\*Analyse\*\*:\s*(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s*$/m);
+      const pipelineMatch = markdown.match(/>\s*\*\*Pipeline\*\*:\s*(.+)$/m);
+      const structureMatch = markdown.match(/>\s*\*\*Structure\*\*:\s*(.+)$/m);
+
+      if (timingMatchV6) {
+        const [_, date, startTime, endTime] = timingMatchV6;
         const duration = calculateDuration(startTime, endTime);
         timingHtml = `
           <div class="analysis-timing">
-            <div class="timing-item">
-              <span class="timing-label">📅 Date:</span>
-              <span class="timing-value">${date}</span>
-            </div>
-            <div class="timing-item">
-              <span class="timing-label">🕐 Début:</span>
-              <span class="timing-value">${startTime}</span>
-            </div>
-            <div class="timing-item">
-              <span class="timing-label">🕑 Fin:</span>
-              <span class="timing-value">${endTime}</span>
-            </div>
-            <div class="timing-item">
-              <span class="timing-label">⏱️ Durée:</span>
-              <span class="timing-value timing-duration">${duration}</span>
-            </div>
+            <div class="timing-item"><span class="timing-label">📅 Date:</span><span class="timing-value">${date}</span></div>
+            <div class="timing-item"><span class="timing-label">🕐 Début:</span><span class="timing-value">${startTime}</span></div>
+            <div class="timing-item"><span class="timing-label">🕑 Fin:</span><span class="timing-value">${endTime}</span></div>
+            <div class="timing-item"><span class="timing-label">⏱️ Durée:</span><span class="timing-value timing-duration">${duration}</span></div>
+            ${pipelineMatch ? `<div class="timing-item"><span class="timing-label">🔧 Pipeline:</span><span class="timing-value">${pipelineMatch[1]}</span></div>` : ''}
+          </div>`;
+      } else if (timingMatchV7) {
+        const [_, date, time] = timingMatchV7;
+        timingHtml = `
+          <div class="analysis-timing">
+            <div class="timing-item"><span class="timing-label">📅 Date:</span><span class="timing-value">${date}</span></div>
+            <div class="timing-item"><span class="timing-label">🕐 Heure:</span><span class="timing-value">${time}</span></div>
+            ${pipelineMatch ? `<div class="timing-item"><span class="timing-label">🔧 Pipeline:</span><span class="timing-value">${pipelineMatch[1]}</span></div>` : ''}
+            ${structureMatch ? `<div class="timing-item"><span class="timing-label">📐 Structure:</span><span class="timing-value">${structureMatch[1]}</span></div>` : ''}
           </div>`;
       }
 
@@ -1964,9 +1976,15 @@
 
       // Build tabs HTML
       const tabLabels = {
+        // V6.0
         'Fonctionnel': '📋 Fonctionnel',
         'Technique': '⚙️ Technique',
-        'Cartographie': '🗺️ Cartographie'
+        'Cartographie': '🗺️ Cartographie',
+        // V7.0
+        'Resume': '📋 Resume',
+        'Ecrans': '🖥️ Ecrans',
+        'Donnees': '🗄️ Donnees',
+        'Connexions': '🔗 Connexions'
       };
 
       let tabsBarHtml = '<div class="spec-tabs">';
