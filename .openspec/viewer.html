@@ -114,10 +114,10 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
+    html, body {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      width: 100vw;
-      height: 100vh;
     }
 
     body {
@@ -125,9 +125,6 @@
       background: var(--bg-primary);
       color: var(--text-primary);
       display: flex;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
     }
 
     /* Sidebar */
@@ -702,8 +699,8 @@
     .content hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
 
     /* Tables */
-    .content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; table-layout: auto; }
-    .content th { background: var(--bg-tertiary); font-weight: 600; text-align: left; padding: 8px 10px; border: 1px solid var(--border); color: var(--text-primary); white-space: nowrap; }
+    .content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; table-layout: fixed; }
+    .content th { background: var(--bg-tertiary); font-weight: 600; text-align: left; padding: 8px 10px; border: 1px solid var(--border); color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; }
     .content td { padding: 8px 10px; border: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; word-break: break-word; }
     .content tr:hover td { background: var(--bg-secondary); }
     .content td:first-child { color: var(--text-primary); font-weight: 500; }
@@ -712,7 +709,7 @@
 
     /* Code */
     .content code { font-family: 'SF Mono', 'Consolas', 'Monaco', monospace; font-size: 12px; background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
-    .content pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    .content pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 16px; overflow-x: auto; margin: 16px 0; max-width: 100%; }
     .content pre code { background: none; padding: 0; color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
 
     /* Blockquote */
@@ -1050,6 +1047,7 @@
       <h1>OpenSpec Viewer</h1>
       <div class="version">v1.4.0</div>
       <div class="updated" id="lastUpdated"></div>
+      <div class="updated" id="lastBuild"></div>
       <div class="search-container">
         <span class="search-icon">&#x1F50D;</span>
         <input type="text" class="search-input" id="searchInput" placeholder="Rechercher (table:849, access:W, vente...)" autocomplete="off">
@@ -1081,6 +1079,7 @@
     const content = document.getElementById('content');
     const navigation = document.getElementById('navigation');
     const lastUpdatedEl = document.getElementById('lastUpdated');
+    const lastBuildEl = document.getElementById('lastBuild');
     const saveIndicator = document.getElementById('saveIndicator');
     const saveText = document.getElementById('saveText');
     let indexData = null;
@@ -1418,6 +1417,9 @@
     function updateLastUpdated() {
       const date = new Date(indexData.lastUpdated);
       lastUpdatedEl.textContent = `Maj: ${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}`;
+      // Build timestamp embedded at commit time
+      const BUILD_DATE = '2026-01-29 21:10';
+      lastBuildEl.textContent = `Build: ${BUILD_DATE}`;
     }
 
     function buildNavigation() {
