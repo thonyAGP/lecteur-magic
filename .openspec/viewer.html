@@ -1085,7 +1085,23 @@
     let indexData = null;
     let currentSort = 'analysis'; // 'id', 'analysis', 'created'
 
-    marked.setOptions({ breaks: true, gfm: true });
+    // Custom renderer: add id attributes to headings for anchor navigation
+    const renderer = new marked.Renderer();
+    renderer.heading = function({ text, depth }) {
+      // Strip HTML tags for ID generation, keep text
+      const rawText = text.replace(/<[^>]+>/g, '').trim();
+      const id = rawText.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove accents
+        .replace(/[^\w\s-]/g, '')  // remove special chars
+        .replace(/\s+/g, '-')     // spaces to hyphens
+        .replace(/-+/g, '-')      // collapse multiple hyphens
+        .replace(/^-|-$/g, '');   // trim hyphens
+      return `<h${depth} id="${id}">${text}</h${depth}>\n`;
+    };
+    marked.setOptions({ breaks: true, gfm: true, renderer });
+
+    // Navigation history stack for back button between specs
+    const navHistory = [];
 
     const STATUSES = [
       { id: 'progress', label: 'En cours' },
@@ -1780,7 +1796,31 @@
       const links = container.querySelectorAll('a[href]');
       links.forEach(link => {
         const href = link.getAttribute('href');
-        // Match patterns like: ADH-IDE-238.md, specs/ADH-IDE-238.md, renders/ADH-IDE-238.md
+
+        // 1) Internal fragment links (#ecran-t1, #t1, etc.)
+        if (href.startsWith('#')) {
+          link.style.cursor = 'pointer';
+          link.style.color = 'var(--accent)';
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = href.slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+              // If target is in a hidden tab, switch to that tab first
+              const section = target.closest('.spec-section');
+              if (section && !section.classList.contains('active')) {
+                const tabName = section.dataset.tab;
+                if (tabName) switchSpecTab(tabName);
+                setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+              } else {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }
+          });
+          return; // Don't process as spec link
+        }
+
+        // 2) Cross-spec links: ADH-IDE-238.md, specs/ADH-IDE-238.md, renders/ADH-IDE-238.md
         const specMatch = href.match(/(?:(specs|renders)\/)?([A-Z]{2,4}-IDE-\d+)\.md$/i);
         if (specMatch) {
           const folder = specMatch[1] || 'specs'; // Default to specs, but preserve renders if specified
@@ -1790,12 +1830,16 @@
           link.style.textDecoration = 'underline';
           link.addEventListener('click', (e) => {
             e.preventDefault();
+            // Push current spec to history for back navigation
+            const currentHash = decodeURIComponent(window.location.hash.slice(1));
+            if (currentHash) navHistory.push(currentHash);
             const specPath = `${folder}/${specId}.md`;
             loadFile(specPath);
             setActiveNav(specPath);
           });
         }
-        // Handle annotation YAML links
+
+        // 3) Annotation YAML links
         const annotationMatch = href.match(/annotations\/([A-Z]{2,4}-IDE-\d+)\.yaml$/i);
         if (annotationMatch) {
           const annotId = annotationMatch[1].toUpperCase();
@@ -1804,10 +1848,21 @@
           link.style.textDecoration = 'underline';
           link.addEventListener('click', (e) => {
             e.preventDefault();
+            const currentHash = decodeURIComponent(window.location.hash.slice(1));
+            if (currentHash) navHistory.push(currentHash);
             loadFile(`annotations/${annotId}.yaml`);
           });
         }
       });
+    }
+
+    // Navigate back to previous spec
+    function navigateBack() {
+      if (navHistory.length > 0) {
+        const prevPath = navHistory.pop();
+        loadFile(prevPath);
+        setActiveNav(prevPath);
+      }
     }
 
     function setActiveNav(file) {
@@ -1828,10 +1883,15 @@
       let ticketId = null;
       let ticketData = null;
 
-      // Back link for renders and annotations (V2.1 specs)
+      // Back link for navigation history
       let backLinkHtml = '';
       if (isRender || isAnnotation) {
         backLinkHtml = `<a class="back-link" onclick="loadFile('SPECS_ENRICHIES_V21.md'); setActiveNav('SPECS_ENRICHIES_V21.md'); window.location.hash='SPECS_ENRICHIES_V21.md'">← Retour aux Specs Enrichies V2.1</a>`;
+      } else if (navHistory.length > 0) {
+        // Dynamic back button from navigation history
+        const prevFile = navHistory[navHistory.length - 1];
+        const prevName = prevFile.replace('specs/', '').replace('.md', '');
+        backLinkHtml = `<a class="back-link" onclick="navigateBack()">← Retour ${prevName}</a>`;
       }
 
       // Handle Specs
@@ -1962,7 +2022,7 @@
           // V2.1 renders without TAB markers
           content.innerHTML = backLinkHtml + headerHtml + tabsHtml + marked.parse(text);
         } else {
-          content.innerHTML = headerHtml + tabsHtml + marked.parse(text);
+          content.innerHTML = backLinkHtml + headerHtml + tabsHtml + marked.parse(text);
         }
         // Render Mermaid diagrams
         await renderMermaidDiagrams();
