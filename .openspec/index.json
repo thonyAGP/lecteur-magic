@@ -1689,7 +1689,7 @@
                       "complexity":  "MOYENNE",
                       "hasTabMarkers":  false,
                       "ide":  121,
-                      "specVersion":  "7.0",
+                      "specVersion":  "7.1",
                       "title":  "ADH-IDE-121-summary",
                       "tables":  0,
                       "file":  "specs/ADH-IDE-121-summary.md"
@@ -1703,7 +1703,7 @@
                       "complexity":  "BASSE",
                       "hasTabMarkers":  true,
                       "ide":  121,
-                      "specVersion":  "7.0",
+                      "specVersion":  "7.1",
                       "title":  "ADH-IDE-121",
                       "tables":  0,
                       "file":  "specs/ADH-IDE-121.md"
@@ -3313,7 +3313,7 @@
                       "complexity":  "BASSE",
                       "hasTabMarkers":  false,
                       "ide":  236,
-                      "specVersion":  "7.0",
+                      "specVersion":  "7.1",
                       "title":  "ADH-IDE-236-summary",
                       "tables":  0,
                       "file":  "specs/ADH-IDE-236-summary.md"
@@ -3327,7 +3327,7 @@
                       "complexity":  "BASSE",
                       "hasTabMarkers":  true,
                       "ide":  236,
-                      "specVersion":  "7.0",
+                      "specVersion":  "7.1",
                       "title":  "ADH-IDE-236",
                       "tables":  0,
                       "file":  "specs/ADH-IDE-236.md"
@@ -3355,7 +3355,7 @@
                       "complexity":  "BASSE",
                       "hasTabMarkers":  true,
                       "ide":  237,
-                      "specVersion":  "7.0",
+                      "specVersion":  "7.1",
                       "title":  "ADH-IDE-237",
                       "tables":  0,
                       "file":  "specs/ADH-IDE-237.md"
@@ -3369,7 +3369,7 @@
                       "complexity":  "HAUTE",
                       "hasTabMarkers":  false,
                       "ide":  237,
-                      "specVersion":  "7.0",
+                      "specVersion":  "7.1",
                       "title":  "ADH-IDE-237-summary",
                       "tables":  0,
                       "file":  "specs/ADH-IDE-237-summary.md"
@@ -4959,5 +4959,5 @@
               ],
     "totalSpecs":  354,
     "project":  "Lecteur_Magic",
-    "lastUpdated":  "2026-01-29T17:33:58+01:00"
+    "lastUpdated":  "2026-01-29T21:10:38+01:00"
 }

@@ -1,135 +1,65 @@
 ﻿{
-    "pipeline_timing":  {
-                            "phases_start":  "2026-01-29 20:09:24",
-                            "assembly_start":  "2026-01-29 20:09:37",
-                            "phases_duration":  "13s",
-                            "phases_end":  "2026-01-29 20:09:37"
-                        },
-    "audit":  {
-                  "checks":  [
-                                 {
-                                     "expected":  0,
-                                     "status":  "PASS",
-                                     "detail":  "Aucun placeholder detecte",
-                                     "actual":  0,
-                                     "check":  "RULES_NO_PLACEHOLDER"
-                                 },
-                                 {
-                                     "expected":  0,
-                                     "status":  "PASS",
-                                     "detail":  "0/0 regles presentes",
-                                     "actual":  0,
-                                     "check":  "RULES_COUNT"
-                                 },
-                                 {
-                                     "expected":  0,
-                                     "status":  "PASS",
-                                     "detail":  "2/0 tables WRITE",
-                                     "actual":  2,
-                                     "check":  "TABLES_WRITE"
-                                 },
-                                 {
-                                     "expected":  4,
-                                     "status":  "PASS",
-                                     "detail":  "4 callers documentes",
-                                     "actual":  "present",
-                                     "check":  "CALLERS_SECTION"
-                                 },
-                                 {
-                                     "expected":  2,
-                                     "status":  "PASS",
-                                     "detail":  "2 callees documentes",
-                                     "actual":  "present",
-                                     "check":  "CALLEES_SECTION"
-                                 },
-                                 {
-                                     "expected":  15,
-                                     "status":  "PASS",
-                                     "detail":  "Ecrans visibles coherents",
-                                     "actual":  15,
-                                     "check":  "SCREENS_VISIBLE"
-                                 },
-                                 {
-                                     "expected":  "100%",
-                                     "status":  "PASS",
-                                     "detail":  "Coverage 100% documentee",
-                                     "actual":  "present",
-                                     "check":  "EXPR_COVERAGE"
-                                 },
-                                 {
-                                     "expected":  0,
-                                     "status":  "PASS",
-                                     "detail":  "Aucune reference XML brute dans Resume",
-                                     "actual":  0,
-                                     "check":  "NO_RAW_XML"
-                                 },
-                                 {
-                                     "expected":  4,
-                                     "status":  "PASS",
-                                     "detail":  "4 onglets V7.1 presents",
-                                     "actual":  4,
-                                     "check":  "TAB_STRUCTURE"
-                                 },
-                                 {
-                                     "expected":  "Phases 1-4",
-                                     "status":  "PASS",
-                                     "detail":  "Timing pipeline reel affiche",
-                                     "actual":  "present",
-                                     "check":  "TIMING_REALISTIC"
-                                 },
-                                 {
-                                     "expected":  "bloc_headers",
-                                     "status":  "PASS",
-                                     "detail":  "0 groupes par bloc fonctionnel",
-                                     "actual":  0,
-                                     "check":  "RULES_BY_BLOC"
-                                 },
-                                 {
-                                     "expected":  "present",
-                                     "status":  "PASS",
-                                     "detail":  "2 blocs avec variables cles",
-                                     "actual":  2,
-                                     "check":  "BLOC_VARIABLES"
-                                 },
-                                 {
-                                     "expected":  "flowchart LR",
-                                     "status":  "PASS",
-                                     "detail":  "Navigation en flowchart LR",
-                                     "actual":  "present",
-                                     "check":  "NAV_FLOWCHART_LR"
-                                 },
-                                 {
-                                     "expected":  "parent.child",
-                                     "status":  "PASS",
-                                     "detail":  "34 sous-taches avec notation hierarchique",
-                                     "actual":  34,
-                                     "check":  "TASK_HIERARCHY"
-                                 },
-                                 {
-                                     "expected":  "absent",
-                                     "status":  "PASS",
-                                     "detail":  "Pas d\u0027estimation effort en jours",
-                                     "actual":  "absent",
-                                     "check":  "NO_EFFORT_DAYS"
-                                 }
-                             ],
-                  "pass":  15,
-                  "fail":  0,
-                  "warn":  0,
-                  "all_passed":  true
-              },
-    "metadata":  {
-                     "pipeline_version":  "7.1",
-                     "generated_at":  "2026-01-29 20:09:38",
-                     "ide_position":  236,
-                     "duration_seconds":  0.9,
-                     "program_name":  "Print ticket vente PMS-584",
-                     "project":  "ADH"
-                 },
     "files_generated":  [
                             "ADH-IDE-236-summary.md",
                             "ADH-IDE-236.md"
                         ],
+    "extraction_coverage":  {
+                                "tables_extracted":  true,
+                                "expressions_decoded":  true,
+                                "callers_extracted":  true,
+                                "callees_extracted":  true,
+                                "variables_mapped":  true,
+                                "forms_extracted":  true
+                            },
+    "audit":  {
+                  "checks":  [
+                                 {
+                                     "detail":  "OK",
+                                     "status":  "PASS",
+                                     "check":  "RULES_NO_PLACEHOLDER"
+                                 },
+                                 {
+                                     "detail":  "4 onglets V7.2",
+                                     "status":  "PASS",
+                                     "check":  "TAB_STRUCTURE"
+                                 },
+                                 {
+                                     "detail":  "V7.2 present",
+                                     "status":  "PASS",
+                                     "check":  "VERSION_72"
+                                 },
+                                 {
+                                     "detail":  "38 ancres",
+                                     "status":  "PASS",
+                                     "check":  "V72_ANCHORS"
+                                 },
+                                 {
+                                     "detail":  "31 liens cliquables",
+                                     "status":  "PASS",
+                                     "check":  "V72_LINKS"
+                                 },
+                                 {
+                                     "detail":  "15 blocs FORM-DATA",
+                                     "status":  "PASS",
+                                     "check":  "V72_FORMDATA"
+                                 },
+                                 {
+                                     "detail":  "3 groupes par role",
+                                     "status":  "PASS",
+                                     "check":  "V72_VAR_ROLES"
+                                 },
+                                 {
+                                     "detail":  "19 types precis",
+                                     "status":  "PASS",
+                                     "check":  "V72_EXPR_TYPES"
+                                 }
+                             ],
+                  "pass":  8,
+                  "fail":  0,
+                  "warn":  0,
+                  "all_passed":  true
+              },
+    "quality_score":  100,
     "complexity":  {
                        "score":  25,
                        "level":  "BASSE",
@@ -141,34 +71,26 @@
                                        "Code desactive: 0% (SAIN)"
                                    ]
                    },
-    "quality_score":  100,
-    "structure":  {
-                      "tabs":  4,
-                      "callees_with_context":  2,
-                      "business_rules_fr":  0,
-                      "functional_blocks":  4,
-                      "tab_names":  [
-                                        "Resume",
-                                        "Ecrans",
-                                        "Donnees",
-                                        "Connexions"
-                                    ]
-                  },
-    "extraction_coverage":  {
-                                "tables_extracted":  true,
-                                "expressions_decoded":  true,
-                                "callers_extracted":  true,
-                                "callees_extracted":  true,
-                                "variables_mapped":  true,
-                                "forms_extracted":  true
-                            },
-    "validation":  {
-                       "callers_shown":  4,
-                       "callees_shown":  2,
-                       "visible_forms_count":  15,
-                       "tables_unified_count":  15,
-                       "variables_mapped_count":  39,
-                       "business_rules_count":  0,
-                       "total_forms_count":  38
-                   }
+    "pipeline_timing":  {
+                            "phases_start":  "2026-01-30 09:42:31",
+                            "assembly_end":  "2026-01-30 09:42:40",
+                            "assembly_start":  "2026-01-30 09:42:40",
+                            "phases_duration":  "8s",
+                            "phases_end":  "2026-01-30 09:42:40"
+                        },
+    "v72_features":  {
+                         "clickable_links":  31,
+                         "variable_roles":  3,
+                         "precise_expr_types":  19,
+                         "anchors":  38,
+                         "form_data_blocks":  15
+                     },
+    "metadata":  {
+                     "pipeline_version":  "7.2",
+                     "generated_at":  "2026-01-30 09:42:40",
+                     "ide_position":  236,
+                     "duration_seconds":  0.4,
+                     "program_name":  "Print ticket vente PMS-584",
+                     "project":  "ADH"
+                 }
 }

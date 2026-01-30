@@ -9,7 +9,6 @@ param(
 $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptDir)
-$V60Dir = Join-Path (Split-Path -Parent $ScriptDir) "spec-pipeline-v60"
 
 # Programmes Ventes ADH
 $VentesPrograms = @(229, 233, 236, 237, 241, 242, 247, 254, 316)
@@ -45,7 +44,7 @@ foreach ($ide in $VentesPrograms) {
     # Phase 1: Discovery
     try {
         Write-Host "  Phase 1: Discovery..." -NoNewline
-        & (Join-Path $V60Dir "Phase1-Discovery.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
+        & (Join-Path $ScriptDir "Phase1-Discovery.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
         $phaseStatus["P1"] = "OK"
         Write-Host " OK" -ForegroundColor Green
     } catch {
@@ -60,7 +59,7 @@ foreach ($ide in $VentesPrograms) {
     # Phase 2: Mapping
     try {
         Write-Host "  Phase 2: Mapping..." -NoNewline
-        & (Join-Path $V60Dir "Phase2-Mapping.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
+        & (Join-Path $ScriptDir "Phase2-Mapping.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
         $phaseStatus["P2"] = "OK"
         Write-Host " OK" -ForegroundColor Green
     } catch {
@@ -71,7 +70,7 @@ foreach ($ide in $VentesPrograms) {
     # Phase 3: Decode
     try {
         Write-Host "  Phase 3: Decode..." -NoNewline
-        & (Join-Path $V60Dir "Phase3-Decode.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
+        & (Join-Path $ScriptDir "Phase3-Decode.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
         $phaseStatus["P3"] = "OK"
         Write-Host " OK" -ForegroundColor Green
     } catch {
@@ -83,7 +82,7 @@ foreach ($ide in $VentesPrograms) {
     if (-not $SkipPhase4) {
         try {
             Write-Host "  Phase 4: UI Forms..." -NoNewline
-            & (Join-Path $V60Dir "Phase4-UIForms.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
+            & (Join-Path $ScriptDir "Phase4-UIForms.ps1") -Project $Project -IdePosition $ide -OutputPath $outputPath | Out-Null
             $phaseStatus["P4"] = "OK"
             Write-Host " OK" -ForegroundColor Green
         } catch {

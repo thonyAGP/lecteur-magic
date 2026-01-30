@@ -1,6 +1,6 @@
 ﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
-> **Analyse**: 2026-01-30 09:42
+> **Analyse**: 2026-01-30 10:07
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF
