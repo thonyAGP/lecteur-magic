@@ -1,10 +1,10 @@
 ﻿{
     "files_generated":  [
-                            "ADH-IDE-237-summary.md",
-                            "ADH-IDE-237.md"
+                            "ADH-IDE-233-summary.md",
+                            "ADH-IDE-233.md"
                         ],
     "extraction_coverage":  {
-                                "tables_extracted":  true,
+                                "tables_extracted":  false,
                                 "expressions_decoded":  true,
                                 "callers_extracted":  true,
                                 "callees_extracted":  true,
@@ -29,27 +29,27 @@
                                      "check":  "VERSION_72"
                                  },
                                  {
-                                     "detail":  "49 ancres",
+                                     "detail":  "1 ancres",
                                      "status":  "PASS",
                                      "check":  "V72_ANCHORS"
                                  },
                                  {
-                                     "detail":  "126 liens cliquables",
+                                     "detail":  "49 liens cliquables",
                                      "status":  "PASS",
                                      "check":  "V72_LINKS"
                                  },
                                  {
-                                     "detail":  "14 blocs FORM-DATA",
+                                     "detail":  "1 blocs FORM-DATA",
                                      "status":  "PASS",
                                      "check":  "V72_FORMDATA"
                                  },
                                  {
-                                     "detail":  "3 groupes par role",
+                                     "detail":  "1 groupes par role",
                                      "status":  "PASS",
                                      "check":  "V72_VAR_ROLES"
                                  },
                                  {
-                                     "detail":  "37 types precis",
+                                     "detail":  "2 types precis",
                                      "status":  "PASS",
                                      "check":  "V72_EXPR_TYPES"
                                  },
@@ -59,17 +59,17 @@
                                      "check":  "GAP1_SPECIFIC_ROLES"
                                  },
                                  {
-                                     "detail":  "Liste sous-taches presente",
+                                     "detail":  "N/A (programme simple: 1 taches)",
                                      "status":  "PASS",
                                      "check":  "GAP2_SUBTASKS"
                                  },
                                  {
-                                     "detail":  "Variables liees aux taches",
+                                     "detail":  "N/A (programme simple)",
                                      "status":  "PASS",
                                      "check":  "GAP2_VARS_TASK"
                                  },
                                  {
-                                     "detail":  "3/3 champs enrichis (source/exemple/impact)",
+                                     "detail":  "N/A (pas de regles metier)",
                                      "status":  "PASS",
                                      "check":  "GAP3_ENRICHED_RULES"
                                  },
@@ -99,38 +99,38 @@
                   "warn":  0,
                   "all_passed":  true
               },
-    "quality_score":  100,
+    "quality_score":  85,
     "complexity":  {
-                       "score":  85,
-                       "level":  "HAUTE",
+                       "score":  5,
+                       "level":  "BASSE",
                        "details":  [
-                                       "Expressions: 305 (HAUTE)",
-                                       "Taches: 49 (HAUTE)",
-                                       "Tables WRITE: 9 (HAUTE)",
-                                       "Callees: 20 (HAUTE)",
+                                       "Expressions: 2 (MINIMALE)",
+                                       "Taches: 1 (MINIMALE)",
+                                       "Tables WRITE: 0 (AUCUNE)",
+                                       "Callees: 2 (BASSE)",
                                        "Code desactive: 0% (SAIN)"
                                    ]
                    },
     "pipeline_timing":  {
-                            "phases_start":  "2026-01-30 19:09:34",
-                            "assembly_end":  "2026-01-30 19:09:47",
-                            "assembly_start":  "2026-01-30 19:09:43",
-                            "phases_duration":  "10s",
-                            "phases_end":  "2026-01-30 19:09:43"
+                            "phases_start":  "2026-01-30 19:09:12",
+                            "assembly_end":  "2026-01-30 19:09:22",
+                            "assembly_start":  "2026-01-30 19:09:21",
+                            "phases_duration":  "9s",
+                            "phases_end":  "2026-01-30 19:09:21"
                         },
     "v72_features":  {
-                         "clickable_links":  126,
-                         "variable_roles":  3,
-                         "precise_expr_types":  37,
-                         "anchors":  49,
-                         "form_data_blocks":  14
+                         "clickable_links":  49,
+                         "variable_roles":  1,
+                         "precise_expr_types":  2,
+                         "anchors":  1,
+                         "form_data_blocks":  1
                      },
     "metadata":  {
                      "pipeline_version":  "7.2",
-                     "generated_at":  "2026-01-30 19:09:47",
-                     "ide_position":  237,
-                     "duration_seconds":  3.4,
-                     "program_name":  "Transaction Nouv vente avec GP",
+                     "generated_at":  "2026-01-30 19:09:22",
+                     "ide_position":  233,
+                     "duration_seconds":  0.4,
+                     "program_name":  "Appel Print ticket vente PMS28",
                      "project":  "ADH"
                  }
 }

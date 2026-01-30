@@ -1,6 +1,6 @@
 ﻿# ADH IDE 233 - Appel Print ticket vente PMS28
 
-> **Analyse**: Phases 1-4 2026-01-30 09:42 -> 09:42 (8s) | Assemblage 09:42
+> **Analyse**: Phases 1-4 2026-01-30 19:09 -> 19:09 (9s) | Assemblage 19:09
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -37,7 +37,7 @@ Traitements internes.
 
 #### <a id="t1"></a>T1 - Veuillez patienter ... [ECRAN]
 
-**Role** : Traitement interne.
+**Role** : Traitement : Veuillez patienter ....
 **Ecran** : 422 x 56 DLU (MDI) | [Voir mockup](#ecran-t1)
 
 
@@ -156,7 +156,9 @@ Ecran unique: **Veuillez patienter ...**
 
 ### 9.3 Structure hierarchique (1 tache)
 
-- **233.1** [Veuillez patienter ... (T1)](#t1) **[ECRAN]** (MDI) 422x56 -> [mockup](#ecran-t1) *[Traitement]*
+| Position | Tache | Type | Dimensions | Bloc |
+|----------|-------|------|------------|------|
+| **233.1** | [**Veuillez patienter ...** (T1)](#t1) [mockup](#ecran-t1) | MDI | 422x56 | Traitement |
 
 <!-- TAB:Donnees -->
 
@@ -167,11 +169,11 @@ Ecran unique: **Veuillez patienter ...**
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
 
-### Colonnes par table
+### Colonnes par table (0 / 0 tables avec colonnes identifiees)
 
 ## 11. VARIABLES
 
-### 11.1 Parametres entrants (20)
+### 11.1 Parametres entrants (29)
 
 Variables recues du programme appelant ([Historique des ventes - Gratui (IDE 312)](ADH-IDE-312.md)).
 
@@ -193,18 +195,11 @@ Variables recues du programme appelant ([Historique des ventes - Gratui (IDE 312
 | N | P0 Numero Ticket(VRL) | Numeric | - |
 | O | P0 Num GM | Numeric | - |
 | P | P0 UNI/BI | Alpha | - |
+| Q | PO is TAI | Logical | - |
 | R | P0 TAI Cash | Alpha | - |
 | S | P0 TAI start date | Date | - |
 | T | P0 TAI end date | Date | - |
 | U | P0 OD ? | Logical | - |
-
-### 11.2 Autres (9)
-
-Variables diverses.
-
-| Lettre | Nom | Type | Usage dans |
-|--------|-----|------|-----------|
-| Q | PO is TAI | Logical | - |
 | V | P.PDF | Logical | - |
 | W | P.Document ticket | Alpha | - |
 | X | P.Filename signature | Alpha | - |
@@ -235,19 +230,19 @@ Variables diverses.
 | P0 | **N** | P0 Numero Ticket(VRL) | Numeric |
 | P0 | **O** | P0 Num GM | Numeric |
 | P0 | **P** | P0 UNI/BI | Alpha |
+| P0 | **Q** | PO is TAI | Logical |
 | P0 | **R** | P0 TAI Cash | Alpha |
 | P0 | **S** | P0 TAI start date | Date |
 | P0 | **T** | P0 TAI end date | Date |
 | P0 | **U** | P0 OD ? | Logical |
-| Autre | **Q** | PO is TAI | Logical |
-| Autre | **V** | P.PDF | Logical |
-| Autre | **W** | P.Document ticket | Alpha |
-| Autre | **X** | P.Filename signature | Alpha |
-| Autre | **Y** | p.Re_Print | Logical |
-| Autre | **Z** | p.Re_Print_Annulation | Logical |
-| Autre | **BA** | PI.N° de Ticket si VG TENV10 | Numeric |
-| Autre | **BB** | Pi.TPE N° Dossier Axis | Alpha |
-| Autre | **BC** | Pi TPE Num autorisation | Alpha |
+| P0 | **V** | P.PDF | Logical |
+| P0 | **W** | P.Document ticket | Alpha |
+| P0 | **X** | P.Filename signature | Alpha |
+| P0 | **Y** | p.Re_Print | Logical |
+| P0 | **Z** | p.Re_Print_Annulation | Logical |
+| P0 | **BA** | PI.N° de Ticket si VG TENV10 | Numeric |
+| P0 | **BB** | Pi.TPE N° Dossier Axis | Alpha |
+| P0 | **BC** | Pi TPE Num autorisation | Alpha |
 
 </details>
 
@@ -401,7 +396,9 @@ graph LR
 
 #### Traitement (1 tache: 1 ecran, 0 traitement)
 
-- Traitement standard a migrer
+- **Strategie** : 1 composant(s) UI (Razor/React) avec formulaires et validation.
+- 2 sous-programme(s) a migrer ou a reutiliser depuis les services existants.
+- Decomposer les taches en services unitaires testables.
 
 ### 14.3 Dependances critiques
 
@@ -411,4 +408,4 @@ graph LR
 | [ Print ticket vente (IDE 234)](ADH-IDE-234.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-01-30 09:42*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-01-30 19:09*

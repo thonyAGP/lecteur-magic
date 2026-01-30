@@ -1,6 +1,6 @@
 ﻿# ADH IDE 233 - Appel Print ticket vente PMS28
 
-> **Analyse**: 2026-01-30 09:42
+> **Analyse**: 2026-01-30 19:09
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF

@@ -1,6 +1,6 @@
 ﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
-> **Analyse**: Phases 1-4 2026-01-30 10:45 -> 10:45 (9s) | Assemblage 10:45
+> **Analyse**: Phases 1-4 2026-01-30 19:09 -> 19:09 (10s) | Assemblage 19:09
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -4036,55 +4036,124 @@ flowchart TD
 
 ### 9.3 Structure hierarchique (49 taches)
 
-- **237.1** [Saisie transaction (T1)](#t1) **[ECRAN]** (Modal) 1112x279 -> [mockup](#ecran-t1) *[Saisie]*
-  - **237.1.1** [Saisie Bilaterale (T7)](#t7) **[ECRAN]** (Type6) 326x249 -> [mockup](#ecran-t7)
-  - **237.1.2** [Saisie mode de règlement (T8)](#t8) **[ECRAN]** (Type6) 506x250 -> [mockup](#ecran-t8)
-  - **237.1.3** [Saisie Commentaires (T10)](#t10) **[ECRAN]** (Type6) 772x169 -> [mockup](#ecran-t10)
-  - **237.1.4** [VRL : Saisie identité (T11)](#t11) **[ECRAN]** (MDI) 699x157 -> [mockup](#ecran-t11)
-  - **237.1.5** [Saisie dates forfait (T19)](#t19) **[ECRAN]** (MDI) 528x121 -> [mockup](#ecran-t19)
-  - **237.1.6** [Affiche saisie (T30)](#t30) **[ECRAN]** (Modal) 427x124 -> [mockup](#ecran-t30)
-- **237.2** [Reglements suite a refus TPE (T2)](#t2) **[ECRAN]** (Type6) 708x256 -> [mockup](#ecran-t2) *[Reglement]*
-  - **237.2.1** [Verif reglement tpe (T5)](#t5)  
-  - **237.2.2** [Creation reglement (T28)](#t28)  
-  - **237.2.3** [Changement MOP multi paiement (T34)](#t34)  
-- **237.3** [verif reg restant (T3)](#t3)   *[Validation]*
-- **237.4** [creation règlement (T4)](#t4)   *[Creation]*
-  - **237.4.1** [Creation prestation (T22)](#t22)  (MDI)
-  - **237.4.2** [Creation Tempo (T27)](#t27)  (MDI)
-  - **237.4.3** [Creation (T29)](#t29)  
-  - **237.4.4** [Creation_heure_liberation (T47)](#t47)  
-- **237.5** [Dé-Affecition (T6)](#t6)   *[Traitement]*
-  - **237.5.1** [Test si cloture en cours (T12)](#t12)  (MDI)
-  - **237.5.2** [Blocage cloture v1 (T13)](#t13)  (MDI)
-  - **237.5.3** [Blocage cloture v1 (T14)](#t14)  (MDI)
-  - **237.5.4** [Test reseau (T16)](#t16)  (MDI)
-  - **237.5.5** [Forfait (T17)](#t17)  (MDI)
-  - **237.5.6** [(sans nom) (T18)](#t18) **[ECRAN]** (Modal) 116x32 -> [mockup](#ecran-t18)
-  - **237.5.7** [Effacement forfait (T20)](#t20)  (MDI)
-  - **237.5.8** [Effacement mvt forfait (T21)](#t21)  (MDI)
-  - **237.5.9** [Deblocage cloture v1 (T23)](#t23)  (MDI)
-  - **237.5.10** [Deblocage cloture (T24)](#t24)  (MDI)
-  - **237.5.11** [Gratuite ? (T25)](#t25)  (MDI)
-  - **237.5.12** [garantie? (T31)](#t31)  (MDI)
-  - **237.5.13** [Supprime enregs non affectés (T41)](#t41)  
-  - **237.5.14** [Affectation Auto (T44)](#t44)  
-  - **237.5.15** [MaJ Num Chèque (T45)](#t45)  
-  - **237.5.16** [Libération du logement (T46)](#t46) **[ECRAN]**  123x149 -> [mockup](#ecran-t46)
-  - **237.5.17** [Récup nb chambre /LCO (T49)](#t49) **[ECRAN]**  123x89 -> [mockup](#ecran-t49)
-- **237.6** [RAZ 269 (T9)](#t9)  (MDI) *[Initialisation]*
-  - **237.6.1** [RAZ 269 (T32)](#t32)  (MDI)
-  - **237.6.2** [RAZ LCO liberation (T48)](#t48)  
-- **237.7** [Reaffichage infos compte (T15)](#t15)  (MDI) *[Calcul]*
-  - **237.7.1** [calcul nombre carte (T35)](#t35)  
-  - **237.7.2** [Compte Enregs affectés (T37)](#t37)  
-  - **237.7.3** [Compte Enregs affectés (T42)](#t42)  
-  - **237.7.4** [Compte Enregs affectés (T43)](#t43)  
-- **237.8** [Recherche imputation/ssimput (T26)](#t26)  (MDI) *[Consultation]*
-- **237.9** [Increment Num. Ticket(VRL/VSL) (T33)](#t33)   *[Impression]*
-- **237.10** [Raz Affectation Transfert (T36)](#t36)   *[Transfert]*
-  - **237.10.1** [Type transfert (T38)](#t38) **[ECRAN]** (Type6) 722x292 -> [mockup](#ecran-t38)
-  - **237.10.2** [Affiche Transfert A/R (T39)](#t39) **[ECRAN]** (Type6) 681x205 -> [mockup](#ecran-t39)
-  - **237.10.3** [Affectation PAX / Transfert (T40)](#t40) **[ECRAN]**  1056x281 -> [mockup](#ecran-t40)
+| Position | Tache | Type | Dimensions | Bloc |
+|----------|-------|------|------------|------|
+| **237.1** | [**Saisie transaction** (T1)](#t1) [mockup](#ecran-t1) | Modal | 1112x279 | Saisie |
+| 237.1.1 | [Saisie Bilaterale (T7)](#t7) [mockup](#ecran-t7) | Type6 | 326x249 | |
+| 237.1.2 | [Saisie mode de règlement (T8)](#t8) [mockup](#ecran-t8) | Type6 | 506x250 | |
+| 237.1.3 | [Saisie Commentaires (T10)](#t10) [mockup](#ecran-t10) | Type6 | 772x169 | |
+| 237.1.4 | [VRL : Saisie identité (T11)](#t11) [mockup](#ecran-t11) | MDI | 699x157 | |
+| 237.1.5 | [Saisie dates forfait (T19)](#t19) [mockup](#ecran-t19) | MDI | 528x121 | |
+| 237.1.6 | [Affiche saisie (T30)](#t30) [mockup](#ecran-t30) | Modal | 427x124 | |
+| **237.2** | [**Reglements suite a refus TPE** (T2)](#t2) [mockup](#ecran-t2) | Type6 | 708x256 | Reglement |
+| 237.2.1 | [Verif reglement tpe (T5)](#t5) | - | - | |
+| 237.2.2 | [Creation reglement (T28)](#t28) | - | - | |
+| 237.2.3 | [Changement MOP multi paiement (T34)](#t34) | - | - | |
+| **237.3** | [**verif reg restant** (T3)](#t3) | - | - | Validation |
+| **237.4** | [**creation règlement** (T4)](#t4) | - | - | Creation |
+| 237.4.1 | [Creation prestation (T22)](#t22) | MDI | - | |
+| 237.4.2 | [Creation Tempo (T27)](#t27) | MDI | - | |
+| 237.4.3 | [Creation (T29)](#t29) | - | - | |
+| 237.4.4 | [Creation_heure_liberation (T47)](#t47) | - | - | |
+| **237.5** | [**Dé-Affecition** (T6)](#t6) | - | - | Traitement |
+| 237.5.1 | [Test si cloture en cours (T12)](#t12) | MDI | - | |
+| 237.5.2 | [Blocage cloture v1 (T13)](#t13) | MDI | - | |
+| 237.5.3 | [Blocage cloture v1 (T14)](#t14) | MDI | - | |
+| 237.5.4 | [Test reseau (T16)](#t16) | MDI | - | |
+| 237.5.5 | [Forfait (T17)](#t17) | MDI | - | |
+| 237.5.6 | [(sans nom) (T18)](#t18) [mockup](#ecran-t18) | Modal | 116x32 | |
+| 237.5.7 | [Effacement forfait (T20)](#t20) | MDI | - | |
+| 237.5.8 | [Effacement mvt forfait (T21)](#t21) | MDI | - | |
+| 237.5.9 | [Deblocage cloture v1 (T23)](#t23) | MDI | - | |
+| 237.5.10 | [Deblocage cloture (T24)](#t24) | MDI | - | |
+| 237.5.11 | [Gratuite ? (T25)](#t25) | MDI | - | |
+| 237.5.12 | [garantie? (T31)](#t31) | MDI | - | |
+| 237.5.13 | [Supprime enregs non affectés (T41)](#t41) | - | - | |
+| 237.5.14 | [Affectation Auto (T44)](#t44) | - | - | |
+| 237.5.15 | [MaJ Num Chèque (T45)](#t45) | - | - | |
+| 237.5.16 | [Libération du logement (T46)](#t46) [mockup](#ecran-t46) | - | 123x149 | |
+| 237.5.17 | [Récup nb chambre /LCO (T49)](#t49) [mockup](#ecran-t49) | - | 123x89 | |
+| **237.6** | [**RAZ 269** (T9)](#t9) | MDI | - | Initialisation |
+| 237.6.1 | [RAZ 269 (T32)](#t32) | MDI | - | |
+| 237.6.2 | [RAZ LCO liberation (T48)](#t48) | - | - | |
+| **237.7** | [**Reaffichage infos compte** (T15)](#t15) | MDI | - | Calcul |
+| 237.7.1 | [calcul nombre carte (T35)](#t35) | - | - | |
+| 237.7.2 | [Compte Enregs affectés (T37)](#t37) | - | - | |
+| 237.7.3 | [Compte Enregs affectés (T42)](#t42) | - | - | |
+| 237.7.4 | [Compte Enregs affectés (T43)](#t43) | - | - | |
+| **237.8** | [**Recherche imputation/ssimput** (T26)](#t26) | MDI | - | Consultation |
+| **237.9** | [**Increment Num. Ticket(VRL/VSL)** (T33)](#t33) | - | - | Impression |
+| **237.10** | [**Raz Affectation Transfert** (T36)](#t36) | - | - | Transfert |
+| 237.10.1 | [Type transfert (T38)](#t38) [mockup](#ecran-t38) | Type6 | 722x292 | |
+| 237.10.2 | [Affiche Transfert A/R (T39)](#t39) [mockup](#ecran-t39) | Type6 | 681x205 | |
+| 237.10.3 | [Affectation PAX / Transfert (T40)](#t40) [mockup](#ecran-t40) | - | 1056x281 | |
+
+### 9.4 Algorigramme
+
+```mermaid
+flowchart TD
+    START([Entree])
+    style START fill:#3fb950
+    BLK1[Saisie 7 ecr 7 taches]
+    style BLK1 fill:#58a6ff
+    BLK2[Reglement 1 ecr 4 taches]
+    style BLK2 fill:#58a6ff
+    BLK3[Validation 1 taches]
+    style BLK3 fill:#58a6ff
+    BLK4[Creation 5 taches]
+    style BLK4 fill:#58a6ff
+    BLK5[Traitement 3 ecr 18 taches]
+    style BLK5 fill:#58a6ff
+    BLK6[Initialisation 3 taches]
+    style BLK6 fill:#58a6ff
+    BLK7[Calcul 5 taches]
+    style BLK7 fill:#58a6ff
+    BLK8[Consultation 1 taches]
+    style BLK8 fill:#58a6ff
+    BLK9[Impression 1 taches]
+    style BLK9 fill:#58a6ff
+    BLK10[Transfert 3 ecr 4 taches]
+    style BLK10 fill:#58a6ff
+    EXT1([IDE 152 Recup Classe et Li])
+    style EXT1 fill:#3fb950
+    EXT2([IDE 84     SP Caractères ])
+    style EXT2 fill:#3fb950
+    EXT3([IDE 233 Appel Print ticket])
+    style EXT3 fill:#3fb950
+    EXT4([IDE 249 Reinit Aff PYR])
+    style EXT4 fill:#3fb950
+    EXT5([IDE 277 Selection Vols /t ])
+    style EXT5 fill:#3fb950
+    EXT6([IDE 43 Recuperation du ti])
+    style EXT6 fill:#3fb950
+    EXT7([IDE 149 Calcul stock produ])
+    style EXT7 fill:#3fb950
+    EXT8([IDE 179 Get Printer])
+    style EXT8 fill:#3fb950
+    FIN([Sortie])
+    style FIN fill:#f85149
+    START --> BLK1
+    BLK1 --> BLK2
+    BLK2 --> BLK3
+    BLK3 --> BLK4
+    BLK4 --> BLK5
+    BLK5 --> BLK6
+    BLK6 --> BLK7
+    BLK7 --> BLK8
+    BLK8 --> BLK9
+    BLK9 --> BLK10
+    BLK10 --> FIN
+    BLK1 -.->|appel| EXT1
+    BLK1 -.->|appel| EXT2
+    BLK1 -.->|appel| EXT3
+    BLK1 -.->|appel| EXT4
+    BLK1 -.->|appel| EXT5
+    BLK1 -.->|appel| EXT6
+    BLK1 -.->|appel| EXT7
+    BLK1 -.->|appel| EXT8
+```
+
+**Legende** : Bleu = blocs fonctionnels | Vert = programmes externes | Rouge = sortie
 
 <!-- TAB:Donnees -->
 
@@ -4285,7 +4354,7 @@ flowchart TD
 
 ## 11. VARIABLES
 
-### 11.1 Parametres entrants (15)
+### 11.1 Parametres entrants (16)
 
 Variables recues du programme appelant ([Menu caisse GM - scroll (IDE 163)](ADH-IDE-163.md)).
 
@@ -4306,6 +4375,7 @@ Variables recues du programme appelant ([Menu caisse GM - scroll (IDE 163)](ADH-
 | M | P0.Date debut sejour | Date | 1x parametre entrant |
 | N | P0.Valide ? | Numeric | 1x parametre entrant |
 | O | P0.Nb decimales | Numeric | 2x parametre entrant |
+| GM | P.Toute ligne | Logical | - |
 
 ### 11.2 Variables de session (51)
 
@@ -4461,7 +4531,7 @@ Variables internes au programme.
 | EM | W0 choix transac manuelle | Numeric | [T1](#t1) |
 | EO | W0 Lien Logement Lieu Séjour | Logical | - |
 
-### 11.4 Autres (16)
+### 11.4 Autres (15)
 
 Variables diverses.
 
@@ -4480,7 +4550,6 @@ Variables diverses.
 | FQ | b.type de transfert | Alpha | - |
 | GK | CHG_REASON_W0 libelle article | Numeric | - |
 | GL | CHG_PRV_W0 libelle article | Alpha | - |
-| GM | P.Toute ligne | Logical | - |
 | GN | CHG_REASON_W0 nbre articles | Numeric | - |
 | GO | CHG_PRV_W0 nbre articles | Numeric | 4x refs |
 
@@ -4504,6 +4573,7 @@ Variables diverses.
 | P0 | **M** | P0.Date debut sejour | Date |
 | P0 | **N** | P0.Valide ? | Numeric |
 | P0 | **O** | P0.Nb decimales | Numeric |
+| P0 | **GM** | P.Toute ligne | Logical |
 | W0 | **R** | W0 FIN SAISIE OD | Logical |
 | W0 | **T** | W0 Cloture en cours | Logical |
 | W0 | **U** | W0 code article | Numeric |
@@ -4657,7 +4727,6 @@ Variables diverses.
 | Autre | **FQ** | b.type de transfert | Alpha |
 | Autre | **GK** | CHG_REASON_W0 libelle article | Numeric |
 | Autre | **GL** | CHG_PRV_W0 libelle article | Alpha |
-| Autre | **GM** | P.Toute ligne | Logical |
 | Autre | **GN** | CHG_REASON_W0 nbre articles | Numeric |
 | Autre | **GO** | CHG_PRV_W0 nbre articles | Numeric |
 
@@ -5391,4 +5460,4 @@ graph LR
 | [Zoom services village (IDE 269)](ADH-IDE-269.md) | Sous-programme | 1x | Normale - Selection/consultation |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-01-30 10:45*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-01-30 19:09*

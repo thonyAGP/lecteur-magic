@@ -3,11 +3,12 @@
     Validation systematique du contenu d'une spec V7.2 generee
 
 .DESCRIPTION
-    Verifie que la spec respecte les 17 criteres V7.2 :
+    Verifie que la spec respecte les 20 criteres V7.2 :
     - 8 checks structurels (TAB, anchors, links, FORM-DATA, roles, types)
     - 7 checks GAP (roles specifiques, sous-taches, regles enrichies,
       boutons, colonnes, variables, migration)
     - 2 checks integrite (liens internes, syntaxe Mermaid)
+    - 3 checks non-regression (categorisation variables, format navigation, algorigramme)
 
 .PARAMETER SpecFile
     Chemin vers le fichier .md a valider
@@ -266,6 +267,49 @@ function Test-SpecV72 {
     }
 
     # ========================================
+    # SECTION D: NON-REGRESSION CHECKS (18+)
+    # ========================================
+
+    # CHECK 18 (NR-FIX1): Variable categorization - no misclassified parameters
+    # Variables named P0/PO/P./p./PI./Pi. must be in category "P0", never "Autre"
+    $misclassified = [regex]::Matches($content, '\|\s*Autre\s*\|\s*\*\*\w+\*\*\s*\|\s*(P[0O][\.\s]|[Pp][Ii]?[\.\s]|[Pp][Ii]\s)')
+    if ($misclassified.Count -eq 0) {
+        [void]$checks.Add([PSCustomObject]@{ check = "NR_VAR_CATEGORY"; status = "PASS"; detail = "Parametres correctement categorises" })
+    } else {
+        [void]$checks.Add([PSCustomObject]@{ check = "NR_VAR_CATEGORY"; status = "FAIL"; detail = "$($misclassified.Count) parametres classes en 'Autre'" })
+    }
+
+    # CHECK 19 (NR-FIX3): Navigation section not all on one line (complex programs)
+    if ($isComplexProgram) {
+        $navSection = [regex]::Match($content, '(?s)### 9\.3 Structure hierarchique.*?(?=##|\z)')
+        if ($navSection.Success) {
+            $navLines = ($navSection.Value -split "`n") | Where-Object { $_ -match '^\s*-\s+\*\*\d+\.\d+' }
+            $tooLongLines = @($navLines | Where-Object { $_.Length -gt 120 })
+            if ($tooLongLines.Count -eq 0) {
+                [void]$checks.Add([PSCustomObject]@{ check = "NR_NAV_FORMAT"; status = "PASS"; detail = "Navigation lisible" })
+            } else {
+                [void]$checks.Add([PSCustomObject]@{ check = "NR_NAV_FORMAT"; status = "WARN"; detail = "$($tooLongLines.Count) lignes >120 chars" })
+            }
+        } else {
+            [void]$checks.Add([PSCustomObject]@{ check = "NR_NAV_FORMAT"; status = "PASS"; detail = "N/A" })
+        }
+    } else {
+        [void]$checks.Add([PSCustomObject]@{ check = "NR_NAV_FORMAT"; status = "PASS"; detail = "N/A (programme simple)" })
+    }
+
+    # CHECK 20 (NR-FIX5): Algorigramme metier present (complex programs)
+    if ($isComplexProgram) {
+        $hasAlgorigramme = ($content -match '### 9\.4 Algorigramme') -and ($content -match 'START\(\[')
+        if ($hasAlgorigramme) {
+            [void]$checks.Add([PSCustomObject]@{ check = "NR_ALGORIGRAMME"; status = "PASS"; detail = "Algorigramme metier present" })
+        } else {
+            [void]$checks.Add([PSCustomObject]@{ check = "NR_ALGORIGRAMME"; status = "WARN"; detail = "Algorigramme metier absent (programme complexe)" })
+        }
+    } else {
+        [void]$checks.Add([PSCustomObject]@{ check = "NR_ALGORIGRAMME"; status = "PASS"; detail = "N/A (programme simple)" })
+    }
+
+    # ========================================
     # COMPUTE RESULTS
     # ========================================
 
@@ -302,7 +346,7 @@ function Test-SpecV72 {
 # ============================================================
 
 Write-Host "`n=================================================================" -ForegroundColor Cyan
-Write-Host "    VALIDATION CONTENU V7.2 - 17 CRITERES SYSTEMATIQUES        " -ForegroundColor Cyan
+Write-Host "    VALIDATION CONTENU V7.2 - 20 CRITERES SYSTEMATIQUES        " -ForegroundColor Cyan
 Write-Host "=================================================================" -ForegroundColor Cyan
 
 $allResults = [System.Collections.ArrayList]::new()

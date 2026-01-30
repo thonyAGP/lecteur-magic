@@ -91,10 +91,12 @@ function Clean-MermaidLabel {
 
 function Get-VariableCategory {
     param([string]$Name)
-    if ($Name -match '^P0[\.\s]') { return "P0" }
+    # P0, PO (typo O/0), P., p., PI., Pi. = parametres entrants
+    if ($Name -match '^P[0O][\.\s]') { return "P0" }
+    if ($Name -match '^[Pp][Ii]?[\.\s]') { return "P0" }
     if ($Name -match '^W0[\.\s]') { return "W0" }
     if ($Name -match '^V\.') { return "V." }
-    if ($Name -match '^VG\d') { return "VG" }
+    if ($Name -match '^VG[\d\s\.]') { return "VG" }
     if ($Name -match '^v[\.\s]') { return "V." }
     return "Autre"
 }
@@ -1247,9 +1249,11 @@ if ($visibleForms.Count -gt 1) {
     Add-Line
 }
 
-# V7.2: Hierarchical task structure with links
+# V7.2: Hierarchical task structure as table
 Add-Line "### 9.3 Structure hierarchique ($(Pluralize $allForms.Count 'tache' 'taches'))"
 Add-Line
+Add-Line "| Position | Tache | Type | Dimensions | Bloc |"
+Add-Line "|----------|-------|------|------------|------|"
 
 $blocIdx = 1
 foreach ($blocName in $blocMap.Keys) {
@@ -1258,29 +1262,116 @@ foreach ($blocName in $blocMap.Keys) {
 
     $parentForm = $blocForms[0]
     $parentTaskId = [int]$parentForm.task_isn2
-    $pVis = if ($parentForm.dimensions.width -gt 0) { "**[ECRAN]**" } else { "" }
-    $pType = if ($parentForm.window_type_str -and $parentForm.window_type_str -ne 'Type0') { "($($parentForm.window_type_str))" } else { "" }
-    $pDims = ""
-    if ($parentForm.dimensions.width -gt 0) { $pDims = " $($parentForm.dimensions.width)x$($parentForm.dimensions.height) -> [mockup](#ecran-t$parentTaskId)" }
     $pName = if ($parentForm.name -and $parentForm.name.Trim()) { $parentForm.name.Trim() } else { "(sans nom)" }
-    # V7.2: clickable link to task anchor
-    Add-Line "- **$IdePosition.$blocIdx** [$pName (T$parentTaskId)](#t$parentTaskId) $pVis $pType$pDims *[$blocName]*"
+    $pType = if ($parentForm.window_type_str -and $parentForm.window_type_str -ne 'Type0') { $parentForm.window_type_str } else { "-" }
+    $pDims = "-"
+    $pMockup = ""
+    if ($parentForm.dimensions.width -gt 0) {
+        $pDims = "$($parentForm.dimensions.width)x$($parentForm.dimensions.height)"
+        $pMockup = " [mockup](#ecran-t$parentTaskId)"
+    }
+    Add-Line "| **$IdePosition.$blocIdx** | [**$pName** (T$parentTaskId)](#t$parentTaskId)$pMockup | $pType | $pDims | $blocName |"
 
     $childIdx = 1
     for ($fi = 1; $fi -lt $blocForms.Count; $fi++) {
         $cf = $blocForms[$fi]
         $cId = [int]$cf.task_isn2
-        $cVis = if ($cf.dimensions.width -gt 0) { "**[ECRAN]**" } else { "" }
-        $cType = if ($cf.window_type_str -and $cf.window_type_str -ne 'Type0') { "($($cf.window_type_str))" } else { "" }
-        $cDims = ""
-        if ($cf.dimensions.width -gt 0) { $cDims = " $($cf.dimensions.width)x$($cf.dimensions.height) -> [mockup](#ecran-t$cId)" }
         $cName = if ($cf.name -and $cf.name.Trim()) { $cf.name.Trim() } else { "(sans nom)" }
-        Add-Line "  - **$IdePosition.$blocIdx.$childIdx** [$cName (T$cId)](#t$cId) $cVis $cType$cDims"
+        $cType = if ($cf.window_type_str -and $cf.window_type_str -ne 'Type0') { $cf.window_type_str } else { "-" }
+        $cDims = "-"
+        $cMockup = ""
+        if ($cf.dimensions.width -gt 0) {
+            $cDims = "$($cf.dimensions.width)x$($cf.dimensions.height)"
+            $cMockup = " [mockup](#ecran-t$cId)"
+        }
+        Add-Line "| $IdePosition.$blocIdx.$childIdx | [$cName (T$cId)](#t$cId)$cMockup | $cType | $cDims | |"
         $childIdx++
     }
     $blocIdx++
 }
 Add-Line
+
+# V7.2-FIX5: Algorigramme metier (programmes complexes >3 taches)
+$isComplex = ($allForms.Count -gt 3)
+if ($isComplex) {
+    Add-Line "### 9.4 Algorigramme"
+    Add-Line
+    Add-Line '```mermaid'
+    Add-Line "flowchart TD"
+    Add-Line "    START([Entree])"
+    Add-Line "    style START fill:#3fb950"
+
+    $blocKeys = @($blocMap.Keys)
+    $blocNodeIds = @{}
+    $bIdx = 1
+    foreach ($bk in $blocKeys) {
+        $bForms = @($blocMap[$bk])
+        $screenCount = @($bForms | Where-Object { $_.dimensions.width -gt 0 }).Count
+        $taskCount = $bForms.Count
+        $nodeId = "BLK$bIdx"
+        $blocNodeIds[$bk] = $nodeId
+        $shortName = if ($bk.Length -gt 20) { $bk.Substring(0, 20) } else { $bk }
+        if ($screenCount -gt 0) {
+            Add-Line "    $nodeId[$shortName $screenCount ecr $taskCount taches]"
+        } else {
+            Add-Line "    $nodeId[$shortName $taskCount taches]"
+        }
+        Add-Line "    style $nodeId fill:#58a6ff"
+        $bIdx++
+    }
+
+    # External calls as separate nodes
+    $calleeList = @()
+    if ($discovery.call_graph -and $discovery.call_graph.callees) {
+        $calleeList = @($discovery.call_graph.callees | Select-Object -First 8)
+    }
+    $extIdx = 1
+    foreach ($callee in $calleeList) {
+        $cName = if ($callee.name.Length -gt 18) { $callee.name.Substring(0, 18) } else { $callee.name }
+        $cName = $cName -replace '["\[\]{}()<>]', ''
+        Add-Line "    EXT$extIdx([IDE $($callee.ide) $cName])"
+        Add-Line "    style EXT$extIdx fill:#3fb950"
+        $extIdx++
+    }
+
+    Add-Line "    FIN([Sortie])"
+    Add-Line "    style FIN fill:#f85149"
+
+    # Connect: START -> first block
+    if ($blocKeys.Count -gt 0) {
+        Add-Line "    START --> $($blocNodeIds[$blocKeys[0]])"
+    }
+
+    # Connect blocks sequentially
+    for ($bi = 0; $bi -lt $blocKeys.Count - 1; $bi++) {
+        $fromNode = $blocNodeIds[$blocKeys[$bi]]
+        $toNode = $blocNodeIds[$blocKeys[$bi + 1]]
+        Add-Line "    $fromNode --> $toNode"
+    }
+
+    # Connect last block -> FIN
+    if ($blocKeys.Count -gt 0) {
+        $lastNode = $blocNodeIds[$blocKeys[$blocKeys.Count - 1]]
+        Add-Line "    $lastNode --> FIN"
+    }
+
+    # Connect first block to external calls
+    if ($calleeList.Count -gt 0 -and $blocKeys.Count -gt 0) {
+        $mainNode = $blocNodeIds[$blocKeys[0]]
+        $extIdx = 1
+        foreach ($callee in $calleeList) {
+            $ctx = if ($callee.context) { $callee.context } else { "appel" }
+            $ctx = if ($ctx.Length -gt 20) { $ctx.Substring(0, 20) } else { $ctx }
+            Add-Line "    $mainNode -.->|$ctx| EXT$extIdx"
+            $extIdx++
+        }
+    }
+
+    Add-Line '```'
+    Add-Line
+    Add-Line "**Legende** : Bleu = blocs fonctionnels | Vert = programmes externes | Rouge = sortie"
+    Add-Line
+}
 
 # ================================================================
 # TAB 3: DONNEES
