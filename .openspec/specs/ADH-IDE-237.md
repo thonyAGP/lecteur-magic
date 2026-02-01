@@ -1,6 +1,6 @@
 ﻿# ADH IDE 237 - Transaction Nouv vente avec GP
 
-> **Analyse**: Phases 1-4 2026-02-01 00:54 -> 00:55 (24s) | Assemblage 00:55
+> **Analyse**: Phases 1-4 2026-02-01 10:35 -> 10:35 (14s) | Assemblage 10:35
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -6110,4 +6110,4 @@ graph LR
 | [Zoom services village (IDE 269)](ADH-IDE-269.md) | Sous-programme | 1x | Normale - Selection/consultation |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-01 00:55*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-01 10:35*
