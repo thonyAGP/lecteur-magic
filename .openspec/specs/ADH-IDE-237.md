@@ -25,130 +25,130 @@
 
 ### Controles pre-vente
 
-Avant toute saisie, le programme verifie que la caisse n'est pas en cours de cloture. La tache T12 lit la table `reseau_cloture___rec` (cafil001_dat) pour detecter un verrou de cloture actif. Si un verrou existe, les sous-taches T13 et T14 posent un blocage supplementaire (Write sur `reseau_cloture___rec`) pour empecher toute transaction concurrente pendant la cloture. La tache T16 teste l'etat du reseau en ecrivant dans `compte_gm________cgm` (cafil025_dat) — si le reseau est indisponible, le programme peut basculer en mode hors-ligne.
+Avant toute saisie, le programme verifie que la caisse n'est pas en cours de cloture. La tache 237.8 lit la table `reseau_cloture___rec` (cafil001_dat) pour detecter un verrou de cloture actif. Si un verrou existe, les sous-taches 237.8.1 et 237.8.2 posent un blocage supplementaire (Write sur `reseau_cloture___rec`) pour empecher toute transaction concurrente pendant la cloture. La tache 237.10 teste l'etat du reseau en ecrivant dans `compte_gm________cgm` (cafil025_dat) — si le reseau est indisponible, le programme peut basculer en mode hors-ligne.
 
 <details>
-<summary>3 taches : T12, T15, T16</summary>
+<summary>3 taches : 237.8, 237.9, 237.10</summary>
 
-- **T12** - Test si cloture en cours (28 lignes, lit reseau_cloture___rec)
-- **T15** - Reaffichage infos compte (14 lignes, ecrit compte_gm________cgm)
-- **T16** - Test reseau (11 lignes, ecrit compte_gm________cgm)
+- **237.8** - Test si cloture en cours (28 lignes, lit reseau_cloture___rec)
+- **237.9** - Reaffichage infos compte (14 lignes, ecrit compte_gm________cgm)
+- **237.10** - Test reseau (11 lignes, ecrit compte_gm________cgm)
 
 </details>
 
 ### Saisie de la vente
 
-La saisie s'effectue via plusieurs ecrans adaptes au type d'article vendu. L'ecran principal T1 (716 lignes) orchestre l'ensemble du flux et presente le formulaire de saisie transaction. Pour les articles VSL, la tache T10 affiche un ecran de commentaire specifique aux sejours non-adherents. Pour les VRL, la tache T11 ouvre un ecran d'identification du compte specifique aux residents locaux. Le programme appelle [Recuperation du titre (IDE 43)](ADH-IDE-43.md) pour completer les informations client, [SP Caracteres Interdits (IDE 84)](ADH-IDE-84.md) pour valider les champs saisis, et [Zoom articles (IDE 257)](ADH-IDE-257.md), [Zoom services village (IDE 269)](ADH-IDE-269.md) pour la selection d'articles et services.
+La saisie s'effectue via plusieurs ecrans adaptes au type d'article vendu. L'ecran principal (tache racine 237, 716 lignes) orchestre l'ensemble du flux et presente le formulaire de saisie transaction. Pour les articles VSL, la tache 237.6 affiche un ecran de commentaire specifique aux sejours non-adherents. Pour les VRL, la tache 237.7 ouvre un ecran d'identification du compte specifique aux residents locaux. Le programme appelle [Recuperation du titre (IDE 43)](ADH-IDE-43.md) pour completer les informations client, [SP Caracteres Interdits (IDE 84)](ADH-IDE-84.md) pour valider les champs saisis, et [Zoom articles (IDE 257)](ADH-IDE-257.md), [Zoom services village (IDE 269)](ADH-IDE-269.md) pour la selection d'articles et services.
 
 <details>
-<summary>4 taches : T1, T10, T11, T30</summary>
+<summary>4 taches : 237, 237.6, 237.7, 237.21</summary>
 
-- **T1** - Transaction Nouv vente avec GP (716 lignes, lit table 103, **[ECRAN]**)
-- **T10** - Saisie commentaire VSL NA (33 lignes, lit table 77, **[ECRAN]**)
-- **T11** - Saisie ident cpt spe VRL (31 lignes, lit table 109, **[ECRAN]**)
-- **T30** - Affiche saisie (28 lignes, ecrit tempo_ecran_police, **[ECRAN]**)
+- **237** - Transaction Nouv vente avec GP (716 lignes, lit table 103, **[ECRAN]**)
+- **237.6** - Saisie commentaire VSL NA (33 lignes, lit table 77, **[ECRAN]**)
+- **237.7** - Saisie ident cpt spe VRL (31 lignes, lit table 109, **[ECRAN]**)
+- **237.21** - Affiche saisie (28 lignes, ecrit tempo_ecran_police, **[ECRAN]**)
 
 </details>
 
 ### Forfait et tarification
 
-Le calcul des forfaits est gere par la tache T17 (62 lignes) qui lit la table `prestations` (cafil010_dat) pour determiner le tarif applicable selon le type d'article, la duree du sejour et les dates. La tache T18 permet la saisie manuelle des dates de forfait via un ecran dedie. Les taches T20 et T21 gerent l'effacement d'un forfait existant avant recreation : T20 supprime l'enregistrement dans `prestations` et T21 efface le mouvement dans `mvt_prestation___mpr` (cafil024_dat). La tache T22 cree la nouvelle prestation en mode Create dans `prestations`. Ce bloc ne s'execute que pour les articles VRL et VSL qui necessitent un forfait.
+Le calcul des forfaits est gere par la tache 237.11 (62 lignes) qui lit la table `prestations` (cafil010_dat) pour determiner le tarif applicable selon le type d'article, la duree du sejour et les dates. La tache 237.12 permet la saisie manuelle des dates de forfait via un ecran dedie. Les taches 237.13 et 237.14 gerent l'effacement d'un forfait existant avant recreation : 237.13 supprime l'enregistrement dans `prestations` et 237.14 efface le mouvement dans `mvt_prestation___mpr` (cafil024_dat). La tache 237.15 cree la nouvelle prestation en mode Create dans `prestations`. Ce bloc ne s'execute que pour les articles VRL et VSL qui necessitent un forfait.
 
 <details>
-<summary>5 taches : T17, T18, T20, T21, T22</summary>
+<summary>5 taches : 237.11, 237.12, 237.13, 237.14, 237.15</summary>
 
-- **T17** - Forfait (62 lignes, lit prestations)
-- **T18** - Saisie des dates forfait (5 lignes, conteneur sous-tache T19 **[ECRAN]**)
-- **T20** - Effacement forfait (5 lignes, ecrit prestations)
-- **T21** - Effacement mvt forfait (5 lignes, ecrit mvt_prestation___mpr)
-- **T22** - Creation prestation (19 lignes, ecrit prestations en mode Create)
+- **237.11** - Forfait (62 lignes, lit prestations)
+- **237.12** - Saisie des dates forfait (5 lignes, conteneur sous-tache 237.12.1 **[ECRAN]**)
+- **237.13** - Effacement forfait (5 lignes, ecrit prestations)
+- **237.14** - Effacement mvt forfait (5 lignes, ecrit mvt_prestation___mpr)
+- **237.15** - Creation prestation (19 lignes, ecrit prestations en mode Create)
 
 </details>
 
 ### Garantie et Gift Pass
 
-Ce domaine couvre la verification des conditions de gratuites et de garanties deposees. La tache T25 "Gratuite ?" (10 lignes) interroge la table `articles` (table 30) pour verifier si l'article est eligible a une gratuité, en lisant aussi l'imputation comptable via la sous-tache T26. La tache T31 "garantie?" (10 lignes) verifie dans la table `depot_garantie` (table 39) si le client a un depot de garantie actif, ce qui influence le montant a regler. Le programme appelle [Solde Gift Pass (IDE 241)](ADH-IDE-241.md) et [Solde Resort Credit (IDE 254)](ADH-IDE-254.md) pour recuperer le solde disponible en Gift Pass et Resort Credit, et T35 calcule le nombre de cartes GP et le montant deductible.
+Ce domaine couvre la verification des conditions de gratuites et de garanties deposees. La tache 237.18 "Gratuite ?" (10 lignes) interroge la table `articles` (table 30) pour verifier si l'article est eligible a une gratuité, en lisant aussi l'imputation comptable via la sous-tache 237.18.1. La tache 237.22 "garantie?" (10 lignes) verifie dans la table `depot_garantie` (table 39) si le client a un depot de garantie actif, ce qui influence le montant a regler. Le programme appelle [Solde Gift Pass (IDE 241)](ADH-IDE-241.md) et [Solde Resort Credit (IDE 254)](ADH-IDE-254.md) pour recuperer le solde disponible en Gift Pass et Resort Credit, et 237.26 calcule le nombre de cartes GP et le montant deductible.
 
 <details>
-<summary>4 taches : T25, T31, T35, T26</summary>
+<summary>4 taches : 237.18, 237.22, 237.26, 237.18.1</summary>
 
-- **T25** - Gratuite ? (10 lignes, lit table articles)
-- **T31** - garantie? (10 lignes, lit depot_garantie)
-- **T35** - Calcul nombre carte et montant (18 lignes, lit table temporaire)
-- **T26** - Recherche imputation/ssimput (10 lignes, lit table imputations, sous-tache de T25)
+- **237.18** - Gratuite ? (10 lignes, lit table articles)
+- **237.22** - garantie? (10 lignes, lit depot_garantie)
+- **237.26** - Calcul nombre carte et montant (18 lignes, lit table temporaire)
+- **237.18.1** - Recherche imputation/ssimput (10 lignes, lit table imputations, sous-tache de 237.18)
 
 </details>
 
 ### Preparation de la transaction
 
-La tache T27 "Creation Tempo" est la plus volumineuse du programme (202 lignes). Elle assemble toutes les donnees saisies (article, montant, forfait, MOP, identite) dans la table temporaire `tempo_ecran_police` (tmp_ecrpolice_dat) qui sert de zone de travail avant le deversement comptable final. Cette tache appelle [Get Fidelisation et Remise (IDE 225)](ADH-IDE-225.md) pour recuperer les remises applicables et [Get Matricule (IDE 227)](ADH-IDE-227.md) pour l'identification de l'operateur. Les variables W0 (code article, montant, devise, dates) sont lues et assemblees en un enregistrement temporaire complet.
+La tache 237.19 "Creation Tempo" est la plus volumineuse du programme (202 lignes). Elle assemble toutes les donnees saisies (article, montant, forfait, MOP, identite) dans la table temporaire `tempo_ecran_police` (tmp_ecrpolice_dat) qui sert de zone de travail avant le deversement comptable final. Cette tache appelle [Get Fidelisation et Remise (IDE 225)](ADH-IDE-225.md) pour recuperer les remises applicables et [Get Matricule (IDE 227)](ADH-IDE-227.md) pour l'identification de l'operateur. Les variables W0 (code article, montant, devise, dates) sont lues et assemblees en un enregistrement temporaire complet.
 
 <details>
-<summary>1 tache : T27</summary>
+<summary>1 tache : 237.19</summary>
 
-- **T27** - Creation Tempo (202 lignes, lit table temporaire, assemblage donnees)
+- **237.19** - Creation Tempo (202 lignes, lit table temporaire, assemblage donnees)
 
 </details>
 
 ### Reglements
 
-Le reglement s'effectue selon deux modes : bilateral (T7, ecran BI avec deux devises) ou unilateral (T8, ecran UNI en devise locale). Le choix du mode depend de la variable W0 et du type de client. La tache T34 "Changement MOP" (41 lignes) gere le changement de moyen de paiement en cours de transaction, en appelant [Recup Classe et Lib du MOP (IDE 152)](ADH-IDE-152.md) pour charger la classe et le libelle du nouveau mode. T28 cree l'enregistrement de reglement dans `stat_lieu_vente_date` et T45 met a jour le numero de cheque si le MOP est de type cheque. En cas d'erreur TPE, la tache T2 (85 lignes, ecran) permet de ressaisir le reglement apres rejet carte bancaire, avec [Gestion Cheque (IDE 228)](ADH-IDE-228.md) et [Zoom modes de paiement (IDE 272)](ADH-IDE-272.md).
+Le reglement s'effectue selon deux modes : bilateral (237.3, ecran BI avec deux devises) ou unilateral (237.4, ecran UNI en devise locale). Le choix du mode depend de la variable W0 et du type de client. La tache 237.25 "Changement MOP" (41 lignes) gere le changement de moyen de paiement en cours de transaction, en appelant [Recup Classe et Lib du MOP (IDE 152)](ADH-IDE-152.md) pour charger la classe et le libelle du nouveau mode. 237.20 cree l'enregistrement de reglement dans `stat_lieu_vente_date` et 237.32 met a jour le numero de cheque si le MOP est de type cheque. En cas d'erreur TPE, la tache 237.1 (85 lignes, ecran) permet de ressaisir le reglement apres rejet carte bancaire, avec [Gestion Cheque (IDE 228)](ADH-IDE-228.md) et [Zoom modes de paiement (IDE 272)](ADH-IDE-272.md).
 
 <details>
-<summary>7 taches : T2, T7, T8, T28, T34, T45, T9</summary>
+<summary>7 taches : 237.1, 237.3, 237.4, 237.20, 237.25, 237.32, 237.5</summary>
 
-- **T2** - Reglement suite a erreur TPE (85 lignes, lit table 50, **[ECRAN]**)
-- **T7** - Saisie mode de reglement BI (30 lignes, lit table MOP, **[ECRAN]**)
-- **T8** - Saisie mode de reglement UNI (34 lignes, lit table 50, **[ECRAN]**)
-- **T28** - Creation reglement (20 lignes, ecrit stat_lieu_vente_date)
-- **T34** - Changement MOP (41 lignes, lit table 77)
-- **T45** - MaJ Num Cheque (4 lignes, ecrit stat_lieu_vente_date)
-- **T9** - RAZ tempo reglement (14 lignes, supprime table temporaire)
+- **237.1** - Reglement suite a erreur TPE (85 lignes, lit table 50, **[ECRAN]**)
+- **237.3** - Saisie mode de reglement BI (30 lignes, lit table MOP, **[ECRAN]**)
+- **237.4** - Saisie mode de reglement UNI (34 lignes, lit table 50, **[ECRAN]**)
+- **237.20** - Creation reglement (20 lignes, ecrit stat_lieu_vente_date)
+- **237.25** - Changement MOP (41 lignes, lit table 77)
+- **237.32** - MaJ Num Cheque (4 lignes, ecrit stat_lieu_vente_date)
+- **237.5** - RAZ tempo reglement (14 lignes, supprime table temporaire)
 
 </details>
 
 ### Transfert (specifique TRF)
 
-Ce domaine ne s'execute que lorsque le code article W0 = 'TRF' (transfert de passagers). La tache T38 presente un ecran de selection du type de transfert (Aller, Retour, Aller/Retour) — la variable est decodee via l'expression 2 qui mappe les valeurs 1/2/3. La tache T40 "Affectation PAX / Transfert" (67 lignes, ecran) permet d'affecter les passagers aux horaires de bus dans la table `Boo_ResultsRechercheHoraire`, avec selection via [Selection Vols (IDE 277)](ADH-IDE-277.md). T44 gere l'affectation automatique et T36/T6 le nettoyage (RAZ et desaffectation). T37 compte les enregistrements affectes pour valider la coherence avant deversement.
+Ce domaine ne s'execute que lorsque le code article W0 = 'TRF' (transfert de passagers). La tache 237.29 presente un ecran de selection du type de transfert (Aller, Retour, Aller/Retour) — la variable est decodee via l'expression 2 qui mappe les valeurs 1/2/3. La tache 237.30 "Affectation PAX / Transfert" (67 lignes, ecran) permet d'affecter les passagers aux horaires de bus dans la table `Boo_ResultsRechercheHoraire`, avec selection via [Selection Vols (IDE 277)](ADH-IDE-277.md). 237.31 gere l'affectation automatique et 237.27/237.2 le nettoyage (RAZ et desaffectation). 237.28 compte les enregistrements affectes pour valider la coherence avant deversement.
 
 <details>
-<summary>7 taches : T36, T37, T38, T40, T44, T6, T33</summary>
+<summary>7 taches : 237.27, 237.28, 237.29, 237.30, 237.31, 237.2, 237.24</summary>
 
-- **T36** - Raz Affectation Transfert (2 lignes, supprime Boo_ResultsRechercheHoraire)
-- **T37** - Compte Enregs affectes (5 lignes, lit Boo_ResultsRechercheHoraire)
-- **T38** - Type Transfert (17 lignes, **[ECRAN]**)
-- **T40** - Affectation PAX / Transfert (67 lignes, ecrit Boo_ResultsRechercheHoraire, **[ECRAN]**)
-- **T44** - Affectation Auto (13 lignes, ecrit Boo_ResultsRechercheHoraire)
-- **T6** - Desaffectation (9 lignes, ecrit Boo_ResultsRechercheHoraire)
-- **T33** - Increment Num. Ticket VRL/VSL (10 lignes, ecrit compteurs________cpt)
+- **237.27** - Raz Affectation Transfert (2 lignes, supprime Boo_ResultsRechercheHoraire)
+- **237.28** - Compte Enregs affectes (5 lignes, lit Boo_ResultsRechercheHoraire)
+- **237.29** - Type Transfert (17 lignes, **[ECRAN]**)
+- **237.30** - Affectation PAX / Transfert (67 lignes, ecrit Boo_ResultsRechercheHoraire, **[ECRAN]**)
+- **237.31** - Affectation Auto (13 lignes, ecrit Boo_ResultsRechercheHoraire)
+- **237.2** - Desaffectation (9 lignes, ecrit Boo_ResultsRechercheHoraire)
+- **237.24** - Increment Num. Ticket VRL/VSL (10 lignes, ecrit compteurs________cpt)
 
 </details>
 
 ### Liberation chambre (specifique PYR)
 
-Ce domaine ne s'execute que pour le code article W0 = 'PYR' (Payer la chambre) lorsque le client libere son logement. La tache T46 "Maj heure Liberation chambre" (24 lignes, ecran) affiche un formulaire pour saisir l'heure de liberation effective dans `Table_1037` (table memory des logements). T47 cree l'enregistrement de liberation si celui-ci n'existe pas encore (Write, 16 lignes). T48 efface les enregistrements LCO temporaires (Delete sur `Table_1037`). T49 recupere le nombre de chambres liees au compte pour gerer les PYR multi-chambres, avec appel a [Choix PYR (IDE 248)](ADH-IDE-248.md) et [Zoom Logements (IDE 274)](ADH-IDE-274.md) si plusieurs chambres sont disponibles.
+Ce domaine ne s'execute que pour le code article W0 = 'PYR' (Payer la chambre) lorsque le client libere son logement. La tache 237.33 "Maj heure Liberation chambre" (24 lignes, ecran) affiche un formulaire pour saisir l'heure de liberation effective dans `Table_1037` (table memory des logements). 237.34 cree l'enregistrement de liberation si celui-ci n'existe pas encore (Write, 16 lignes). 237.35 efface les enregistrements LCO temporaires (Delete sur `Table_1037`). 237.36 recupere le nombre de chambres liees au compte pour gerer les PYR multi-chambres, avec appel a [Choix PYR (IDE 248)](ADH-IDE-248.md) et [Zoom Logements (IDE 274)](ADH-IDE-274.md) si plusieurs chambres sont disponibles.
 
 <details>
-<summary>4 taches : T46, T47, T48, T49</summary>
+<summary>4 taches : 237.33, 237.34, 237.35, 237.36</summary>
 
-- **T46** - Maj heure Liberation chambre (24 lignes, ecrit Table_1037, **[ECRAN]**)
-- **T47** - Creation_heure_liberation (16 lignes, ecrit Table_1037)
-- **T48** - RAZ LCO liberation (3 lignes, supprime Table_1037)
-- **T49** - Recup nb chambres /LCO (5 lignes)
+- **237.33** - Maj heure Liberation chambre (24 lignes, ecrit Table_1037, **[ECRAN]**)
+- **237.34** - Creation_heure_liberation (16 lignes, ecrit Table_1037)
+- **237.35** - RAZ LCO liberation (3 lignes, supprime Table_1037)
+- **237.36** - Recup nb chambres /LCO (5 lignes)
 
 </details>
 
 ### Finalisation
 
-Apres la transaction, le programme effectue un nettoyage complet. T32 reinitialise la table temporaire des lignes de vente (Delete sur `tempo_ecran_police`). Les taches T23 et T24 debloquent les verrous de cloture poses au debut (Write sur `reseau_cloture___rec`) — v1 pour la cloture standard, T2H pour le creneau horaire. La tache T33 incremente le compteur de tickets dans `compteurs________cpt` (cafil046_dat) pour les ventes VRL/VSL. Enfin, le programme appelle [Deversement Transaction (IDE 247)](ADH-IDE-247.md) pour transferer les donnees temporaires vers les tables comptables definitives, et [Appel Print ticket vente PMS28 (IDE 233)](ADH-IDE-233.md) pour imprimer le ticket de caisse via [Get Printer (IDE 179)](ADH-IDE-179.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md) et [Raz Current Printer (IDE 182)](ADH-IDE-182.md).
+Apres la transaction, le programme effectue un nettoyage complet. 237.23 reinitialise la table temporaire des lignes de vente (Delete sur `tempo_ecran_police`). Les taches 237.16 et 237.17 debloquent les verrous de cloture poses au debut (Write sur `reseau_cloture___rec`) — v1 pour la cloture standard, T2H pour le creneau horaire. La tache 237.24 incremente le compteur de tickets dans `compteurs________cpt` (cafil046_dat) pour les ventes VRL/VSL. Enfin, le programme appelle [Deversement Transaction (IDE 247)](ADH-IDE-247.md) pour transferer les donnees temporaires vers les tables comptables definitives, et [Appel Print ticket vente PMS28 (IDE 233)](ADH-IDE-233.md) pour imprimer le ticket de caisse via [Get Printer (IDE 179)](ADH-IDE-179.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md) et [Raz Current Printer (IDE 182)](ADH-IDE-182.md).
 
 <details>
-<summary>4 taches : T23, T24, T32, T33</summary>
+<summary>4 taches : 237.16, 237.17, 237.23, 237.24</summary>
 
-- **T23** - Deblocage cloture v1 (4 lignes, ecrit reseau_cloture___rec)
-- **T24** - Deblocage cloture T2H (5 lignes, ecrit reseau_cloture___rec)
-- **T32** - RAZ tempo ligne vente (7 lignes, supprime tempo_ecran_police)
-- **T33** - Increment Num. Ticket VRL/VSL (10 lignes, ecrit compteurs________cpt)
+- **237.16** - Deblocage cloture v1 (4 lignes, ecrit reseau_cloture___rec)
+- **237.17** - Deblocage cloture T2H (5 lignes, ecrit reseau_cloture___rec)
+- **237.23** - RAZ tempo ligne vente (7 lignes, supprime tempo_ecran_police)
+- **237.24** - Increment Num. Ticket VRL/VSL (10 lignes, ecrit compteurs________cpt)
 
 </details>
 
@@ -4546,22 +4546,22 @@ flowchart TD
 | Noeud | Source | Justification |
 |-------|--------|---------------|
 | START | Programme ADH IDE 237 | Point d'entree Transaction Nouv vente avec GP |
-| CTRL | Taches T12, T15, T16 | Verification cloture et reseau avant toute operation |
-| SAISIE | Tache T1 (716 lignes) + T10, T11 | Ecran principal de saisie + ecrans conditionnels VSL/VRL |
-| FORFAIT | Taches T17, T18, T20-T22 | Calcul et creation des prestations/forfaits |
-| GRATIS | Tache T25 - Expression articles | Decision : article gratuit ou payant |
+| CTRL | Taches 237.8, 237.9, 237.10 | Verification cloture et reseau avant toute operation |
+| SAISIE | Tache 237 (716 lignes) + 237.6, 237.7 | Ecran principal de saisie + ecrans conditionnels VSL/VRL |
+| FORFAIT | Taches 237.11, 237.12, 237.13 a 237.15 | Calcul et creation des prestations/forfaits |
+| GRATIS | Tache 237.18 - Expression articles | Decision : article gratuit ou payant |
 | GPCHECK | Callees IDE 241, IDE 254 | Interrogation solde Gift Pass et Resort Credit |
-| GARANT | Tache T31 - Table depot_garantie | Decision : depot de garantie actif |
-| GPCALC | Tache T35 | Calcul nombre de cartes GP et montant deductible |
-| TEMPO | Tache T27 (202 lignes) | Assemblage donnees dans tempo_ecran_police |
-| REGL | Taches T7 BI, T8 UNI, T28, T34 | Saisie mode de reglement et creation enregistrement |
-| TPEERR | Tache T2 - Erreur TPE | Decision : rejet carte bancaire par terminal TPE |
+| GARANT | Tache 237.22 - Table depot_garantie | Decision : depot de garantie actif |
+| GPCALC | Tache 237.26 | Calcul nombre de cartes GP et montant deductible |
+| TEMPO | Tache 237.19 (202 lignes) | Assemblage donnees dans tempo_ecran_police |
+| REGL | Taches 237.3 BI, 237.4 UNI, 237.20, 237.32 | Saisie mode de reglement et creation enregistrement |
+| TPEERR | Tache 237.1 - Reglement suite a erreur TPE | Decision : rejet carte bancaire par terminal TPE |
 | WCODE | Expression 120 - W0 code article [W] | Routage multi-voies VRL/VSL/TRF/PYR (29 conditions) |
-| TRFPAX | Taches T38, T40, T44 | Affectation passagers aux horaires Booker (TRF) |
-| PYRLCO | Taches T46, T47, T48, T49 | Liberation chambre et enregistrement heure (PYR) |
-| TICKET | Tache T33, Callee IDE 233 | Impression ticket de caisse via Print ticket |
+| TRFPAX | Taches 237.30, 237.30.2, 237.31 | Affectation passagers aux horaires Booker (TRF) |
+| PYRLCO | Taches 237.33, 237.34, 237.35, 237.36 | Liberation chambre et enregistrement heure (PYR) |
+| TICKET | Tache 237.24, Callee IDE 233 | Impression ticket de caisse via Print ticket |
 | DEVERS | Callee IDE 247 - DEVERSEMENT | Transfert donnees temporaires vers tables comptables |
-| FINRAZ | Taches T23, T24, T32 | Deblocage cloture + RAZ tables temporaires |
+| FINRAZ | Taches 237.16, 237.17, 237.23 | Deblocage cloture + RAZ tables temporaires |
 | ENDOK | Fin normale | Transaction enregistree avec succes |
 | ENDKO | Fin erreur TPE | Echec reglement carte bancaire |
 
