@@ -195,11 +195,21 @@ if (Test-Path $goldenFile) {
 }
 
 # Save pipeline report
+$algoJsonPath = Join-Path $OutputPath "algo.json"
+$specFilePath = Join-Path $specsPath "$Project-IDE-$IdePosition.md"
+
 $report = @{
     project = $Project
     ide_position = $IdePosition
     duration_seconds = [math]::Round($totalDuration.TotalSeconds, 1)
     pipeline_version = "7.2"
+    algo_json = $algoJsonPath
+    spec_path = $specFilePath
+}
+
+# Marker for Claude /spec-pipeline command
+if (Test-Path $algoJsonPath) {
+    Write-Host "[ALGO-SYNTHESIS-READY] algo_json=$algoJsonPath | spec_path=$specFilePath" -ForegroundColor Magenta
 }
 
 $reportPath = Join-Path $OutputPath "pipeline-report.json"
