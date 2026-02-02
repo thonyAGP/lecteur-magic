@@ -38,35 +38,26 @@ Si le fichier n'existe pas ou est vide :
 
 ## REGLE CRITIQUE : Nommage des taches (IDE Path)
 
-**JAMAIS utiliser le format `T{ISN2}`** (ex: T12, T31). Toujours utiliser le **chemin IDE** : `{IDE}.{position_enfant}`.
+**JAMAIS utiliser le format `T{ISN2}`** (ex: T12, T31). Toujours utiliser le **chemin IDE** pre-calcule dans `algo.json`.
 
-### Algorithme de conversion ISN2 → IDE Path
+Chaque tache dans `algo.json` possede un champ **`ide_path`** calcule automatiquement par le pipeline PS1.
 
-1. La racine (ISN2=1, level=0) = le programme lui-meme, path = `{IDE}` (ex: `237`)
-2. Pour chaque tache de level 1 (parent_isn2=1), calculer sa **position parmi ses freres** :
-   - Trier TOUS les enfants d'un meme parent par ISN2 croissant
-   - La position = rang 1-based dans cette liste triee
-   - Path = `{parent_path}.{position}`
-3. Recurser pour les niveaux plus profonds
+### Comment utiliser
 
-**Exemple concret** (ADH IDE 237) :
-```
-Enfants de root (ISN2=1), tries par ISN2 :
-  ISN2=2  → position 1  → 237.1
-  ISN2=6  → position 2  → 237.2
-  ISN2=7  → position 3  → 237.3
-  ISN2=8  → position 4  → 237.4
-  ...
-  ISN2=12 → position 8  → 237.8
-  ISN2=15 → position 9  → 237.9  (PAS 237.15!)
-  ISN2=16 → position 10 → 237.10
+1. Lire le champ `ide_path` de chaque tache dans `algo.json`
+2. Utiliser **directement** cette valeur dans les sections 2 et 9.4
+3. **NE JAMAIS** calculer le path manuellement a partir de `isn2` ou `parent_isn2`
 
-Sous-taches de ISN2=12 (path=237.8) :
-  ISN2=13 → position 1 → 237.8.1
-  ISN2=14 → position 2 → 237.8.2
+**Exemple** (extrait algo.json) :
+```json
+{ "isn2": 12, "name": "Test si cloture", "ide_path": "237.8" }
+{ "isn2": 15, "name": "Reaffichage infos", "ide_path": "237.9" }
+{ "isn2": 13, "name": "Blocage cloture v1", "ide_path": "237.8.1" }
 ```
 
-**PIEGE FREQUENT** : ISN2 != position enfant. Les ISN2 peuvent avoir des trous (ex: 12, 15, 16 = positions 8, 9, 10). Ne JAMAIS utiliser ISN2 comme suffixe de path.
+→ Utiliser `237.8`, `237.9`, `237.8.1` (PAS T12, T15, T13 ni 237.12, 237.15, 237.13)
+
+**PIEGE** : ISN2 != position enfant. `isn2=15` a le path `237.9` (9e enfant), pas `237.15`.
 
 ## Etape 4 : Synthese Claude - Description fonctionnelle (section 2)
 
