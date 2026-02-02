@@ -102,7 +102,8 @@ CREATE TABLE IF NOT EXISTS dataview_columns (
     locate_expression_id INTEGER,
     -- GUI Control info (Schema v8)
     gui_control_type TEXT,       -- EDIT, COMBO, CHECKBOX, RADIO, BUTTON, LABEL, TABLE, BROWSER, SUBFORM
-    gui_table_control_type TEXT  -- Control type when displayed in a table/grid
+    gui_table_control_type TEXT, -- Control type when displayed in a table/grid
+    default_value_expr INTEGER   -- DefaultValue expression ID (0=none) from Column/PropertyList/DefaultValue
 );
 
 CREATE INDEX IF NOT EXISTS idx_dv_columns_task ON dataview_columns(task_id);
@@ -132,6 +133,7 @@ CREATE TABLE IF NOT EXISTS expressions (
     ide_position INTEGER NOT NULL,
     content TEXT NOT NULL,
     comment TEXT,
+    exp_type TEXT,               -- ExpAttribute val: U=Unicode, A=Alpha, N=Numeric, D=Date, B=Boolean, L=Logical, T=Time
     UNIQUE(program_id, xml_id)
 );
 
@@ -315,7 +317,7 @@ CREATE TABLE IF NOT EXISTS kb_metadata (
     value TEXT NOT NULL
 );
 
-INSERT OR REPLACE INTO kb_metadata (key, value) VALUES ('schema_version', '9');
+INSERT OR REPLACE INTO kb_metadata (key, value) VALUES ('schema_version', '10');
 INSERT OR REPLACE INTO kb_metadata (key, value) VALUES ('created_at', datetime('now'));
 
 -- ============================================================================
@@ -759,6 +761,7 @@ CREATE TABLE IF NOT EXISTS task_information (
     box_right INTEGER,
     box_direction TEXT,
     open_task_window TEXT,                -- Y/N - whether task opens its window
+    magic_sql_type INTEGER,              -- MAGIC_SQL val: 2-8 (SQL command type at task level)
     UNIQUE(task_id)
 );
 
@@ -1060,5 +1063,18 @@ CREATE TABLE IF NOT EXISTS evaluate_operations (
 CREATE INDEX IF NOT EXISTS idx_eval_ops_line ON evaluate_operations(logic_line_id);
 
 -- =========================================================================
--- END OF SCHEMA V9
+-- 18. LOGIC REMARKS (LogicLine/Remark - inline code comments)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS logic_remarks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    logic_line_id INTEGER NOT NULL REFERENCES logic_lines(id) ON DELETE CASCADE,
+    remark_type INTEGER,             -- Remark/Type/@val (0, 1, 2)
+    remark_text TEXT                  -- Remark/Text/@val (the actual comment text)
+);
+
+CREATE INDEX IF NOT EXISTS idx_logic_remarks_line ON logic_remarks(logic_line_id);
+
+-- =========================================================================
+-- END OF SCHEMA V10
 -- =========================================================================

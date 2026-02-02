@@ -375,10 +375,10 @@ public class KnowledgeDb : IDisposable
         const string sql = @"
             INSERT INTO dataview_columns (task_id, line_number, xml_id, variable, name, data_type, picture,
                                          definition, source, source_column_number, locate_expression_id,
-                                         gui_control_type, gui_table_control_type)
+                                         gui_control_type, gui_table_control_type, default_value_expr)
             VALUES (@task_id, @line_number, @xml_id, @variable, @name, @data_type, @picture,
                    @definition, @source, @source_column_number, @locate_expression_id,
-                   @gui_control_type, @gui_table_control_type)";
+                   @gui_control_type, @gui_table_control_type, @default_value_expr)";
 
         using var cmd = Connection.CreateCommand();
         cmd.CommandText = sql;
@@ -397,6 +397,7 @@ public class KnowledgeDb : IDisposable
         var pLocateExpr = cmd.Parameters.Add("@locate_expression_id", SqliteType.Integer);
         var pGuiControl = cmd.Parameters.Add("@gui_control_type", SqliteType.Text);
         var pGuiTableControl = cmd.Parameters.Add("@gui_table_control_type", SqliteType.Text);
+        var pDefaultValueExpr = cmd.Parameters.Add("@default_value_expr", SqliteType.Integer);
 
         foreach (var col in columns)
         {
@@ -413,6 +414,7 @@ public class KnowledgeDb : IDisposable
             pLocateExpr.Value = col.LocateExpressionId ?? (object)DBNull.Value;
             pGuiControl.Value = col.GuiControlType ?? (object)DBNull.Value;
             pGuiTableControl.Value = col.GuiTableControlType ?? (object)DBNull.Value;
+            pDefaultValueExpr.Value = col.DefaultValueExpr ?? (object)DBNull.Value;
             cmd.ExecuteNonQuery();
         }
     }
@@ -451,8 +453,8 @@ public class KnowledgeDb : IDisposable
     public void BulkInsertExpressions(IEnumerable<DbExpression> expressions, SqliteTransaction? tx = null)
     {
         const string sql = @"
-            INSERT INTO expressions (program_id, xml_id, ide_position, content, comment)
-            VALUES (@program_id, @xml_id, @ide_position, @content, @comment)";
+            INSERT INTO expressions (program_id, xml_id, ide_position, content, comment, exp_type)
+            VALUES (@program_id, @xml_id, @ide_position, @content, @comment, @exp_type)";
 
         using var cmd = Connection.CreateCommand();
         cmd.CommandText = sql;
@@ -463,6 +465,7 @@ public class KnowledgeDb : IDisposable
         var pIdePos = cmd.Parameters.Add("@ide_position", SqliteType.Integer);
         var pContent = cmd.Parameters.Add("@content", SqliteType.Text);
         var pComment = cmd.Parameters.Add("@comment", SqliteType.Text);
+        var pExpType = cmd.Parameters.Add("@exp_type", SqliteType.Text);
 
         foreach (var expr in expressions)
         {
@@ -471,6 +474,7 @@ public class KnowledgeDb : IDisposable
             pIdePos.Value = expr.IdePosition;
             pContent.Value = expr.Content;
             pComment.Value = expr.Comment ?? (object)DBNull.Value;
+            pExpType.Value = expr.ExpType ?? (object)DBNull.Value;
             cmd.ExecuteNonQuery();
         }
     }
@@ -629,10 +633,10 @@ public class KnowledgeDb : IDisposable
         ExecuteNonQuery(@"
             INSERT OR IGNORE INTO task_information (task_id, initial_mode, end_task_condition_expr, evaluate_end_condition,
                 force_record_delete, main_db_component, key_mode, range_direction, locate_direction, sort_cls,
-                box_bottom, box_right, box_direction, open_task_window)
+                box_bottom, box_right, box_direction, open_task_window, magic_sql_type)
             VALUES (@task_id, @initial_mode, @end_task_condition_expr, @evaluate_end_condition,
                 @force_record_delete, @main_db_component, @key_mode, @range_direction, @locate_direction, @sort_cls,
-                @box_bottom, @box_right, @box_direction, @open_task_window)",
+                @box_bottom, @box_right, @box_direction, @open_task_window, @magic_sql_type)",
             new Dictionary<string, object?>
             {
                 ["@task_id"] = info.TaskId,
@@ -648,7 +652,8 @@ public class KnowledgeDb : IDisposable
                 ["@box_bottom"] = info.BoxBottom,
                 ["@box_right"] = info.BoxRight,
                 ["@box_direction"] = info.BoxDirection,
-                ["@open_task_window"] = info.OpenTaskWindow
+                ["@open_task_window"] = info.OpenTaskWindow,
+                ["@magic_sql_type"] = info.MagicSqlType
             }, tx);
     }
 
@@ -1177,6 +1182,34 @@ public class KnowledgeDb : IDisposable
             pPublicObj.Value = o.PublicObjectObj ?? (object)DBNull.Value;
             pWaitMode.Value = o.WaitMode ?? (object)DBNull.Value;
             pDirection.Value = o.Direction ?? (object)DBNull.Value;
+            cmd.ExecuteNonQuery();
+        }
+    }
+
+    // V10: Logic remarks (inline code comments)
+    public void BulkInsertLogicRemarks(IEnumerable<DbLogicRemark> remarks, SqliteTransaction? tx = null)
+    {
+        const string sql = @"
+            INSERT OR IGNORE INTO logic_remarks (logic_line_id, remark_type, remark_text)
+            VALUES (
+                (SELECT id FROM logic_lines WHERE task_id = @task_id AND line_number = @line_number),
+                @remark_type, @remark_text)";
+
+        using var cmd = Connection.CreateCommand();
+        cmd.CommandText = sql;
+        if (tx != null) cmd.Transaction = tx;
+
+        var pTaskId = cmd.Parameters.Add("@task_id", SqliteType.Integer);
+        var pLineNum = cmd.Parameters.Add("@line_number", SqliteType.Integer);
+        var pRemarkType = cmd.Parameters.Add("@remark_type", SqliteType.Integer);
+        var pRemarkText = cmd.Parameters.Add("@remark_text", SqliteType.Text);
+
+        foreach (var r in remarks)
+        {
+            pTaskId.Value = r.TaskId;
+            pLineNum.Value = r.LineNumber;
+            pRemarkType.Value = r.RemarkType ?? (object)DBNull.Value;
+            pRemarkText.Value = r.RemarkText ?? (object)DBNull.Value;
             cmd.ExecuteNonQuery();
         }
     }

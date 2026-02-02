@@ -287,7 +287,8 @@ public class BatchIndexer
                                 SourceColumnNumber = c.SourceColumnNumber,
                                 LocateExpressionId = c.LocateExpressionId,
                                 GuiControlType = c.GuiControlType,
-                                GuiTableControlType = c.GuiTableControlType
+                                GuiTableControlType = c.GuiTableControlType,
+                                DefaultValueExpr = c.DefaultValueExpr
                             }), tx);
                         }
 
@@ -433,7 +434,8 @@ public class BatchIndexer
                                 BoxBottom = task.Information.BoxBottom,
                                 BoxRight = task.Information.BoxRight,
                                 BoxDirection = task.Information.BoxDirection,
-                                OpenTaskWindow = task.Information.OpenTaskWindow
+                                OpenTaskWindow = task.Information.OpenTaskWindow,
+                                MagicSqlType = task.Information.MagicSqlType
                             }, tx);
                         }
 
@@ -628,6 +630,18 @@ public class BatchIndexer
                             }), tx);
                         }
 
+                        // V10: Insert logic remarks
+                        if (task.Remarks.Count > 0)
+                        {
+                            _db.BulkInsertLogicRemarks(task.Remarks.Select(r => new DbLogicRemark
+                            {
+                                TaskId = taskId,
+                                LineNumber = r.LineNumber,
+                                RemarkType = r.RemarkType,
+                                RemarkText = r.RemarkText
+                            }), tx);
+                        }
+
                         result.TasksIndexed++;
                     }
 
@@ -640,7 +654,8 @@ public class BatchIndexer
                             XmlId = e.Id,
                             IdePosition = e.IdePosition,
                             Content = e.Content,
-                            Comment = e.Comment
+                            Comment = e.Comment,
+                            ExpType = e.ExpType
                         }), tx);
                         result.ExpressionsIndexed += parsed.Expressions.Count;
                     }
