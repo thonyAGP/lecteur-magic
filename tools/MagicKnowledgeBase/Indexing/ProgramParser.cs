@@ -136,7 +136,7 @@ public partial class ProgramParser
             var (columns, mainSourceTableId, mainSourceAccess, tableUsages) = ParseDataView(taskElement);
 
             // Parse Logic (includes V9 operation details)
-            var (logicLines, programCalls, selectDefs, updateOps, linkOps, stopOps, blockOps, evaluateOps, raiseEventOps) =
+            var (logicLines, programCalls, selectDefs, updateOps, linkOps, stopOps, blockOps, evaluateOps, raiseEventOps, remarkOps) =
                 ParseLogicLines(taskElement, projectName);
 
             // Parse TaskForms (UI screens)
@@ -179,7 +179,8 @@ public partial class ProgramParser
                 StopOperations = stopOps,
                 BlockOperations = blockOps,
                 EvaluateOperations = evaluateOps,
-                RaiseEventOperations = raiseEventOps
+                RaiseEventOperations = raiseEventOps,
+                Remarks = remarkOps
             };
         }
 
@@ -291,6 +292,10 @@ public partial class ProgramParser
             var guiControlType = ExtractGuiControlType(propList?.Element("GuiDisplay"));
             var guiTableControlType = ExtractGuiControlType(propList?.Element("GuiDisplayTable"));
 
+            // V10: Extract default value expression
+            var defaultValueRaw = ParseInt(propList?.Element("DefaultValue")?.Attribute("val")?.Value);
+            var defaultValueExpr = defaultValueRaw is > 0 ? defaultValueRaw : null;
+
             var name = nameAttr?.Value ?? $"Col_{xmlId}";
             string definition;
             if (name.StartsWith(">") || name.StartsWith("&gt;") || name.StartsWith("<") || name.StartsWith("&lt;"))
@@ -316,7 +321,8 @@ public partial class ProgramParser
                 Picture = picture,
                 Definition = definition,
                 GuiControlType = guiControlType,
-                GuiTableControlType = guiTableControlType
+                GuiTableControlType = guiTableControlType,
+                DefaultValueExpr = defaultValueExpr
             });
 
             int currentPosition = dvLine;
@@ -492,7 +498,7 @@ public partial class ProgramParser
         List<ParsedSelectDefinition> selects, List<ParsedUpdateOperation> updates,
         List<ParsedLinkOperation> links, List<ParsedStopOperation> stops,
         List<ParsedBlockOperation> blocks, List<ParsedEvaluateOperation> evaluates,
-        List<ParsedRaiseEventOperation> raiseEvents) ParseLogicLines(XElement taskElement, string projectName)
+        List<ParsedRaiseEventOperation> raiseEvents, List<ParsedLogicRemark> remarks) ParseLogicLines(XElement taskElement, string projectName)
     {
         var lines = new List<ParsedLogicLine>();
         var calls = new List<ParsedProgramCall>();
@@ -503,10 +509,11 @@ public partial class ProgramParser
         var blocks = new List<ParsedBlockOperation>();
         var evaluates = new List<ParsedEvaluateOperation>();
         var raiseEvents = new List<ParsedRaiseEventOperation>();
+        var remarks = new List<ParsedLogicRemark>();
         int lineNum = 1;
 
         var taskLogic = taskElement.Element("TaskLogic");
-        if (taskLogic == null) return (lines, calls, selects, updates, links, stops, blocks, evaluates, raiseEvents);
+        if (taskLogic == null) return (lines, calls, selects, updates, links, stops, blocks, evaluates, raiseEvents, remarks);
 
         foreach (var logicUnit in taskLogic.Elements("LogicUnit"))
         {
@@ -561,6 +568,20 @@ public partial class ProgramParser
                     case "RaiseEvent":
                         ExtractRaiseEvent(operation, lineNum, raiseEvents);
                         break;
+                    case "Remark":
+                        // V10: Extract remark type and text
+                        var remarkType = ParseInt(operation.Element("Type")?.Attribute("val")?.Value);
+                        var remarkText = operation.Element("Text")?.Attribute("val")?.Value;
+                        if (remarkType != null || remarkText != null)
+                        {
+                            remarks.Add(new ParsedLogicRemark
+                            {
+                                LineNumber = lineNum,
+                                RemarkType = remarkType,
+                                RemarkText = remarkText
+                            });
+                        }
+                        break;
                 }
 
                 lines.Add(new ParsedLogicLine
@@ -575,7 +596,7 @@ public partial class ProgramParser
             }
         }
 
-        return (lines, calls, selects, updates, links, stops, blocks, evaluates, raiseEvents);
+        return (lines, calls, selects, updates, links, stops, blocks, evaluates, raiseEvents, remarks);
     }
 
     private static void ExtractCallTask(XElement operation, int lineNum, string projectName,
@@ -833,12 +854,16 @@ public partial class ProgramParser
                 // The XML id might repeat across tasks, so we use globalIdePosition as unique key
                 var uniqueKey = globalIdePosition;
 
+                // V10: Extract expression type attribute
+                var expType = expr.Element("ExpAttribute")?.Attribute("val")?.Value;
+
                 program.Expressions[uniqueKey] = new ParsedExpression
                 {
                     Id = id,
                     IdePosition = globalIdePosition++,
                     Content = content,
-                    Comment = comment
+                    Comment = comment,
+                    ExpType = expType
                 };
             }
         }
@@ -956,23 +981,25 @@ public partial class ProgramParser
     private ParsedTaskInformation? ParseTaskInformation(XElement taskElement)
     {
         var info = taskElement.Element("Information");
-        if (info == null) return null;
+        var magicSqlType = ParseInt(taskElement.Element("MAGIC_SQL")?.Attribute("val")?.Value);
+        if (info == null && magicSqlType == null) return null;
 
         return new ParsedTaskInformation
         {
-            InitialMode = info.Element("InitialMode")?.Attribute("val")?.Value,
-            EndTaskConditionExpr = ParseInt(info.Element("EndTaskCondition")?.Attribute("val")?.Value),
-            EvaluateEndCondition = info.Element("EVL_END_CND")?.Attribute("val")?.Value,
-            ForceRecordDelete = info.Element("DEL")?.Attribute("val")?.Value,
-            MainDbComponent = ParseInt(info.Element("DB")?.Attribute("comp")?.Value),
-            KeyMode = info.Element("Key")?.Element("Mode")?.Attribute("val")?.Value,
-            RangeDirection = info.Element("RngDIR")?.Attribute("val")?.Value,
-            LocateDirection = info.Element("LocDIR")?.Attribute("val")?.Value,
-            SortCls = info.Element("SortCLS")?.Attribute("val")?.Value,
-            BoxBottom = ParseInt(info.Element("BoxBottom")?.Attribute("val")?.Value),
-            BoxRight = ParseInt(info.Element("BoxRight")?.Attribute("val")?.Value),
-            BoxDirection = info.Element("BoxDirection")?.Attribute("val")?.Value,
-            OpenTaskWindow = info.Element("WIN")?.Element("OpenTaskWindow")?.Attribute("val")?.Value
+            MagicSqlType = magicSqlType,
+            InitialMode = info?.Element("InitialMode")?.Attribute("val")?.Value,
+            EndTaskConditionExpr = ParseInt(info?.Element("EndTaskCondition")?.Attribute("val")?.Value),
+            EvaluateEndCondition = info?.Element("EVL_END_CND")?.Attribute("val")?.Value,
+            ForceRecordDelete = info?.Element("DEL")?.Attribute("val")?.Value,
+            MainDbComponent = ParseInt(info?.Element("DB")?.Attribute("comp")?.Value),
+            KeyMode = info?.Element("Key")?.Element("Mode")?.Attribute("val")?.Value,
+            RangeDirection = info?.Element("RngDIR")?.Attribute("val")?.Value,
+            LocateDirection = info?.Element("LocDIR")?.Attribute("val")?.Value,
+            SortCls = info?.Element("SortCLS")?.Attribute("val")?.Value,
+            BoxBottom = ParseInt(info?.Element("BoxBottom")?.Attribute("val")?.Value),
+            BoxRight = ParseInt(info?.Element("BoxRight")?.Attribute("val")?.Value),
+            BoxDirection = info?.Element("BoxDirection")?.Attribute("val")?.Value,
+            OpenTaskWindow = info?.Element("WIN")?.Element("OpenTaskWindow")?.Attribute("val")?.Value
         };
     }
 
@@ -1340,6 +1367,8 @@ public record ParsedTask
     public List<ParsedRaiseEventOperation> RaiseEventOperations { get; init; } = new();
     public List<ParsedBlockOperation> BlockOperations { get; init; } = new();
     public List<ParsedEvaluateOperation> EvaluateOperations { get; init; } = new();
+    // V10: Logic remarks (inline code comments)
+    public List<ParsedLogicRemark> Remarks { get; init; } = new();
 }
 
 public record ParsedColumn
@@ -1358,6 +1387,8 @@ public record ParsedColumn
     public string? GuiControlType { get; init; }
     /// <summary>GUI control type when displayed in a table/grid</summary>
     public string? GuiTableControlType { get; init; }
+    /// <summary>DefaultValue expression ID from Column/PropertyList/DefaultValue (0=none)</summary>
+    public int? DefaultValueExpr { get; init; }
 }
 
 public record ParsedLogicLine
@@ -1394,6 +1425,8 @@ public record ParsedExpression
     public int IdePosition { get; init; }
     public required string Content { get; init; }
     public string? Comment { get; init; }
+    /// <summary>ExpAttribute type: U=Unicode, A=Alpha, N=Numeric, D=Date, B=Boolean, L=Logical, T=Time</summary>
+    public string? ExpType { get; init; }
 }
 
 public record ParsedTaskForm
@@ -1472,6 +1505,8 @@ public record ParsedTaskInformation
     public int? BoxRight { get; init; }
     public string? BoxDirection { get; init; }
     public string? OpenTaskWindow { get; init; }
+    /// <summary>MAGIC_SQL val: 2-8 (SQL command type at task level)</summary>
+    public int? MagicSqlType { get; init; }
 }
 
 public record ParsedTaskProperties
@@ -1662,4 +1697,12 @@ public record ParsedEvaluateOperation
     public int? ConditionExpr { get; init; }
     public string? Direction { get; init; }
     public string? Modifier { get; init; }
+}
+
+/// <summary>V10: Logic remark (inline code comment)</summary>
+public record ParsedLogicRemark
+{
+    public int LineNumber { get; init; }
+    public int? RemarkType { get; init; }
+    public string? RemarkText { get; init; }
 }

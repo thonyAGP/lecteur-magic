@@ -252,7 +252,8 @@ public class IncrementalIndexer
                             SourceColumnNumber = c.SourceColumnNumber,
                             LocateExpressionId = c.LocateExpressionId,
                             GuiControlType = c.GuiControlType,
-                            GuiTableControlType = c.GuiTableControlType
+                            GuiTableControlType = c.GuiTableControlType,
+                            DefaultValueExpr = c.DefaultValueExpr
                         }), tx);
                     }
 
@@ -352,6 +353,30 @@ public class IncrementalIndexer
                             InternalEventId = r.InternalEventId, PublicObjectComp = r.PublicObjectComp,
                             PublicObjectObj = r.PublicObjectObj, WaitMode = r.WaitMode, Direction = r.Direction
                         }), tx);
+
+                    // V10: Insert logic remarks
+                    if (task.Remarks.Count > 0)
+                        _db.BulkInsertLogicRemarks(task.Remarks.Select(r => new DbLogicRemark
+                        {
+                            TaskId = taskId, LineNumber = r.LineNumber,
+                            RemarkType = r.RemarkType, RemarkText = r.RemarkText
+                        }), tx);
+
+                    // V9: Insert task information (includes V10 MagicSqlType)
+                    if (task.Information != null)
+                        _db.InsertTaskInformation(new DbTaskInformation
+                        {
+                            TaskId = taskId, InitialMode = task.Information.InitialMode,
+                            EndTaskConditionExpr = task.Information.EndTaskConditionExpr,
+                            EvaluateEndCondition = task.Information.EvaluateEndCondition,
+                            ForceRecordDelete = task.Information.ForceRecordDelete,
+                            MainDbComponent = task.Information.MainDbComponent,
+                            KeyMode = task.Information.KeyMode, RangeDirection = task.Information.RangeDirection,
+                            LocateDirection = task.Information.LocateDirection, SortCls = task.Information.SortCls,
+                            BoxBottom = task.Information.BoxBottom, BoxRight = task.Information.BoxRight,
+                            BoxDirection = task.Information.BoxDirection, OpenTaskWindow = task.Information.OpenTaskWindow,
+                            MagicSqlType = task.Information.MagicSqlType
+                        }, tx);
                 }
 
                 // Insert expressions
@@ -363,7 +388,8 @@ public class IncrementalIndexer
                         XmlId = e.Id,
                         IdePosition = e.IdePosition,
                         Content = e.Content,
-                        Comment = e.Comment
+                        Comment = e.Comment,
+                        ExpType = e.ExpType
                     }), tx);
                 }
 

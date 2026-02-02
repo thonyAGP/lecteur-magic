@@ -71,6 +71,8 @@ public record DbDataViewColumn
     public string? GuiControlType { get; init; }
     /// <summary>GUI control type when displayed in a table/grid</summary>
     public string? GuiTableControlType { get; init; }
+    /// <summary>DefaultValue expression ID from Column/PropertyList/DefaultValue (0=none)</summary>
+    public int? DefaultValueExpr { get; init; }
 }
 
 /// <summary>
@@ -99,6 +101,8 @@ public record DbExpression
     public int IdePosition { get; init; }
     public required string Content { get; init; }
     public string? Comment { get; init; }
+    /// <summary>ExpAttribute type: U=Unicode, A=Alpha, N=Numeric, D=Date, B=Boolean, L=Logical, T=Time</summary>
+    public string? ExpType { get; init; }
 }
 
 /// <summary>
@@ -397,6 +401,8 @@ public record DbTaskInformation
     public int? BoxRight { get; init; }
     public string? BoxDirection { get; init; }
     public string? OpenTaskWindow { get; init; }
+    /// <summary>MAGIC_SQL val: 2-8 (SQL command type at task level)</summary>
+    public int? MagicSqlType { get; init; }
 }
 
 /// <summary>V9: Task properties block</summary>
@@ -623,4 +629,14 @@ public record DbRaiseEventOperation
     public int? PublicObjectObj { get; init; }
     public string? WaitMode { get; init; }
     public string? Direction { get; init; }
+}
+
+/// <summary>V10: Logic remark (inline code comment)</summary>
+public record DbLogicRemark
+{
+    public long Id { get; init; }
+    public long TaskId { get; init; }
+    public int LineNumber { get; init; }
+    public int? RemarkType { get; init; }
+    public string? RemarkText { get; init; }
 }
