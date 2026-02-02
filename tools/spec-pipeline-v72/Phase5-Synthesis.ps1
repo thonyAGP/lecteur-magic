@@ -1374,6 +1374,49 @@ if (Test-Path (Join-Path $kbRunnerPath "KbIndexRunner.csproj")) {
         $algoJsonLine = $algoOutput | Where-Object { $_ -match '^\{' } | Select-Object -First 1
         if ($algoJsonLine) {
             $algoData = $algoJsonLine | ConvertFrom-Json
+
+            # --- Compute ide_path for each task (deterministic ISN2 → IDE path) ---
+            if ($algoData.tasks -and $algoData.tasks.Count -gt 0) {
+                $ide = $algoData.ide
+                # Build parent → sorted children map
+                $childrenOf = @{}
+                foreach ($t in $algoData.tasks) {
+                    $pKey = if ($null -eq $t.parent_isn2) { "_root_" } else { "$($t.parent_isn2)" }
+                    if (-not $childrenOf.ContainsKey($pKey)) { $childrenOf[$pKey] = [System.Collections.ArrayList]::new() }
+                    [void]$childrenOf[$pKey].Add($t)
+                }
+                foreach ($key in @($childrenOf.Keys)) {
+                    $childrenOf[$key] = @($childrenOf[$key] | Sort-Object isn2)
+                }
+                # Assign paths: root = IDE, children = parent_path.position
+                $pathOf = @{}
+                $rootTask = $algoData.tasks | Where-Object { $null -eq $_.parent_isn2 } | Select-Object -First 1
+                if ($rootTask) { $pathOf["$($rootTask.isn2)"] = "$ide" }
+                # BFS to assign paths level by level
+                $queue = [System.Collections.Queue]::new()
+                if ($rootTask) { $queue.Enqueue($rootTask.isn2) }
+                while ($queue.Count -gt 0) {
+                    $parentIsn2 = $queue.Dequeue()
+                    $parentPath = $pathOf["$parentIsn2"]
+                    $cKey = "$parentIsn2"
+                    if ($childrenOf.ContainsKey($cKey)) {
+                        $pos = 1
+                        foreach ($child in $childrenOf[$cKey]) {
+                            $pathOf["$($child.isn2)"] = "$parentPath.$pos"
+                            $queue.Enqueue($child.isn2)
+                            $pos++
+                        }
+                    }
+                }
+                # Inject ide_path into each task object
+                foreach ($t in $algoData.tasks) {
+                    $p = $pathOf["$($t.isn2)"]
+                    if (-not $p) { $p = "$ide.?$($t.isn2)" }
+                    $t | Add-Member -NotePropertyName "ide_path" -NotePropertyValue $p -Force
+                }
+                Write-Host "  ide_path computed for $($algoData.tasks.Count) tasks" -ForegroundColor DarkGray
+            }
+
             # Save algo.json for Claude /algorigramme skill
             $algoJsonPath = Join-Path $OutputPath "algo.json"
             $algoJsonFormatted = $algoData | ConvertTo-Json -Depth 10
