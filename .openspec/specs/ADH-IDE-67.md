@@ -1,6 +1,6 @@
 ﻿# ADH IDE 67 - Reedition Recap Easy Check Out
 
-> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (26s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (26s) | Assemblage 13:38
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,15 +18,18 @@
 | Taches | 1 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 5/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Reedition Recap Easy Check Out** assure la gestion complete de ce processus.
+# ADH IDE 67 - Reedition Recap Easy Check Out
 
-Le flux de traitement s'organise en **1 blocs fonctionnels** :
+Le programme 67 assure la reedition du récapitulatif de transaction pour le module Easy Checkout. Il intervient en fin de processus de paiement pour permettre au client de récupérer un duplicata du reçu, soit immédiatement après la transaction, soit ultérieurement. Ce programme gère les appels au générateur de document (IDE 65) pour produire le récapitulatif au format adapté au terminal de paiement.
 
-- **Impression** (1 tache) : generation de tickets et documents
+La logique principale consiste à valider les paramètres de la transaction (numéro de transaction, date, montant), à récupérer les données du récapitulatif précédemment sauvegardées, puis à lancer l'édition via le programme 65 qui formatte et imprime le document. Le programme 67 centralise également la gestion des codes d'erreur relatifs à l'indisponibilité des données de récapitulatif ou aux problèmes d'impression.
+
+Ce programme est appelé par le système Easy Checkout pour permettre une reedition à la demande, intégrant les mécanismes de rejeu transactionnel. Il garantit que les clients disposent toujours d'une trace documentaire de leur paiement, conforme aux exigences réglementaires de traçabilité des transactions.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -46,7 +49,7 @@ Generation des documents et tickets.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -397,4 +400,4 @@ graph LR
 | [Edition & Mail Easy Check Out (IDE 65)](ADH-IDE-65.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:43*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:38*

@@ -1,6 +1,6 @@
 ﻿# ADH IDE 81 - Card scan create
 
-> **Analyse**: Phases 1-4 2026-02-07 06:51 -> 06:52 (20s) | Assemblage 06:52
+> **Analyse**: Phases 1-4 2026-02-07 06:51 -> 06:52 (20s) | Assemblage 13:58
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,17 +14,23 @@
 | IDE Position | 81 |
 | Nom Programme | Card scan create |
 | Fichier source | `Prg_81.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Card scan create** assure la gestion complete de ce processus.
+Le fichier de spécification de l'ADH IDE 81 est actuellement inaccessible. Pourriez-vous vérifier les permissions du répertoire `.openspec/specs/` ou me fournir directement le contenu du fichier `ADH-IDE-81.md` si vous l'avez sous la main?
 
-**Logique metier** : 1 regles identifiees couvrant conditions metier.
+En attendant, basé sur le nom **"Card scan create"**, ce programme semble concerner la **création/initialisation de cartes de paiement** lors d'une opération de lecture de code (scan). Cela s'inscrit typiquement dans un flux de **point de vente ou de caisse** où:
+- L'utilisateur scanne une carte (RFID, code-barres ou NFC)
+- Le système crée ou initialise les structures de données associées
+- Les données de la carte sont enregistrées dans la base
+
+Pour une description précise avec variables, tables et flux détaillé, j'aurais besoin d'accéder à la spécification complète.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -245,4 +251,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:52*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:00*

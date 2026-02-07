@@ -1,6 +1,6 @@
 ﻿# ADH IDE 83 - Deactivate all cards
 
-> **Analyse**: Phases 1-4 2026-02-07 06:52 -> 06:53 (16s) | Assemblage 06:53
+> **Analyse**: Phases 1-4 2026-02-07 06:52 -> 06:53 (16s) | Assemblage 14:02
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,23 +14,26 @@
 | IDE Position | 83 |
 | Nom Programme | Deactivate all cards |
 | Fichier source | `Prg_83.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 7/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Deactivate all cards** assure la gestion complete de ce processus.
+Le programme ADH IDE 83 effectue une désactivation en masse de cartes dans la table `ez_card`. Il accepte trois paramètres : la société (p.societe), un code à 8 chiffres (p.code-8chiffres) pour filtrer les cartes concernées, et un compteur de cartes valides (p.nb carte valides) qui s'incrémente au fur et traitement. Le programme utilise des codes statut 'O' et 'V' pour contrôler l'état des cartes, probablement représentant des états « Annulé » et « Valide ».
 
-**Donnees modifiees** : 1 tables en ecriture (ez_card).
+La logique métier intègre un enregistrement temporel (date et heure courantes) pour tracer l'opération de désactivation, et s'appuie sur une variable globale (VG1) pour coordonner l'exécution. Ce programme constitue une opération de maintenance critique pour gérer le cycle de vie des cartes de paiement ou d'accès dans le système ADH, permettant de désactiver sélectivement des cartes en fonction de critères de société et de code.
+
+Le programme apparaît comme orphelin potentiel sans appelants directs détectés, suggérant qu'il est invoqué soit par son nom public (si défini), soit depuis un module externe du projet ADH.
 
 ## 3. BLOCS FONCTIONNELS
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -217,4 +220,4 @@ graph LR
 | ez_card | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:53*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:03*

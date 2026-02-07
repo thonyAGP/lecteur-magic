@@ -1,6 +1,6 @@
 ﻿# ADH IDE 77 - Club Med Pass menu
 
-> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:45 (28s) | Assemblage 06:50
+> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:45 (28s) | Assemblage 13:51
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,59 +14,21 @@
 | IDE Position | 77 |
 | Nom Programme | Club Med Pass menu |
 | Fichier source | `Prg_77.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | Navigation |
 | Taches | 9 (5 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 12 |
+| Complexite | **BASSE** (score 29/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Club Med Pass menu** assure la gestion complete de ce processus, accessible depuis [Menu caisse GM - scroll (IDE 163)](ADH-IDE-163.md).
+# ADH IDE 77 - Club Med Pass Menu
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+Le programme gère l'interface de gestion des cartes Club Med Pass en caisse. Il affiche un menu permettant aux utilisateurs de consulter les transactions associées, gérer les oppositions de carte, et accéder aux fonctionnalités de lecture/création de cartes via les périphériques de scan. Le programme reçoit ses données du menu caisse principal (IDE 163) et coordonne les différentes opérations de traitement des cartes de crédit Club Med.
 
-- **Traitement** (6 taches) : traitements metier divers
-- **Saisie** (2 taches) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Creation** (1 tache) : insertion d'enregistrements en base (mouvements, prestations)
+Les tâches principales incluent l'affichage du menu initial, le traitement des sélections utilisateur, et le routage vers les modules spécialisés. Selon l'action sélectionnée, le programme appelle les modules de scan de carte (IDE 80, 81), de consultation du solde crédit (IDE 79), de gestion des limites (IDE 86), ou de gestion des forfaits (IDE 173). Chaque branche du menu délègue à un module métier dédié tout en maintenant le contexte de la transaction en cours.
 
-**Donnees modifiees** : 1 tables en ecriture (ez_card).
-
-**Logique metier** : 2 regles identifiees couvrant conditions metier.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (6 taches)
-
-- **T1** - Club Med Pass menu **[ECRAN]**
-- **T2** - Processing ... **[ECRAN]**
-- **T5** - Opposition Club Med Pass
-- **T6** - Delete Club Med Pass
-- **T8** - paramètre
-- **T9** - Club Med Pass menu **[ECRAN]**
-
-Delegue a : [Appel programme (IDE 44)](ADH-IDE-44.md), [Balance Credit de conso (IDE 79)](ADH-IDE-79.md), [   Card scan read (IDE 80)](ADH-IDE-80.md), [Bar Limit (IDE 86)](ADH-IDE-86.md), [Gestion forfait TAI LOCAL (IDE 173)](ADH-IDE-173.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
-
-#### Phase 2 : Saisie (2 taches)
-
-- **T3** - Detail des transactions CMP **[ECRAN]**
-- **T4** - Transactions details **[ECRAN]**
-
-Delegue a : [Print Ventes Club Med Pass (IDE 78)](ADH-IDE-78.md)
-
-#### Phase 3 : Creation (1 tache)
-
-- **T7** - Create Club Med Pass
-
-Delegue a : [   Card scan create (IDE 81)](ADH-IDE-81.md)
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| ez_card | **W**/L (4 usages) |  |
-
-</details>
+La gestion des impressions et du numérotage des tickets est centralisée à travers les appels aux modules d'impression (IDE 178-182), permettant une configuration cohérente des paramètres d'imprimante. Seule la table `ez_card` est modifiée directement par ce programme, principalement lors des opérations d'opposition ou de suppression de carte.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -1593,14 +1555,22 @@ flowchart TD
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 9 taches]
+    B1[Traitement (6t)]
+    START --> B1
+    B2[Saisie (2t)]
+    B1 --> B2
+    B3[Creation (1t)]
+    B2 --> B3
+    WRITE[MAJ 1 tables]
+    B3 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -1610,40 +1580,18 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 14 | transac_detail_bar |  | DB | R |   |   | 1 |
-| 15 | transac_entete_bar |  | DB |   |   | L | 1 |
-| 31 | gm-complet_______gmc |  | DB | R |   |   | 2 |
-| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
-| 47 | compte_gm________cgm | Comptes GM (generaux) | DB |   |   | L | 1 |
-| 131 | fichier_validation |  | DB |   |   | L | 1 |
 | 312 | ez_card |  | DB |   | **W** | L | 4 |
-| 470 | comptage_coffre | Etat du coffre | TMP |   |   | L | 1 |
-| 728 | arc_cc_total |  | DB | R |   |   | 1 |
+| 31 | gm-complet_______gmc |  | DB | R |   |   | 2 |
 | 786 | qualite_avant_reprise |  | DB | R |   |   | 1 |
+| 728 | arc_cc_total |  | DB | R |   |   | 1 |
+| 14 | transac_detail_bar |  | DB | R |   |   | 1 |
+| 131 | fichier_validation |  | DB |   |   | L | 1 |
+| 47 | compte_gm________cgm | Comptes GM (generaux) | DB |   |   | L | 1 |
+| 470 | comptage_coffre | Etat du coffre | TMP |   |   | L | 1 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
+| 15 | transac_entete_bar |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (5 / 5 tables avec colonnes identifiees)
-
-<details>
-<summary>Table 14 - transac_detail_bar (R) - 1 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | P.Bar_id | R | Unicode |
-| B | P.Pos_id | R | Unicode |
-| C | P.Ticket_number | R | Unicode |
-| D | TicketSelectionEzm | R | Alpha |
-
-</details>
-
-<details>
-<summary>Table 31 - gm-complet_______gmc (R) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | v.view detail | R | Logical |
-| B | bt view details | R | Alpha |
-
-</details>
 
 <details>
 <summary>Table 312 - ez_card (**W**/L) - 4 usages</summary>
@@ -1657,9 +1605,12 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 728 - arc_cc_total (R) - 1 usages</summary>
+<summary>Table 31 - gm-complet_______gmc (R) - 2 usages</summary>
 
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | v.view detail | R | Logical |
+| B | bt view details | R | Alpha |
 
 </details>
 
@@ -1708,6 +1659,25 @@ flowchart TD
 | BL | v.ActionPActive | R | Logical |
 | BM | V.Compte scanne | R | Numeric |
 | BN | V.Compte special | R | Logical |
+
+</details>
+
+<details>
+<summary>Table 728 - arc_cc_total (R) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 14 - transac_detail_bar (R) - 1 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | P.Bar_id | R | Unicode |
+| B | P.Pos_id | R | Unicode |
+| C | P.Ticket_number | R | Unicode |
+| D | TicketSelectionEzm | R | Alpha |
 
 </details>
 
@@ -2115,4 +2085,4 @@ graph LR
 | [   Select affilies (IDE 82)](ADH-IDE-82.md) | Sous-programme | 1x | Normale - Selection/consultation |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:50*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:51*

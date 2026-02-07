@@ -1,6 +1,6 @@
 ﻿# ADH IDE 94 - Maj des lignes saisies archive
 
-> **Analyse**: Phases 1-4 2026-02-07 06:56 -> 06:56 (18s) | Assemblage 06:56
+> **Analyse**: Phases 1-4 2026-02-07 06:56 -> 06:56 (18s) | Assemblage 14:22
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,19 +14,20 @@
 | IDE Position | 94 |
 | Nom Programme | Maj des lignes saisies archive |
 | Fichier source | `Prg_94.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 7/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Maj des lignes saisies archive** assure la gestion complete de ce processus.
+Ce programme traite la mise à jour en masse des lignes archivées dans la table "projet". Il boucle sur l'ensemble des enregistrements de la table n746 (projet) et effectue une validation conditionnelle basée sur le flag "Flague [C]" pour déterminer si chaque ligne doit être marquée comme complète (TRUE) ou en attente (FALSE). Les modifications apportées incluent la capture de deux timestamps via la fonction Date(), la lecture des données clés (numéro de facture, nom du fichier PDF, société, compte) et la mise à jour des champs de statut.
 
-**Donnees modifiees** : 1 tables en ecriture (projet).
+Le programme est extrêmement simple dans sa structure : une seule tâche (Tache 94.1) de type batch sans interface utilisateur, composée de 14 expressions seulement et n'effectuant qu'une seule opération WRITE sur la table cible. Il n'appelle aucun autre programme et ne possède pas de callers directs, ce qui en fait un processus autonome typiquement destiné à être exécuté par un ordonnanceur ou un job de batch externe.
 
-**Logique metier** : 1 regles identifiees couvrant conditions metier.
+Cette opération remplit une fonction de consolidation archivistique : finaliser les entrées de projet après vérification, en les marquant comme traitées ou en attente pour audit et réconciliation. Les champs "Retour Compta" et "Retour Vente" [F et G] captent également le statut de retour des opérations comptables et commerciales, donnant une vue complète de la justification de chaque ligne archivée.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -95,8 +96,8 @@ flowchart TD
 |----|-----|-------------|------|---|---|---|--------|
 | 746 | projet |  | DB |   | **W** |   | 1 |
 | 866 | maj_appli_tpe |  | DB |   |   | L | 1 |
-| 870 | Rayons_Boutique |  | DB |   |   | L | 1 |
 | 871 | Activite |  | DB |   |   | L | 1 |
+| 870 | Rayons_Boutique |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 1 tables avec colonnes identifiees)
 
@@ -251,4 +252,4 @@ graph LR
 | projet | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:56*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:24*

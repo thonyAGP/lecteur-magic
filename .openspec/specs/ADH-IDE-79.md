@@ -1,6 +1,6 @@
 ﻿# ADH IDE 79 - Balance Credit de conso
 
-> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:45 (28s) | Assemblage 06:51
+> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:45 (28s) | Assemblage 13:54
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,82 +14,24 @@
 | IDE Position | 79 |
 | Nom Programme | Balance Credit de conso |
 | Fichier source | `Prg_79.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 30 (2 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 5 |
+| Complexite | **BASSE** (score 25/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Balance Credit de conso** assure la gestion complete de ce processus, accessible depuis [Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md), [Club Med Pass menu (IDE 77)](ADH-IDE-77.md).
+## ADH IDE 79 - Balance Crédit de Conso
 
-Le flux de traitement s'organise en **4 blocs fonctionnels** :
+**Fonctionnel :**
+Le programme affiche et édite la balance des crédits de consommation des clients Club Med selon leur profil (société, code compte, filiation). S'intégrant dans le flux d'accueil via le menu Club Med Pass, il permet à l'utilisateur de visualiser le solde global ou en détail par type de crédit (bar, restaurant, loisirs, etc.). Le programme met à jour les cumuls par type de crédit (`cc_total_par_type`) et supporte l'impression de rapports formatés selon la devise du village.
 
-- **Impression** (22 taches) : generation de tickets et documents
-- **Traitement** (5 taches) : traitements metier divers
-- **Saisie** (2 taches) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Initialisation** (1 tache) : reinitialisation d'etats et de variables de travail
+**Technique :**
+30 tâches orchestrent la récupération des soldes depuis les tables de crédit (`cc_total`, `cc_type_detail`, `cc_type`), leur formatage selon le masque montant et devise, et la sortie imprimée. Une chaîne d'impression structurée initialise les paramètres par défaut (IDE 186), applique les choix utilisateur (IDE 185), établit la numérotation des listages (IDE 181 × 2 appels), récupère les paramètres d'imprimante (IDE 184 × 2 appels), puis nettoie l'imprimante courante (IDE 182). Zéro code mort, une règle métier booléenne gate le détail/résumé.
 
-**Donnees modifiees** : 1 tables en ecriture (cc_total_par_type).
-
-**Logique metier** : 1 regles identifiees couvrant conditions metier.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (5 taches)
-
-- **T1** - Position des credits bar **[ECRAN]**
-- **T3** - detail credit conso **[ECRAN]**
-- **T4** - GLOBAL **[ECRAN]**
-- **T17** - DETAIL **[ECRAN]**
-- **T30** - get solde
-
-Delegue a : [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Chained Listing Load Default (IDE 186)](ADH-IDE-186.md)
-
-#### Phase 2 : Initialisation (1 tache)
-
-- **T2** - Init village **[ECRAN]**
-
-#### Phase 3 : Impression (22 taches)
-
-- **T5** - Printer 1 **[ECRAN]**
-- **T6** - edition extrait compte **[ECRAN]**
-- **T7** - edition extrait compte **[ECRAN]**
-- **T8** - Printer 4 **[ECRAN]**
-- **T9** - edition extrait compte **[ECRAN]**
-- **T10** - edition extrait compte **[ECRAN]**
-- **T11** - Printer 6 **[ECRAN]**
-- **T13** - Printer 8 **[ECRAN]**
-- **T14** - edition extrait compte **[ECRAN]**
-- **T15** - Printer 9 **[ECRAN]**
-- **T16** - edition extrait compte **[ECRAN]**
-- **T18** - Printer 1 **[ECRAN]**
-- **T19** - edition extrait compte **[ECRAN]**
-- **T20** - edition extrait compte **[ECRAN]**
-- **T21** - Printer 4 **[ECRAN]**
-- **T22** - edition extrait compte **[ECRAN]**
-- **T23** - edition extrait compte **[ECRAN]**
-- **T24** - Printer 6 **[ECRAN]**
-- **T26** - Printer 8 **[ECRAN]**
-- **T27** - edition extrait compte **[ECRAN]**
-- **T28** - Printer 9 **[ECRAN]**
-- **T29** - edition extrait compte **[ECRAN]**
-
-Delegue a : [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Get Printer for chained list (IDE 184)](ADH-IDE-184.md), [Raz Current Printer (IDE 182)](ADH-IDE-182.md), [Chained Listing Printer Choice (IDE 185)](ADH-IDE-185.md), [Chained Listing Load Default (IDE 186)](ADH-IDE-186.md)
-
-#### Phase 4 : Saisie (2 taches)
-
-- **T12** - Transactions details **[ECRAN]**
-- **T25** - Transactions details **[ECRAN]**
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| cc_total_par_type | **W**/L (16 usages) |  |
-
-</details>
+**Contexte :**
+Appelé par le menu Club Med Pass (IDE 77) et la gestion de garantie sur compte PMS-584 (IDE 0), le programme s'inscrit dans la chaîne d'accueil des résidents. Modifie la table `cc_total_par_type` et lit 5 autres tables de crédits et paramétrages. Les 10 variables locales gèrent société, code compte, filiation, devise et l'état du formulaire (30 contrôles, 728 × 276 DLU).
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -879,14 +821,24 @@ flowchart TD
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 30 taches]
+    B1[Traitement (5t)]
+    START --> B1
+    B2[Initialisation (1t)]
+    B1 --> B2
+    B3[Impression (22t)]
+    B2 --> B3
+    B4[Saisie (2t)]
+    B3 --> B4
+    WRITE[MAJ 1 tables]
+    B4 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -896,14 +848,31 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
+| 268 | cc_total_par_type |  | DB |   | **W** | L | 16 |
+| 272 | cc_type_detail |  | DB | R |   | L | 8 |
 | 31 | gm-complet_______gmc |  | DB | R |   |   | 15 |
 | 69 | initialisation___ini |  | DB | R |   |   | 1 |
-| 268 | cc_total_par_type |  | DB |   | **W** | L | 16 |
-| 271 | cc_total |  | DB |   |   | L | 15 |
-| 272 | cc_type_detail |  | DB | R |   | L | 8 |
 | 273 | cc_type |  | DB |   |   | L | 16 |
+| 271 | cc_total |  | DB |   |   | L | 15 |
 
 ### Colonnes par table (2 / 4 tables avec colonnes identifiees)
+
+<details>
+<summary>Table 268 - cc_total_par_type (**W**/L) - 16 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 272 - cc_type_detail (R/L) - 8 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| I | v.detail | R | Logical |
+| J | bt.detail | R | Alpha |
+
+</details>
 
 <details>
 <summary>Table 31 - gm-complet_______gmc (R) - 15 usages</summary>
@@ -927,23 +896,6 @@ flowchart TD
 <summary>Table 69 - initialisation___ini (R) - 1 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 268 - cc_total_par_type (**W**/L) - 16 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 272 - cc_type_detail (R/L) - 8 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| I | v.detail | R | Logical |
-| J | bt.detail | R | Alpha |
 
 </details>
 
@@ -1244,4 +1196,4 @@ graph LR
 | [Raz Current Printer (IDE 182)](ADH-IDE-182.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:51*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:56*

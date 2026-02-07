@@ -1,6 +1,6 @@
-﻿# ADH IDE 100 - Verif boutique V3
+﻿# ADH IDE 100 - flag ligne boutique V3
 
-> **Analyse**: Phases 1-4 2026-02-07 06:58 -> 06:58 (16s) | Assemblage 06:58
+> **Analyse**: Phases 1-4 2026-02-07 03:47 -> 03:47 (27s) | Assemblage 14:32
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -12,28 +12,50 @@
 |----------|--------|
 | Projet | ADH |
 | IDE Position | 100 |
-| Nom Programme | Verif boutique V3 |
+| Nom Programme | flag ligne boutique V3 |
 | Fichier source | `Prg_100.xml` |
-| Dossier IDE | Factures |
-| Taches | 1 (0 ecrans visibles) |
-| Tables modifiees | 0 |
+| Dossier IDE | General |
+| Taches | 2 (0 ecrans visibles) |
+| Tables modifiees | 1 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 7/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Verif boutique V3** assure la gestion complete de ce processus.
+Programme de marquage/flagage des lignes boutique pour les applications TPE (Terminaux de Paiement Électronique). Le processus démarre via la tâche principale "flag ligne boutique V3" qui initialise le flagging en mass update de la table maj_appli_tpe. La sous-tâche enfant "flag ligne" réalise l'opération de marquage unitaire, en appliquant un flag logique TRUE sur chaque ligne boutique ciblée.
+
+Le programme utilise un mécanisme de filtrage paramétrisé combinant deux variables : p.Societe (lettre A) pour identifier la société concernée et p.Compte (lettre B) pour cibler le compte spécifique. Les lignes correspondent aux critères sont marquées dans un mode "R" (possiblement Recherche ou Récupération), réalisant ainsi une transaction batch cohérente de marquage boutique V3.
+
+C'est un processus transactionnel pur sans branchement conditionnel—16 lignes de logique linéaire déployées en deux niveaux hiérarchiques. Le programme reste orphelin en apparence (aucun appelant détecté dans la chaîne Main), suggérant une utilisation batch ou EDI depuis un contexte externe non analysé.
 
 ## 3. BLOCS FONCTIONNELS
 
+### 3.1 Traitement (2 taches)
+
+Traitements internes.
+
+---
+
+#### <a id="t1"></a>T1 - flag ligne boutique V3
+
+**Role** : Traitement : flag ligne boutique V3.
+
+---
+
+#### <a id="t2"></a>T2 - flag ligne
+
+**Role** : Traitement : flag ligne.
+
+
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
 - **Appele par**: (aucun)
-- **Appelle**: 0 programmes | **Tables**: 1 (W:0 R:1 L:0) | **Taches**: 1 | **Expressions**: 9
+- **Appelle**: 0 programmes | **Tables**: 1 (W:1 R:0 L:0) | **Taches**: 2 | **Expressions**: 4
 
 <!-- TAB:Ecrans -->
 
@@ -43,24 +65,28 @@
 
 ## 9. NAVIGATION
 
-### 9.3 Structure hierarchique (0 tache)
+### 9.3 Structure hierarchique (2 taches)
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
+| **100.1** | [**flag ligne boutique V3** (T1)](#t1) | - | - | Traitement |
+| 100.1.1 | [flag ligne (T2)](#t2) | - | - | |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 1 taches]
+    PROCESS[Traitement 2 taches]
+    WRITE[MAJ 1 tables]
+    START --> PROCESS --> WRITE --> ENDOK
     ENDOK([END])
-    START --> PROCESS --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -70,93 +96,63 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 866 | maj_appli_tpe |  | DB | R |   |   | 1 |
+| 866 | maj_appli_tpe |  | DB |   | **W** |   | 2 |
 
 ### Colonnes par table (1 / 1 tables avec colonnes identifiees)
 
 <details>
-<summary>Table 866 - maj_appli_tpe (R) - 1 usages</summary>
+<summary>Table 866 - maj_appli_tpe (**W**) - 2 usages</summary>
 
 | Lettre | Variable | Acces | Type |
 |--------|----------|-------|------|
-| A | P.Societe | R | Alpha |
-| B | P.Compte | R | Numeric |
-| C | P.Row id vente | R | Numeric |
-| D | P.Ligne manquante ? | R | Logical |
-| E | v.Existe ligne boutique ? | R | Logical |
+| A | p.Societe | W | Unicode |
+| B | p.Compte | W | Numeric |
 
 </details>
 
 ## 11. VARIABLES
 
-### 11.1 Parametres entrants (4)
+### 11.1 Parametres entrants (2)
 
 Variables recues en parametre.
 
 | Lettre | Nom | Type | Usage dans |
 |--------|-----|------|-----------|
-| A | P.Societe | Alpha | 1x parametre entrant |
-| B | P.Compte | Numeric | 1x parametre entrant |
-| C | P.Row id vente | Numeric | 1x parametre entrant |
-| D | P.Ligne manquante ? | Logical | - |
-
-### 11.2 Variables de session (1)
-
-Variables persistantes pendant toute la session.
-
-| Lettre | Nom | Type | Usage dans |
-|--------|-----|------|-----------|
-| E | v.Existe ligne boutique ? | Logical | - |
+| A | p.Societe | Unicode | 1x parametre entrant |
+| B | p.Compte | Numeric | 1x parametre entrant |
 
 ## 12. EXPRESSIONS
 
-**9 / 9 expressions decodees (100%)**
+**4 / 4 expressions decodees (100%)**
 
 ### 12.1 Repartition par type
 
 | Type | Expressions | Regles |
 |------|-------------|--------|
-| CONSTANTE | 2 | 0 |
-| OTHER | 3 | 0 |
-| CONDITION | 1 | 0 |
-| CAST_LOGIQUE | 2 | 0 |
-| NEGATION | 1 | 0 |
+| CONSTANTE | 1 | 0 |
+| CAST_LOGIQUE | 1 | 0 |
+| OTHER | 2 | 0 |
 
 ### 12.2 Expressions cles par type
 
-#### CONSTANTE (2 expressions)
+#### CONSTANTE (1 expressions)
 
 | Type | IDE | Expression | Regle |
 |------|-----|------------|-------|
-| CONSTANTE | 6 | `1` | - |
-| CONSTANTE | 4 | `'R'` | - |
+| CONSTANTE | 2 | `'R'` | - |
 
-#### OTHER (3 expressions)
-
-| Type | IDE | Expression | Regle |
-|------|-----|------------|-------|
-| OTHER | 5 | `[I]` | - |
-| OTHER | 2 | `P.Compte [B]` | - |
-| OTHER | 1 | `P.Societe [A]` | - |
-
-#### CONDITION (1 expressions)
+#### CAST_LOGIQUE (1 expressions)
 
 | Type | IDE | Expression | Regle |
 |------|-----|------------|-------|
-| CONDITION | 3 | `CndRange(P.Row id vente [C]<>0,P.Row id vente [C])` | - |
+| CAST_LOGIQUE | 1 | `'TRUE'LOG` | - |
 
-#### CAST_LOGIQUE (2 expressions)
-
-| Type | IDE | Expression | Regle |
-|------|-----|------------|-------|
-| CAST_LOGIQUE | 9 | `'FALSE'LOG` | - |
-| CAST_LOGIQUE | 7 | `'TRUE'LOG` | - |
-
-#### NEGATION (1 expressions)
+#### OTHER (2 expressions)
 
 | Type | IDE | Expression | Regle |
 |------|-----|------------|-------|
-| NEGATION | 8 | `NOT [J]` | - |
+| OTHER | 4 | `p.Compte [B]` | - |
+| OTHER | 3 | `p.Societe [A]` | - |
 
 <!-- TAB:Connexions -->
 
@@ -168,7 +164,7 @@ Variables persistantes pendant toute la session.
 
 ```mermaid
 graph LR
-    T100[100 Verif boutique V3]
+    T100[100 flag ligne boutiqu...]
     style T100 fill:#58a6ff
     NONE[Aucun caller]
     NONE -.-> T100
@@ -185,7 +181,7 @@ graph LR
 
 ```mermaid
 graph LR
-    T100[100 Verif boutique V3]
+    T100[100 flag ligne boutiqu...]
     style T100 fill:#58a6ff
     NONE[Aucun callee]
     T100 -.-> NONE
@@ -204,20 +200,26 @@ graph LR
 
 | Metrique | Valeur | Impact migration |
 |----------|--------|-----------------|
-| Lignes de logique | 17 | Programme compact |
-| Expressions | 9 | Peu de logique |
-| Tables WRITE | 0 | Impact faible |
+| Lignes de logique | 16 | Programme compact |
+| Expressions | 4 | Peu de logique |
+| Tables WRITE | 1 | Impact faible |
 | Sous-programmes | 0 | Peu de dependances |
 | Ecrans visibles | 0 | Ecran unique ou traitement batch |
-| Code desactive | 0% (0 / 17) | Code sain |
+| Code desactive | 0% (0 / 16) | Code sain |
 | Regles metier | 0 | Pas de regle identifiee |
 
 ### 14.2 Plan de migration par bloc
+
+#### Traitement (2 taches: 0 ecran, 2 traitements)
+
+- **Strategie** : 2 service(s) backend injectable(s) (Domain Services).
+- Decomposer les taches en services unitaires testables.
 
 ### 14.3 Dependances critiques
 
 | Dependance | Type | Appels | Impact |
 |------------|------|--------|--------|
+| maj_appli_tpe | Table WRITE (Database) | 2x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:58*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:34*

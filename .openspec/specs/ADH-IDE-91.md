@@ -1,6 +1,6 @@
 ﻿# ADH IDE 91 - Verif boutique
 
-> **Analyse**: Phases 1-4 2026-02-07 06:55 -> 06:55 (16s) | Assemblage 06:55
+> **Analyse**: Phases 1-4 2026-02-07 06:55 -> 06:55 (16s) | Assemblage 14:16
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,26 @@
 | IDE Position | 91 |
 | Nom Programme | Verif boutique |
 | Fichier source | `Prg_91.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Verif boutique** assure la gestion complete de ce processus.
+Le programme **ADH IDE 91 - Verif_boutique** est un utilitaire de vérification chargé de valider l'intégrité des données relatives aux articles de boutique (merchandise) lors du processus de facturation et caisse. Il intervient dans la chaîne de checkout, appelé par ADH 54 (Factures_Check_Out), et reçoit en entrée l'identifiant de la transaction (Societe, Compte, Row ID de vente). Le programme effectue une validation par plage sur l'ID de ligne pour s'assurer qu'il est valide et non-zéro, puis interroge la table maj_appli_tpe (configuration TPE) pour vérifier l'existence et la validité de la ligne boutique associée.
+
+Structuralement, il s'agit d'un programme très simple composé d'une unique tâche avec 17 lignes de logique et 9 expressions, sans branchement conditionnel. Le programme retourne deux drapeaux logiques (variables E et D) indiquant respectivement si la ligne boutique existe et si des lignes sont manquantes. Cette approche minimaliste reflète son rôle de vérification ponctuelle : il n'effectue que des lectures et aucune modification de données.
+
+Sur le plan métier, ADH 91 constitue un point de contrôle critique de la qualité des données dans le flux comptable et de ventes. Elle garantit que les articles de boutique sont correctement associés aux transactions avant la génération de factures, et s'inscrit dans une chaîne complexe incluant aussi ADH 89 (Factures - Table Comptabilité), ADH 90 (Edition Facture TVA) et ADH 92 (Flag ligne boutique). Son utilisation cross-projets suggère son importance dans la cohérence des données entre plusieurs modules du système.
 
 ## 3. BLOCS FONCTIONNELS
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -225,4 +230,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:55*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:18*

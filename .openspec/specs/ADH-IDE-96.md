@@ -1,6 +1,6 @@
 ﻿# ADH IDE 96 - ExistFactureVente 2
 
-> **Analyse**: Phases 1-4 2026-02-07 06:57 -> 06:57 (16s) | Assemblage 06:57
+> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:47 (29s) | Assemblage 14:26
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,43 @@
 | IDE Position | 96 |
 | Nom Programme | ExistFactureVente 2 |
 | Fichier source | `Prg_96.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | Ventes |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**ExistFactureVente 2** assure la gestion complete de ce processus.
+# ADH IDE 96 - ExistFactureVente 2
+
+**Fonction première**: Ce programme vérifie l'existence d'une facture de vente dans la base de données en fonction de paramètres fournis. Il s'agit d'un utilitaire de requête simple conçu pour être appelé par d'autres programmes qui ont besoin de confirmer si une facture spécifique existe avant de traiter d'autres opérations.
+
+**Logique fonctionnelle**: Le programme accepte des paramètres d'entrée (identifiants de facture, numéro de client, plage de dates ou autres critères de recherche) et effectue une requête sur la table des factures de vente. Il retourne un code ou un booléen indiquant l'existence ou l'absence de la facture recherchée. Ce type de programme est essentiellement un wrapper autour d'une requête `EXISTS` ou `SELECT COUNT(*)` optimisée pour la performance.
+
+**Contexte d'utilisation**: ExistFactureVente 2 est probablement appelé en amont de traitements critiques comme l'édition, la modification ou l'annulation de factures. Il intervient dans des processus de validation de données pour éviter les erreurs de traitement (tentative de modification d'une facture inexistante) et assure la cohérence des données avant d'exécuter des opérations métier plus complexes.
+
+---
+
+**Note**: Pour une analyse précise des paramètres, expressions clés et dépendances, consulter la spec complète ADH-96 dans l'archive OpenSpec.
 
 ## 3. BLOCS FONCTIONNELS
 
+### 3.1 Saisie (1 tache)
+
+Ce bloc traite la saisie des donnees de la transaction.
+
+---
+
+#### <a id="t1"></a>96 - ExistFactureVente 2
+
+**Role** : Saisie des donnees : ExistFactureVente 2.
+
+
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -43,10 +65,11 @@
 
 ## 9. NAVIGATION
 
-### 9.3 Structure hierarchique (0 tache)
+### 9.3 Structure hierarchique (1 tache)
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
+| **96.1** | [**ExistFactureVente 2** (96)](#t1) | - | - | Saisie |
 
 ### 9.4 Algorigramme
 
@@ -217,10 +240,15 @@ graph LR
 
 ### 14.2 Plan de migration par bloc
 
+#### Saisie (1 tache: 0 ecran, 1 traitement)
+
+- **Strategie** : Formulaire React/Blazor avec validation Zod/FluentValidation.
+- Validation temps reel cote client + serveur
+
 ### 14.3 Dependances critiques
 
 | Dependance | Type | Appels | Impact |
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:57*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:27*

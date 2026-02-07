@@ -1,6 +1,6 @@
 ﻿# ADH IDE 83 - Deactivate all cards
 
-> **Analyse**: 2026-02-07 06:53
+> **Analyse**: 2026-02-07 14:02
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF

@@ -1,6 +1,6 @@
 ﻿# ADH IDE 92 - flag ligne boutique
 
-> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:47 (29s) | Assemblage 06:56
+> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:47 (29s) | Assemblage 14:18
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,20 +14,17 @@
 | IDE Position | 92 |
 | Nom Programme | flag ligne boutique |
 | Fichier source | `Prg_92.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | General |
 | Taches | 2 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
+| Complexite | **BASSE** (score 7/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**flag ligne boutique** assure la gestion complete de ce processus, accessible depuis [Factures (Tble Compta&Vent (IDE 89)](ADH-IDE-89.md), [Factures_Check_Out (IDE 54)](ADH-IDE-54.md), [Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md).
+Le programme **ADH IDE 92** assure la mise à jour du flag boutique au sein des factures du système. Appelé par les trois variantes majeures de facturation (factures standard IDE 89, checkout IDE 54, et version V3 IDE 97), il modifie la table `maj_appli_tpe` en enregistrant les informations de société et de compte pour marquer les lignes comme associées à la boutique. Avec seulement 2 tâches et 5 expressions décodées, le programme reste volontairement simple et sans code mort, reflétant son rôle d'utilitaire spécialisé.
 
-Le flux de traitement s'organise en **1 blocs fonctionnels** :
-
-- **Traitement** (2 taches) : traitements metier divers
-
-**Donnees modifiees** : 1 tables en ecriture (maj_appli_tpe).
+Ce programme s'intègre dans les flux critiques de checkout et de settlement (solde de compte), notamment en caisse (IDE 163) et lors des fins de séjour (IDE 193). Ses trois appelants couvrent l'ensemble des parcours de paiement : le flux Easy Check-Out (IDE 54), les factures comptables et de vente (IDE 89), et la version modernisée V3 (IDE 97). La mise à jour de `maj_appli_tpe` permet au système de tracer et de gérer les transactions boutique tout au long du cycle de facturation.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -50,7 +47,7 @@ Traitements internes.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -78,13 +75,15 @@ Traitements internes.
 flowchart TD
     START([START])
     PROCESS[Traitement 2 taches]
+    WRITE[MAJ 1 tables]
+    START --> PROCESS --> WRITE --> ENDOK
     ENDOK([END])
-    START --> PROCESS --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -279,4 +278,4 @@ graph LR
 | maj_appli_tpe | Table WRITE (Database) | 2x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:56*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:20*

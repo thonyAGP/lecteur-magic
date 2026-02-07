@@ -1,6 +1,6 @@
 ﻿# ADH IDE 77 - Club Med Pass menu
 
-> **Analyse**: 2026-02-07 06:50
+> **Analyse**: 2026-02-07 13:51
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF

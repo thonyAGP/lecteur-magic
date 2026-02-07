@@ -1,6 +1,6 @@
 ﻿# ADH IDE 76 - Print extrait compte /Service
 
-> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:44 (28s) | Assemblage 06:50
+> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:44 (28s) | Assemblage 13:50
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,59 +14,19 @@
 | IDE Position | 76 |
 | Nom Programme | Print extrait compte /Service |
 | Fichier source | `Prg_76.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | Comptabilite |
 | Taches | 17 (3 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 5 |
+| Complexite | **BASSE** (score 25/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print extrait compte /Service** assure la gestion complete de ce processus, accessible depuis [Extrait Easy Check Out à J+1 (IDE 53)](ADH-IDE-53.md), [Extrait de compte (IDE 69)](ADH-IDE-69.md).
+Le programme ADH IDE 76 gère l'impression de l'extrait de compte pour le service de caisse. Il intervient dans deux contextes majeurs : l'extraction à J+1 (depuis IDE 53) et la consultation directe de compte (depuis IDE 69). Son rôle est de coordonner l'ensemble du processus d'édition et d'impression, en passant par plusieurs étapes de formatage et de préparation des données.
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+Le flux d'exécution suit une séquence logique d'étapes : initialisation avec "Veuillez patienter...", configuration de l'imprimante (sélection de Printer 1), édition du corps principal de l'extrait de compte, génération du pied de facture via IDE 75, et enfin édition des récapitulatifs spécifiques (Free Etra). Pendant ce processus, le programme récupère la devise locale via IDE 21 et gère l'imprimante via les utilitaires IDE 179-182 (localisation, numérotation, réinitialisation).
 
-- **Impression** (13 taches) : generation de tickets et documents
-- **Traitement** (4 taches) : traitements metier divers
-
-**Donnees modifiees** : 1 tables en ecriture (log_maj_tpe).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (4 taches)
-
-- **T1** - Veuillez patienter... **[ECRAN]**
-- **T10** - Veuillez patienter... **[ECRAN]**
-- **T14** - Veuillez patienter... **[ECRAN]**
-- **T17** - recup nom adherent
-
-Delegue a : [Recupere devise local (IDE 21)](ADH-IDE-21.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
-
-#### Phase 2 : Impression (13 taches)
-
-- **T2** - Printer 1
-- **T3** - edition extrait compte
-- **T4** - Edition du pied
-- **T5** - Edition recap Free Etra
-- **T6** - edition extrait compte
-- **T7** - Edition du pied
-- **T8** - Edition recap Free Etra
-- **T9** - Printer 8 **[ECRAN]**
-- **T11** - Edition du pied
-- **T12** - Edition recap Free Etra
-- **T13** - Printer 9 **[ECRAN]**
-- **T15** - Edition du pied
-- **T16** - Edition recap Free Etra
-
-Delegue a : [Get Printer (IDE 179)](ADH-IDE-179.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| log_maj_tpe | **W** (4 usages) |  |
-
-</details>
+La table `log_maj_tpe` est mise à jour pour tracer les opérations d'impression, garantissant une historique d'audit des éditions. Ce programme centralise ainsi tous les aspects de l'édition d'extrait : gestion d'imprimante, formatage multi-sections, localisation, et journalisation, ce qui en fait un composant critique du workflow de fin de caisse.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -215,7 +175,7 @@ Generation des documents et tickets.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -560,14 +520,20 @@ flowchart TD
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 17 taches]
+    B1[Traitement (4t)]
+    START --> B1
+    B2[Impression (13t)]
+    B1 --> B2
+    WRITE[MAJ 1 tables]
+    B2 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -577,27 +543,20 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
+| 867 | log_maj_tpe |  | DB |   | **W** |   | 4 |
+| 40 | comptable________cte |  | DB | R |   | L | 8 |
 | 30 | gm-recherche_____gmr | Index de recherche | DB | R |   | L | 5 |
 | 31 | gm-complet_______gmc |  | DB | R |   | L | 3 |
-| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
-| 40 | comptable________cte |  | DB | R |   | L | 8 |
 | 67 | tables___________tab |  | DB |   |   | L | 3 |
-| 400 | pv_cust_rentals |  | DB |   |   | L | 1 |
-| 413 | pv_tva |  | DB |   |   | L | 1 |
-| 867 | log_maj_tpe |  | DB |   | **W** |   | 4 |
 | 928 | type_lit |  | DB |   |   | L | 2 |
+| 413 | pv_tva |  | DB |   |   | L | 1 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
+| 400 | pv_cust_rentals |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 4 tables avec colonnes identifiees)
 
 <details>
-<summary>Table 30 - gm-recherche_____gmr (R/L) - 5 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 31 - gm-complet_______gmc (R/L) - 3 usages</summary>
+<summary>Table 867 - log_maj_tpe (**W**) - 4 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
@@ -625,7 +584,14 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 867 - log_maj_tpe (**W**) - 4 usages</summary>
+<summary>Table 30 - gm-recherche_____gmr (R/L) - 5 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 31 - gm-complet_______gmc (R/L) - 3 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
@@ -885,4 +851,4 @@ graph LR
 | [Get Printer (IDE 179)](ADH-IDE-179.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:50*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:51*

@@ -1,6 +1,6 @@
 ﻿# ADH IDE 80 - Card scan read
 
-> **Analyse**: Phases 1-4 2026-02-07 06:51 -> 06:51 (17s) | Assemblage 06:51
+> **Analyse**: Phases 1-4 2026-02-07 06:51 -> 06:51 (17s) | Assemblage 13:56
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,24 @@
 | IDE Position | 80 |
 | Nom Programme | Card scan read |
 | Fichier source | `Prg_80.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Card scan read** assure la gestion complete de ce processus.
+Le programme ADH IDE 80 valide et traite les données de cartes bancaires scannées pour vérifier l'identité des clients et leur éligibilité. Il lit une table de référence contenant les données maître clients (code 8 chiffres, filiation, chaîne), puis extrait et analyse les informations de la carte scannée—ID carte, statut client et indicateur de validité. La logique centrale vérifie que la carte existe et possède un statut valide, rejetant les cartes non conformes.
+
+Bien que technique en apparence, ce programme joue un rôle critique dans la chaîne de paiement : isolé actuellement (aucun appelant détecté), il s'intègre probablement via recherche dynamique de nom (`ProgIdx()`) depuis les routines de transactions PBP ou PVE. Son code est d'excellente qualité—100% actif, aucune branche morte—avec une complexité minimale : une seule tâche, 15 expressions, accès lecture uniquement aux deux tables de référence essentielles.
 
 ## 3. BLOCS FONCTIONNELS
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -240,4 +243,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:51*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:58*

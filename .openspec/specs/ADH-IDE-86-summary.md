@@ -1,6 +1,6 @@
 ﻿# ADH IDE 86 - Bar Limit
 
-> **Analyse**: 2026-02-07 06:54
+> **Analyse**: 2026-02-07 14:06
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF

@@ -1,6 +1,6 @@
 ﻿# ADH IDE 90 - Edition Facture Tva(Compta&Ve)
 
-> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:46 (28s) | Assemblage 06:55
+> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:46 (28s) | Assemblage 14:13
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,40 +14,19 @@
 | IDE Position | 90 |
 | Nom Programme | Edition Facture Tva(Compta&Ve) |
 | Fichier source | `Prg_90.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | Facturation |
 | Taches | 4 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
+| Complexite | **BASSE** (score 0/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Edition Facture Tva(Compta&Ve)** assure la gestion complete de ce processus, accessible depuis [Factures (Tble Compta&Vent (IDE 89)](ADH-IDE-89.md), [Factures_Check_Out (IDE 54)](ADH-IDE-54.md), [Lancement Edition Facture (IDE 279)](ADH-IDE-279.md).
+**ADH IDE 90** est un programme d'édition de factures TVA destiné à la comptabilité et à la vente. Il traite les factures avec un détail des montants HT et TTC en fonction de leurs taux de TVA respectifs. Le programme est appelé depuis trois points critiques : la table Compta&Vent (IDE 89), le flux de sortie facture lors du checkout (IDE 54), et le menu de lancement direct d'édition (IDE 279). Cette position centrale en aval du processus de vente indique son rôle de finalisation comptable.
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+La structure interne du programme repose sur quatre tâches principales : **Edition Facture Tva(Ventes)** qui oriente la logique selon le contexte client/fournisseur, **Edition** qui construit le corps de la facture avec groupement par taux TVA, **Edition du Pied** qui intègre les totaux par taux et le total général, et **Total Général** qui calcule et valide la cohérence comptable. Cette architecture en cascade garantit que chaque ligne facture est classée correctement avant les calculs d'agrégation au niveau pied de document.
 
-- **Impression** (2 taches) : generation de tickets et documents
-- **Traitement** (1 tache) : traitements metier divers
-- **Saisie** (1 tache) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-
-**Logique metier** : 1 regles identifiees couvrant valeurs par defaut.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Saisie (1 tache)
-
-- **T1** - Edition Facture Tva(Ventes)
-
-#### Phase 2 : Impression (2 taches)
-
-- **T2** - Edition
-- **T3** - Edition du Pied
-
-#### Phase 3 : Traitement (1 tache)
-
-- **T4** - Total Général
-
-</details>
+Le programme manipule les données brutes de vente (lignages, montants unitaires, quantités) en les transformant en format de sortie réglementairement conforme, avec séparation des montants HT par catégorie TVA et calcul des montants TTC correspondants. Les éditions générées alimentent vraisemblablement les processus de reporting comptable et les remises d'impôt (TVA collectée/déductible).
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -134,14 +113,19 @@ Traitements internes.
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 4 taches]
+    B1[Saisie (1t)]
+    START --> B1
+    B2[Impression (2t)]
+    B1 --> B2
+    B3[Traitement (1t)]
+    B2 --> B3
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B3 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -151,16 +135,30 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
+| 867 | log_maj_tpe |  | DB | R |   |   | 2 |
+| 744 | pv_lieux_vente | Donnees de ventes | DB | R |   |   | 1 |
 | 27 | donnees_village__dvi |  | DB | R |   |   | 1 |
 | 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
-| 372 | pv_budget |  | DB |   |   | L | 1 |
-| 744 | pv_lieux_vente | Donnees de ventes | DB | R |   |   | 1 |
-| 866 | maj_appli_tpe |  | DB |   |   | L | 1 |
-| 867 | log_maj_tpe |  | DB | R |   |   | 2 |
 | 869 | Detail_Import_Boutique |  | DB |   |   | L | 1 |
 | 932 | taxe_add_param |  | DB |   |   | L | 1 |
+| 372 | pv_budget |  | DB |   |   | L | 1 |
+| 866 | maj_appli_tpe |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 3 tables avec colonnes identifiees)
+
+<details>
+<summary>Table 867 - log_maj_tpe (R) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 744 - pv_lieux_vente (R) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
 
 <details>
 <summary>Table 27 - donnees_village__dvi (R) - 1 usages</summary>
@@ -179,20 +177,6 @@ flowchart TD
 | J | P.Archive | R | Logical |
 | K | P.Easy Check Out | R | Logical |
 | L | P.Reediter | R | Logical |
-
-</details>
-
-<details>
-<summary>Table 744 - pv_lieux_vente (R) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 867 - log_maj_tpe (R) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -378,4 +362,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:55*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:16*

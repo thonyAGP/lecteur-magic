@@ -1,6 +1,6 @@
 ﻿# ADH IDE 86 - Bar Limit
 
-> **Analyse**: Phases 1-4 2026-02-07 03:45 -> 03:45 (27s) | Assemblage 06:54
+> **Analyse**: Phases 1-4 2026-02-07 03:45 -> 03:45 (27s) | Assemblage 14:06
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,58 +14,19 @@
 | IDE Position | 86 |
 | Nom Programme | Bar Limit |
 | Fichier source | `Prg_86.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 14 (4 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 6 |
+| Complexite | **BASSE** (score 24/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Bar Limit** assure la gestion complete de ce processus, accessible depuis [Club Med Pass menu (IDE 77)](ADH-IDE-77.md).
+**Bar Limit** gère la modification des plafonds de dépense associés à chaque carte client. Le programme récupère le plafond actuel, affiche le solde disponible et permet à l'utilisateur de saisir un nouveau plafond. Les actions principales incluent la création d'un nouveau plafond (`Create`), l'annulation en cours (`Bar Limit Cancel`) et la validation des modifications sur la table `ez_card`.
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+Le processus de validation distingue deux parcours : la validation directe (`validate D/C GO`) qui confirme les changements, et le calcul du plafond restant qui soustrait les dépenses engagées du plafond autorisé. La tâche affiche le "plafond actuel" avant modification et le "plafond reste" après soustraction des consommations.
 
-- **Traitement** (9 taches) : traitements metier divers
-- **Creation** (3 taches) : insertion d'enregistrements en base (mouvements, prestations)
-- **Validation** (2 taches) : controles et verifications de coherence
-
-**Donnees modifiees** : 1 tables en ecriture (ez_card).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (9 taches)
-
-- **T1** - Bar Limit **[ECRAN]**
-- **T3** - Bar Limit Cancel **[ECRAN]**
-- **T5** - Plafond actuel
-- **T6** - plafond reste
-- **T7** - derniere annulation
-- **T11** - Bar Limit **[ECRAN]**
-- **T12** - Plafond actuel
-- **T13** - derniere annulation
-- **T14** - plafond reste
-
-Delegue a : [Appel programme (IDE 44)](ADH-IDE-44.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
-
-#### Phase 2 : Creation (3 taches)
-
-- **T2** - Create **[ECRAN]**
-- **T8** - Create **[ECRAN]**
-- **T9** - Creation **[ECRAN]**
-
-#### Phase 3 : Validation (2 taches)
-
-- **T4** - validate D/C GO **[ECRAN]**
-- **T10** - validate D/C GO **[ECRAN]**
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| ez_card | R/**W** (4 usages) |  |
-
-</details>
+L'impression du plafond est externalisée via des appels successifs aux programmes spécialisés (`IDE 87` pour l'édition, `IDE 179-182` pour la gestion du spool d'impression), déléguant la responsabilité d'affichage sans gérer directement le matériel imprimant. Cette architecture modulaire permet de réutiliser la logique d'impression dans d'autres contextes.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -209,7 +170,7 @@ Controles de coherence : 2 taches verifient les donnees et conditions.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -1209,14 +1170,22 @@ flowchart TD
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 14 taches]
+    B1[Traitement (9t)]
+    START --> B1
+    B2[Creation (3t)]
+    B1 --> B2
+    B3[Validation (2t)]
+    B2 --> B3
+    WRITE[MAJ 1 tables]
+    B3 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -1226,11 +1195,20 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
+| 312 | ez_card |  | DB | R | **W** |   | 4 |
 | 19 | bl_detail |  | DB | R |   | L | 7 |
 | 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 1 |
-| 312 | ez_card |  | DB | R | **W** |   | 4 |
 
 ### Colonnes par table (3 / 3 tables avec colonnes identifiees)
+
+<details>
+<summary>Table 312 - ez_card (R/**W**) - 4 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| F | p.card code | W | Alpha |
+
+</details>
 
 <details>
 <summary>Table 19 - bl_detail (R/L) - 7 usages</summary>
@@ -1258,15 +1236,6 @@ flowchart TD
 | I | v.choix action | R | Alpha |
 | J | V.Date derniere annulation | R | Date |
 | K | V.Time derniere annulation | R | Time |
-
-</details>
-
-<details>
-<summary>Table 312 - ez_card (R/**W**) - 4 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| F | p.card code | W | Alpha |
 
 </details>
 
@@ -1461,4 +1430,4 @@ graph LR
 | [Get Printer (IDE 179)](ADH-IDE-179.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:54*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:07*
