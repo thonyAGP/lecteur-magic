@@ -1,6 +1,6 @@
 ﻿# ADH IDE 71 - Print extrait compte /Date
 
-> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (28s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (28s) | Assemblage 13:43
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,62 +18,15 @@
 | Taches | 24 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 5 |
+| Complexite | **BASSE** (score 25/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print extrait compte /Date** assure la gestion complete de ce processus, accessible depuis [Extrait de compte (IDE 69)](ADH-IDE-69.md), [Extrait Easy Check Out à J+1 (IDE 53)](ADH-IDE-53.md), [Solde Easy Check Out (IDE 64)](ADH-IDE-64.md), [Solde Easy Check Out (IDE 287)](ADH-IDE-287.md).
+**ADH IDE 71 - Print extrait compte /Date** est un programme de génération et d'impression d'extraits de compte. Il reçoit les appels de plusieurs programmes spécialisés dans la consultation de soldes (IDE 69 pour l'extrait standard, IDE 53 pour le checkout décalé, IDE 64 et 287 pour les soldes). Son rôle est de préparer les données comptables de l'adhérent, récupérer les paramètres d'impression (devise locale via IDE 21, imprimante via IDE 179) et orchestrer l'édition complète du document.
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+Le processus suit une séquence logique : récupération du nom de l'adhérent, configuration de l'imprimante cible (tâche "Printer 1"), génération du corps du document "extrait compte", ajout du pied de page en appelant IDE 75, et finalisation avec un récapitulatif des frais supplémentaires. Le programme met à jour la table `log_maj_tpe` pour tracer les opérations d'impression effectuées, garantissant un audit des éditions critiques.
 
-- **Impression** (19 taches) : generation de tickets et documents
-- **Traitement** (5 taches) : traitements metier divers
-
-**Donnees modifiees** : 1 tables en ecriture (log_maj_tpe).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (5 taches)
-
-- **71** - Veuillez patienter... **[[ECRAN]](#ecran-t1)**
-- **71.1** - recup nom adherent
-- **71.4.1** - Veuillez patienter... **[[ECRAN]](#ecran-t16)**
-- **71.5.1** - Veuillez patienter... **[[ECRAN]](#ecran-t18)**
-- **71.6.1** - Veuillez patienter... **[[ECRAN]](#ecran-t22)**
-
-Delegue a : [Recupere devise local (IDE 21)](ADH-IDE-21.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
-
-#### Phase 2 : Impression (19 taches)
-
-- **71.2** - Printer 1
-- **71.2.1** - edition extrait compte
-- **71.2.1.1** - Edition du pied
-- **71.2.1.2** - Edition recap Free Etra
-- **71.2.2** - edition extrait compte
-- **71.2.2.1** - Edition du pied
-- **71.2.2.2** - Edition recap Free Etra
-- **71.3** - Printer 4
-- **71.3.1** - edition extrait compte
-- **71.3.2** - edition extrait compte
-- **71.3.2.1** - Edition du pied
-- **71.3.2.2** - Edition recap Free Etra
-- **71.4** - Printer 6
-- **71.5** - Printer 8
-- **71.5.1.1** - Edition du pied
-- **71.5.1.2** - Edition recap Free Etra
-- **71.6** - Printer 9
-- **71.6.1.1** - Edition du pied
-- **71.6.1.2** - Edition recap Free Etra
-
-Delegue a : [Get Printer (IDE 179)](ADH-IDE-179.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| log_maj_tpe | **W** (5 usages) |  |
-
-</details>
+La gestion de l'imprimante est centralisée : utilisation des services IDE 181 (Set Listing Number) et 182 (Raz Current Printer) pour initialiser et réinitialiser l'état de sortie. Cela assure que chaque édition est isolée et que l'imprimante revient à un état connu après impression, évitant les chevauchements de documents ou les configurations résiduelles.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -83,7 +36,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t1"></a>71 - Veuillez patienter... [[ECRAN]](#ecran-t1)
+#### <a id="t1"></a>T1 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 432 x 60 DLU (MDI) | [Voir mockup](#ecran-t1)
@@ -93,17 +46,17 @@ Traitements internes.
 
 | Tache | Nom | Bloc |
 |-------|-----|------|
-| [71.1](#t2) | recup nom adherent | Traitement |
-| [71.4.1](#t16) | Veuillez patienter... **[[ECRAN]](#ecran-t16)** | Traitement |
-| [71.5.1](#t18) | Veuillez patienter... **[[ECRAN]](#ecran-t18)** | Traitement |
-| [71.6.1](#t22) | Veuillez patienter... **[[ECRAN]](#ecran-t22)** | Traitement |
+| [T2](#t2) | recup nom adherent | Traitement |
+| [T16](#t16) | Veuillez patienter... **[ECRAN]** | Traitement |
+| [T18](#t18) | Veuillez patienter... **[ECRAN]** | Traitement |
+| [T22](#t22) | Veuillez patienter... **[ECRAN]** | Traitement |
 
 </details>
 **Delegue a** : [Recupere devise local (IDE 21)](ADH-IDE-21.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
 
 ---
 
-#### <a id="t2"></a>71.1 - recup nom adherent
+#### <a id="t2"></a>T2 - recup nom adherent
 
 **Role** : Consultation/chargement : recup nom adherent.
 **Variables liees** : S (W0 nom adherent), T (W0 prenom adherent), U (W0 n° adherent)
@@ -111,7 +64,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t16"></a>71.4.1 - Veuillez patienter... [[ECRAN]](#ecran-t16)
+#### <a id="t16"></a>T16 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 56 DLU (MDI) | [Voir mockup](#ecran-t16)
@@ -119,7 +72,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t18"></a>71.5.1 - Veuillez patienter... [[ECRAN]](#ecran-t18)
+#### <a id="t18"></a>T18 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 56 DLU (MDI) | [Voir mockup](#ecran-t18)
@@ -127,7 +80,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t22"></a>71.6.1 - Veuillez patienter... [[ECRAN]](#ecran-t22)
+#### <a id="t22"></a>T22 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 56 DLU (MDI) | [Voir mockup](#ecran-t22)
@@ -140,128 +93,128 @@ Generation des documents et tickets.
 
 ---
 
-#### <a id="t3"></a>71.2 - Printer 1
+#### <a id="t3"></a>T3 - Printer 1
 
 **Role** : Generation du document : Printer 1.
 
 ---
 
-#### <a id="t4"></a>71.2.1 - edition extrait compte
+#### <a id="t4"></a>T4 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : B (P0 n° compte), H (P0 edition Tva V2), O (P. Edition Auto), X (W0 masque extrait), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t5"></a>71.2.1.1 - Edition du pied
+#### <a id="t5"></a>T5 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t6"></a>71.2.1.2 - Edition recap Free Etra
+#### <a id="t6"></a>T6 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t7"></a>71.2.2 - edition extrait compte
+#### <a id="t7"></a>T7 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : B (P0 n° compte), H (P0 edition Tva V2), O (P. Edition Auto), X (W0 masque extrait), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t8"></a>71.2.2.1 - Edition du pied
+#### <a id="t8"></a>T8 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t9"></a>71.2.2.2 - Edition recap Free Etra
+#### <a id="t9"></a>T9 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t10"></a>71.3 - Printer 4
+#### <a id="t10"></a>T10 - Printer 4
 
 **Role** : Generation du document : Printer 4.
 
 ---
 
-#### <a id="t11"></a>71.3.1 - edition extrait compte
+#### <a id="t11"></a>T11 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : B (P0 n° compte), H (P0 edition Tva V2), O (P. Edition Auto), X (W0 masque extrait), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t12"></a>71.3.2 - edition extrait compte
+#### <a id="t12"></a>T12 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : B (P0 n° compte), H (P0 edition Tva V2), O (P. Edition Auto), X (W0 masque extrait), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t13"></a>71.3.2.1 - Edition du pied
+#### <a id="t13"></a>T13 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t14"></a>71.3.2.2 - Edition recap Free Etra
+#### <a id="t14"></a>T14 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t15"></a>71.4 - Printer 6
+#### <a id="t15"></a>T15 - Printer 6
 
 **Role** : Generation du document : Printer 6.
 
 ---
 
-#### <a id="t17"></a>71.5 - Printer 8
+#### <a id="t17"></a>T17 - Printer 8
 
 **Role** : Generation du document : Printer 8.
 
 ---
 
-#### <a id="t19"></a>71.5.1.1 - Edition du pied
+#### <a id="t19"></a>T19 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t20"></a>71.5.1.2 - Edition recap Free Etra
+#### <a id="t20"></a>T20 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t21"></a>71.6 - Printer 9
+#### <a id="t21"></a>T21 - Printer 9
 
 **Role** : Generation du document : Printer 9.
 
 ---
 
-#### <a id="t23"></a>71.6.1.1 - Edition du pied
+#### <a id="t23"></a>T23 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
 
 ---
 
-#### <a id="t24"></a>71.6.1.2 - Edition recap Free Etra
+#### <a id="t24"></a>T24 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 **Variables liees** : H (P0 edition Tva V2), O (P. Edition Auto), BD (v. Libelle edition)
@@ -269,7 +222,7 @@ Generation des documents et tickets.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -288,50 +241,50 @@ Generation des documents et tickets.
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
-| **71.1** | [**Veuillez patienter...** (71)](#t1) [mockup](#ecran-t1) | MDI | 432x60 | Traitement |
-| 71.1.1 | [recup nom adherent (71.1)](#t2) | MDI | - | |
-| 71.1.2 | [Veuillez patienter... (71.4.1)](#t16) [mockup](#ecran-t16) | MDI | 422x56 | |
-| 71.1.3 | [Veuillez patienter... (71.5.1)](#t18) [mockup](#ecran-t18) | MDI | 422x56 | |
-| 71.1.4 | [Veuillez patienter... (71.6.1)](#t22) [mockup](#ecran-t22) | MDI | 422x56 | |
-| **71.2** | [**Printer 1** (71.2)](#t3) | MDI | - | Impression |
-| 71.2.1 | [edition extrait compte (71.2.1)](#t4) | MDI | - | |
-| 71.2.2 | [Edition du pied (71.2.1.1)](#t5) | - | - | |
-| 71.2.3 | [Edition recap Free Etra (71.2.1.2)](#t6) | - | - | |
-| 71.2.4 | [edition extrait compte (71.2.2)](#t7) | MDI | - | |
-| 71.2.5 | [Edition du pied (71.2.2.1)](#t8) | - | - | |
-| 71.2.6 | [Edition recap Free Etra (71.2.2.2)](#t9) | - | - | |
-| 71.2.7 | [Printer 4 (71.3)](#t10) | MDI | - | |
-| 71.2.8 | [edition extrait compte (71.3.1)](#t11) | MDI | - | |
-| 71.2.9 | [edition extrait compte (71.3.2)](#t12) | MDI | - | |
-| 71.2.10 | [Edition du pied (71.3.2.1)](#t13) | - | - | |
-| 71.2.11 | [Edition recap Free Etra (71.3.2.2)](#t14) | - | - | |
-| 71.2.12 | [Printer 6 (71.4)](#t15) | MDI | - | |
-| 71.2.13 | [Printer 8 (71.5)](#t17) | MDI | - | |
-| 71.2.14 | [Edition du pied (71.5.1.1)](#t19) | - | - | |
-| 71.2.15 | [Edition recap Free Etra (71.5.1.2)](#t20) | - | - | |
-| 71.2.16 | [Printer 9 (71.6)](#t21) | MDI | - | |
-| 71.2.17 | [Edition du pied (71.6.1.1)](#t23) | - | - | |
-| 71.2.18 | [Edition recap Free Etra (71.6.1.2)](#t24) | - | - | |
+| **71.1** | [**Veuillez patienter...** (T1)](#t1) [mockup](#ecran-t1) | MDI | 432x60 | Traitement |
+| 71.1.1 | [recup nom adherent (T2)](#t2) | MDI | - | |
+| 71.1.2 | [Veuillez patienter... (T16)](#t16) [mockup](#ecran-t16) | MDI | 422x56 | |
+| 71.1.3 | [Veuillez patienter... (T18)](#t18) [mockup](#ecran-t18) | MDI | 422x56 | |
+| 71.1.4 | [Veuillez patienter... (T22)](#t22) [mockup](#ecran-t22) | MDI | 422x56 | |
+| **71.2** | [**Printer 1** (T3)](#t3) | MDI | - | Impression |
+| 71.2.1 | [edition extrait compte (T4)](#t4) | MDI | - | |
+| 71.2.2 | [Edition du pied (T5)](#t5) | - | - | |
+| 71.2.3 | [Edition recap Free Etra (T6)](#t6) | - | - | |
+| 71.2.4 | [edition extrait compte (T7)](#t7) | MDI | - | |
+| 71.2.5 | [Edition du pied (T8)](#t8) | - | - | |
+| 71.2.6 | [Edition recap Free Etra (T9)](#t9) | - | - | |
+| 71.2.7 | [Printer 4 (T10)](#t10) | MDI | - | |
+| 71.2.8 | [edition extrait compte (T11)](#t11) | MDI | - | |
+| 71.2.9 | [edition extrait compte (T12)](#t12) | MDI | - | |
+| 71.2.10 | [Edition du pied (T13)](#t13) | - | - | |
+| 71.2.11 | [Edition recap Free Etra (T14)](#t14) | - | - | |
+| 71.2.12 | [Printer 6 (T15)](#t15) | MDI | - | |
+| 71.2.13 | [Printer 8 (T17)](#t17) | MDI | - | |
+| 71.2.14 | [Edition du pied (T19)](#t19) | - | - | |
+| 71.2.15 | [Edition recap Free Etra (T20)](#t20) | - | - | |
+| 71.2.16 | [Printer 9 (T21)](#t21) | MDI | - | |
+| 71.2.17 | [Edition du pied (T23)](#t23) | - | - | |
+| 71.2.18 | [Edition recap Free Etra (T24)](#t24) | - | - | |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    INIT[Init controles]
-    SAISIE[Printer 8]
-    UPDATE[MAJ 1 tables]
-    ENDOK([END OK])
-
-    START --> INIT --> SAISIE
-    SAISIE --> UPDATE --> ENDOK
-
+    B1[Traitement (5t)]
+    START --> B1
+    B2[Impression (19t)]
+    B1 --> B2
+    WRITE[MAJ 1 tables]
+    B2 --> WRITE
+    ENDOK([END])
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
-> *Algorigramme auto-genere. Utiliser `/algorigramme` pour une synthese metier detaillee.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -341,26 +294,19 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   | L | 8 |
-| 31 | gm-complet_______gmc |  | DB | R |   | L | 10 |
-| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
-| 40 | comptable________cte |  | DB | R |   | L | 12 |
-| 400 | pv_cust_rentals |  | DB |   |   | L | 1 |
-| 413 | pv_tva |  | DB |   |   | L | 1 |
 | 867 | log_maj_tpe |  | DB |   | **W** |   | 5 |
+| 40 | comptable________cte |  | DB | R |   | L | 12 |
+| 31 | gm-complet_______gmc |  | DB | R |   | L | 10 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   | L | 8 |
 | 928 | type_lit |  | DB |   |   | L | 2 |
+| 413 | pv_tva |  | DB |   |   | L | 1 |
+| 400 | pv_cust_rentals |  | DB |   |   | L | 1 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 4 tables avec colonnes identifiees)
 
 <details>
-<summary>Table 30 - gm-recherche_____gmr (R/L) - 8 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 31 - gm-complet_______gmc (R/L) - 10 usages</summary>
+<summary>Table 867 - log_maj_tpe (**W**) - 5 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
@@ -386,7 +332,14 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 867 - log_maj_tpe (**W**) - 5 usages</summary>
+<summary>Table 31 - gm-complet_______gmc (R/L) - 10 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 30 - gm-recherche_____gmr (R/L) - 8 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
@@ -701,4 +654,4 @@ graph LR
 | [Get Printer (IDE 179)](ADH-IDE-179.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:44*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:44*

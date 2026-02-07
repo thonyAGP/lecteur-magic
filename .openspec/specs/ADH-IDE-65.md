@@ -1,6 +1,6 @@
 ﻿# ADH IDE 65 - Edition & Mail Easy Check Out
 
-> **Analyse**: Phases 1-4 2026-02-07 03:42 -> 03:43 (26s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:42 -> 03:43 (26s) | Assemblage 13:36
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,42 +18,15 @@
 | Taches | 4 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
+| Complexite | **BASSE** (score 7/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Edition & Mail Easy Check Out** assure la gestion complete de ce processus, accessible depuis [Récap Trait Easy Check-Out (IDE 56)](ADH-IDE-56.md), [Solde Easy Check Out (IDE 64)](ADH-IDE-64.md), [Reedition Recap Easy Check Out (IDE 67)](ADH-IDE-67.md), [Solde Easy Check Out (IDE 287)](ADH-IDE-287.md).
+Le programme **ADH IDE 65** gère l'édition et l'envoi par email des reçus de fin de séjour Easy Check-Out. Orchestrateur central du workflow de départ, il récupère les données d'hébergement, calcule les totaux par mode de paiement (VISA, AMEX) et génère un document de synthèse avec options d'attachements. Le programme applique les paramètres de configuration stockés dans la table `pv_budget` (édition automatique, environnement test, date/heure d'émission) et valide l'absence d'erreurs avant de poursuivre.
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+Après édition du reçu, le programme crée une entrée email dans la table `log_booker` pour transmission au client, mais uniquement si l'édition automatique est activée et que l'environnement n'est pas un test PES. Cette séparation entre édition et mailing garantit un contrôle granulaire : éditions d'erreurs seules, suppressions de test, ou workflows partiels selon les flags configurés. Les tâches sont hiérarchisées (édition principale avec gestion d'annulation embarquée, puis mailing secondaire) pour maximiser la lisibilité et la maintenabilité du flux.
 
-- **Traitement** (2 taches) : traitements metier divers
-- **Creation** (1 tache) : insertion d'enregistrements en base (mouvements, prestations)
-- **Impression** (1 tache) : generation de tickets et documents
-
-**Donnees modifiees** : 1 tables en ecriture (log_booker).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Impression (1 tache)
-
-- **65** - Edition & Mail Easy Check Out
-
-#### Phase 2 : Traitement (2 taches)
-
-- **65.1** - Express Check-Out **[[ECRAN]](#ecran-t2)**
-- **65.1.1** - Annulation ECO
-
-#### Phase 3 : Creation (1 tache)
-
-- **65.2** - Creation Envoi Mail
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| log_booker | **W** (1 usages) |  |
-
-</details>
+Le programme est un **nœud terminal** (aucun appel sortant) appelé par 4 programmes amont (IDE 56, 64, 67, 287) qui représentent différentes étapes de la transaction hôtelière. Ses 116 lignes sans code mort, réparties sur 4 tâches, reflètent une implémentation mature et stable, avec traçabilité complète en audit pour conformité.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -63,7 +36,7 @@ Generation des documents et tickets.
 
 ---
 
-#### <a id="t1"></a>65 - Edition & Mail Easy Check Out
+#### <a id="t1"></a>T1 - Edition & Mail Easy Check Out
 
 **Role** : Generation du document : Edition & Mail Easy Check Out.
 **Variables liees** : B (P.i.Edition Auto), D (P.i.Date Edition)
@@ -75,14 +48,14 @@ Traitements internes.
 
 ---
 
-#### <a id="t2"></a>65.1 - Express Check-Out [[ECRAN]](#ecran-t2)
+#### <a id="t2"></a>T2 - Express Check-Out [ECRAN]
 
 **Role** : Traitement : Express Check-Out.
 **Ecran** : 218 x 66 DLU | [Voir mockup](#ecran-t2)
 
 ---
 
-#### <a id="t4"></a>65.1.1 - Annulation ECO
+#### <a id="t4"></a>T4 - Annulation ECO
 
 **Role** : Traitement : Annulation ECO.
 
@@ -93,14 +66,14 @@ Insertion de nouveaux enregistrements en base.
 
 ---
 
-#### <a id="t3"></a>65.2 - Creation Envoi Mail
+#### <a id="t3"></a>T3 - Creation Envoi Mail
 
 **Role** : Creation d'enregistrement : Creation Envoi Mail.
 
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -119,30 +92,32 @@ Insertion de nouveaux enregistrements en base.
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
-| **65.1** | [**Edition & Mail Easy Check Out** (65)](#t1) | - | - | Impression |
-| **65.2** | [**Express Check-Out** (65.1)](#t2) [mockup](#ecran-t2) | - | 218x66 | Traitement |
-| 65.2.1 | [Annulation ECO (65.1.1)](#t4) | - | - | |
-| **65.3** | [**Creation Envoi Mail** (65.2)](#t3) | - | - | Creation |
+| **65.1** | [**Edition & Mail Easy Check Out** (T1)](#t1) | - | - | Impression |
+| **65.2** | [**Express Check-Out** (T2)](#t2) [mockup](#ecran-t2) | - | 218x66 | Traitement |
+| 65.2.1 | [Annulation ECO (T4)](#t4) | - | - | |
+| **65.3** | [**Creation Envoi Mail** (T3)](#t3) | - | - | Creation |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    INIT[Init controles]
-    SAISIE[Traitement principal]
-    UPDATE[MAJ 1 tables]
-    ENDOK([END OK])
-
-    START --> INIT --> SAISIE
-    SAISIE --> UPDATE --> ENDOK
-
+    B1[Impression (1t)]
+    START --> B1
+    B2[Traitement (2t)]
+    B1 --> B2
+    B3[Creation (1t)]
+    B2 --> B3
+    WRITE[MAJ 1 tables]
+    B3 --> WRITE
+    ENDOK([END])
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
-> *Algorigramme auto-genere. Utiliser `/algorigramme` pour une synthese metier detaillee.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -152,24 +127,20 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 34 | hebergement______heb | Hebergement (chambres) | DB | R |   |   | 1 |
-| 39 | depot_garantie___dga | Depots et garanties | DB |   |   | L | 1 |
-| 47 | compte_gm________cgm | Comptes GM (generaux) | DB |   |   | L | 1 |
-| 48 | lignes_de_solde__sld |  | DB |   |   | L | 1 |
-| 372 | pv_budget |  | DB | R |   | L | 2 |
 | 911 | log_booker |  | DB |   | **W** |   | 1 |
+| 372 | pv_budget |  | DB | R |   | L | 2 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB | R |   |   | 1 |
+| 48 | lignes_de_solde__sld |  | DB |   |   | L | 1 |
+| 47 | compte_gm________cgm | Comptes GM (generaux) | DB |   |   | L | 1 |
 | 934 | selection enregistrement diver |  | DB |   |   | L | 1 |
+| 39 | depot_garantie___dga | Depots et garanties | DB |   |   | L | 1 |
 
 ### Colonnes par table (2 / 3 tables avec colonnes identifiees)
 
 <details>
-<summary>Table 34 - hebergement______heb (R) - 1 usages</summary>
+<summary>Table 911 - log_booker (**W**) - 1 usages</summary>
 
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | v.Total_VISA | R | Numeric |
-| B | v.Total_AMEX | R | Numeric |
-| C | v.Message Erreur Test | R | Unicode |
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -189,9 +160,13 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 911 - log_booker (**W**) - 1 usages</summary>
+<summary>Table 34 - hebergement______heb (R) - 1 usages</summary>
 
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | v.Total_VISA | R | Numeric |
+| B | v.Total_AMEX | R | Numeric |
+| C | v.Message Erreur Test | R | Unicode |
 
 </details>
 
@@ -372,4 +347,4 @@ graph LR
 | log_booker | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:43*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:38*

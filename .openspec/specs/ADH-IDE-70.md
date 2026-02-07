@@ -1,6 +1,6 @@
 ﻿# ADH IDE 70 - Print extrait compte /Nom
 
-> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (27s) | Assemblage 12:34
+> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (27s) | Assemblage 13:41
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -22,11 +22,13 @@
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**ADH IDE 70** gère l'impression de l'extrait de compte pour un adhérent. Le programme affiche d'abord un message "Veuillez patienter..." avant de récupérer les informations essentielles : le nom de l'adhérent depuis la base de données, la devise locale via le programme IDE 21, et configure l'imprimante via IDE 179. Il initialise également le numéro de listage pour le document (IDE 181) et réinitialise les paramètres imprimante (IDE 182).
+**ADH IDE 70 - Impression d'extrait de compte par nom**
 
-Le cœur du processus consiste à éditer l'extrait de compte avec tous les détails de l'adhérent en utilisant l'imprimante sélectionnée. Une fois le contenu principal généré, le programme ajoute le pied de page du document via IDE 75, puis édite un récapitulatif des extras gratuits. Chaque étape met à jour la table `log_maj_tpe` pour tracer les modifications effectuées.
+Le programme 70 est un module spécialisé dans l'édition d'extraits de compte triés par nom d'adhérent. Appelé depuis le programme parent ADH IDE 69 (Extrait de compte), il gère l'impression formatée des transactions membres en orchestrant 5 sous-programmes : configuration d'imprimante (179, 181, 182), récupération de devise locale (21) et calcul du pied de facture (75). Le flux débute par un écran "Veuillez patienter" suivi de la récupération des données adhérent et du positionnement imprimante, avant de parcourir les enregistrements comptables liés (tables gm-recherche, gm-complet, comptable).
 
-Ce programme est un example classique de workflow d'édition/impression : il orchestestre plusieurs sous-programmes spécialisés (récupération données, configuration d'impression, génération de contenu) pour produire un document complet et correctement formaté. Il s'inscrit dans la chaîne d'édition des extraits de compte, appelé depuis IDE 69 lorsque l'utilisateur demande l'impression.
+L'opération core implique le rendu multi-section de l'extrait (détails transactions, calculs TVA, totaux cumulés) avec une gestion sophistiquée des formats de montants et devises. Le programme génère automatiquement la section pied contenant les totaux nets/bruts et ventilation fiscale, puis enregistre chaque opération d'impression dans la table audit log_maj_tpe pour la conformité. Support multi-imprimantes (printers 1, 6, 8, 9) et nombre de copies configurables.
+
+Aucune branche de code n'est désactivée (100% de logique active). Le programme démontre une robustesse élevée avec validations de configuration imprimante et bypass de mode composant pour appels directs.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -564,4 +566,4 @@ graph LR
 | [Get Printer (IDE 179)](ADH-IDE-179.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 12:34*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:43*

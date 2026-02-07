@@ -1,6 +1,6 @@
 ﻿# ADH IDE 69 - Extrait de compte
 
-> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (27s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (27s) | Assemblage 13:41
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,6 +18,7 @@
 | Taches | 12 (3 ecrans visibles) |
 | Tables modifiees | 4 |
 | Programmes appeles | 14 |
+| Complexite | **BASSE** (score 35/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
@@ -138,7 +139,7 @@ Calculs metier : montants, stocks, compteurs.
 
 ---
 
-#### <a id="t1"></a>69 - Extrait de compte [[ECRAN]](#ecran-t1)
+#### <a id="t1"></a>T1 - Extrait de compte [ECRAN]
 
 **Role** : Traitement : Extrait de compte.
 **Ecran** : 166 x 15 DLU (MDI) | [Voir mockup](#ecran-t1)
@@ -148,10 +149,10 @@ Calculs metier : montants, stocks, compteurs.
 
 | Tache | Nom | Bloc |
 |-------|-----|------|
-| [69.1](#t2) | Recalcul solde | Calcul |
-| [69.2](#t4) | Reaffichage infos compte | Calcul |
-| [69.3](#t5) | Scroll compte **[[ECRAN]](#ecran-t5)** | Calcul |
-| [69.4](#t12) | Reaffichage infos compte | Calcul |
+| [T2](#t2) | Recalcul solde | Calcul |
+| [T4](#t4) | Reaffichage infos compte | Calcul |
+| [T5](#t5) | Scroll compte **[ECRAN]** | Calcul |
+| [T12](#t12) | Reaffichage infos compte | Calcul |
 
 </details>
 **Variables liees** : G (< solde compte), H (< etat compte)
@@ -159,21 +160,21 @@ Calculs metier : montants, stocks, compteurs.
 
 ---
 
-#### <a id="t2"></a>69.1 - Recalcul solde
+#### <a id="t2"></a>T2 - Recalcul solde
 
 **Role** : Calcul : Recalcul solde.
 **Variables liees** : G (< solde compte), I (< date solde)
 
 ---
 
-#### <a id="t4"></a>69.2 - Reaffichage infos compte
+#### <a id="t4"></a>T4 - Reaffichage infos compte
 
 **Role** : Reinitialisation : Reaffichage infos compte.
 **Variables liees** : G (< solde compte), H (< etat compte)
 
 ---
 
-#### <a id="t5"></a>69.3 - Scroll compte [[ECRAN]](#ecran-t5)
+#### <a id="t5"></a>T5 - Scroll compte [ECRAN]
 
 **Role** : Traitement : Scroll compte.
 **Ecran** : 1496 x 291 DLU (MDI) | [Voir mockup](#ecran-t5)
@@ -181,7 +182,7 @@ Calculs metier : montants, stocks, compteurs.
 
 ---
 
-#### <a id="t12"></a>69.4 - Reaffichage infos compte
+#### <a id="t12"></a>T12 - Reaffichage infos compte
 
 **Role** : Reinitialisation : Reaffichage infos compte.
 **Variables liees** : G (< solde compte), H (< etat compte)
@@ -193,7 +194,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t3"></a>69.1.1 - Solde GM
+#### <a id="t3"></a>T3 - Solde GM
 
 **Role** : Consultation/chargement : Solde GM.
 **Variables liees** : G (< solde compte), I (< date solde)
@@ -201,14 +202,14 @@ Traitements internes.
 
 ---
 
-#### <a id="t8"></a>69.3.3 - SendMail
+#### <a id="t8"></a>T8 - SendMail
 
 **Role** : Traitement : SendMail.
 **Delegue a** : [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Other Listing (IDE 183)](ADH-IDE-183.md), [Recuperation du titre (IDE 43)](ADH-IDE-43.md)
 
 ---
 
-#### <a id="t10"></a>69.3.5 - Check recu detail
+#### <a id="t10"></a>T10 - Check recu detail
 
 **Role** : Traitement : Check recu detail.
 **Variables liees** : S (v.Flag recu détaillé), T (v.Blob recu détaillé), U (v.Fichier recu détaillé), Z (v.Retour_recu_detail)
@@ -216,7 +217,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t11"></a>69.3.6 - PDF mobilité POS [[ECRAN]](#ecran-t11)
+#### <a id="t11"></a>T11 - PDF mobilité POS [ECRAN]
 
 **Role** : Traitement : PDF mobilité POS.
 **Ecran** : 123 x 195 DLU | [Voir mockup](#ecran-t11)
@@ -230,7 +231,7 @@ Generation des documents et tickets.
 
 ---
 
-#### <a id="t6"></a>69.3.1 - Choix Edition [[ECRAN]](#ecran-t6)
+#### <a id="t6"></a>T6 - Choix Edition [ECRAN]
 
 **Role** : Generation du document : Choix Edition.
 **Ecran** : 537 x 41 DLU | [Voir mockup](#ecran-t6)
@@ -244,7 +245,7 @@ Ecrans de recherche et consultation.
 
 ---
 
-#### <a id="t7"></a>69.3.2 - Zoom Listing [[ECRAN]](#ecran-t7)
+#### <a id="t7"></a>T7 - Zoom Listing [ECRAN]
 
 **Role** : Selection par l'operateur : Zoom Listing.
 **Ecran** : 818 x 0 DLU (MDI) | [Voir mockup](#ecran-t7)
@@ -257,7 +258,7 @@ Ce bloc traite la saisie des donnees de la transaction.
 
 ---
 
-#### <a id="t9"></a>69.3.4 - Vérif. Vente avec signature
+#### <a id="t9"></a>T9 - Vérif. Vente avec signature
 
 **Role** : Saisie des donnees : Vérif. Vente avec signature.
 **Variables liees** : Y (v.Retour isVenteODSignature)
@@ -265,72 +266,7 @@ Ce bloc traite la saisie des donnees de la transaction.
 
 ## 5. REGLES METIER
 
-### 5.1 Calcul du solde
-
-Le solde du compte GM est recalcule a chaque ouverture du programme :
-
-```
-Solde = SUM(cte_montant)
-WHERE cte_societe = societe
-  AND cte_code_adherent = code_adherent
-  AND (cte_debit + cte_credit) <> 0
-```
-
-**Formule expression 4** : `solde_cumule = solde_precedent + montant_operation`
-
-### 5.2 Filtrage des ecritures
-
-Les ecritures affichees doivent satisfaire la condition SQL :
-```sql
-WHERE (cte_debit + cte_credit) <> 0
-```
-
-Cela exclut les ecritures a zero (annulations, corrections).
-
-### 5.3 Codification couleur des lignes
-
-| Etat ligne (col 13) | Couleur | Code couleur |
-|---------------------|---------|--------------|
-| `X` | Rouge | 141 |
-| `A` | Orange | 143 |
-| Autre | Noir | 7 |
-
-### 5.4 Gestion des recus detailles
-
-Une ligne affiche le bouton "detail recu" si :
-- La ligne a un lien vers un ticket de vente mobilite (v.Lien ticket Vte mobilite = TRUE)
-- **OU** la vente a une signature electronique (`isVenteODSignature() = TRUE` ET champ blob non null)
-- **OU** un recu detaille existe en base (`Exist_recu_detail() = TRUE`)
-
-### 5.5 Parametrage des listings
-
-Le choix du format d'edition utilise le systeme de parametres globaux :
-```
-SetParam('ASKEDLISTINGNUM', [8|10|12|14|16])
-```
-
-Verification avant impression :
-```
-SI GetParam('ASKEDLISTINGNUM') <> GetParam('LISTINGNUMPRINTERCHOICE')
-   ET GetParam('LISTINGNUMPRINTERCHOICE') <> 0
-ALORS demander confirmation changement imprimante
-```
-
-### 5.6 Edition partielle
-
-Le programme supporte l'edition partielle (impression d'une periode specifique) via la variable `v.Edition partielle ?` :
-- **0** : Edition complete (tout l'historique)
-- **1** : Edition partielle (plage de dates)
-
-Les dates de filtre sont calculees par :
-- Date debut : `IF(v.Edition partielle, date_filtre, '01/01/1900')`
-- Date fin : `IF(v.Edition partielle, date_filtre, '01/01/2900')`
-
-### 5.7 Gestion Gift Pass
-
-- Le programme detecte la presence de Gift Pass sur le compte (`W0 Presence Recap Free Extra`)
-- L'operateur peut demander l'impression d'un recapitulatif Gift Pass (`W0 Print Recap Free Extra`)
-- La checkbox "Edition recapitulatif GIFT PASS" est affichee si des Gift Pass existent
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -345,16 +281,16 @@ Les dates de filtre sont calculees par :
 
 | # | Position | Tache | Nom | Type | Largeur | Hauteur | Bloc |
 |---|----------|-------|-----|------|---------|---------|------|
-| 1 | 69.3 | 69.3 | Scroll compte | MDI | 1496 | 291 | Calcul |
-| 2 | 69.3.1 | 69.3.1 | Choix Edition | Type0 | 537 | 41 | Impression |
-| 3 | 69.3.2 | 69.3.2 | Zoom Listing | MDI | 818 | 0 | Consultation |
+| 1 | 69.3 | T5 | Scroll compte | MDI | 1496 | 291 | Calcul |
+| 2 | 69.3.1 | T6 | Choix Edition | Type0 | 537 | 41 | Impression |
+| 3 | 69.3.2 | T7 | Zoom Listing | MDI | 818 | 0 | Consultation |
 
 ### 8.2 Mockups Ecrans
 
 ---
 
 #### <a id="ecran-t5"></a>69.3 - Scroll compte
-**Tache** : [69.3](#t5) | **Type** : MDI | **Dimensions** : 1496 x 291 DLU
+**Tache** : [T5](#t5) | **Type** : MDI | **Dimensions** : 1496 x 291 DLU
 **Bloc** : Calcul | **Titre IDE** : Scroll compte
 
 <!-- FORM-DATA:
@@ -1097,7 +1033,7 @@ Les dates de filtre sont calculees par :
 ---
 
 #### <a id="ecran-t6"></a>69.3.1 - Choix Edition
-**Tache** : [69.3.1](#t6) | **Type** : Type0 | **Dimensions** : 537 x 41 DLU
+**Tache** : [T6](#t6) | **Type** : Type0 | **Dimensions** : 537 x 41 DLU
 **Bloc** : Impression | **Titre IDE** : Choix Edition
 
 <!-- FORM-DATA:
@@ -1166,7 +1102,7 @@ Les dates de filtre sont calculees par :
 ---
 
 #### <a id="ecran-t7"></a>69.3.2 - Zoom Listing
-**Tache** : [69.3.2](#t7) | **Type** : MDI | **Dimensions** : 818 x 0 DLU
+**Tache** : [T7](#t7) | **Type** : MDI | **Dimensions** : 818 x 0 DLU
 **Bloc** : Consultation | **Titre IDE** : Zoom Listing
 
 <!-- FORM-DATA:
@@ -1235,11 +1171,11 @@ Les dates de filtre sont calculees par :
 flowchart TD
     START([Entree])
     style START fill:#3fb950
-    VF5[69.3 Scroll compte]
+    VF5[T5 Scroll compte]
     style VF5 fill:#58a6ff
-    VF6[69.3.1 Choix Edition]
+    VF6[T6 Choix Edition]
     style VF6 fill:#58a6ff
-    VF7[69.3.2 Zoom Listing]
+    VF7[T7 Zoom Listing]
     style VF7 fill:#58a6ff
     EXT179[IDE 179 Get Printer]
     style EXT179 fill:#3fb950
@@ -1306,108 +1242,44 @@ flowchart TD
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
-| **69.1** | [**Extrait de compte** (69)](#t1) [mockup](#ecran-t1) | MDI | 166x15 | Calcul |
-| 69.1.1 | [Recalcul solde (69.1)](#t2) | SDI | - | |
-| 69.1.2 | [Reaffichage infos compte (69.2)](#t4) | MDI | - | |
-| 69.1.3 | [Scroll compte (69.3)](#t5) [mockup](#ecran-t5) | MDI | 1496x291 | |
-| 69.1.4 | [Reaffichage infos compte (69.4)](#t12) | MDI | - | |
-| **69.2** | [**Solde GM** (69.1.1)](#t3) | SDI | - | Traitement |
-| 69.2.1 | [SendMail (69.3.3)](#t8) | - | - | |
-| 69.2.2 | [Check recu detail (69.3.5)](#t10) | - | - | |
-| 69.2.3 | [PDF mobilité POS (69.3.6)](#t11) [mockup](#ecran-t11) | - | 123x195 | |
-| **69.3** | [**Choix Edition** (69.3.1)](#t6) [mockup](#ecran-t6) | - | 537x41 | Impression |
-| **69.4** | [**Zoom Listing** (69.3.2)](#t7) [mockup](#ecran-t7) | MDI | 818x0 | Consultation |
-| **69.5** | [**Vérif. Vente avec signature** (69.3.4)](#t9) | - | - | Saisie |
+| **69.1** | [**Extrait de compte** (T1)](#t1) [mockup](#ecran-t1) | MDI | 166x15 | Calcul |
+| 69.1.1 | [Recalcul solde (T2)](#t2) | SDI | - | |
+| 69.1.2 | [Reaffichage infos compte (T4)](#t4) | MDI | - | |
+| 69.1.3 | [Scroll compte (T5)](#t5) [mockup](#ecran-t5) | MDI | 1496x291 | |
+| 69.1.4 | [Reaffichage infos compte (T12)](#t12) | MDI | - | |
+| **69.2** | [**Solde GM** (T3)](#t3) | SDI | - | Traitement |
+| 69.2.1 | [SendMail (T8)](#t8) | - | - | |
+| 69.2.2 | [Check recu detail (T10)](#t10) | - | - | |
+| 69.2.3 | [PDF mobilité POS (T11)](#t11) [mockup](#ecran-t11) | - | 123x195 | |
+| **69.3** | [**Choix Edition** (T6)](#t6) [mockup](#ecran-t6) | - | 537x41 | Impression |
+| **69.4** | [**Zoom Listing** (T7)](#t7) [mockup](#ecran-t7) | MDI | 818x0 | Consultation |
+| **69.5** | [**Vérif. Vente avec signature** (T9)](#t9) | - | - | Saisie |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    LOAD_CGM[Charger compte GM table 47]
-    CALC_SOLDE[Recalcul solde tache 69.1]
-    LOAD_CTE[Charger ecritures table 40]
-    DISPLAY[Afficher scroll ecritures]
-
-    WAIT_ACTION{Attente action utilisateur}
-
-    CHK_N{Bouton N?}
-    CHK_D{Bouton D?}
-    CHK_C{Bouton C?}
-    CHK_I{Bouton I?}
-    CHK_O{Bouton O?}
-    CHK_S{Bouton S?}
-    CHK_L{Bouton L?}
-    CHK_QUIT{Quitter?}
-
-    PRINT_N[IDE 70 Edition par Nom]
-    PRINT_D[IDE 71 Edition par Date]
-    PRINT_C[IDE 72 Edition par Cumule]
-    PRINT_I[IDE 73 Edition par Imputation]
-    PRINT_O[IDE 74 Edition Date Imp]
-    PRINT_S[IDE 76 Edition par Service]
-    ZOOM[IDE 226 Zoom Listing]
-
-    MAJ_SOLDE[MAJ solde dans cgm]
+    B1[Calcul (5t)]
+    START --> B1
+    B2[Traitement (4t)]
+    B1 --> B2
+    B3[Impression (1t)]
+    B2 --> B3
+    B4[Consultation (1t)]
+    B3 --> B4
+    B5[Saisie (1t)]
+    B4 --> B5
+    WRITE[MAJ 4 tables]
+    B5 --> WRITE
     ENDOK([END])
-
-    START --> LOAD_CGM
-    LOAD_CGM --> CALC_SOLDE
-    CALC_SOLDE --> LOAD_CTE
-    LOAD_CTE --> DISPLAY
-    DISPLAY --> WAIT_ACTION
-
-    WAIT_ACTION --> CHK_N
-    CHK_N -->|OUI| PRINT_N --> WAIT_ACTION
-    CHK_N -->|NON| CHK_D
-
-    CHK_D -->|OUI| PRINT_D --> WAIT_ACTION
-    CHK_D -->|NON| CHK_C
-
-    CHK_C -->|OUI| PRINT_C --> WAIT_ACTION
-    CHK_C -->|NON| CHK_I
-
-    CHK_I -->|OUI| PRINT_I --> WAIT_ACTION
-    CHK_I -->|NON| CHK_O
-
-    CHK_O -->|OUI| PRINT_O --> WAIT_ACTION
-    CHK_O -->|NON| CHK_S
-
-    CHK_S -->|OUI| PRINT_S --> WAIT_ACTION
-    CHK_S -->|NON| CHK_L
-
-    CHK_L -->|OUI| ZOOM --> WAIT_ACTION
-    CHK_L -->|NON| CHK_QUIT
-
-    CHK_QUIT -->|NON| WAIT_ACTION
-    CHK_QUIT -->|OUI| MAJ_SOLDE --> ENDOK
-
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
-    style WAIT_ACTION fill:#58a6ff,color:#000
-    style CHK_N fill:#58a6ff,color:#000
-    style CHK_D fill:#58a6ff,color:#000
-    style CHK_C fill:#58a6ff,color:#000
-    style CHK_I fill:#58a6ff,color:#000
-    style CHK_O fill:#58a6ff,color:#000
-    style CHK_S fill:#58a6ff,color:#000
-    style CHK_L fill:#58a6ff,color:#000
-    style CHK_QUIT fill:#58a6ff,color:#000
-    style CALC_SOLDE fill:#ffeb3b,color:#000
-    style MAJ_SOLDE fill:#ffeb3b,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-**Legende** :
-- Vert : START / END
-- Bleu : Decisions (choix utilisateur)
-- Jaune : Actions cles (calcul solde, MAJ)
-
-**Resume du flux** :
-1. Chargement du compte GM et recalcul du solde
-2. Affichage des ecritures comptables en scroll
-3. Boucle d'attente des actions utilisateur (boutons C/D/I/N/O/L/S)
-4. Chaque bouton appelle le programme d'edition correspondant
-5. Bouton Quitter : sauvegarde du solde et fin
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -1417,21 +1289,21 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB |   |   | L | 1 |
 | 40 | comptable________cte |  | DB | R | **W** |   | 3 |
 | 47 | compte_gm________cgm | Comptes GM (generaux) | DB | R | **W** |   | 3 |
-| 67 | tables___________tab |  | DB |   |   | L | 1 |
-| 70 | date_comptable___dat |  | DB |   |   | L | 1 |
-| 285 | email |  | DB |   |   | L | 1 |
-| 367 | pms_print_param_default |  | DB |   | **W** |   | 1 |
-| 377 | pv_contracts |  | DB | R |   |   | 1 |
-| 395 | pv_ownership |  | DB |   |   | L | 1 |
-| 396 | pv_cust_packages |  | DB |   |   | L | 2 |
-| 473 | comptage_caisse | Sessions de caisse | TMP |   |   | L | 1 |
-| 728 | arc_cc_total |  | DB |   |   | L | 1 |
-| 786 | qualite_avant_reprise |  | DB |   |   | L | 1 |
 | 911 | log_booker |  | DB |   | **W** |   | 1 |
+| 367 | pms_print_param_default |  | DB |   | **W** |   | 1 |
 | 945 | Table_945 |  | MEM | R |   | L | 2 |
+| 377 | pv_contracts |  | DB | R |   |   | 1 |
+| 396 | pv_cust_packages |  | DB |   |   | L | 2 |
+| 728 | arc_cc_total |  | DB |   |   | L | 1 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB |   |   | L | 1 |
+| 70 | date_comptable___dat |  | DB |   |   | L | 1 |
+| 395 | pv_ownership |  | DB |   |   | L | 1 |
+| 473 | comptage_caisse | Sessions de caisse | TMP |   |   | L | 1 |
+| 67 | tables___________tab |  | DB |   |   | L | 1 |
+| 786 | qualite_avant_reprise |  | DB |   |   | L | 1 |
+| 285 | email |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (5 / 6 tables avec colonnes identifiees)
 
@@ -1466,6 +1338,13 @@ flowchart TD
 </details>
 
 <details>
+<summary>Table 911 - log_booker (**W**) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
 <summary>Table 367 - pms_print_param_default (**W**) - 1 usages</summary>
 
 | Lettre | Variable | Acces | Type |
@@ -1476,26 +1355,19 @@ flowchart TD
 </details>
 
 <details>
+<summary>Table 945 - Table_945 (R/L) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
 <summary>Table 377 - pv_contracts (R) - 1 usages</summary>
 
 | Lettre | Variable | Acces | Type |
 |--------|----------|-------|------|
 | A | P.I Retour recu detail | R | Logical |
 | B | v.Retour recu detail | R | Logical |
-
-</details>
-
-<details>
-<summary>Table 911 - log_booker (**W**) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 945 - Table_945 (R/L) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -1792,4 +1664,4 @@ graph LR
 | [Appel programme (IDE 44)](ADH-IDE-44.md) | Sous-programme | 1x | Normale - Sous-programme |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:43*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:41*

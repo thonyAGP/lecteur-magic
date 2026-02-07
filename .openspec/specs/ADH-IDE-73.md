@@ -1,6 +1,6 @@
 ﻿# ADH IDE 73 - Print extrait compte /Imp
 
-> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:44 (27s) | Assemblage 03:44
+> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:44 (27s) | Assemblage 13:44
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,64 +18,15 @@
 | Taches | 26 (4 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 5 |
+| Complexite | **BASSE** (score 25/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print extrait compte /Imp** assure la gestion complete de ce processus, accessible depuis [Extrait de compte (IDE 69)](ADH-IDE-69.md).
+ADH IDE 73 (**Print extrait compte /Imp**) est le module responsable de l'impression des extraits de compte. Appelé depuis IDE 69, il gère une architecture multi-imprimantes supportant cinq modèles distincts : deux imprimantes feuilles (A4 et A5) et trois imprimantes rouleau (950 CUT, TMT 88III, TMT88IV). Le programme centralise la sélection d'imprimante via paramètre `CURRENTPRINTERNUM`, initialise les services de support (devise locale via IDE 21, détection imprimante via IDE 179, numérotation via IDE 181), puis route le flux vers la branche d'impression appropriée.
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+Chaque branche suit un pattern répétitif : pour les imprimantes A4/A5, deux cycles d'impression sont générés (version avec nombre de pages + version complète), chacun incluant la génération du pied de facture (IDE 75) et un récapitulatif « Free Extra » basé sur les données de table 31. Les imprimantes rouleau exécutent un seul cycle d'impression avec les mêmes composants. Tous les accès à la table 40 (comptable) et table 31 (gestion) sont séquencés par impression, garantissant une cohérence des montants dans chaque version imprimée.
 
-- **Impression** (21 taches) : generation de tickets et documents
-- **Traitement** (5 taches) : traitements metier divers
-
-**Donnees modifiees** : 1 tables en ecriture (log_maj_tpe).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (5 taches)
-
-- **73** - Veuillez patienter... **[[ECRAN]](#ecran-t1)**
-- **73.3.1** - Veuillez patienter... **[[ECRAN]](#ecran-t17)**
-- **73.4.1** - Veuillez patienter... **[[ECRAN]](#ecran-t19)**
-- **73.5.1** - Veuillez patienter... **[[ECRAN]](#ecran-t23)**
-- **73.6** - recup nom adherent
-
-Delegue a : [Recupere devise local (IDE 21)](ADH-IDE-21.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
-
-#### Phase 2 : Impression (21 taches)
-
-- **73.1** - Printer 1
-- **73.1.1** - edition extrait compte
-- **73.1.1.1** - Edition du pied
-- **73.1.1.2** - Edition recap Free Etra
-- **73.1.2** - edition extrait compte
-- **73.1.2.1** - Edition du pied
-- **73.1.2.2** - Edition recap Free Etra
-- **73.2** - Printer 4
-- **73.2.1** - edition extrait compte
-- **73.2.1.1** - Edition du pied
-- **73.2.1.2** - Edition recap Free Etra
-- **73.2.2** - edition extrait compte
-- **73.2.2.1** - Edition recap Free Etra
-- **73.2.2.2** - Edition du pied
-- **73.3** - Printer 6 **[[ECRAN]](#ecran-t16)**
-- **73.4** - Printer 8 **[[ECRAN]](#ecran-t18)**
-- **73.4.1.1** - Edition du pied
-- **73.4.1.2** - Edition recap Free Etra
-- **73.5** - Printer 9 **[[ECRAN]](#ecran-t22)**
-- **73.5.1.1** - Edition du pied
-- **73.5.1.2** - Edition recap Free Etra
-
-Delegue a : [Get Printer (IDE 179)](ADH-IDE-179.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| log_maj_tpe | **W** (6 usages) |  |
-
-</details>
+La traceabilité est assurée par six écritures dans la table 867 (log_maj_tpe), enregistrant chaque tentative d'impression. La devise locale est récupérée une seule fois en début de processus et réutilisée dans tous les calculs de montants. Après exécution de toutes les impressions, IDE 182 réinitialise l'imprimante. Aucune branche désactivée et zéro logique conditionnelle indiquent un code mature et stabilisé en production.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -85,7 +36,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t1"></a>73 - Veuillez patienter... [[ECRAN]](#ecran-t1)
+#### <a id="t1"></a>T1 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 56 DLU (MDI) | [Voir mockup](#ecran-t1)
@@ -95,17 +46,17 @@ Traitements internes.
 
 | Tache | Nom | Bloc |
 |-------|-----|------|
-| [73.3.1](#t17) | Veuillez patienter... **[[ECRAN]](#ecran-t17)** | Traitement |
-| [73.4.1](#t19) | Veuillez patienter... **[[ECRAN]](#ecran-t19)** | Traitement |
-| [73.5.1](#t23) | Veuillez patienter... **[[ECRAN]](#ecran-t23)** | Traitement |
-| [73.6](#t26) | recup nom adherent | Traitement |
+| [T17](#t17) | Veuillez patienter... **[ECRAN]** | Traitement |
+| [T19](#t19) | Veuillez patienter... **[ECRAN]** | Traitement |
+| [T23](#t23) | Veuillez patienter... **[ECRAN]** | Traitement |
+| [T26](#t26) | recup nom adherent | Traitement |
 
 </details>
 **Delegue a** : [Recupere devise local (IDE 21)](ADH-IDE-21.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
 
 ---
 
-#### <a id="t17"></a>73.3.1 - Veuillez patienter... [[ECRAN]](#ecran-t17)
+#### <a id="t17"></a>T17 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 57 DLU (MDI) | [Voir mockup](#ecran-t17)
@@ -113,7 +64,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t19"></a>73.4.1 - Veuillez patienter... [[ECRAN]](#ecran-t19)
+#### <a id="t19"></a>T19 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 57 DLU (MDI) | [Voir mockup](#ecran-t19)
@@ -121,7 +72,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t23"></a>73.5.1 - Veuillez patienter... [[ECRAN]](#ecran-t23)
+#### <a id="t23"></a>T23 - Veuillez patienter... [ECRAN]
 
 **Role** : Traitement : Veuillez patienter....
 **Ecran** : 422 x 57 DLU (MDI) | [Voir mockup](#ecran-t23)
@@ -129,7 +80,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t26"></a>73.6 - recup nom adherent
+#### <a id="t26"></a>T26 - recup nom adherent
 
 **Role** : Consultation/chargement : recup nom adherent.
 **Variables liees** : B (P0 code adherent), S (W0 n° adherent)
@@ -142,141 +93,141 @@ Generation des documents et tickets.
 
 ---
 
-#### <a id="t2"></a>73.1 - Printer 1
+#### <a id="t2"></a>T2 - Printer 1
 
 **Role** : Generation du document : Printer 1.
 
 ---
 
-#### <a id="t3"></a>73.1.1 - edition extrait compte
+#### <a id="t3"></a>T3 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : X (W0 masque extrait)
 
 ---
 
-#### <a id="t4"></a>73.1.1.1 - Edition du pied
+#### <a id="t4"></a>T4 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 
 ---
 
-#### <a id="t5"></a>73.1.1.2 - Edition recap Free Etra
+#### <a id="t5"></a>T5 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 
 ---
 
-#### <a id="t6"></a>73.1.2 - edition extrait compte
+#### <a id="t6"></a>T6 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : X (W0 masque extrait)
 
 ---
 
-#### <a id="t7"></a>73.1.2.1 - Edition du pied
+#### <a id="t7"></a>T7 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 
 ---
 
-#### <a id="t8"></a>73.1.2.2 - Edition recap Free Etra
+#### <a id="t8"></a>T8 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 
 ---
 
-#### <a id="t9"></a>73.2 - Printer 4
+#### <a id="t9"></a>T9 - Printer 4
 
 **Role** : Generation du document : Printer 4.
 
 ---
 
-#### <a id="t10"></a>73.2.1 - edition extrait compte
+#### <a id="t10"></a>T10 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : X (W0 masque extrait)
 
 ---
 
-#### <a id="t11"></a>73.2.1.1 - Edition du pied
+#### <a id="t11"></a>T11 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 
 ---
 
-#### <a id="t12"></a>73.2.1.2 - Edition recap Free Etra
+#### <a id="t12"></a>T12 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 
 ---
 
-#### <a id="t13"></a>73.2.2 - edition extrait compte
+#### <a id="t13"></a>T13 - edition extrait compte
 
 **Role** : Generation du document : edition extrait compte.
 **Variables liees** : X (W0 masque extrait)
 
 ---
 
-#### <a id="t14"></a>73.2.2.1 - Edition recap Free Etra
+#### <a id="t14"></a>T14 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 
 ---
 
-#### <a id="t15"></a>73.2.2.2 - Edition du pied
+#### <a id="t15"></a>T15 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 
 ---
 
-#### <a id="t16"></a>73.3 - Printer 6 [[ECRAN]](#ecran-t16)
+#### <a id="t16"></a>T16 - Printer 6 [ECRAN]
 
 **Role** : Generation du document : Printer 6.
 **Ecran** : 422 x 57 DLU (MDI) | [Voir mockup](#ecran-t16)
 
 ---
 
-#### <a id="t18"></a>73.4 - Printer 8 [[ECRAN]](#ecran-t18)
+#### <a id="t18"></a>T18 - Printer 8 [ECRAN]
 
 **Role** : Generation du document : Printer 8.
 **Ecran** : 422 x 57 DLU (MDI) | [Voir mockup](#ecran-t18)
 
 ---
 
-#### <a id="t20"></a>73.4.1.1 - Edition du pied
+#### <a id="t20"></a>T20 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 
 ---
 
-#### <a id="t21"></a>73.4.1.2 - Edition recap Free Etra
+#### <a id="t21"></a>T21 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 
 ---
 
-#### <a id="t22"></a>73.5 - Printer 9 [[ECRAN]](#ecran-t22)
+#### <a id="t22"></a>T22 - Printer 9 [ECRAN]
 
 **Role** : Generation du document : Printer 9.
 **Ecran** : 422 x 57 DLU (MDI) | [Voir mockup](#ecran-t22)
 
 ---
 
-#### <a id="t24"></a>73.5.1.1 - Edition du pied
+#### <a id="t24"></a>T24 - Edition du pied
 
 **Role** : Generation du document : Edition du pied.
 
 ---
 
-#### <a id="t25"></a>73.5.1.2 - Edition recap Free Etra
+#### <a id="t25"></a>T25 - Edition recap Free Etra
 
 **Role** : Generation du document : Edition recap Free Etra.
 
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -291,17 +242,17 @@ Generation des documents et tickets.
 
 | # | Position | Tache | Nom | Type | Largeur | Hauteur | Bloc |
 |---|----------|-------|-----|------|---------|---------|------|
-| 1 | 73 | 73 | Veuillez patienter... | MDI | 422 | 56 | Traitement |
-| 2 | 73.3.1 | 73.3.1 | Veuillez patienter... | MDI | 422 | 57 | Traitement |
-| 3 | 73.4.1 | 73.4.1 | Veuillez patienter... | MDI | 422 | 57 | Traitement |
-| 4 | 73.5.1 | 73.5.1 | Veuillez patienter... | MDI | 422 | 57 | Traitement |
+| 1 | 73 | T1 | Veuillez patienter... | MDI | 422 | 56 | Traitement |
+| 2 | 73.3.1 | T17 | Veuillez patienter... | MDI | 422 | 57 | Traitement |
+| 3 | 73.4.1 | T19 | Veuillez patienter... | MDI | 422 | 57 | Traitement |
+| 4 | 73.5.1 | T23 | Veuillez patienter... | MDI | 422 | 57 | Traitement |
 
 ### 8.2 Mockups Ecrans
 
 ---
 
 #### <a id="ecran-t1"></a>73 - Veuillez patienter...
-**Tache** : [73](#t1) | **Type** : MDI | **Dimensions** : 422 x 56 DLU
+**Tache** : [T1](#t1) | **Type** : MDI | **Dimensions** : 422 x 56 DLU
 **Bloc** : Traitement | **Titre IDE** : Veuillez patienter...
 
 <!-- FORM-DATA:
@@ -385,7 +336,7 @@ Generation des documents et tickets.
 ---
 
 #### <a id="ecran-t17"></a>73.3.1 - Veuillez patienter...
-**Tache** : [73.3.1](#t17) | **Type** : MDI | **Dimensions** : 422 x 57 DLU
+**Tache** : [T17](#t17) | **Type** : MDI | **Dimensions** : 422 x 57 DLU
 **Bloc** : Traitement | **Titre IDE** : Veuillez patienter...
 
 <!-- FORM-DATA:
@@ -469,7 +420,7 @@ Generation des documents et tickets.
 ---
 
 #### <a id="ecran-t19"></a>73.4.1 - Veuillez patienter...
-**Tache** : [73.4.1](#t19) | **Type** : MDI | **Dimensions** : 422 x 57 DLU
+**Tache** : [T19](#t19) | **Type** : MDI | **Dimensions** : 422 x 57 DLU
 **Bloc** : Traitement | **Titre IDE** : Veuillez patienter...
 
 <!-- FORM-DATA:
@@ -553,7 +504,7 @@ Generation des documents et tickets.
 ---
 
 #### <a id="ecran-t23"></a>73.5.1 - Veuillez patienter...
-**Tache** : [73.5.1](#t23) | **Type** : MDI | **Dimensions** : 422 x 57 DLU
+**Tache** : [T23](#t23) | **Type** : MDI | **Dimensions** : 422 x 57 DLU
 **Bloc** : Traitement | **Titre IDE** : Veuillez patienter...
 
 <!-- FORM-DATA:
@@ -642,13 +593,13 @@ Generation des documents et tickets.
 flowchart TD
     START([Entree])
     style START fill:#3fb950
-    VF1[73 Veuillez patienter...]
+    VF1[T1 Veuillez patienter...]
     style VF1 fill:#58a6ff
-    VF17[73.3.1 Veuillez patienter...]
+    VF17[T17 Veuillez patienter...]
     style VF17 fill:#58a6ff
-    VF19[73.4.1 Veuillez patienter...]
+    VF19[T19 Veuillez patienter...]
     style VF19 fill:#58a6ff
-    VF23[73.5.1 Veuillez patienter...]
+    VF23[T23 Veuillez patienter...]
     style VF23 fill:#58a6ff
     EXT75[IDE 75 Creation Pied F...]
     style EXT75 fill:#3fb950
@@ -685,52 +636,52 @@ flowchart TD
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
-| **73.1** | [**Veuillez patienter...** (73)](#t1) [mockup](#ecran-t1) | MDI | 422x56 | Traitement |
-| 73.1.1 | [Veuillez patienter... (73.3.1)](#t17) [mockup](#ecran-t17) | MDI | 422x57 | |
-| 73.1.2 | [Veuillez patienter... (73.4.1)](#t19) [mockup](#ecran-t19) | MDI | 422x57 | |
-| 73.1.3 | [Veuillez patienter... (73.5.1)](#t23) [mockup](#ecran-t23) | MDI | 422x57 | |
-| 73.1.4 | [recup nom adherent (73.6)](#t26) | MDI | - | |
-| **73.2** | [**Printer 1** (73.1)](#t2) | MDI | - | Impression |
-| 73.2.1 | [edition extrait compte (73.1.1)](#t3) | MDI | - | |
-| 73.2.2 | [Edition du pied (73.1.1.1)](#t4) | - | - | |
-| 73.2.3 | [Edition recap Free Etra (73.1.1.2)](#t5) | - | - | |
-| 73.2.4 | [edition extrait compte (73.1.2)](#t6) | MDI | - | |
-| 73.2.5 | [Edition du pied (73.1.2.1)](#t7) | - | - | |
-| 73.2.6 | [Edition recap Free Etra (73.1.2.2)](#t8) | - | - | |
-| 73.2.7 | [Printer 4 (73.2)](#t9) | MDI | - | |
-| 73.2.8 | [edition extrait compte (73.2.1)](#t10) | MDI | - | |
-| 73.2.9 | [Edition du pied (73.2.1.1)](#t11) | - | - | |
-| 73.2.10 | [Edition recap Free Etra (73.2.1.2)](#t12) | - | - | |
-| 73.2.11 | [edition extrait compte (73.2.2)](#t13) | MDI | - | |
-| 73.2.12 | [Edition recap Free Etra (73.2.2.1)](#t14) | - | - | |
-| 73.2.13 | [Edition du pied (73.2.2.2)](#t15) | - | - | |
-| 73.2.14 | [Printer 6 (73.3)](#t16) [mockup](#ecran-t16) | MDI | 422x57 | |
-| 73.2.15 | [Printer 8 (73.4)](#t18) [mockup](#ecran-t18) | MDI | 422x57 | |
-| 73.2.16 | [Edition du pied (73.4.1.1)](#t20) | - | - | |
-| 73.2.17 | [Edition recap Free Etra (73.4.1.2)](#t21) | - | - | |
-| 73.2.18 | [Printer 9 (73.5)](#t22) [mockup](#ecran-t22) | MDI | 422x57 | |
-| 73.2.19 | [Edition du pied (73.5.1.1)](#t24) | - | - | |
-| 73.2.20 | [Edition recap Free Etra (73.5.1.2)](#t25) | - | - | |
+| **73.1** | [**Veuillez patienter...** (T1)](#t1) [mockup](#ecran-t1) | MDI | 422x56 | Traitement |
+| 73.1.1 | [Veuillez patienter... (T17)](#t17) [mockup](#ecran-t17) | MDI | 422x57 | |
+| 73.1.2 | [Veuillez patienter... (T19)](#t19) [mockup](#ecran-t19) | MDI | 422x57 | |
+| 73.1.3 | [Veuillez patienter... (T23)](#t23) [mockup](#ecran-t23) | MDI | 422x57 | |
+| 73.1.4 | [recup nom adherent (T26)](#t26) | MDI | - | |
+| **73.2** | [**Printer 1** (T2)](#t2) | MDI | - | Impression |
+| 73.2.1 | [edition extrait compte (T3)](#t3) | MDI | - | |
+| 73.2.2 | [Edition du pied (T4)](#t4) | - | - | |
+| 73.2.3 | [Edition recap Free Etra (T5)](#t5) | - | - | |
+| 73.2.4 | [edition extrait compte (T6)](#t6) | MDI | - | |
+| 73.2.5 | [Edition du pied (T7)](#t7) | - | - | |
+| 73.2.6 | [Edition recap Free Etra (T8)](#t8) | - | - | |
+| 73.2.7 | [Printer 4 (T9)](#t9) | MDI | - | |
+| 73.2.8 | [edition extrait compte (T10)](#t10) | MDI | - | |
+| 73.2.9 | [Edition du pied (T11)](#t11) | - | - | |
+| 73.2.10 | [Edition recap Free Etra (T12)](#t12) | - | - | |
+| 73.2.11 | [edition extrait compte (T13)](#t13) | MDI | - | |
+| 73.2.12 | [Edition recap Free Etra (T14)](#t14) | - | - | |
+| 73.2.13 | [Edition du pied (T15)](#t15) | - | - | |
+| 73.2.14 | [Printer 6 (T16)](#t16) [mockup](#ecran-t16) | MDI | 422x57 | |
+| 73.2.15 | [Printer 8 (T18)](#t18) [mockup](#ecran-t18) | MDI | 422x57 | |
+| 73.2.16 | [Edition du pied (T20)](#t20) | - | - | |
+| 73.2.17 | [Edition recap Free Etra (T21)](#t21) | - | - | |
+| 73.2.18 | [Printer 9 (T22)](#t22) [mockup](#ecran-t22) | MDI | 422x57 | |
+| 73.2.19 | [Edition du pied (T24)](#t24) | - | - | |
+| 73.2.20 | [Edition recap Free Etra (T25)](#t25) | - | - | |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    INIT[Init controles]
-    SAISIE[Traitement principal]
-    UPDATE[MAJ 1 tables]
-    ENDOK([END OK])
-
-    START --> INIT --> SAISIE
-    SAISIE --> UPDATE --> ENDOK
-
+    B1[Traitement (5t)]
+    START --> B1
+    B2[Impression (21t)]
+    B1 --> B2
+    WRITE[MAJ 1 tables]
+    B2 --> WRITE
+    ENDOK([END])
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
-> *Algorigramme auto-genere. Utiliser `/algorigramme` pour une synthese metier detaillee.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -740,24 +691,17 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
+| 867 | log_maj_tpe |  | DB |   | **W** |   | 6 |
+| 40 | comptable________cte |  | DB | R |   | L | 13 |
 | 30 | gm-recherche_____gmr | Index de recherche | DB | R |   | L | 8 |
 | 31 | gm-complet_______gmc |  | DB | R |   | L | 7 |
-| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
-| 40 | comptable________cte |  | DB | R |   | L | 13 |
-| 867 | log_maj_tpe |  | DB |   | **W** |   | 6 |
 | 928 | type_lit |  | DB |   |   | L | 2 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 4 tables avec colonnes identifiees)
 
 <details>
-<summary>Table 30 - gm-recherche_____gmr (R/L) - 8 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 31 - gm-complet_______gmc (R/L) - 7 usages</summary>
+<summary>Table 867 - log_maj_tpe (**W**) - 6 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
@@ -785,7 +729,14 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 867 - log_maj_tpe (**W**) - 6 usages</summary>
+<summary>Table 30 - gm-recherche_____gmr (R/L) - 8 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 31 - gm-complet_______gmc (R/L) - 7 usages</summary>
 
 *Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
@@ -1014,4 +965,4 @@ graph LR
 | [Get Printer (IDE 179)](ADH-IDE-179.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:44*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:47*

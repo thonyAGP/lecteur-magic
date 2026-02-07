@@ -1,6 +1,6 @@
 ﻿# ADH IDE 84 - SP Caractères Interdits
 
-> **Analyse**: Phases 1-4 2026-02-07 03:45 -> 03:45 (27s) | Assemblage 06:53
+> **Analyse**: Phases 1-4 2026-02-07 03:45 -> 03:45 (27s) | Assemblage 14:03
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,32 +14,19 @@
 | IDE Position | 84 |
 | Nom Programme | SP Caractères Interdits |
 | Fichier source | `Prg_84.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 2 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
+| Complexite | **BASSE** (score 0/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**SP Caractères Interdits** assure la gestion complete de ce processus, accessible depuis [Transaction Nouv vente avec GP (IDE 237)](ADH-IDE-237.md), [Transaction Nouv vente PMS-584 (IDE 238)](ADH-IDE-238.md), [Transaction Nouv vente PMS-721 (IDE 239)](ADH-IDE-239.md), [Transaction Nouv vente PMS-710 (IDE 240)](ADH-IDE-240.md), [Saisie transaction 154  N.U (IDE 307)](ADH-IDE-307.md), [Saisie transaction Nouv vente (IDE 310)](ADH-IDE-310.md), [Saisie transaction Nouv vente (IDE 316)](ADH-IDE-316.md).
+**ADH IDE 84 - Caractères Interdits** valide les saisies de transactions en vérifiant l'absence de caractères non autorisés dans les données utilisateur. Ce programme effectue un contrôle strictement nécessaire lors de l'enregistrement de nouvelles transactions de vente (GP, PMS-584, PMS-721, PMS-710) et de saisies génériques de transactions, garantissant que seuls les caractères valides sont acceptés avant la persistence des données.
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+Le programme expose deux tâches principales : **Caractères Interdits** qui effectue la validation du contenu saisi, et **Verification Chaine** qui analyse la chaîne de caractères pour détecter les patterns interdits. Cette logique est appelée transversalement depuis sept programmes de transaction différents, ce qui en fait un service de validation centralisé pour l'intégrité des données de vente.
 
-- **Validation** (1 tache) : controles et verifications de coherence
-- **Traitement** (1 tache) : traitements metier divers
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (1 tache)
-
-- **T1** - Caractères Interdits
-
-#### Phase 2 : Validation (1 tache)
-
-- **T2** - Verification Chaine
-
-</details>
+En tant que module de validation métier, ADH IDE 84 intervient comme barrière d'entrée critique pour prévenir l'injection de caractères malformés ou incompatibles avec le système de caisse. Ses appels systématiques depuis la chaîne de saisie des transactions (237→84, 238→84, etc.) confirment son rôle de filtre obligatoire avant toute enregistrement transactionnel.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -67,7 +54,7 @@ Controles de coherence : 1 tache verifie les donnees et conditions.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -94,14 +81,17 @@ Controles de coherence : 1 tache verifie les donnees et conditions.
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 2 taches]
+    B1[Traitement (1t)]
+    START --> B1
+    B2[Validation (1t)]
+    B1 --> B2
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B2 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -275,4 +265,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:53*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:04*

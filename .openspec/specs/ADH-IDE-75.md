@@ -1,6 +1,6 @@
 ﻿# ADH IDE 75 - Creation Pied Facture
 
-> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:44 (27s) | Assemblage 03:44
+> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:44 (27s) | Assemblage 13:48
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,16 +18,15 @@
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
+| Complexite | **BASSE** (score 7/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Creation Pied Facture** assure la gestion complete de ce processus, accessible depuis [Print extrait compte /Imp (IDE 73)](ADH-IDE-73.md), [Print extrait DateImp /O (IDE 74)](ADH-IDE-74.md), [Print extrait compte /Date (IDE 71)](ADH-IDE-71.md), [Print extrait compte /Cum (IDE 72)](ADH-IDE-72.md), [Print extrait compte /Nom (IDE 70)](ADH-IDE-70.md), [Print extrait compte /Service (IDE 76)](ADH-IDE-76.md).
+ADH IDE 75 est un utilitaire de calcul fiscal spécialisé dans la génération des lignes de pied de facture. Le programme reçoit cinq paramètres (société, compte général, filiation, taux TVA, montant TTC) et effectue les calculs de décomposition fiscale : extraction du montant HT à partir du TTC en appliquant le taux de TVA, calcul de la TVA due avec arrondi à deux décimales, puis enregistrement dans la table log_maj_tpe. Le traitement est linéaire et déterministe, sans branching conditionnel.
 
-Le flux de traitement s'organise en **1 blocs fonctionnels** :
+Ce programme revêt une importance critique dans la chaîne d'édition d'extraits de compte, où il est appelé 30 fois par six variantes d'impression (IDE 70 à 76) qui diffèrent par leur ordre de tri (nom, date, cumulatif, import, etc.). Comme programme terminal ne déclenchant aucun appel externe, il concentre une logique métier pure focalisée sur la fiscalité.
 
-- **Creation** (1 tache) : insertion d'enregistrements en base (mouvements, prestations)
-
-**Donnees modifiees** : 1 tables en ecriture (log_maj_tpe).
+Les variables paramétriques alternatives (lettres U, V, W) indiquent que le programme produit plusieurs variantes de résultat pour supporter différents formats d'édition ou d'archivage. L'absence de code mort (100% actif) et la simplicité structurelle du programme en font un composant stable et peu sujet aux regressions, servant de fondation fiable pour toute la cascade d'édition d'extraits.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -45,7 +44,7 @@ Insertion de nouveaux enregistrements en base.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -301,4 +300,4 @@ graph LR
 | log_maj_tpe | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:44*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:50*

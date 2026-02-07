@@ -1,6 +1,6 @@
 ﻿# ADH IDE 64 - Solde Easy Check Out
 
-> **Analyse**: Phases 1-4 2026-02-07 03:42 -> 03:43 (27s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:42 -> 03:43 (27s) | Assemblage 13:36
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,80 +18,15 @@
 | Taches | 26 (1 ecrans visibles) |
 | Tables modifiees | 13 |
 | Programmes appeles | 5 |
+| Complexite | **BASSE** (score 38/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Solde Easy Check Out** assure la gestion complete de ce processus, accessible depuis [Easy Check-Out === V2.00 (IDE 55)](ADH-IDE-55.md), [Lancement Solde ECO (IDE 66)](ADH-IDE-66.md), [Easy Check-Out === V2.00 (IDE 283)](ADH-IDE-283.md).
+Ce programme gère le **solde final du service Easy Check-Out (ECO)**, calculant et enregistrant les transactions de fin de période. Il intervient après toutes les opérations de paiement et facturation (IDE 55, 66, 283), consolidant les montants à payer ou rembourser pour chaque compte client. Le flux principal exécute le calcul du solde, génère les lignes d'écritures comptables, met à jour les compteurs (versements/retraits) et produit les documents de fin de période.
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+**Les 6 tâches principales accomplissent** : (1) Solde Easy Check Out - calcul du solde par compte avec réconciliation des paiements, (2) Recalcul solde - ajustements et corrections si nécessaire, (3) Solde GM - traitement spécifique des comptes Gold Member, (4) Lignes de solde - génération des écritures dans `lignes_de_solde` pour la comptabilité, (5) Création comptable - écritures en `comptable` et `compte_gm`, (6) Récup compteur - mise à jour des compteurs de versements/retraits. Le programme modifie 13 tables incluant les données critiques de comptabilité et de configuration automatisée.
 
-- **Traitement** (15 taches) : traitements metier divers
-- **Calcul** (8 taches) : calculs de montants, stocks ou compteurs
-- **Creation** (3 taches) : insertion d'enregistrements en base (mouvements, prestations)
-
-**Donnees modifiees** : 13 tables en ecriture (comptable________cte, compte_gm________cgm, lignes_de_solde__sld, ligne_telephone__lgn, compteurs________cpt, commande_autocom_cot, codes_autocom____aut, sda_telephone____sda, fichier_echanges, nb_code__poste, ez_card, log_booker, selection enregistrement diver).
-
-**Logique metier** : 2 regles identifiees couvrant conditions metier.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (15 taches)
-
-- **64** - Solde Easy Check Out **[[ECRAN]](#ecran-t1)**
-- **64.1.1** - Solde GM
-- **64.2** - Lignes de solde **[[ECRAN]](#ecran-t4)**
-- **64.6** - (sans nom)
-- **64.6.1** - Mise opposition des CAM
-- **64.6.1.3** - Liberation Ligne
-- **64.6.1.4** - Liberation Poste
-- **64.7** - Mise opposition des CAM
-- **64.7.4** - Liberation Ligne
-- **64.7.5** - Liberation Ligne
-- **64.7.6** - Liberation Poste
-- **64.8** - Désactiver Club Med Pass
-- **64.9** - Log Facture
-- **64.10** - Mail
-- **64.11** - Création Ligne Log **[[ECRAN]](#ecran-t26)**
-
-Delegue a : [Factures_Check_Out (IDE 54)](ADH-IDE-54.md), [Set Listing Number (IDE 181)](ADH-IDE-181.md)
-
-#### Phase 2 : Calcul (8 taches)
-
-- **64.1** - Recalcul solde
-- **64.3** - Creation comptable **[[ECRAN]](#ecran-t5)**
-- **64.3.1** - Recup compteur verst/retrait
-- **64.4** - Creation comptable **[[ECRAN]](#ecran-t7)**
-- **64.4.1** - Recup compteur verst/retrait
-- **64.5** - MàJ compte et depôt garantie
-- **64.6.1.2** - Decrementation Compteur Tel
-- **64.7.3** - Decrementation Compteur Tel
-
-#### Phase 3 : Creation (3 taches)
-
-- **64.6.1.1** - Creation commande
-- **64.7.1** - Creation commande
-- **64.7.2** - Creation commande
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| compteurs________cpt | **W** (4 usages) | Comptes GM (generaux) |
-| sda_telephone____sda | **W**/L (4 usages) |  |
-| comptable________cte | R/**W** (3 usages) |  |
-| fichier_echanges | **W** (2 usages) |  |
-| codes_autocom____aut | **W**/L (2 usages) |  |
-| compte_gm________cgm | **W** (2 usages) | Comptes GM (generaux) |
-| nb_code__poste | **W** (2 usages) |  |
-| ligne_telephone__lgn | **W** (1 usages) |  |
-| selection enregistrement diver | **W** (1 usages) |  |
-| log_booker | **W** (1 usages) |  |
-| ez_card | **W** (1 usages) |  |
-| commande_autocom_cot | **W** (1 usages) |  |
-| lignes_de_solde__sld | **W** (1 usages) |  |
-
-</details>
+**Le programme alimente la chaîne de finalisation** en aval : les factures consolidées (IDE 54) pour la facturation client, l'édition & mail (IDE 65) pour la distribution des documents, et l'extraction de compte (IDE 71) pour l'archivage légal. C'est un **point critique de fin de période** qui garantit que tous les soldes sont correctement calculés, enregistrés et imputés avant clôture comptable.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -101,7 +36,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t1"></a>64 - Solde Easy Check Out [[ECRAN]](#ecran-t1)
+#### <a id="t1"></a>T1 - Solde Easy Check Out [ECRAN]
 
 **Role** : Tache d'orchestration : point d'entree du programme (15 sous-taches). Coordonne l'enchainement des traitements.
 **Ecran** : 458 x 195 DLU | [Voir mockup](#ecran-t1)
@@ -111,34 +46,34 @@ Traitements internes.
 
 | Tache | Nom | Bloc |
 |-------|-----|------|
-| [64.1.1](#t3) | Solde GM | Traitement |
-| [64.2](#t4) | Lignes de solde **[[ECRAN]](#ecran-t4)** | Traitement |
-| [64.6](#t10) | (sans nom) | Traitement |
-| [64.6.1](#t11) | Mise opposition des CAM | Traitement |
-| [64.6.1.3](#t14) | Liberation Ligne | Traitement |
-| [64.6.1.4](#t15) | Liberation Poste | Traitement |
-| [64.7](#t16) | Mise opposition des CAM | Traitement |
-| [64.7.4](#t20) | Liberation Ligne | Traitement |
-| [64.7.5](#t21) | Liberation Ligne | Traitement |
-| [64.7.6](#t22) | Liberation Poste | Traitement |
-| [64.8](#t23) | Désactiver Club Med Pass | Traitement |
-| [64.9](#t24) | Log Facture | Traitement |
-| [64.10](#t25) | Mail | Traitement |
-| [64.11](#t26) | Création Ligne Log **[[ECRAN]](#ecran-t26)** | Traitement |
+| [T3](#t3) | Solde GM | Traitement |
+| [T4](#t4) | Lignes de solde **[ECRAN]** | Traitement |
+| [T10](#t10) | (sans nom) | Traitement |
+| [T11](#t11) | Mise opposition des CAM | Traitement |
+| [T14](#t14) | Liberation Ligne | Traitement |
+| [T15](#t15) | Liberation Poste | Traitement |
+| [T16](#t16) | Mise opposition des CAM | Traitement |
+| [T20](#t20) | Liberation Ligne | Traitement |
+| [T21](#t21) | Liberation Ligne | Traitement |
+| [T22](#t22) | Liberation Poste | Traitement |
+| [T23](#t23) | Désactiver Club Med Pass | Traitement |
+| [T24](#t24) | Log Facture | Traitement |
+| [T25](#t25) | Mail | Traitement |
+| [T26](#t26) | Création Ligne Log **[ECRAN]** | Traitement |
 
 </details>
 **Variables liees** : I (v.Date_Solde), J (v.Heure-Solde), M (v.Ligne_Solde), W (v.Solde du compte)
 
 ---
 
-#### <a id="t3"></a>64.1.1 - Solde GM
+#### <a id="t3"></a>T3 - Solde GM
 
 **Role** : Consultation/chargement : Solde GM.
 **Variables liees** : I (v.Date_Solde), J (v.Heure-Solde), M (v.Ligne_Solde), W (v.Solde du compte)
 
 ---
 
-#### <a id="t4"></a>64.2 - Lignes de solde [[ECRAN]](#ecran-t4)
+#### <a id="t4"></a>T4 - Lignes de solde [ECRAN]
 
 **Role** : Consultation/chargement : Lignes de solde.
 **Ecran** : 640 x 110 DLU (MDI) | [Voir mockup](#ecran-t4)
@@ -146,77 +81,77 @@ Traitements internes.
 
 ---
 
-#### <a id="t10"></a>64.6 - (sans nom)
+#### <a id="t10"></a>T10 - (sans nom)
 
 **Role** : Traitement interne.
 
 ---
 
-#### <a id="t11"></a>64.6.1 - Mise opposition des CAM
+#### <a id="t11"></a>T11 - Mise opposition des CAM
 
 **Role** : Traitement : Mise opposition des CAM.
 
 ---
 
-#### <a id="t14"></a>64.6.1.3 - Liberation Ligne
+#### <a id="t14"></a>T14 - Liberation Ligne
 
 **Role** : Traitement : Liberation Ligne.
 **Variables liees** : M (v.Ligne_Solde)
 
 ---
 
-#### <a id="t15"></a>64.6.1.4 - Liberation Poste
+#### <a id="t15"></a>T15 - Liberation Poste
 
 **Role** : Traitement : Liberation Poste.
 
 ---
 
-#### <a id="t16"></a>64.7 - Mise opposition des CAM
+#### <a id="t16"></a>T16 - Mise opposition des CAM
 
 **Role** : Traitement : Mise opposition des CAM.
 
 ---
 
-#### <a id="t20"></a>64.7.4 - Liberation Ligne
+#### <a id="t20"></a>T20 - Liberation Ligne
 
 **Role** : Traitement : Liberation Ligne.
 **Variables liees** : M (v.Ligne_Solde)
 
 ---
 
-#### <a id="t21"></a>64.7.5 - Liberation Ligne
+#### <a id="t21"></a>T21 - Liberation Ligne
 
 **Role** : Traitement : Liberation Ligne.
 **Variables liees** : M (v.Ligne_Solde)
 
 ---
 
-#### <a id="t22"></a>64.7.6 - Liberation Poste
+#### <a id="t22"></a>T22 - Liberation Poste
 
 **Role** : Traitement : Liberation Poste.
 
 ---
 
-#### <a id="t23"></a>64.8 - Désactiver Club Med Pass
+#### <a id="t23"></a>T23 - Désactiver Club Med Pass
 
 **Role** : Traitement : Désactiver Club Med Pass.
 
 ---
 
-#### <a id="t24"></a>64.9 - Log Facture
+#### <a id="t24"></a>T24 - Log Facture
 
 **Role** : Traitement : Log Facture.
 
 ---
 
-#### <a id="t25"></a>64.10 - Mail
+#### <a id="t25"></a>T25 - Mail
 
 **Role** : Traitement : Mail.
 **Variables liees** : S (v.Evoi_mail), X (v.MailAtachedFiles)
 
 ---
 
-#### <a id="t26"></a>64.11 - Création Ligne Log [[ECRAN]](#ecran-t26)
+#### <a id="t26"></a>T26 - Création Ligne Log [ECRAN]
 
 **Role** : Traitement : Création Ligne Log.
 **Ecran** : 315 x 0 DLU | [Voir mockup](#ecran-t26)
@@ -229,53 +164,53 @@ Calculs metier : montants, stocks, compteurs.
 
 ---
 
-#### <a id="t2"></a>64.1 - Recalcul solde
+#### <a id="t2"></a>T2 - Recalcul solde
 
 **Role** : Calcul : Recalcul solde.
 **Variables liees** : I (v.Date_Solde), J (v.Heure-Solde), M (v.Ligne_Solde), W (v.Solde du compte)
 
 ---
 
-#### <a id="t5"></a>64.3 - Creation comptable [[ECRAN]](#ecran-t5)
+#### <a id="t5"></a>T5 - Creation comptable [ECRAN]
 
 **Role** : Creation d'enregistrement : Creation comptable.
 **Ecran** : 426 x 98 DLU (MDI) | [Voir mockup](#ecran-t5)
 
 ---
 
-#### <a id="t6"></a>64.3.1 - Recup compteur verst/retrait
+#### <a id="t6"></a>T6 - Recup compteur verst/retrait
 
 **Role** : Calcul : Recup compteur verst/retrait.
 
 ---
 
-#### <a id="t7"></a>64.4 - Creation comptable [[ECRAN]](#ecran-t7)
+#### <a id="t7"></a>T7 - Creation comptable [ECRAN]
 
 **Role** : Creation d'enregistrement : Creation comptable.
 **Ecran** : 426 x 98 DLU (MDI) | [Voir mockup](#ecran-t7)
 
 ---
 
-#### <a id="t8"></a>64.4.1 - Recup compteur verst/retrait
+#### <a id="t8"></a>T8 - Recup compteur verst/retrait
 
 **Role** : Calcul : Recup compteur verst/retrait.
 
 ---
 
-#### <a id="t9"></a>64.5 - MàJ compte et depôt garantie
+#### <a id="t9"></a>T9 - MàJ compte et depôt garantie
 
 **Role** : Traitement : MàJ compte et depôt garantie.
 **Variables liees** : D (P.i.Num Compte Test), O (v.MajCompte), W (v.Solde du compte)
 
 ---
 
-#### <a id="t13"></a>64.6.1.2 - Decrementation Compteur Tel
+#### <a id="t13"></a>T13 - Decrementation Compteur Tel
 
 **Role** : Calcul : Decrementation Compteur Tel.
 
 ---
 
-#### <a id="t19"></a>64.7.3 - Decrementation Compteur Tel
+#### <a id="t19"></a>T19 - Decrementation Compteur Tel
 
 **Role** : Calcul : Decrementation Compteur Tel.
 
@@ -286,19 +221,19 @@ Insertion de nouveaux enregistrements en base.
 
 ---
 
-#### <a id="t12"></a>64.6.1.1 - Creation commande
+#### <a id="t12"></a>T12 - Creation commande
 
 **Role** : Creation d'enregistrement : Creation commande.
 
 ---
 
-#### <a id="t17"></a>64.7.1 - Creation commande
+#### <a id="t17"></a>T17 - Creation commande
 
 **Role** : Creation d'enregistrement : Creation commande.
 
 ---
 
-#### <a id="t18"></a>64.7.2 - Creation commande
+#### <a id="t18"></a>T18 - Creation commande
 
 **Role** : Creation d'enregistrement : Creation commande.
 
@@ -344,14 +279,14 @@ Insertion de nouveaux enregistrements en base.
 
 | # | Position | Tache | Nom | Type | Largeur | Hauteur | Bloc |
 |---|----------|-------|-----|------|---------|---------|------|
-| 1 | 64 | 64 | Solde Easy Check Out | Type0 | 458 | 195 | Traitement |
+| 1 | 64 | T1 | Solde Easy Check Out | Type0 | 458 | 195 | Traitement |
 
 ### 8.2 Mockups Ecrans
 
 ---
 
 #### <a id="ecran-t1"></a>64 - Solde Easy Check Out
-**Tache** : [64](#t1) | **Type** : Type0 | **Dimensions** : 458 x 195 DLU
+**Tache** : [T1](#t1) | **Type** : Type0 | **Dimensions** : 458 x 195 DLU
 **Bloc** : Traitement | **Titre IDE** : Solde Easy Check Out
 
 <!-- FORM-DATA:
@@ -477,62 +412,54 @@ Ecran unique: **Solde Easy Check Out**
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
-| **64.1** | [**Solde Easy Check Out** (64)](#t1) [mockup](#ecran-t1) | - | 458x195 | Traitement |
-| 64.1.1 | [Solde GM (64.1.1)](#t3) | SDI | - | |
-| 64.1.2 | [Lignes de solde (64.2)](#t4) [mockup](#ecran-t4) | MDI | 640x110 | |
-| 64.1.3 | [(sans nom) (64.6)](#t10) | MDI | - | |
-| 64.1.4 | [Mise opposition des CAM (64.6.1)](#t11) | MDI | - | |
-| 64.1.5 | [Liberation Ligne (64.6.1.3)](#t14) | MDI | - | |
-| 64.1.6 | [Liberation Poste (64.6.1.4)](#t15) | MDI | - | |
-| 64.1.7 | [Mise opposition des CAM (64.7)](#t16) | MDI | - | |
-| 64.1.8 | [Liberation Ligne (64.7.4)](#t20) | MDI | - | |
-| 64.1.9 | [Liberation Ligne (64.7.5)](#t21) | MDI | - | |
-| 64.1.10 | [Liberation Poste (64.7.6)](#t22) | MDI | - | |
-| 64.1.11 | [Désactiver Club Med Pass (64.8)](#t23) | MDI | - | |
-| 64.1.12 | [Log Facture (64.9)](#t24) | - | - | |
-| 64.1.13 | [Mail (64.10)](#t25) | - | - | |
-| 64.1.14 | [Création Ligne Log (64.11)](#t26) [mockup](#ecran-t26) | - | 315x0 | |
-| **64.2** | [**Recalcul solde** (64.1)](#t2) | SDI | - | Calcul |
-| 64.2.1 | [Creation comptable (64.3)](#t5) [mockup](#ecran-t5) | MDI | 426x98 | |
-| 64.2.2 | [Recup compteur verst/retrait (64.3.1)](#t6) | MDI | - | |
-| 64.2.3 | [Creation comptable (64.4)](#t7) [mockup](#ecran-t7) | MDI | 426x98 | |
-| 64.2.4 | [Recup compteur verst/retrait (64.4.1)](#t8) | MDI | - | |
-| 64.2.5 | [MàJ compte et depôt garantie (64.5)](#t9) | MDI | - | |
-| 64.2.6 | [Decrementation Compteur Tel (64.6.1.2)](#t13) | MDI | - | |
-| 64.2.7 | [Decrementation Compteur Tel (64.7.3)](#t19) | MDI | - | |
-| **64.3** | [**Creation commande** (64.6.1.1)](#t12) | MDI | - | Creation |
-| 64.3.1 | [Creation commande (64.7.1)](#t17) | MDI | - | |
-| 64.3.2 | [Creation commande (64.7.2)](#t18) | MDI | - | |
+| **64.1** | [**Solde Easy Check Out** (T1)](#t1) [mockup](#ecran-t1) | - | 458x195 | Traitement |
+| 64.1.1 | [Solde GM (T3)](#t3) | SDI | - | |
+| 64.1.2 | [Lignes de solde (T4)](#t4) [mockup](#ecran-t4) | MDI | 640x110 | |
+| 64.1.3 | [(sans nom) (T10)](#t10) | MDI | - | |
+| 64.1.4 | [Mise opposition des CAM (T11)](#t11) | MDI | - | |
+| 64.1.5 | [Liberation Ligne (T14)](#t14) | MDI | - | |
+| 64.1.6 | [Liberation Poste (T15)](#t15) | MDI | - | |
+| 64.1.7 | [Mise opposition des CAM (T16)](#t16) | MDI | - | |
+| 64.1.8 | [Liberation Ligne (T20)](#t20) | MDI | - | |
+| 64.1.9 | [Liberation Ligne (T21)](#t21) | MDI | - | |
+| 64.1.10 | [Liberation Poste (T22)](#t22) | MDI | - | |
+| 64.1.11 | [Désactiver Club Med Pass (T23)](#t23) | MDI | - | |
+| 64.1.12 | [Log Facture (T24)](#t24) | - | - | |
+| 64.1.13 | [Mail (T25)](#t25) | - | - | |
+| 64.1.14 | [Création Ligne Log (T26)](#t26) [mockup](#ecran-t26) | - | 315x0 | |
+| **64.2** | [**Recalcul solde** (T2)](#t2) | SDI | - | Calcul |
+| 64.2.1 | [Creation comptable (T5)](#t5) [mockup](#ecran-t5) | MDI | 426x98 | |
+| 64.2.2 | [Recup compteur verst/retrait (T6)](#t6) | MDI | - | |
+| 64.2.3 | [Creation comptable (T7)](#t7) [mockup](#ecran-t7) | MDI | 426x98 | |
+| 64.2.4 | [Recup compteur verst/retrait (T8)](#t8) | MDI | - | |
+| 64.2.5 | [MàJ compte et depôt garantie (T9)](#t9) | MDI | - | |
+| 64.2.6 | [Decrementation Compteur Tel (T13)](#t13) | MDI | - | |
+| 64.2.7 | [Decrementation Compteur Tel (T19)](#t19) | MDI | - | |
+| **64.3** | [**Creation commande** (T12)](#t12) | MDI | - | Creation |
+| 64.3.1 | [Creation commande (T17)](#t17) | MDI | - | |
+| 64.3.2 | [Creation commande (T18)](#t18) | MDI | - | |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    INIT[Init controles]
-    SAISIE[Traitement principal]
-    DECISION{P.i.Edition Auto}
-    BR1[Traitement TRUE]
-    BR2[Traitement FALSE]
-    VALID[Validation]
-    UPDATE[MAJ 13 tables]
-    ENDOK([END OK])
-    ENDKO([END KO])
-
-    START --> INIT --> SAISIE --> DECISION
-    DECISION -->|TRUE| BR1 --> VALID
-    DECISION -->|FALSE| BR2 --> VALID
-    VALID --> UPDATE --> ENDOK
-    DECISION -->|KO| ENDKO
-
+    B1[Traitement (15t)]
+    START --> B1
+    B2[Calcul (8t)]
+    B1 --> B2
+    B3[Creation (3t)]
+    B2 --> B3
+    WRITE[MAJ 13 tables]
+    B3 --> WRITE
+    ENDOK([END])
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
-    style ENDKO fill:#f85149,color:#fff
-    style DECISION fill:#58a6ff,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
-> *Algorigramme auto-genere. Utiliser `/algorigramme` pour une synthese metier detaillee.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -542,30 +469,144 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   | L | 2 |
-| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
-| 39 | depot_garantie___dga | Depots et garanties | DB |   |   | L | 2 |
 | 40 | comptable________cte |  | DB | R | **W** |   | 3 |
+| 87 | sda_telephone____sda |  | DB |   | **W** | L | 4 |
+| 80 | codes_autocom____aut |  | DB |   | **W** | L | 2 |
+| 68 | compteurs________cpt | Comptes GM (generaux) | DB |   | **W** |   | 4 |
 | 47 | compte_gm________cgm | Comptes GM (generaux) | DB |   | **W** |   | 2 |
+| 151 | nb_code__poste |  | DB |   | **W** |   | 2 |
+| 136 | fichier_echanges |  | DB |   | **W** |   | 2 |
+| 75 | commande_autocom_cot |  | DB |   | **W** |   | 1 |
 | 48 | lignes_de_solde__sld |  | DB |   | **W** |   | 1 |
 | 53 | ligne_telephone__lgn |  | DB |   | **W** |   | 1 |
-| 66 | imputations______imp |  | DB |   |   | L | 2 |
-| 68 | compteurs________cpt | Comptes GM (generaux) | DB |   | **W** |   | 4 |
-| 69 | initialisation___ini |  | DB |   |   | L | 1 |
-| 70 | date_comptable___dat |  | DB |   |   | L | 1 |
-| 75 | commande_autocom_cot |  | DB |   | **W** |   | 1 |
-| 78 | param__telephone_tel |  | DB | R |   | L | 2 |
-| 80 | codes_autocom____aut |  | DB |   | **W** | L | 2 |
-| 87 | sda_telephone____sda |  | DB |   | **W** | L | 4 |
-| 91 | garantie_________gar | Depots et garanties | DB |   |   | L | 1 |
-| 136 | fichier_echanges |  | DB |   | **W** |   | 2 |
-| 151 | nb_code__poste |  | DB |   | **W** |   | 2 |
-| 285 | email |  | DB |   |   | L | 1 |
 | 312 | ez_card |  | DB |   | **W** |   | 1 |
-| 911 | log_booker |  | DB |   | **W** |   | 1 |
 | 934 | selection enregistrement diver |  | DB |   | **W** |   | 1 |
+| 911 | log_booker |  | DB |   | **W** |   | 1 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   | L | 2 |
+| 78 | param__telephone_tel |  | DB | R |   | L | 2 |
+| 66 | imputations______imp |  | DB |   |   | L | 2 |
+| 39 | depot_garantie___dga | Depots et garanties | DB |   |   | L | 2 |
+| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
+| 70 | date_comptable___dat |  | DB |   |   | L | 1 |
+| 91 | garantie_________gar | Depots et garanties | DB |   |   | L | 1 |
+| 69 | initialisation___ini |  | DB |   |   | L | 1 |
+| 285 | email |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (10 / 15 tables avec colonnes identifiees)
+
+<details>
+<summary>Table 40 - comptable________cte (R/**W**) - 3 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | v.ChronoComptable | W | Numeric |
+
+</details>
+
+<details>
+<summary>Table 87 - sda_telephone____sda (**W**/L) - 4 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 80 - codes_autocom____aut (**W**/L) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | v.Nbre | W | Numeric |
+| B | W1 Nom (20) | W | Alpha |
+| C | W1 ret.lien SDA | W | Numeric |
+
+</details>
+
+<details>
+<summary>Table 68 - compteurs________cpt (**W**) - 4 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 47 - compte_gm________cgm (**W**) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| D | P.i.Num Compte Test | W | Numeric |
+| O | v.MajCompte | W | Logical |
+| W | v.Solde du compte | W | Numeric |
+
+</details>
+
+<details>
+<summary>Table 151 - nb_code__poste (**W**) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 136 - fichier_echanges (**W**) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | W1 nom fichier ascii | W | Alpha |
+| Y | v.NomFichierPDF | W | Alpha |
+
+</details>
+
+<details>
+<summary>Table 75 - commande_autocom_cot (**W**) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 48 - lignes_de_solde__sld (**W**) - 1 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | V Solde GM | W | Numeric |
+| I | v.Date_Solde | W | Date |
+| J | v.Heure-Solde | W | Time |
+| M | v.Ligne_Solde | W | Logical |
+| W | v.Solde du compte | W | Numeric |
+
+</details>
+
+<details>
+<summary>Table 53 - ligne_telephone__lgn (**W**) - 1 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| M | v.Ligne_Solde | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 312 - ez_card (**W**) - 1 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| Q | v.NbCard | W | Numeric |
+
+</details>
+
+<details>
+<summary>Table 934 - selection enregistrement diver (**W**) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 911 - log_booker (**W**) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
 
 <details>
 <summary>Table 30 - gm-recherche_____gmr (R/L) - 2 usages</summary>
@@ -603,126 +644,12 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 40 - comptable________cte (R/**W**) - 3 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | v.ChronoComptable | W | Numeric |
-
-</details>
-
-<details>
-<summary>Table 47 - compte_gm________cgm (**W**) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| D | P.i.Num Compte Test | W | Numeric |
-| O | v.MajCompte | W | Logical |
-| W | v.Solde du compte | W | Numeric |
-
-</details>
-
-<details>
-<summary>Table 48 - lignes_de_solde__sld (**W**) - 1 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | V Solde GM | W | Numeric |
-| I | v.Date_Solde | W | Date |
-| J | v.Heure-Solde | W | Time |
-| M | v.Ligne_Solde | W | Logical |
-| W | v.Solde du compte | W | Numeric |
-
-</details>
-
-<details>
-<summary>Table 53 - ligne_telephone__lgn (**W**) - 1 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| M | v.Ligne_Solde | W | Logical |
-
-</details>
-
-<details>
-<summary>Table 68 - compteurs________cpt (**W**) - 4 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 75 - commande_autocom_cot (**W**) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
 <summary>Table 78 - param__telephone_tel (R/L) - 2 usages</summary>
 
 | Lettre | Variable | Acces | Type |
 |--------|----------|-------|------|
 | A | W1 triplet | R | Alpha |
 | B | W1 ret.lien SDA | R | Numeric |
-
-</details>
-
-<details>
-<summary>Table 80 - codes_autocom____aut (**W**/L) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | v.Nbre | W | Numeric |
-| B | W1 Nom (20) | W | Alpha |
-| C | W1 ret.lien SDA | W | Numeric |
-
-</details>
-
-<details>
-<summary>Table 87 - sda_telephone____sda (**W**/L) - 4 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 136 - fichier_echanges (**W**) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | W1 nom fichier ascii | W | Alpha |
-| Y | v.NomFichierPDF | W | Alpha |
-
-</details>
-
-<details>
-<summary>Table 151 - nb_code__poste (**W**) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 312 - ez_card (**W**) - 1 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| Q | v.NbCard | W | Numeric |
-
-</details>
-
-<details>
-<summary>Table 911 - log_booker (**W**) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 934 - selection enregistrement diver (**W**) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -737,7 +664,7 @@ Variables recues du programme appelant ([Easy Check-Out === V2.00 (IDE 55)](ADH-
 | A | P.i.Date Fin Sejour | Date | 1x parametre entrant |
 | B | P.i.Clause Where | Alpha | - |
 | C | P.i.Edition Auto | Logical | 7x parametre entrant |
-| D | P.i.Num Compte Test | Numeric | [64.3.1](#t6), [64.4.1](#t8), [64.5](#t9) |
+| D | P.i.Num Compte Test | Numeric | [T6](#t6), [T8](#t8), [T9](#t9) |
 | E | P.i.Test PES | Logical | 3x parametre entrant |
 
 ### 11.2 Variables de session (22)
@@ -1133,4 +1060,4 @@ graph LR
 | [Edition & Mail Easy Check Out (IDE 65)](ADH-IDE-65.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:43*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:36*

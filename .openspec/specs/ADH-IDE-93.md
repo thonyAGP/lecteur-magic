@@ -1,6 +1,6 @@
 ﻿# ADH IDE 93 - Creation Pied Facture
 
-> **Analyse**: Phases 1-4 2026-02-07 06:56 -> 06:56 (16s) | Assemblage 06:56
+> **Analyse**: Phases 1-4 2026-02-07 06:56 -> 06:56 (16s) | Assemblage 14:20
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,17 +14,22 @@
 | IDE Position | 93 |
 | Nom Programme | Creation Pied Facture |
 | Fichier source | `Prg_93.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | Facturation |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Creation Pied Facture** assure la gestion complete de ce processus.
+## ADH IDE 93 - Creation Pied Facture
 
-**Logique metier** : 1 regles identifiees couvrant conditions metier.
+Ce programme Magic constitue le moteur de consolidation financière des factures dans le système ADH. Son rôle central est de transformer des montants ligne-par-ligne en un résumé consolidé (le "pied") contenant les totaux HT, les montants TTC, et les TVA calculées. Il fonctionne uniquement en lecture depuis la table maj_appli_tpe (données TPE), sans modifier les données existantes—les résultats sont stockés en variables locales pour retour au programme appelant.
+
+La logique métier repose sur des calculs d'agrégation progressifs (expressions 8-13) combinant deux approches de cumul parallèles ([AL/AM/AN] et [AU/AV/AW]), avec un calcul inverse de TVA particulièrement sophistiqué : TVA = (TTC / (1 + taux)) × taux. Cela garantit une TVA calculée correctement même lorsque seul le TTC est connu initialement, un pattern courant dans les systèmes de facturation distribués.
+
+Le programme gère également les remboursements (type 'R') comme cas particulier avec validation métier (RM-001), s'appuyant sur des variables globales partagées (VG77, VG53) pour les conditions d'exécution. Actuellement sans appelants documentés, il apparaît orphelin mais pourrait être intégré dans la chaîne de session partagée ADH.ecf ou appelé dynamiquement depuis PBP—une vérification architecturale serait recommandée pour valider son intégration réelle.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -239,4 +244,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:56*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:22*

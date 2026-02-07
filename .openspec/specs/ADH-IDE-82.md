@@ -1,6 +1,6 @@
 ﻿# ADH IDE 82 - Select affilies
 
-> **Analyse**: Phases 1-4 2026-02-07 03:45 -> 03:45 (26s) | Assemblage 06:52
+> **Analyse**: Phases 1-4 2026-02-07 03:45 -> 03:45 (26s) | Assemblage 14:00
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,36 +14,19 @@
 | IDE Position | 82 |
 | Nom Programme | Select affilies |
 | Fichier source | `Prg_82.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 2 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
+| Complexite | **BASSE** (score 5/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Select affilies** assure la gestion complete de ce processus, accessible depuis [Club Med Pass menu (IDE 77)](ADH-IDE-77.md).
+Le programme ADH IDE 82 ("Select affilies") est un composant spécialisé d'interface utilisateur dans la chaîne Club Med Pass, qui permet aux utilisateurs de sélectionner et consulter des informations d'affiliés. Structuré autour de deux tâches principales avec 61 lignes de logique, le programme interagit avec trois tables centrales (GM-recherche, compte_gm, ez_card) en mode lecture, en récupérant des données d'entrée paramétrisées (société, code adhérent, filiation) tout en calculant des variables dérivées comme le solde du compte, le statut et l'enrichissement du titre via un appel externe à IDE 43 ("Recuperation du titre").
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+La logique métier repose sur trois règles conditionnelles critiques : positionnement dynamique de l'écran selon le statut de variable Y, calcul de l'affichage de l'âge au format "ans/mois" avec logique textuelle comparative (variables W/X), et classification du statut de séjour en trois catégories ("dernier séjour", "prochain séjour", "séjour en cours") par comparaison de dates sérialisées. Un contrôle d'accès sécurisé valide la propriété du compte via la condition `p. societe [A] = ''`, garantissant que seuls les utilisateurs autorisés peuvent consulter les données d'affiliés. L'interface s'étend sur 1010×227 DLU et contient 27 contrôles répartis sur 2 formulaires, affichant à la fois les paramètres d'entrée et un résumé en lecture seule des informations de compte calculées.
 
-- **Calcul** (1 tache) : calculs de montants, stocks ou compteurs
-- **Traitement** (1 tache) : traitements metier divers
-
-**Logique metier** : 3 regles identifiees couvrant conditions metier.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (1 tache)
-
-- **T1** - Ecran **[ECRAN]**
-
-Delegue a : [Recuperation du titre (IDE 43)](ADH-IDE-43.md)
-
-#### Phase 2 : Calcul (1 tache)
-
-- **T2** - Reaffichage infos compte
-
-</details>
+Le programme maintient une position fonctionnelle claire au sein de l'architecture : appelé exclusivement depuis IDE 77 (Club Med Pass menu) lui-même situé dans la hiérarchie IDE 163, il n'a qu'une dépendance sortante vers IDE 43 pour l'enrichissement des titres. Cette conception minimale—un seul appelant, un seul appelé—en fait un composant feuille sans impact significatif sur les branches descendantes, spécialisé dans la sélection et l'affichage d'affiliés dans le workflow plus large de gestion de compte.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -510,14 +493,17 @@ Ecran unique: **Ecran**
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 2 taches]
+    B1[Traitement (1t)]
+    START --> B1
+    B2[Calcul (1t)]
+    B1 --> B2
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B2 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -844,4 +830,4 @@ graph LR
 | [Recuperation du titre (IDE 43)](ADH-IDE-43.md) | Sous-programme | 1x | Normale - Recuperation donnees |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:52*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:02*

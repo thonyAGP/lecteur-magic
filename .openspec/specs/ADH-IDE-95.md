@@ -1,6 +1,6 @@
 ﻿# ADH IDE 95 - Facture - Sejour archive
 
-> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:47 (30s) | Assemblage 06:57
+> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:47 (30s) | Assemblage 14:24
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,49 +14,19 @@
 | IDE Position | 95 |
 | Nom Programme | Facture - Sejour archive |
 | Fichier source | `Prg_95.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | Facturation |
 | Taches | 6 (0 ecrans visibles) |
 | Tables modifiees | 2 |
 | Programmes appeles | 0 |
+| Complexite | **BASSE** (score 14/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Facture - Sejour archive** assure la gestion complete de ce processus, accessible depuis [Factures (Tble Compta&Vent (IDE 89)](ADH-IDE-89.md), [Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md).
+Ce programme traite la génération d'écritures comptables et commerciales pour les factures d'hébergement archivées. Il reçoit les paramètres d'une réservation fermée (société, numéro de compte, filiale, date d'archivage) et crée automatiquement les entrées correspondantes dans les ledgers comptable et commercial, tout en gérant les allocations de gift pass et la mise à jour du rayon boutique associé. La logique se déploie en deux phases symétriques : une création d'écritures comptables suivie d'une création d'écritures commerciales, chacune entrelacée avec des mises à jour des flags d'hébergement temporaires.
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+C'est un programme terminal (aucun appel sortant) relativement simple avec 6 tâches et 261 lignes de logique 100% actives. Il modifie deux tables clés : **Affectation_Gift_Pass** (3 écritures pour tracker les pass) et **Rayons_Boutique** (2 écritures pour l'inventaire boutique). Le flux suit un ordre strict : réception des inputs → création des enregistrements de base → enregistrements comptables + flag update → enregistrements commerciaux + flag final, garantissant une cohérence entre les trois domaines (comptabilité, vente, inventaire).
 
-- **Traitement** (4 taches) : traitements metier divers
-- **Saisie** (1 tache) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Calcul** (1 tache) : calculs de montants, stocks ou compteurs
-
-**Donnees modifiees** : 2 tables en ecriture (Affectation_Gift_Pass, Rayons_Boutique).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (4 taches)
-
-- **T1** - Hebergement **[ECRAN]**
-- **T2** - Création
-- **T4** - Maj Hebergement Temp
-- **T6** - Maj Hebergement Temp
-
-#### Phase 2 : Calcul (1 tache)
-
-- **T3** - Creation Lg Compta **[ECRAN]**
-
-#### Phase 3 : Saisie (1 tache)
-
-- **T5** - Creation Lg Vente **[ECRAN]**
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| Affectation_Gift_Pass | R/**W** (4 usages) |  |
-| Rayons_Boutique | **W** (2 usages) |  |
-
-</details>
+Appelé depuis les deux versions du programme Factures (IDE 89 et 97), ce programme joue un rôle de finaliseur : une fois qu'une facture d'hébergement est marquée comme archivée, ses mouvements financiers et d'inventaire se cristallisent dans les tables permanentes via ce processus batch coordonné.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -130,7 +100,7 @@ L'operateur saisit les donnees de la transaction via 1 ecran (Creation Lg Vente)
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -161,14 +131,22 @@ L'operateur saisit les donnees de la transaction via 1 ecran (Creation Lg Vente)
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 6 taches]
+    B1[Traitement (4t)]
+    START --> B1
+    B2[Calcul (1t)]
+    B1 --> B2
+    B3[Saisie (1t)]
+    B2 --> B3
+    WRITE[MAJ 2 tables]
+    B3 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -178,11 +156,11 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 744 | pv_lieux_vente | Donnees de ventes | DB |   |   | L | 1 |
-| 746 | projet |  | DB |   |   | L | 1 |
-| 756 | Country_ISO |  | DB |   |   | L | 2 |
 | 868 | Affectation_Gift_Pass |  | DB | R | **W** |   | 4 |
 | 870 | Rayons_Boutique |  | DB |   | **W** |   | 2 |
+| 756 | Country_ISO |  | DB |   |   | L | 2 |
+| 746 | projet |  | DB |   |   | L | 1 |
+| 744 | pv_lieux_vente | Donnees de ventes | DB |   |   | L | 1 |
 | 871 | Activite |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 2 tables avec colonnes identifiees)
@@ -360,4 +338,4 @@ graph LR
 | Rayons_Boutique | Table WRITE (Database) | 2x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:57*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:26*

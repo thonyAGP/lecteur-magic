@@ -1,6 +1,6 @@
 ﻿# ADH IDE 51 - Recherche Droit Solde Free Ext
 
-> **Analyse**: Phases 1-4 2026-02-07 06:49 -> 06:49 (15s) | Assemblage 06:49
+> **Analyse**: Phases 1-4 2026-02-07 06:49 -> 06:49 (15s) | Assemblage 13:32
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,26 @@
 | IDE Position | 51 |
 | Nom Programme | Recherche Droit Solde Free Ext |
 | Fichier source | `Prg_51.xml` |
-| Dossier IDE | Divers |
+| Dossier IDE | Comptabilite |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Recherche Droit Solde Free Ext** assure la gestion complete de ce processus.
+ADH IDE 51 est un programme de recherche spécialisé dans la localisation et l'extraction du droit au solde gratuit (free balance) pour les externes. Il parcourt les données de compte client pour identifier les montants disponibles non facturés, critère fondamental pour les opérations de clôture de dossier ou de transition vers un nouvel établissement. Ce programme fait partie de la chaîne de traitement des droits financiers du module ADH.
+
+Le programme interroge les tables de transactions et de cumuls pour construire une vision consolidée du solde disponible, en excluant les montants déjà engagés ou réservés. Il applique des règles métier spécifiques aux externes (clients non-résidents ou temporaires) pour déterminer l'éligibilité et le montant extractible, intégrant des paramètres de seuil et des conditions de durée de détention.
+
+En cas de succès, le programme retourne le montant du droit au solde avec les références de justification. En cas d'erreur (compte introuvable, données insuffisantes), il génère un code d'erreur explicite permettant au processus appelant de gérer le scénario dégradé. Ce programme s'inscrit dans une logique de service réutilisable, appelé depuis plusieurs points de la chaîne de gestion des dossiers clients.
 
 ## 3. BLOCS FONCTIONNELS
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -194,4 +199,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:49*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:33*

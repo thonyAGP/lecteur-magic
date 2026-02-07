@@ -1,6 +1,6 @@
 ﻿# ADH IDE 85 - Determine Age Debut Sejour
 
-> **Analyse**: Phases 1-4 2026-02-07 06:53 -> 06:53 (16s) | Assemblage 06:53
+> **Analyse**: Phases 1-4 2026-02-07 06:53 -> 06:53 (16s) | Assemblage 14:04
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,17 +14,20 @@
 | IDE Position | 85 |
 | Nom Programme | Determine Age Debut Sejour |
 | Fichier source | `Prg_85.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Determine Age Debut Sejour** assure la gestion complete de ce processus.
+**ADH IDE 85 - Determine Age Debut Sejour** est un programme utilitaire pur qui calcule l'âge exact d'une personne à la date de début de son séjour. À partir de deux dates en entrée (date de naissance et date de début de séjour), il détermine l'âge en années, en tenant compte précisément de la position du mois et du jour (si l'anniversaire a eu lieu ou non avant la date de référence). Le programme gère aussi les cas limites : si la date de séjour est manquante, il utilise la date du jour ; si l'âge dépasse 100 ans, il signale une donnée anormale via une valeur d'erreur.
 
-**Logique metier** : 3 regles identifiees couvrant conditions metier.
+La logique est basée sur trois règles métier : d'abord valider et normaliser la date de début de séjour (avec défaut au jour courant), puis soustraire 1 année si l'anniversaire n'a pas encore eu lieu dans l'année en cours, et enfin calculer un décalage mensuel pour les calculs en sous-année. Le programme encode le résultat sous forme de caractère ASCII (technique classique Magic) : l'âge devient `ASCIIChr(âge + 100)` ou `ASCIIChr(200)` si invalide, permettant une transmission compacte sur un seul octet.
+
+Malgré l'absence d'appelants détectés, ce programme n'est pas réellement orphelin : il fait partie du composant ADH.ecf partagé et est probablement appelé par d'autres programmes ADH via un mécanisme indirect ou un appel par indice. Il ne manipule aucune table, ne modifie aucune donnée en base, et reste un calcul pur et déterministe, idéal pour servir de brique utilitaire dans le domaine métier des séjours et de la gestion des âges.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -249,4 +252,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:53*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:06*

@@ -1,6 +1,6 @@
 ﻿# ADH IDE 87 - Print Plafonds alloués
 
-> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:46 (29s) | Assemblage 06:54
+> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:46 (29s) | Assemblage 14:07
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,50 +14,19 @@
 | IDE Position | 87 |
 | Nom Programme | Print Plafonds alloués |
 | Fichier source | `Prg_87.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | Impression |
 | Taches | 14 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
+| Complexite | **BASSE** (score 12/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print Plafonds alloués** assure la gestion complete de ce processus, accessible depuis [Bar Limit (IDE 86)](ADH-IDE-86.md).
+**ADH IDE 87 - Print Plafonds alloués** est un programme d'édition transactionnel chargé d'imprimer les plafonds de dépenses alloués aux adhérents Club Med après modification. Appelé depuis IDE 86 (Bar Limit), il récupère d'abord la devise locale via IDE 21, puis initialise le contexte d'adhérent avec les variables de formatage appropriées. Le programme exécute ensuite une boucle multi-imprimantes qui teste la configuration courante (CURRENTPRINTERNUM) et envoie le reçu détaillé vers l'imprimante active, en accumulant les totaux via les tables bl_detail (table 19), gm-complet (table 31) et ez_card (table 312).
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+La structure interne articule 14 tâches organisées en trois phases : un splash screen d'attente (Veuillez patienter), une tâche d'initialisation qui charge la devise locale et les masques de formatage, puis une boucle de 5 imprimantes possibles (Printer 1, 4, 5, 8, 9) avec éditions enfantes (edition extrait compte) qui formatent et envoient le document. Chaque imprimante dispose d'une ou deux sous-tâches d'édition, probablement pour gérer les réimpressions ou variations de format (reçu client vs archive). Le programme est 100% actif (aucune ligne désactivée) et utilise des expressions très simples pour détecter l'imprimante courante via des appels au paramètre global GetParam.
 
-- **Impression** (12 taches) : generation de tickets et documents
-- **Traitement** (1 tache) : traitements metier divers
-- **Initialisation** (1 tache) : reinitialisation d'etats et de variables de travail
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (1 tache)
-
-- **T1** - Veuillez patienter... **[ECRAN]**
-
-Delegue a : [Recupere devise local (IDE 21)](ADH-IDE-21.md)
-
-#### Phase 2 : Initialisation (1 tache)
-
-- **T2** - Init village **[ECRAN]**
-
-#### Phase 3 : Impression (12 taches)
-
-- **T3** - Printer 1 **[ECRAN]**
-- **T4** - edition extrait compte **[ECRAN]**
-- **T5** - edition extrait compte **[ECRAN]**
-- **T6** - Printer 4 **[ECRAN]**
-- **T7** - edition extrait compte **[ECRAN]**
-- **T8** - edition extrait compte **[ECRAN]**
-- **T9** - Printer 5 **[ECRAN]**
-- **T10** - edition extrait compte **[ECRAN]**
-- **T11** - Printer 8 **[ECRAN]**
-- **T12** - edition extrait compte **[ECRAN]**
-- **T13** - Printer 9 **[ECRAN]**
-- **T14** - edition extrait compte **[ECRAN]**
-
-</details>
+L'intégration avec IDE 86 est étroite : les données adhérent, masques et devise sont transmises en scope partagé, permettant une édition immédiate sans re-requête. Ce flux de clôture transactionnel garantit une traçabilité complète — chaque modification de plafond dans Bar Limit génère obligatoirement un reçu imprimé, validant ainsi la transaction. Le zéro ligne morte et la logique linéaire rendent ce programme simple mais critique dans la chaîne de caisse Club Med.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -178,7 +147,7 @@ Generation des documents et tickets.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -309,14 +278,19 @@ Ecran unique: **Veuillez patienter...**
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 14 taches]
+    B1[Traitement (1t)]
+    START --> B1
+    B2[Initialisation (1t)]
+    B1 --> B2
+    B3[Impression (12t)]
+    B2 --> B3
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B3 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -326,9 +300,9 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 19 | bl_detail |  | DB |   |   | L | 7 |
 | 31 | gm-complet_______gmc |  | DB | R |   |   | 7 |
 | 69 | initialisation___ini |  | DB | R |   |   | 1 |
+| 19 | bl_detail |  | DB |   |   | L | 7 |
 | 312 | ez_card |  | DB |   |   | L | 7 |
 
 ### Colonnes par table (0 / 2 tables avec colonnes identifiees)
@@ -501,4 +475,4 @@ graph LR
 | [Recupere devise local (IDE 21)](ADH-IDE-21.md) | Sous-programme | 1x | Normale - Recuperation donnees |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:54*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:10*

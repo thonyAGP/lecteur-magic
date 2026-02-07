@@ -1,6 +1,6 @@
 ﻿# ADH IDE 89 - Factures (Tble Compta&Vent
 
-> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:46 (29s) | Assemblage 06:55
+> **Analyse**: Phases 1-4 2026-02-07 03:46 -> 03:46 (29s) | Assemblage 14:13
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,106 +14,22 @@
 | IDE Position | 89 |
 | Nom Programme | Factures (Tble Compta&Vent |
 | Fichier source | `Prg_89.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | Facturation |
 | Taches | 35 (5 ecrans visibles) |
 | Tables modifiees | 7 |
 | Programmes appeles | 12 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **MOYENNE** (score 55/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Factures (Tble Compta&Vent** assure la gestion complete de ce processus.
+# ADH IDE 89 - Factures (Table Compta & Ventes)
 
-Le flux de traitement s'organise en **6 blocs fonctionnels** :
+Programme de gestion intégrée des factures couvrant les cycles de création, modification et édition. Pilote l'ensemble du workflow facturation en orchestrant 12 programmes appelés pour valider les données comptables, générer les documents et mettre à jour les références. Modifie 7 tables critiques incluant les compteurs, les rayons boutique et les paramètres de taxation.
 
-- **Traitement** (20 taches) : traitements metier divers
-- **Saisie** (6 taches) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Validation** (4 taches) : controles et verifications de coherence
-- **Creation** (2 taches) : insertion d'enregistrements en base (mouvements, prestations)
-- **Calcul** (2 taches) : calculs de montants, stocks ou compteurs
-- **Consultation** (1 tache) : ecrans de recherche, selection et consultation
+Gère deux flux parallèles : factures de vente standard avec édition TVA comptable et factures de séjour hébergement avec archivage spécifique. Les 6 tâches principales couvrent la création des en-têtes/pieds facture, la saisie et mise à jour des lignes (versions courante et archivée), la gestion temporaire de l'hébergement, et l'incrémentation des numéros de facture avec vérification boutique.
 
-**Donnees modifiees** : 7 tables en ecriture (comptable________cte, compteurs________cpt, projet, maj_appli_tpe, Affectation_Gift_Pass, Rayons_Boutique, taxe_add_param).
-
-**Logique metier** : 2 regles identifiees couvrant conditions metier.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Saisie (6 taches)
-
-- **T1** - Factures Bis(Ventes) **[ECRAN]**
-- **T2** - Maj des lignes saisies **[ECRAN]**
-- **T7** - Creation Lg Vente **[ECRAN]**
-- **T11** - Ventes **[ECRAN]**
-- **T19** - Maj des lignes saisies **[ECRAN]**
-- **T26** - Creation Lg Vente **[ECRAN]**
-
-Delegue a : [Maj des lignes saisies (IDE 61)](ADH-IDE-61.md), [Maj des lignes saisies archive (IDE 94)](ADH-IDE-94.md)
-
-#### Phase 2 : Traitement (20 taches)
-
-- **T3** - Hebergement **[ECRAN]**
-- **T4** - Création
-- **T6** - Maj Hebergement Temp
-- **T8** - Maj Hebergement Temp
-- **T10** - Hebergement **[ECRAN]**
-- **T12** - Lignes boutique **[ECRAN]**
-- **T14** - Suppr fact pro boutique
-- **T15** - Flag All **[ECRAN]**
-- **T16** - Pied de Facture **[ECRAN]**
-- **T18** - Incremente N° de Facture
-- **T22** - Hebergement **[ECRAN]**
-- **T23** - Création
-- **T25** - Maj Hebergement Temp
-- **T27** - Maj Hebergement Temp
-- **T28** - Maj Hebergement Tempo **[ECRAN]**
-- **T29** - flag ligne boutique
-- **T30** - flag ligne
-- **T32** - chargement boutique
-- **T34** - SQL parcourt facture **[ECRAN]**
-- **T35** - SQL parcourt facture **[ECRAN]**
-
-Delegue a : [Incremente N° de Facture (IDE 58)](ADH-IDE-58.md), [flag ligne boutique (IDE 92)](ADH-IDE-92.md), [Factures_Sejour (IDE 57)](ADH-IDE-57.md), [Facture - chargement boutique (IDE 59)](ADH-IDE-59.md), [Maj Hebergement Tempo (IDE 62)](ADH-IDE-62.md), [Facture - Sejour archive (IDE 95)](ADH-IDE-95.md)
-
-#### Phase 3 : Calcul (2 taches)
-
-- **T5** - Creation Lg Compta
-- **T24** - Creation Lg Compta
-
-#### Phase 4 : Validation (4 taches)
-
-- **T9** - verif non flaguee
-- **T13** - Controle ttc
-- **T17** - verif boutique
-- **T31** - verif non flaguee
-
-Delegue a : [Verif boutique (IDE 91)](ADH-IDE-91.md)
-
-#### Phase 5 : Creation (2 taches)
-
-- **T20** - Creation Pied Facture **[ECRAN]**
-- **T33** - Creation entete
-
-Delegue a : [Creation entete facture (IDE 60)](ADH-IDE-60.md), [Creation Pied Facture (IDE 93)](ADH-IDE-93.md)
-
-#### Phase 6 : Consultation (1 tache)
-
-- **T21** - Recherche si Fact déjà éditée
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| maj_appli_tpe | R/**W**/L (16 usages) |  |
-| Rayons_Boutique | R/**W**/L (12 usages) |  |
-| Affectation_Gift_Pass | R/**W**/L (10 usages) |  |
-| projet | **W**/L (2 usages) |  |
-| taxe_add_param | **W**/L (2 usages) |  |
-| comptable________cte | **W**/L (2 usages) |  |
-| compteurs________cpt | **W** (1 usages) | Comptes GM (generaux) |
-
-</details>
+Valide les règles métier à chaque étape : vérification boutique avant enregistrement, flagging des lignes boutique, application des taxes additionnelles, et synchronisation des Gift Pass. Point d'intégration critique entre les modules comptables et ventes, garantissant la cohérence des données facturation dans le système.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -1917,14 +1833,28 @@ flowchart TD
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 35 taches]
+    B1[Saisie (6t)]
+    START --> B1
+    B2[Traitement (20t)]
+    B1 --> B2
+    B3[Calcul (2t)]
+    B2 --> B3
+    B4[Validation (4t)]
+    B3 --> B4
+    B5[Creation (2t)]
+    B4 --> B5
+    B6[Consultation (1t)]
+    B5 --> B6
+    WRITE[MAJ 7 tables]
+    B6 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -1934,59 +1864,26 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB |   |   | L | 2 |
-| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
-| 40 | comptable________cte |  | DB |   | **W** | L | 2 |
-| 68 | compteurs________cpt | Comptes GM (generaux) | DB |   | **W** |   | 1 |
-| 263 | vente | Donnees de ventes | DB |   |   | L | 2 |
-| 372 | pv_budget |  | DB |   |   | L | 1 |
-| 382 | pv_discount_reasons |  | DB |   |   | L | 2 |
-| 400 | pv_cust_rentals |  | DB |   |   | L | 2 |
-| 744 | pv_lieux_vente | Donnees de ventes | DB |   |   | L | 2 |
-| 746 | projet |  | DB |   | **W** | L | 2 |
-| 755 | cafil_address_tmp | Services / filieres | DB |   |   | L | 2 |
-| 756 | Country_ISO |  | DB |   |   | L | 2 |
 | 866 | maj_appli_tpe |  | DB | R | **W** | L | 16 |
-| 867 | log_maj_tpe |  | DB | R |   | L | 3 |
-| 868 | Affectation_Gift_Pass |  | DB | R | **W** | L | 10 |
 | 870 | Rayons_Boutique |  | DB | R | **W** | L | 12 |
-| 871 | Activite |  | DB |   |   | L | 2 |
+| 868 | Affectation_Gift_Pass |  | DB | R | **W** | L | 10 |
+| 40 | comptable________cte |  | DB |   | **W** | L | 2 |
+| 746 | projet |  | DB |   | **W** | L | 2 |
 | 932 | taxe_add_param |  | DB |   | **W** | L | 2 |
+| 68 | compteurs________cpt | Comptes GM (generaux) | DB |   | **W** |   | 1 |
+| 867 | log_maj_tpe |  | DB | R |   | L | 3 |
+| 871 | Activite |  | DB |   |   | L | 2 |
+| 400 | pv_cust_rentals |  | DB |   |   | L | 2 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB |   |   | L | 2 |
+| 382 | pv_discount_reasons |  | DB |   |   | L | 2 |
+| 744 | pv_lieux_vente | Donnees de ventes | DB |   |   | L | 2 |
+| 756 | Country_ISO |  | DB |   |   | L | 2 |
+| 263 | vente | Donnees de ventes | DB |   |   | L | 2 |
+| 755 | cafil_address_tmp | Services / filieres | DB |   |   | L | 2 |
+| 372 | pv_budget |  | DB |   |   | L | 1 |
+| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (9 / 8 tables avec colonnes identifiees)
-
-<details>
-<summary>Table 40 - comptable________cte (**W**/L) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | P.Flague | W | Logical |
-| B | V retour Compta | W | Logical |
-| C | v Retour Vente | W | Logical |
-| D | v Trouvé Compta | W | Logical |
-| E | v Trouvé Vente | W | Logical |
-
-</details>
-
-<details>
-<summary>Table 68 - compteurs________cpt (**W**) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 746 - projet (**W**/L) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | P.Flague | W | Logical |
-| B | V retour Compta | W | Logical |
-| C | v Retour Vente | W | Logical |
-| D | v Trouvé Compta | W | Logical |
-| E | v Trouvé Vente | W | Logical |
-
-</details>
 
 <details>
 <summary>Table 866 - maj_appli_tpe (R/**W**/L) - 16 usages</summary>
@@ -2005,6 +1902,72 @@ flowchart TD
 | J | V TOTAL TTC | W | Numeric |
 | K | v.Editer tous les articles | W | Logical |
 | L | V.ligne boutique manquante ? | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 870 - Rayons_Boutique (R/**W**/L) - 12 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | v.Existe ligne boutique ? | W | Logical |
+| E | V.Boutique manquante ? | W | Logical |
+| G | V.TTC toutes lignes boutique | W | Numeric |
+| H | V.Existe ligne detail boutique | W | Logical |
+| L | V.ligne boutique manquante ? | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 868 - Affectation_Gift_Pass (R/**W**/L) - 10 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | P.Société | W | Alpha |
+| B | P.Num compte | W | Numeric |
+| C | P.Fliliation | W | Numeric |
+| D | V.Lien Hebergement_Pro | W | Logical |
+| E | V.Boutique manquante ? | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 40 - comptable________cte (**W**/L) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | P.Flague | W | Logical |
+| B | V retour Compta | W | Logical |
+| C | v Retour Vente | W | Logical |
+| D | v Trouvé Compta | W | Logical |
+| E | v Trouvé Vente | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 746 - projet (**W**/L) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | P.Flague | W | Logical |
+| B | V retour Compta | W | Logical |
+| C | v Retour Vente | W | Logical |
+| D | v Trouvé Compta | W | Logical |
+| E | v Trouvé Vente | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 932 - taxe_add_param (**W**/L) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 68 - compteurs________cpt (**W**) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -2046,39 +2009,6 @@ flowchart TD
 | BE | V.Erreur addresse ? | R | Logical |
 | BF | v_num_Facture | R | Numeric |
 | BG | v_Nom_fichierxx | R | Alpha |
-
-</details>
-
-<details>
-<summary>Table 868 - Affectation_Gift_Pass (R/**W**/L) - 10 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | P.Société | W | Alpha |
-| B | P.Num compte | W | Numeric |
-| C | P.Fliliation | W | Numeric |
-| D | V.Lien Hebergement_Pro | W | Logical |
-| E | V.Boutique manquante ? | W | Logical |
-
-</details>
-
-<details>
-<summary>Table 870 - Rayons_Boutique (R/**W**/L) - 12 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | v.Existe ligne boutique ? | W | Logical |
-| E | V.Boutique manquante ? | W | Logical |
-| G | V.TTC toutes lignes boutique | W | Numeric |
-| H | V.Existe ligne detail boutique | W | Logical |
-| L | V.ligne boutique manquante ? | W | Logical |
-
-</details>
-
-<details>
-<summary>Table 932 - taxe_add_param (**W**/L) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -2538,4 +2468,4 @@ graph LR
 | [Facture - Sejour archive (IDE 95)](ADH-IDE-95.md) | Sous-programme | 1x | Normale - Sous-programme |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:55*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 14:13*

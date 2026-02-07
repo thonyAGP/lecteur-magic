@@ -1,6 +1,6 @@
 ﻿# ADH IDE 68 - Saisie date
 
-> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (26s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:43 -> 03:43 (26s) | Assemblage 13:38
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,14 +18,15 @@
 | Taches | 1 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
+| Complexite | **BASSE** (score 5/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Saisie date** assure la gestion complete de ce processus, accessible depuis [Print extrait DateImp /O (IDE 74)](ADH-IDE-74.md).
+Le programme ADH IDE 68 est un formulaire de saisie de dates appelé depuis le programme Print extrait DateImp (IDE 74). Son objectif principal est de permettre à l'utilisateur de capturer une plage de dates (date min et date max) dans une interface MDI simple. Le programme utilise 8 variables locales pour gérer les paramètres de saisie : il reçoit la date comptable du système en paramètre d'entrée et capture les limites de date minimale et maximale saisies par l'utilisateur.
 
-Le flux de traitement s'organise en **1 blocs fonctionnels** :
+Le formulaire lui-même est minimaliste, dimensionné à 533x92 DLU, avec un titre dynamique récupéré via un appel au programme Recuperation du titre (IDE 43). Le programme ne persiste aucune donnée en base de données — il effectue une validation des dates saisies via le flag v.ok (variable F) et retourne les valeurs au programme appelant une fois que l'utilisateur valide son saisie avec le bouton Ok.
 
-- **Saisie** (1 tache) : ecrans de saisie utilisateur (formulaires, champs, donnees)
+En tant que composant transactionnel, ADH IDE 68 joue un rôle clé dans le workflow d'extraction de comptes, car il filtre les opérations bancaires affichées par une plage de dates définie par l'utilisateur. Ce programme n'est jamais orphelin, car il fait partie de la chaîne d'appel métier depuis le Menu caisse jusqu'au Print extrait.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -43,7 +44,7 @@ L'operateur saisit les donnees de la transaction via 1 ecran (Saisie dates).
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -463,4 +464,4 @@ graph LR
 | [Recuperation du titre (IDE 43)](ADH-IDE-43.md) | Sous-programme | 1x | Normale - Recuperation donnees |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:43*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:41*

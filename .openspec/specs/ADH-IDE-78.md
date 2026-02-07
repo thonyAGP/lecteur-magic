@@ -1,6 +1,6 @@
 ﻿# ADH IDE 78 - Print Ventes Club Med Pass
 
-> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:45 (27s) | Assemblage 06:51
+> **Analyse**: Phases 1-4 2026-02-07 03:44 -> 03:45 (27s) | Assemblage 13:51
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,50 +14,21 @@
 | IDE Position | 78 |
 | Nom Programme | Print Ventes Club Med Pass |
 | Fichier source | `Prg_78.xml` |
-| Dossier IDE | EzCard |
+| Dossier IDE | Ventes |
 | Taches | 14 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
+| Complexite | **BASSE** (score 12/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print Ventes Club Med Pass** assure la gestion complete de ce processus, accessible depuis [Club Med Pass menu (IDE 77)](ADH-IDE-77.md).
+**Programme ADH IDE 78 - Print Ventes Club Med Pass**
 
-Le flux de traitement s'organise en **3 blocs fonctionnels** :
+Ce programme gère l'édition des ventes Club Med Pass activées depuis le menu spécialisé (IDE 77). Son rôle principal est de récupérer les paramètres de vente (société, compte, filiale, devise), sélectionner la bonne imprimante parmi 5 modèles disponibles selon la configuration courante, puis afficher les totaux du ticket (montant TTC, espèces/cartes payées, crédit de consommation débité). La logique est purement déclarative : aucun calcul métier, aucune validation, seulement du positionnement d'écran et de routage vers l'imprimante.
 
-- **Saisie** (7 taches) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Impression** (6 taches) : generation de tickets et documents
-- **Initialisation** (1 tache) : reinitialisation d'etats et de variables de travail
+Le flux est linéaire et garanti : après avoir chargé les variables de sortie depuis la base de configuration (tables transac_entete_bar et cc_total), le programme affiche les trois totaux clés en deux variantes de layout possible, enregistre une trace d'audit via 'TRUE'LOG, puis appelle systématiquement le programme IDE 182 (Raz Current Printer) pour réinitialiser l'imprimante. Cette cascade d'appel garantit que l'imprimante est toujours propre après édition.
 
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Impression (6 taches)
-
-- **T1** - Print **[ECRAN]**
-- **T3** - Printer 1 **[ECRAN]**
-- **T6** - Printer 4 **[ECRAN]**
-- **T9** - Printer 6 **[ECRAN]**
-- **T11** - Printer 8 **[ECRAN]**
-- **T13** - Printer 9 **[ECRAN]**
-
-Delegue a : [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-#### Phase 2 : Initialisation (1 tache)
-
-- **T2** - Init village **[ECRAN]**
-
-#### Phase 3 : Saisie (7 taches)
-
-- **T4** - Transactions details **[ECRAN]**
-- **T5** - Transactions details **[ECRAN]**
-- **T7** - Transactions details **[ECRAN]**
-- **T8** - Transactions details **[ECRAN]**
-- **T10** - Transactions details **[ECRAN]**
-- **T12** - Transactions details **[ECRAN]**
-- **T14** - Transactions details **[ECRAN]**
-
-</details>
+Fortement couplé à IDE 77 (appelé uniquement depuis ce menu Club Med Pass), le programme ne dispose pas de PublicName et fonctionne exclusivement dans ce contexte spécifique. Ses 14 tâches n'écrivent aucune donnée métier, font purement de la lecture de configuration et gestion d'affichage, ce qui en fait un gestionnaire de présentation plutôt qu'une logique métier.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -202,7 +173,7 @@ L'operateur saisit les donnees de la transaction via 7 ecrans (Transactions deta
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -333,14 +304,19 @@ Ecran unique: **Print**
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 14 taches]
+    B1[Impression (6t)]
+    START --> B1
+    B2[Initialisation (1t)]
+    B1 --> B2
+    B3[Saisie (7t)]
+    B2 --> B3
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B3 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -350,9 +326,9 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 15 | transac_entete_bar |  | DB |   |   | L | 7 |
 | 31 | gm-complet_______gmc |  | DB | R |   |   | 7 |
 | 69 | initialisation___ini |  | DB | R |   |   | 1 |
+| 15 | transac_entete_bar |  | DB |   |   | L | 7 |
 | 271 | cc_total |  | DB |   |   | L | 7 |
 
 ### Colonnes par table (2 / 2 tables avec colonnes identifiees)
@@ -523,4 +499,4 @@ graph LR
 | [Raz Current Printer (IDE 182)](ADH-IDE-182.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:51*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:54*

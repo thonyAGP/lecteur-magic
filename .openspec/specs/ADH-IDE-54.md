@@ -1,6 +1,6 @@
 ﻿# ADH IDE 54 - Factures_Check_Out
 
-> **Analyse**: Phases 1-4 2026-02-07 03:42 -> 03:43 (28s) | Assemblage 03:43
+> **Analyse**: Phases 1-4 2026-02-07 03:42 -> 03:43 (28s) | Assemblage 13:35
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -18,69 +18,15 @@
 | Taches | 13 (2 ecrans visibles) |
 | Tables modifiees | 3 |
 | Programmes appeles | 12 |
+| Complexite | **BASSE** (score 29/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Factures_Check_Out** assure la gestion complete de ce processus, accessible depuis [Easy Check-Out === V2.00 (IDE 283)](ADH-IDE-283.md), [Solde Easy Check Out (IDE 64)](ADH-IDE-64.md), [Lanceur Facture (IDE 280)](ADH-IDE-280.md), [Solde Easy Check Out (IDE 287)](ADH-IDE-287.md), [Easy Check-Out === V2.00 (IDE 313)](ADH-IDE-313.md).
+Le programme **Factures_Check_Out (IDE 54)** est un élément central du processus de facturation pour les ventes en Easy Check-Out. Il gère la création complète des factures en orchestrant plusieurs sous-programmes : incrémentation du numéro de facture, génération de l'en-tête et du pied de facture, mise à jour des lignes de vente et application des taxes. Le programme traite à la fois les factures standard (IDE 90, 98) et les factures de séjour (IDE 57), en intégrant les données boutique et en appliquant les tarifications spécifiques.
 
-Le flux de traitement s'organise en **5 blocs fonctionnels** :
+Le flux principal s'articule autour de quatre axes de traitement : **vérification et flagging des lignes boutique** (via IDE 91, 92) pour identifier les articles non encore traités, **gestion de l'hébergement temporaire** (IDE 62) pour les séjours partiels, **édition de la facture avec calcul des taxes** (IDE 90, 98) en fonction du régime fiscal, et **mise à jour des rayons boutique** pour refléter les stocks utilisés. La tâche "Recherche si Fact déjà éditée" prévient les doublons lors de reprises après erreur.
 
-- **Traitement** (6 taches) : traitements metier divers
-- **Validation** (3 taches) : controles et verifications de coherence
-- **Initialisation** (2 taches) : reinitialisation d'etats et de variables de travail
-- **Saisie** (1 tache) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Consultation** (1 tache) : ecrans de recherche, selection et consultation
-
-**Donnees modifiees** : 3 tables en ecriture (maj_appli_tpe, Rayons_Boutique, taxe_add_param).
-
-**Logique metier** : 3 regles identifiees couvrant conditions metier.
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Saisie (1 tache)
-
-- **54** - Factures Bis(Ventes) **[[ECRAN]](#ecran-t1)**
-
-Delegue a : [Maj des lignes saisies (IDE 61)](ADH-IDE-61.md), [Maj des lignes saisies V3 (IDE 105)](ADH-IDE-105.md)
-
-#### Phase 2 : Validation (3 taches)
-
-- **54.1** - verif non flaguee
-- **54.2.2** - verif boutique
-- **54.4** - verif non flaguee
-
-Delegue a : [Verif boutique (IDE 91)](ADH-IDE-91.md)
-
-#### Phase 3 : Traitement (6 taches)
-
-- **54.2** - Hebergement **[[ECRAN]](#ecran-t3)**
-- **54.2.1** - Flag All **[[ECRAN]](#ecran-t4)**
-- **54.5** - chargement boutique
-- **54.6** - SQL parcourt facture **[[ECRAN]](#ecran-t9)**
-- **54.7** - Browse Fac TVA Pro **[[ECRAN]](#ecran-t10)**
-- **54.8** - Browse Fact Tempo **[[ECRAN]](#ecran-t11)**
-
-Delegue a : [Incremente N° de Facture (IDE 58)](ADH-IDE-58.md), [Factures_Sejour (IDE 57)](ADH-IDE-57.md), [Facture - chargement boutique (IDE 59)](ADH-IDE-59.md), [Maj Hebergement Tempo (IDE 62)](ADH-IDE-62.md), [flag ligne boutique (IDE 92)](ADH-IDE-92.md)
-
-#### Phase 4 : Consultation (1 tache)
-
-- **54.3** - Recherche si Fact déjà éditée
-
-#### Phase 5 : Initialisation (2 taches)
-
-- **54.9** - RAZ facture ECO
-- **54.9.1** - Raz détail facture
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| maj_appli_tpe | R/**W**/L (8 usages) |  |
-| Rayons_Boutique | R/**W**/L (5 usages) |  |
-| taxe_add_param | **W**/L (2 usages) |  |
-
-</details>
+Appelé depuis cinq points d'entrée différents (Easy Check-Out V2.00 en IDE 283 et 313, Solde Easy Check Out en IDE 64 et 287, Lanceur Facture IDE 280), le programme garantit la cohérence facturation quel que soit le scénario (facture directe, régularisation de séjour, ou ajustement de montant). Il modifie les tables critiques `maj_appli_tpe` (journal d'application TPE), `Rayons_Boutique` (stocks) et `taxe_add_param` (paramètres fiscaux), ce qui en fait un point de contrôle majeur pour l'intégrité des données commerciales.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -90,7 +36,7 @@ L'operateur saisit les donnees de la transaction via 1 ecran (Factures Bis(Vente
 
 ---
 
-#### <a id="t1"></a>54 - Factures Bis(Ventes) [[ECRAN]](#ecran-t1)
+#### <a id="t1"></a>T1 - Factures Bis(Ventes) [ECRAN]
 
 **Role** : Saisie des donnees : Factures Bis(Ventes).
 **Ecran** : 881 x 411 DLU | [Voir mockup](#ecran-t1)
@@ -103,7 +49,7 @@ Controles de coherence : 3 taches verifient les donnees et conditions.
 
 ---
 
-#### <a id="t2"></a>54.1 - verif non flaguee
+#### <a id="t2"></a>T2 - verif non flaguee
 
 **Role** : Verification : verif non flaguee.
 **Variables liees** : BB (V.Existe flaguee ?)
@@ -111,14 +57,14 @@ Controles de coherence : 3 taches verifient les donnees et conditions.
 
 ---
 
-#### <a id="t5"></a>54.2.2 - verif boutique
+#### <a id="t5"></a>T5 - verif boutique
 
 **Role** : Verification : verif boutique.
 **Delegue a** : [Verif boutique (IDE 91)](ADH-IDE-91.md)
 
 ---
 
-#### <a id="t7"></a>54.4 - verif non flaguee
+#### <a id="t7"></a>T7 - verif non flaguee
 
 **Role** : Verification : verif non flaguee.
 **Variables liees** : BB (V.Existe flaguee ?)
@@ -131,7 +77,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t3"></a>54.2 - Hebergement [[ECRAN]](#ecran-t3)
+#### <a id="t3"></a>T3 - Hebergement [ECRAN]
 
 **Role** : Traitement : Hebergement.
 **Ecran** : 866 x 250 DLU | [Voir mockup](#ecran-t3)
@@ -140,7 +86,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t4"></a>54.2.1 - Flag All [[ECRAN]](#ecran-t4)
+#### <a id="t4"></a>T4 - Flag All [ECRAN]
 
 **Role** : Traitement : Flag All.
 **Ecran** : 541 x 291 DLU | [Voir mockup](#ecran-t4)
@@ -149,14 +95,14 @@ Traitements internes.
 
 ---
 
-#### <a id="t8"></a>54.5 - chargement boutique
+#### <a id="t8"></a>T8 - chargement boutique
 
 **Role** : Traitement : chargement boutique.
 **Delegue a** : [Incremente N° de Facture (IDE 58)](ADH-IDE-58.md), [Factures_Sejour (IDE 57)](ADH-IDE-57.md), [Facture - chargement boutique (IDE 59)](ADH-IDE-59.md)
 
 ---
 
-#### <a id="t9"></a>54.6 - SQL parcourt facture [[ECRAN]](#ecran-t9)
+#### <a id="t9"></a>T9 - SQL parcourt facture [ECRAN]
 
 **Role** : Traitement : SQL parcourt facture.
 **Ecran** : 609 x 195 DLU | [Voir mockup](#ecran-t9)
@@ -165,7 +111,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t10"></a>54.7 - Browse Fac TVA Pro [[ECRAN]](#ecran-t10)
+#### <a id="t10"></a>T10 - Browse Fac TVA Pro [ECRAN]
 
 **Role** : Traitement : Browse Fac TVA Pro.
 **Ecran** : 1111 x 0 DLU | [Voir mockup](#ecran-t10)
@@ -173,7 +119,7 @@ Traitements internes.
 
 ---
 
-#### <a id="t11"></a>54.8 - Browse Fact Tempo [[ECRAN]](#ecran-t11)
+#### <a id="t11"></a>T11 - Browse Fact Tempo [ECRAN]
 
 **Role** : Traitement : Browse Fact Tempo.
 **Ecran** : 798 x 316 DLU | [Voir mockup](#ecran-t11)
@@ -187,7 +133,7 @@ Ecrans de recherche et consultation.
 
 ---
 
-#### <a id="t6"></a>54.3 - Recherche si Fact déjà éditée
+#### <a id="t6"></a>T6 - Recherche si Fact déjà éditée
 
 **Role** : Traitement : Recherche si Fact déjà éditée.
 **Variables liees** : H (P.i.Facture ECO), J (V.Lien Pied de facture), K (V.Existe facture ?), R (V.Facture Sans Nom), S (V.Facture Sans Adresse)
@@ -199,14 +145,14 @@ Reinitialisation d'etats et variables de travail.
 
 ---
 
-#### <a id="t12"></a>54.9 - RAZ facture ECO
+#### <a id="t12"></a>T12 - RAZ facture ECO
 
 **Role** : Reinitialisation : RAZ facture ECO.
 **Variables liees** : H (P.i.Facture ECO), J (V.Lien Pied de facture), K (V.Existe facture ?), R (V.Facture Sans Nom), S (V.Facture Sans Adresse)
 
 ---
 
-#### <a id="t13"></a>54.9.1 - Raz détail facture
+#### <a id="t13"></a>T13 - Raz détail facture
 
 **Role** : Reinitialisation : Raz détail facture.
 **Variables liees** : H (P.i.Facture ECO), J (V.Lien Pied de facture), K (V.Existe facture ?), R (V.Facture Sans Nom), S (V.Facture Sans Adresse)
@@ -264,15 +210,15 @@ Reinitialisation d'etats et variables de travail.
 
 | # | Position | Tache | Nom | Type | Largeur | Hauteur | Bloc |
 |---|----------|-------|-----|------|---------|---------|------|
-| 1 | 54.7 | 54.7 | Browse Fac TVA Pro | Type0 | 1111 | 0 | Traitement |
-| 2 | 54.8 | 54.8 | Browse Fact Tempo | Type0 | 798 | 316 | Traitement |
+| 1 | 54.7 | T10 | Browse Fac TVA Pro | Type0 | 1111 | 0 | Traitement |
+| 2 | 54.8 | T11 | Browse Fact Tempo | Type0 | 798 | 316 | Traitement |
 
 ### 8.2 Mockups Ecrans
 
 ---
 
 #### <a id="ecran-t10"></a>54.7 - Browse Fac TVA Pro
-**Tache** : [54.7](#t10) | **Type** : Type0 | **Dimensions** : 1111 x 0 DLU
+**Tache** : [T10](#t10) | **Type** : Type0 | **Dimensions** : 1111 x 0 DLU
 **Bloc** : Traitement | **Titre IDE** : Browse Fac TVA Pro
 
 <!-- FORM-DATA:
@@ -925,7 +871,7 @@ Reinitialisation d'etats et variables de travail.
 ---
 
 #### <a id="ecran-t11"></a>54.8 - Browse Fact Tempo
-**Tache** : [54.8](#t11) | **Type** : Type0 | **Dimensions** : 798 x 316 DLU
+**Tache** : [T11](#t11) | **Type** : Type0 | **Dimensions** : 798 x 316 DLU
 **Bloc** : Traitement | **Titre IDE** : Browse Fact Tempo
 
 <!-- FORM-DATA:
@@ -1165,9 +1111,9 @@ Reinitialisation d'etats et variables de travail.
 flowchart TD
     START([Entree])
     style START fill:#3fb950
-    VF10[54.7 Browse Fac TVA Pro]
+    VF10[T10 Browse Fac TVA Pro]
     style VF10 fill:#58a6ff
-    VF11[54.8 Browse Fact Tempo]
+    VF11[T11 Browse Fact Tempo]
     style VF11 fill:#58a6ff
     EXT58[IDE 58 Incremente N° d...]
     style EXT58 fill:#3fb950
@@ -1228,39 +1174,45 @@ flowchart TD
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
-| **54.1** | [**Factures Bis(Ventes)** (54)](#t1) [mockup](#ecran-t1) | - | 881x411 | Saisie |
-| **54.2** | [**verif non flaguee** (54.1)](#t2) | - | - | Validation |
-| 54.2.1 | [verif boutique (54.2.2)](#t5) | - | - | |
-| 54.2.2 | [verif non flaguee (54.4)](#t7) | - | - | |
-| **54.3** | [**Hebergement** (54.2)](#t3) [mockup](#ecran-t3) | - | 866x250 | Traitement |
-| 54.3.1 | [Flag All (54.2.1)](#t4) [mockup](#ecran-t4) | - | 541x291 | |
-| 54.3.2 | [chargement boutique (54.5)](#t8) | - | - | |
-| 54.3.3 | [SQL parcourt facture (54.6)](#t9) [mockup](#ecran-t9) | - | 609x195 | |
-| 54.3.4 | [Browse Fac TVA Pro (54.7)](#t10) [mockup](#ecran-t10) | - | 1111x0 | |
-| 54.3.5 | [Browse Fact Tempo (54.8)](#t11) [mockup](#ecran-t11) | - | 798x316 | |
-| **54.4** | [**Recherche si Fact déjà éditée** (54.3)](#t6) | - | - | Consultation |
-| **54.5** | [**RAZ facture ECO** (54.9)](#t12) | - | - | Initialisation |
-| 54.5.1 | [Raz détail facture (54.9.1)](#t13) | - | - | |
+| **54.1** | [**Factures Bis(Ventes)** (T1)](#t1) [mockup](#ecran-t1) | - | 881x411 | Saisie |
+| **54.2** | [**verif non flaguee** (T2)](#t2) | - | - | Validation |
+| 54.2.1 | [verif boutique (T5)](#t5) | - | - | |
+| 54.2.2 | [verif non flaguee (T7)](#t7) | - | - | |
+| **54.3** | [**Hebergement** (T3)](#t3) [mockup](#ecran-t3) | - | 866x250 | Traitement |
+| 54.3.1 | [Flag All (T4)](#t4) [mockup](#ecran-t4) | - | 541x291 | |
+| 54.3.2 | [chargement boutique (T8)](#t8) | - | - | |
+| 54.3.3 | [SQL parcourt facture (T9)](#t9) [mockup](#ecran-t9) | - | 609x195 | |
+| 54.3.4 | [Browse Fac TVA Pro (T10)](#t10) [mockup](#ecran-t10) | - | 1111x0 | |
+| 54.3.5 | [Browse Fact Tempo (T11)](#t11) [mockup](#ecran-t11) | - | 798x316 | |
+| **54.4** | [**Recherche si Fact déjà éditée** (T6)](#t6) | - | - | Consultation |
+| **54.5** | [**RAZ facture ECO** (T12)](#t12) | - | - | Initialisation |
+| 54.5.1 | [Raz détail facture (T13)](#t13) | - | - | |
 
 ### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
     START([START])
-    INIT[Init controles]
-    SAISIE[Browse Fac TVA Pro]
-    UPDATE[MAJ 3 tables]
-    ENDOK([END OK])
-
-    START --> INIT --> SAISIE
-    SAISIE --> UPDATE --> ENDOK
-
+    B1[Saisie (1t)]
+    START --> B1
+    B2[Validation (3t)]
+    B1 --> B2
+    B3[Traitement (6t)]
+    B2 --> B3
+    B4[Consultation (1t)]
+    B3 --> B4
+    B5[Initialisation (2t)]
+    B4 --> B5
+    WRITE[MAJ 3 tables]
+    B5 --> WRITE
+    ENDOK([END])
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
-> *Algorigramme auto-genere. Utiliser `/algorigramme` pour une synthese metier detaillee.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -1270,14 +1222,14 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB |   |   | L | 1 |
-| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
-| 372 | pv_budget |  | DB |   |   | L | 1 |
 | 866 | maj_appli_tpe |  | DB | R | **W** | L | 8 |
-| 867 | log_maj_tpe |  | DB | R |   |   | 1 |
-| 868 | Affectation_Gift_Pass |  | DB | R |   |   | 1 |
 | 870 | Rayons_Boutique |  | DB | R | **W** | L | 5 |
 | 932 | taxe_add_param |  | DB |   | **W** | L | 2 |
+| 867 | log_maj_tpe |  | DB | R |   |   | 1 |
+| 868 | Affectation_Gift_Pass |  | DB | R |   |   | 1 |
+| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
+| 372 | pv_budget |  | DB |   |   | L | 1 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB |   |   | L | 1 |
 
 ### Colonnes par table (4 / 5 tables avec colonnes identifiees)
 
@@ -1294,6 +1246,23 @@ flowchart TD
 | F | v.Total Tva | W | Numeric |
 | G | V.Total HT | W | Numeric |
 | H | V.Total TTC | W | Numeric |
+
+</details>
+
+<details>
+<summary>Table 870 - Rayons_Boutique (R/**W**/L) - 5 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | v.Existe ligne boutique ? | W | Logical |
+| E | V.Boutique manquante ? | W | Logical |
+
+</details>
+
+<details>
+<summary>Table 932 - taxe_add_param (**W**/L) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -1346,23 +1315,6 @@ flowchart TD
 
 </details>
 
-<details>
-<summary>Table 870 - Rayons_Boutique (R/**W**/L) - 5 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | v.Existe ligne boutique ? | W | Logical |
-| E | V.Boutique manquante ? | W | Logical |
-
-</details>
-
-<details>
-<summary>Table 932 - taxe_add_param (**W**/L) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
 ## 11. VARIABLES
 
 ### 11.1 Parametres entrants (8)
@@ -1387,8 +1339,8 @@ Variables persistantes pendant toute la session.
 | Lettre | Nom | Type | Usage dans |
 |--------|-----|------|-----------|
 | I | V.Lien Gm_Complet | Logical | - |
-| J | V.Lien Pied de facture | Logical | [54](#t1), [54.6](#t9), [54.9](#t12) |
-| K | V.Existe facture ? | Logical | [54](#t1), [54.6](#t9), [54.9](#t12) |
+| J | V.Lien Pied de facture | Logical | [T1](#t1), [T9](#t9), [T12](#t12) |
+| K | V.Existe facture ? | Logical | [T1](#t1), [T9](#t9), [T12](#t12) |
 | L | V.Nom | Alpha | 1x session |
 | M | V.Adresse | Alpha | - |
 | N | V.CP | Alpha | 1x session |
@@ -1397,12 +1349,12 @@ Variables persistantes pendant toute la session.
 | Q | V.Telephone | Alpha | - |
 | R | V.Facture Sans Nom | Logical | - |
 | S | V.Facture Sans Adresse | Logical | 1x session |
-| T | V.No Facture | Numeric | [54](#t1), [54.6](#t9), [54.9](#t12) |
+| T | V.No Facture | Numeric | [T1](#t1), [T9](#t9), [T12](#t12) |
 | U | V.Nom Fichier PDF | Alpha | 1x session |
 | V | V.Pos , | Numeric | 1x session |
 | W | V.Service | Alpha | 1x session |
-| X | V.Fact déjà editée | Logical | [54.3](#t6) |
-| Y | V.Date Début Hebergement | Date | [54.2](#t3) |
+| X | V.Fact déjà editée | Logical | [T6](#t6) |
+| Y | V.Date Début Hebergement | Date | [T3](#t3) |
 | Z | V.Date Fin Hebergement | Date | - |
 | BA | V.Existe non facturee ? | Logical | - |
 | BB | V.Existe flaguee ? | Logical | - |
@@ -1824,4 +1776,4 @@ graph LR
 | [Maj Hebergement Tempo (IDE 62)](ADH-IDE-62.md) | Sous-programme | 1x | Normale - Mise a jour donnees |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 03:43*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:36*
