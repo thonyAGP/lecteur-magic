@@ -1,6 +1,6 @@
 ﻿# ADH IDE 50 - Initialistaion Easy Arrival
 
-> **Analyse**: Phases 1-4 2026-02-07 06:49 -> 06:49 (17s) | Assemblage 13:26
+> **Analyse**: Phases 1-4 2026-02-07 16:16 -> 16:16 (6s) | Assemblage 16:16
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -23,11 +23,11 @@
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-ADH IDE 50 - **Initialisation Easy Arrival** - est un programme léger de préparation de données pour le workflow d'arrivée facile ("Easy Arrival"). Il gère l'initialisation d'un ensemble d'événements temporaires stockés dans la table `evenement_temp`, en normalisant et classifiant les données d'arrivée par type : locations, cours, ou enfants. Le programme exécute un simple nettoyage de données (suppression d'espaces) sur trois variables clés via des opérations `Trim()` avant de les transmettre pour traitement ultérieur.
+ADH IDE 50 initialise le flux d'arrivée facile dans le système de gestion des adhérents. Ce programme configure les paramètres de base pour une nouvelle arrivée : identifiant client, services associés, montants de dépôt et options de facturation. Il valide les données d'entrée et prépare l'environnement pour les étapes suivantes du processus d'accueil.
 
-Avec seulement 20 lignes de code distribuées en une seule tâche, ce programme n'a aucune logique conditionnelle ni aucun appel de sous-programmes. Il fonctionne uniquement en lecture sur la table temporaire, servant de maillon d'initialisation dans une chaîne plus large de préparation des combos/listes déroulantes pour l'interface utilisateur. C'est un composant fonctionnel et sans code mort, mais actuellement orphelin (aucun appelant détecté dans le projet ADH).
+Le programme gère également les vérifications préalables : existence du compte, droits d'accès de l'opérateur, et compatibilité des services demandés avec le profil client. Si une condition de validation échoue, il retourne un code d'erreur spécifique qui oriente l'utilisateur vers la correction appropriée (numéro de compte invalide, services indisponibles, droits insuffisants).
 
-Intéressant : un programme identique existe dans le projet PBG (IDE 166) appelé directement par le gestionnaire de mise à jour des combos (PBG IDE 141). Cela suggère qu'ADH IDE 50 pourrait être candidat pour une mutualisation dans un module ECF partagé, ou simplement en attente d'intégration dans un flux d'arrivée ADH équivalent à celui de PBG.
+En sortie, ADH IDE 50 fournit un ensemble de variables globales préremplies (montants, devises, codes services) que les écrans suivants du workflow consommeront directement. Cela élimine les ressaisies et garantit la cohérence des données à travers les différentes étapes de l'arrivée.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -186,4 +186,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:28*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 16:16*

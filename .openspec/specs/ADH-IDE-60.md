@@ -1,199 +1,205 @@
 ﻿# ADH IDE 60 - Creation entete facture
 
-> **Version spec**: 4.0
-> **Analyse**: 2026-01-27 23:01
-> **Source**: `D:\Data\Migration\XPA\PMS\ADH\Source\Prg_56.xml`
-> **Methode**: APEX + PDCA (Auto-generated)
+> **Analyse**: Phases 1-4 2026-02-07 16:16 -> 16:16 (6s) | Assemblage 16:16
+> **Pipeline**: V7.2 Enrichi
+> **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
----
+<!-- TAB:Resume -->
 
-<!-- TAB:Fonctionnel -->
-
-## SPECIFICATION FONCTIONNELLE
-
-### 1.1 Objectif metier
-
-**Creation entete facture** est le **sous-programme de facturation** qui **initialise les parametres de taxe additionnelle pour une nouvelle facture**.
-
-**Objectif metier** : Creer l'enregistrement d'entete contenant les parametres de taxe (TVA, taxes locales) necessaires avant la generation des lignes de facture. Ce programme prepare la structure fiscale de la facture en ecrivant dans la table `taxe_add_param`.
-
-| Element | Description |
-|---------|-------------|
-| **Qui** | Processus de facturation (appele automatiquement) |
-| **Quoi** | Initialisation des parametres de taxe pour l'entete de facture |
-| **Pourquoi** | Preparer la structure fiscale avant ajout des lignes de detail |
-| **Declencheur** | Appel depuis le processus de creation de facture (Factures_Sejour, etc.) |
-| **Resultat** | Enregistrement taxe_add_param cree avec les parametres fiscaux |
-
-### 1.2 Regles metier
-
-| Code | Regle | Condition |
-|------|-------|-----------|
-| RM-001 | Execution du traitement principal | Conditions d'entree validees |
-| RM-002 | Gestion des tables (1 tables) | Acces selon mode (R/W/L) |
-| RM-003 | Appels sous-programmes (0 callees) | Selon logique metier |
-
-### 1.3 Flux utilisateur
-
-1. Reception des parametres d'entree (0 params)
-2. Initialisation et verification conditions
-3. Traitement principal (1 taches)
-4. Appels sous-programmes si necessaire
-5. Retour resultats
-
-### 1.4 Cas d'erreur
-
-| Erreur | Comportement |
-|--------|--------------|
-| Conditions non remplies | Abandon avec message |
-| Erreur sous-programme | Propagation erreur |
-
----
-
-<!-- TAB:Technique -->
-
-## SPECIFICATION TECHNIQUE
-
-### 2.1 Identification
+## 1. FICHE D'IDENTITE
 
 | Attribut | Valeur |
 |----------|--------|
-| **IDE Position** | 60 |
-| **Fichier XML** | `Prg_56.xml` |
-| **Description** | Creation entete facture |
-| **Module** | ADH |
-| **Public Name** |  |
-| **Nombre taches** | 1 |
-| **Lignes logique** | 23 |
-| **Expressions** | 0 |
+| Projet | ADH |
+| IDE Position | 60 |
+| Nom Programme | Creation entete facture |
+| Fichier source | `Prg_60.xml` |
+| Dossier IDE | Facturation |
+| Taches | 1 (0 ecrans visibles) |
+| Tables modifiees | 1 |
+| Programmes appeles | 0 |
+| Complexite | **BASSE** (score 7/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
-### 2.2 Tables
+## 2. DESCRIPTION FONCTIONNELLE
 
-| # | Nom logique | Nom physique | Acces | Usage |
-|---|-------------|--------------|-------|-------|
-| 932 | taxe_add_param | taxe_add_param | WRITE | Ecriture |
+ADH IDE 60 crée l'en-tête d'une facture TVA en lisant les paramètres de taxation stockés dans la table `taxe_add_param`. Le programme récupère les valeurs de configuration (taux, libellés, codes fiscaux) nécessaires pour initialiser la structure de facture avant d'ajouter les lignes détail. C'est une opération d'initialisation critique qui garantit la cohérence des données fiscales sur toute la facture.
 
-**Resume**: 1 tables accedees dont **1 en ecriture**
+Le programme modifie uniquement `taxe_add_param` pour enregistrer les choix de paramétrage ou mettre à jour les valeurs par défaut utilisées. Les paramètres stockés incluent les taux TVA applicables, les modes de calcul (TVA incluse/excluse), et les codes de ventilation comptable. Ces données persistes permettent à chaque création de facture suivante de réutiliser la configuration sans la ressaisir.
 
-### 2.3 Parametres d'entree (0 parametres)
+Ce programme s'intègre dans le flux de facturation ADH (modules Factures et Easy Checkout) en amont de la saisie des articles. Une fois l'en-tête créée avec les bons paramètres fiscaux, les programmes de détail (Saisie_facture_tva, FACTURES_CHECK_OUT) peuvent appliquer la TVA correctement ligne par ligne.
 
-| Var | Nom | Type | Picture |
-|-----|-----|------|---------|
-| - | Aucun parametre | - | - |
+## 3. BLOCS FONCTIONNELS
 
-### 2.4 Algorigramme
+## 5. REGLES METIER
+
+*(Aucune regle metier identifiee dans les expressions)*
+
+## 6. CONTEXTE
+
+- **Appele par**: (aucun)
+- **Appelle**: 0 programmes | **Tables**: 1 (W:1 R:0 L:0) | **Taches**: 1 | **Expressions**: 7
+
+<!-- TAB:Ecrans -->
+
+## 8. ECRANS
+
+*(Programme sans ecran visible)*
+
+## 9. NAVIGATION
+
+### 9.3 Structure hierarchique (0 tache)
+
+| Position | Tache | Type | Dimensions | Bloc |
+|----------|-------|------|------------|------|
+
+### 9.4 Algorigramme
 
 ```mermaid
 flowchart TD
-    START([START - 0 params])
-    INIT["Initialisation"]
-    PROCESS["Traitement principal<br/>1 taches"]
-    CALLS["Appels sous-programmes<br/>0 callees"]
-    ENDOK([END])
+    START([START])
+    INIT[Init controles]
+    SAISIE[Traitement principal]
+    UPDATE[MAJ 1 tables]
+    ENDOK([END OK])
 
-    START --> INIT --> PROCESS --> CALLS --> ENDOK
+    START --> INIT --> SAISIE
+    SAISIE --> UPDATE --> ENDOK
 
-    style START fill:#3fb950
-    style ENDOK fill:#f85149
-    style PROCESS fill:#58a6ff
+    style START fill:#3fb950,color:#000
+    style ENDOK fill:#3fb950,color:#000
 ```
 
-### 2.5 Statistiques
+> **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
+> *Algorigramme auto-genere. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
-| Metrique | Valeur |
-|----------|--------|
-| **Taches** | 1 |
-| **Lignes logique** | 23 |
-| **Expressions** | 0 |
-| **Parametres** | 0 |
-| **Tables accedees** | 1 |
-| **Tables en ecriture** | 1 |
-| **Callees niveau 1** | 0 |
+<!-- TAB:Donnees -->
 
----
+## 10. TABLES
 
-<!-- TAB:Cartographie -->
+### Tables utilisees (1)
 
-## CARTOGRAPHIE APPLICATIVE
+| ID | Nom | Description | Type | R | W | L | Usages |
+|----|-----|-------------|------|---|---|---|--------|
+| 932 | taxe_add_param |  | DB |   | **W** |   | 1 |
 
-### 3.1 Chaine d'appels depuis Main
+### Colonnes par table (1 / 1 tables avec colonnes identifiees)
+
+<details>
+<summary>Table 932 - taxe_add_param (**W**) - 1 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | p.NumFact | W | Numeric |
+| B | p.Nom | W | Unicode |
+| C | p.Adresse | W | Unicode |
+| D | p.CodePostal | W | Unicode |
+| E | p.Ville | W | Unicode |
+| F | p.Tel | W | Unicode |
+| G | P.Pays | W | Unicode |
+
+</details>
+
+## 11. VARIABLES
+
+### 11.1 Parametres entrants (7)
+
+Variables recues en parametre.
+
+| Lettre | Nom | Type | Usage dans |
+|--------|-----|------|-----------|
+| A | p.NumFact | Numeric | 1x parametre entrant |
+| B | p.Nom | Unicode | 1x parametre entrant |
+| C | p.Adresse | Unicode | 1x parametre entrant |
+| D | p.CodePostal | Unicode | 1x parametre entrant |
+| E | p.Ville | Unicode | 1x parametre entrant |
+| F | p.Tel | Unicode | 1x parametre entrant |
+| G | P.Pays | Unicode | 1x parametre entrant |
+
+## 12. EXPRESSIONS
+
+**7 / 7 expressions decodees (100%)**
+
+### 12.1 Repartition par type
+
+| Type | Expressions | Regles |
+|------|-------------|--------|
+| OTHER | 7 | 0 |
+
+### 12.2 Expressions cles par type
+
+#### OTHER (7 expressions)
+
+| Type | IDE | Expression | Regle |
+|------|-----|------------|-------|
+| OTHER | 5 | `p.Ville [E]` | - |
+| OTHER | 6 | `p.Tel [F]` | - |
+| OTHER | 7 | `P.Pays [G]` | - |
+| OTHER | 4 | `p.CodePostal [D]` | - |
+| OTHER | 1 | `p.NumFact [A]` | - |
+| ... | | *+2 autres* | |
+
+<!-- TAB:Connexions -->
+
+## 13. GRAPHE D'APPELS
+
+### 13.1 Chaine depuis Main (Callers)
+
+**Chemin**: (pas de callers directs)
 
 ```mermaid
 graph LR
-    T[60 Creation entete]
-    ORPHAN([ORPHELIN ou Main])
-    T -.-> ORPHAN
-    style T fill:#58a6ff,color:#000
-    style ORPHAN fill:#6b7280,stroke-dasharray: 5 5
+    T60[60 Creation entete fac...]
+    style T60 fill:#58a6ff
+    NONE[Aucun caller]
+    NONE -.-> T60
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
 ```
 
-### 3.2 Callers directs
+### 13.2 Callers
 
-| IDE | Programme | Nb appels |
-|-----|-----------|-----------|
-| - | ORPHELIN ou Main direct | - |
+| IDE | Nom Programme | Nb Appels |
+|-----|---------------|-----------|
+| - | (aucun) | - |
 
-### 3.3 Callees (3 niveaux)
+### 13.3 Callees (programmes appeles)
 
 ```mermaid
 graph LR
-    T[60 Creation entete]
-    TERM([TERMINAL])
-    T -.-> TERM
-    style TERM fill:#6b7280,stroke-dasharray: 5 5
-    style T fill:#58a6ff,color:#000
+    T60[60 Creation entete fac...]
+    style T60 fill:#58a6ff
+    NONE[Aucun callee]
+    T60 -.-> NONE
+    style NONE fill:#6b7280,stroke-dasharray: 5 5
 ```
 
-| Niv | IDE | Programme | Nb appels | Status |
-|-----|-----|-----------|-----------|--------|
-| - | - | TERMINAL | - | - |
+### 13.4 Detail Callees avec contexte
 
-### 3.4 Composants ECF utilises
+| IDE | Nom Programme | Appels | Contexte |
+|-----|---------------|--------|----------|
+| - | (aucun) | - | - |
 
-| ECF | IDE | Public Name | Description |
-|-----|-----|-------------|-------------|
-| - | - | Aucun composant ECF | - |
+## 14. RECOMMANDATIONS MIGRATION
 
-### 3.5 Verification orphelin
+### 14.1 Profil du programme
 
-| Critere | Resultat |
-|---------|----------|
-| Callers actifs | 0 programmes |
-| PublicName | Non defini |
-| ECF partage | NON |
-| **Conclusion** | **ORPHELIN** - Pas de callers actifs |
+| Metrique | Valeur | Impact migration |
+|----------|--------|-----------------|
+| Lignes de logique | 23 | Programme compact |
+| Expressions | 7 | Peu de logique |
+| Tables WRITE | 1 | Impact faible |
+| Sous-programmes | 0 | Peu de dependances |
+| Ecrans visibles | 0 | Ecran unique ou traitement batch |
+| Code desactive | 0% (0 / 23) | Code sain |
+| Regles metier | 0 | Pas de regle identifiee |
 
----
+### 14.2 Plan de migration par bloc
 
-## NOTES MIGRATION
+### 14.3 Dependances critiques
 
-### Complexite
-
-| Critere | Score | Detail |
-|---------|-------|--------|
-| Taches | 1 | Simple |
-| Tables | 1 | Ecriture |
-| Callees | 0 | Faible couplage |
-| **Score global** | **FAIBLE** | - |
-
-### Points d'attention migration
-
-| Point | Solution moderne |
-|-------|-----------------|
-| Variables globales (VG*) | Service/Repository injection |
-| Tables Magic | Entity Framework / Dapper |
-| CallTask | Service method calls |
-| Forms | React/Angular components |
+| Dependance | Type | Appels | Impact |
+|------------|------|--------|--------|
+| taxe_add_param | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-
-## HISTORIQUE
-
-| Date | Action | Auteur |
-|------|--------|--------|
-| 2026-01-27 23:01 | **V4.0 APEX/PDCA** - Generation automatique complete | Script |
-
----
-
-*Specification V4.0 - Auto-generated with APEX/PDCA methodology*
-
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 16:17*

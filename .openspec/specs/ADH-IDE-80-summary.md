@@ -1,6 +1,6 @@
 ﻿# ADH IDE 80 - Card scan read
 
-> **Analyse**: 2026-02-07 13:56
+> **Analyse**: 2026-02-07 16:14
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF

@@ -10,6 +10,8 @@ param(
 
     [string]$OutputPath,
 
+    [string]$Folder = "",
+
     [switch]$SkipPhase4
 )
 
@@ -126,7 +128,14 @@ Write-Host ""
 try {
     $phase5Script = Join-Path $ScriptDir "Phase5-Synthesis.ps1"
     $specsPath = Join-Path $ProjectRoot ".openspec\specs"
-    $phase5Result = & $phase5Script -Project $Project -IdePosition $IdePosition -OutputPath $OutputPath -SpecsOutputPath $specsPath
+    $phase5Args = @{
+        Project = $Project
+        IdePosition = $IdePosition
+        OutputPath = $OutputPath
+        SpecsOutputPath = $specsPath
+    }
+    if ($Folder) { $phase5Args["Folder"] = $Folder }
+    $phase5Result = & $phase5Script @phase5Args
     $phaseResults["Phase5"] = @{ success = $true; data = $phase5Result }
     Write-Host ""
 } catch {
