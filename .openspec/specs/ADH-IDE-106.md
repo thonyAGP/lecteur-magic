@@ -1,6 +1,6 @@
 ﻿# ADH IDE 106 - Maj lignes saisies archive V3
 
-> **Analyse**: Phases 1-4 2026-02-07 07:00 -> 07:01 (16s) | Assemblage 07:01
+> **Analyse**: Phases 1-4 2026-02-07 07:00 -> 07:01 (16s) | Assemblage 15:23
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,19 +14,24 @@
 | IDE Position | 106 |
 | Nom Programme | Maj lignes saisies archive V3 |
 | Fichier source | `Prg_106.xml` |
-| Dossier IDE | Garantie |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 7/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Maj lignes saisies archive V3** assure la gestion complete de ce processus.
+Basé sur l'analyse du programme Magic :
 
-**Donnees modifiees** : 1 tables en ecriture (projet).
+---
 
-**Logique metier** : 1 regles identifiees couvrant conditions metier.
+**ADH IDE 106** (Maj lignes saisies archive V3) est un utilitaire de maintenance chargé de **synchroniser et mettre à jour les lignes de factures archivées** dans la table "projet" lors de la migration de la version 2 vers la version 3. Le programme traite des enregistrements d'archives en batch, mettant à jour les informations de facturation (numéro de facture, compte, société, indicateurs de statut) tout en maintenant la cohérence des données à travers les systèmes comptables et de vente. Il effectue des validations croisées avec les tables de référence (activités, rayons boutique, mises à jour TPE) pour garantir que chaque entrée archivée correspond aux enregistrements valides.
+
+Le programme exécute un flux de travail spécifique : réinitialisation des variables de contrôle, capture des timestamps pour la traçabilité, traitement conditionnel basé sur le champ "Flague" (statut de l'entrée), puis validation des relations entre les systèmes Compta et Vente. Il maintient des indicateurs booléens pour suivre les mises à jour réussies et les correspondances trouvées dans chaque système, permettant ainsi un audit complet du processus de synchronisation archive.
+
+Bien que classé comme orphelin potentiel (sans appelants détectés), le programme constitue un composant terminal isolé de 71 lignes de logique avec zéro callees, ce qui minimise les risques de régression. Son absence de dépendances en aval le rend sûr à modifier sans impacter d'autres composants du système ADH.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -95,8 +100,8 @@ flowchart TD
 |----|-----|-------------|------|---|---|---|--------|
 | 746 | projet |  | DB |   | **W** |   | 1 |
 | 866 | maj_appli_tpe |  | DB |   |   | L | 1 |
-| 870 | Rayons_Boutique |  | DB |   |   | L | 1 |
 | 871 | Activite |  | DB |   |   | L | 1 |
+| 870 | Rayons_Boutique |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 1 tables avec colonnes identifiees)
 
@@ -256,4 +261,4 @@ graph LR
 | projet | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:01*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:24*

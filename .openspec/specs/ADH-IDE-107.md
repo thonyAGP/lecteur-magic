@@ -1,6 +1,6 @@
 ﻿# ADH IDE 107 - Print creation garantie
 
-> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:48 (27s) | Assemblage 07:01
+> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:48 (27s) | Assemblage 15:24
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,46 +14,19 @@
 | IDE Position | 107 |
 | Nom Programme | Print creation garantie |
 | Fichier source | `Prg_107.xml` |
-| Dossier IDE | Garantie |
+| Dossier IDE | Garanties |
 | Taches | 14 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
+| Complexite | **BASSE** (score 12/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print creation garantie** assure la gestion complete de ce processus, accessible depuis [Garantie sur compte (IDE 111)](ADH-IDE-111.md), [Garantie sur compte PMS-584 (IDE 112)](ADH-IDE-112.md), [Garantie sur compte (IDE 288)](ADH-IDE-288.md), [Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md).
+Ce programme gère l'impression des garanties de compte, en tant que composant critique du flux de création de garantie. Il reçoit les appels de plusieurs programmes liés aux garanties (IDE 111, 112, 288 et IDE 0) qui initient respectivement les garanties sur compte standard, les garanties PMS-584, et les variations multi-environnements. Son rôle est de formater et d'envoyer les données de garantie vers l'imprimante configurée.
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+La structure du programme s'organise autour d'une série de tâches d'impression coordonnées : initialisation de l'imprimante (Printer 1), trois boucles d'édition d'extraits de compte avec formatage spécifique, une tâche d'imprimante secondaire (Printer 4), et deux passes additionnelles d'édition. Cette organisation permet de gérer différentes phases d'impression avec des paramètres distincts selon le type de garantie traité.
 
-- **Impression** (10 taches) : generation de tickets et documents
-- **Traitement** (4 taches) : traitements metier divers
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (4 taches)
-
-- **T1** - (sans nom)
-- **T8** - Iteration **[ECRAN]**
-- **T9** - Veuillez patienter... **[ECRAN]**
-- **T10** - recup nom adherent
-
-#### Phase 2 : Impression (10 taches)
-
-- **T2** - Printer 1
-- **T3** - edition extrait compte
-- **T4** - edition extrait compte
-- **T5** - Printer 4
-- **T6** - edition extrait compte
-- **T7** - edition extrait compte
-- **T11** - Printer 8
-- **T12** - edition extrait compte
-- **T13** - Printer 9
-- **T14** - edition extrait compte
-
-Delegue a : [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-</details>
+Le programme finalise son exécution en réinitialisant l'état de l'imprimante via l'appel à "Raz Current Printer" (IDE 182), garantissant que l'imprimante revient à un état propre après l'impression. Ce pattern d'initialisation-traitement-réinitialisation est standard dans les flux d'impression Magic pour éviter les blocages d'imprimante et assurer la cohérence des opérations suivantes.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -177,7 +150,7 @@ Generation des documents et tickets.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -308,14 +281,17 @@ Ecran unique: **Veuillez patienter...**
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 14 taches]
+    B1[Traitement (4t)]
+    START --> B1
+    B2[Impression (10t)]
+    B1 --> B2
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B2 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -325,22 +301,15 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 1 |
-| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
-| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
 | 39 | depot_garantie___dga | Depots et garanties | DB | R |   |   | 7 |
-| 91 | garantie_________gar | Depots et garanties | DB |   |   | L | 7 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 1 |
 | 368 | pms_village |  | DB | R |   |   | 1 |
+| 91 | garantie_________gar | Depots et garanties | DB |   |   | L | 7 |
+| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
 | 818 | Circuit supprime |  | DB |   |   | L | 1 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
 
 ### Colonnes par table (2 / 3 tables avec colonnes identifiees)
-
-<details>
-<summary>Table 30 - gm-recherche_____gmr (R) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
 
 <details>
 <summary>Table 39 - depot_garantie___dga (R) - 7 usages</summary>
@@ -356,6 +325,13 @@ flowchart TD
 | G | W1 massicot | R | Alpha |
 | H | W1 selection feuille | R | Alpha |
 | I | W1 selection rouleau | R | Alpha |
+
+</details>
+
+<details>
+<summary>Table 30 - gm-recherche_____gmr (R) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -565,4 +541,4 @@ graph LR
 | [Raz Current Printer (IDE 182)](ADH-IDE-182.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:01*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:24*

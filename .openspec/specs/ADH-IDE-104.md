@@ -1,6 +1,6 @@
 ﻿# ADH IDE 104 - Maj Hebergement Tempo V3
 
-> **Analyse**: Phases 1-4 2026-02-07 07:00 -> 07:00 (17s) | Assemblage 07:00
+> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:48 (27s) | Assemblage 15:20
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,25 +14,42 @@
 | IDE Position | 104 |
 | Nom Programme | Maj Hebergement Tempo V3 |
 | Fichier source | `Prg_104.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Maj Hebergement Tempo V3** assure la gestion complete de ce processus.
+Le programme ADH IDE 104 est un utilitaire léger de mise à jour des hébergements temporaires, appelé depuis le processus de facturation client (IDE 97). Il synchronise les références d'hébergement court terme dans la base de données après la génération d'une facture, en vérifiant la cohérence avec les cartes cadeau et les liens hébergement professionnel. Son rôle est crucial pour maintenir la traçabilité entre les factures émises et les situations de logement provisoire des clients.
+
+Le programme opère en lecture seule, sans modification directe des données. Il reçoit en paramètres l'identifiant client (société, compte, filiation), le numéro de facture, les dates de la période d'hébergement et des drapeaux de traitement. La logique se limite à 27 lignes sans condition : extraction des données de configuration TPE, vérification du lien avec la table d'affectation des cartes cadeau, et retour des informations mises à jour au programme appelant.
+
+Conçu pour les situations où un client est en transition (changement de statut, transfert de filiale, hébergement provisoire), ce programme garantit que chaque facture générée maintient la cohérence des données d'hébergement temporaire. C'est un maillon discret mais essentiel de la chaîne de facturation, assurant que les opérations comptables reflètent correctement l'état réel du logement des clients au moment de la facturation.
 
 ## 3. BLOCS FONCTIONNELS
 
+### 3.1 Traitement (1 tache)
+
+Traitements internes.
+
+---
+
+#### <a id="t1"></a>104 - Maj Hebergement Tempo V3 [[ECRAN]](#ecran-t1)
+
+**Role** : Traitement : Maj Hebergement Tempo V3.
+**Ecran** : 672 x 0 DLU | [Voir mockup](#ecran-t1)
+**Variables liees** : H (V.Lien Hebergement_Pro)
+
+
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
-- **Appele par**: (aucun)
+- **Appele par**: [Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md)
 - **Appelle**: 0 programmes | **Tables**: 2 (W:0 R:1 L:1) | **Taches**: 1 | **Expressions**: 9
 
 <!-- TAB:Ecrans -->
@@ -43,10 +60,11 @@
 
 ## 9. NAVIGATION
 
-### 9.3 Structure hierarchique (0 tache)
+### 9.3 Structure hierarchique (1 tache)
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
+| **104.1** | [**Maj Hebergement Tempo V3** (104)](#t1) [mockup](#ecran-t1) | - | 672x0 | Traitement |
 
 ### 9.4 Algorigramme
 
@@ -100,7 +118,7 @@ flowchart TD
 
 ### 11.1 Parametres entrants (7)
 
-Variables recues en parametre.
+Variables recues du programme appelant ([Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md)).
 
 | Lettre | Nom | Type | Usage dans |
 |--------|-----|------|-----------|
@@ -156,22 +174,41 @@ Variables persistantes pendant toute la session.
 
 ### 13.1 Chaine depuis Main (Callers)
 
-**Chemin**: (pas de callers directs)
+Main -> ... -> [Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md) -> **Maj Hebergement Tempo V3 (IDE 104)**
 
 ```mermaid
 graph LR
     T104[104 Maj Hebergement Te...]
     style T104 fill:#58a6ff
-    NONE[Aucun caller]
-    NONE -.-> T104
-    style NONE fill:#6b7280,stroke-dasharray: 5 5
+    CC1[1 Main Program]
+    style CC1 fill:#8b5cf6
+    CC174[174 VersementRetrait]
+    style CC174 fill:#8b5cf6
+    CC193[193 Solde compte fin s...]
+    style CC193 fill:#f59e0b
+    CC163[163 Menu caisse GM - s...]
+    style CC163 fill:#f59e0b
+    CC190[190 Menu solde dun compte]
+    style CC190 fill:#f59e0b
+    CC97[97 Factures Tble Compt...]
+    style CC97 fill:#3fb950
+    CC163 --> CC97
+    CC190 --> CC97
+    CC193 --> CC97
+    CC1 --> CC163
+    CC174 --> CC163
+    CC1 --> CC190
+    CC174 --> CC190
+    CC1 --> CC193
+    CC174 --> CC193
+    CC97 --> T104
 ```
 
 ### 13.2 Callers
 
 | IDE | Nom Programme | Nb Appels |
 |-----|---------------|-----------|
-| - | (aucun) | - |
+| [97](ADH-IDE-97.md) | Factures (Tble Compta&Vent) V3 | 1 |
 
 ### 13.3 Callees (programmes appeles)
 
@@ -206,10 +243,15 @@ graph LR
 
 ### 14.2 Plan de migration par bloc
 
+#### Traitement (1 tache: 1 ecran, 0 traitement)
+
+- **Strategie** : 1 composant(s) UI (Razor/React) avec formulaires et validation.
+- Decomposer les taches en services unitaires testables.
+
 ### 14.3 Dependances critiques
 
 | Dependance | Type | Appels | Impact |
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:00*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:22*
