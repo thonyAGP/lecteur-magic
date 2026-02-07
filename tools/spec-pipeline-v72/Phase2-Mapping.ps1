@@ -66,21 +66,30 @@ function Convert-LetterToField {
     if ($Letter.StartsWith("VG")) { return 0 }
     if ($Letter.StartsWith("Field")) { return 0 }
 
-    # Convert letters like A=1, Z=26, AA=27, BA=53
-    $fieldId = 0
+    # Convert letters to FieldId - Magic IDE convention
+    # A=1..Z=26, BA=27..BZ=52, CA=53..CZ=78, etc.
+    # NOTE: After Z comes BA (not AA) - this is Magic IDE, not Excel style.
     $Letter = $Letter.ToUpper()
 
-    for ($i = 0; $i -lt $Letter.Length; $i++) {
-        [char]$char = $Letter[$i]
-        [int]$charCode = [int]$char
-        # A=65, Z=90
-        if ($charCode -ge 65 -and $charCode -le 90) {
-            $fieldId = $fieldId * 26 + ($charCode - 64)  # A=1, B=2, etc.
-        } else {
-            return 0  # Invalid character
-        }
+    if ($Letter.Length -eq 1) {
+        # A-Z: FieldId 1-26
+        return ([int][char]$Letter) - 64  # A=1, B=2, ... Z=26
     }
-    return $fieldId
+    elseif ($Letter.Length -eq 2) {
+        # BA-ZZ: FieldId 27-702
+        # BA=27, BB=28... BZ=52, CA=53...
+        $first = ([int][char]$Letter[0]) - 65   # B=1, C=2, D=3...
+        $second = ([int][char]$Letter[1]) - 65  # A=0, B=1, C=2...
+        return $first * 26 + $second + 1
+    }
+    elseif ($Letter.Length -eq 3) {
+        # BAA-ZZZ: FieldId 703+
+        $first = ([int][char]$Letter[0]) - 65
+        $second = ([int][char]$Letter[1]) - 65
+        $third = ([int][char]$Letter[2]) - 65
+        return 702 + ($first - 1) * 676 + $second * 26 + $third + 1
+    }
+    return 0
 }
 
 $variableMapping = @{}

@@ -50,20 +50,34 @@ if (Test-Path $mappingPath) {
 }
 Write-Host ""
 
-# Function: Convert Field number to IDE letter
+# Function: Convert Field number to IDE letter - Magic IDE convention
+# A=1..Z=26, BA=27..BZ=52, CA=53..CZ=78, etc.
+# NOTE: After Z comes BA (not AA) - this is Magic IDE, not Excel style.
 function Convert-FieldToLetter {
     param([int]$FieldId)
     if ($FieldId -le 0) { return "?" }
-    $result = ""
-    [int]$n = $FieldId
-    while ($n -gt 0) {
-        $n--
-        [int]$remainder = $n % 26
-        [int]$charCode = $remainder + 65  # 65 = 'A'
-        $result = [char]$charCode + $result
-        $n = [int][math]::Floor($n / 26)
+
+    $index = $FieldId - 1  # Convert to 0-based
+
+    if ($index -lt 26) {
+        # A-Z: indices 0-25 (FieldId 1-26)
+        return [string][char](65 + $index)
     }
-    return $result
+    elseif ($index -lt 702) {
+        # BA-ZZ: indices 26-701 (FieldId 27-702)
+        $first = [int][math]::Floor($index / 26)   # 1=B, 2=C, 3=D...
+        $second = $index % 26                       # 0=A, 1=B, 2=C...
+        return [string][char](65 + $first) + [string][char](65 + $second)
+    }
+    else {
+        # BAA-ZZZ: indices 702+ (FieldId 703+)
+        $adjusted = $index - 702
+        $first = [int][math]::Floor($adjusted / 676) + 1
+        $rem = $adjusted % 676
+        $second = [int][math]::Floor($rem / 26)
+        $third = $rem % 26
+        return [string][char](65 + $first) + [string][char](65 + $second) + [string][char](65 + $third)
+    }
 }
 
 # Function: Decode expression - replace {N,Y} with readable format

@@ -2628,19 +2628,38 @@ Console.WriteLine($"Database path: {db.DbPath}");
 
 return 0;
 
-// Shared helper: convert 1-based FieldId to IDE letter (A=1, Z=26, AA=27, AZ=52, BA=53)
+// Shared helper: convert 1-based FieldId to IDE letter
+// Magic IDE convention: A=1..Z=26, BA=27..BZ=52, CA=53..CZ=78, etc.
+// NOTE: After Z comes BA (not AA) - this is the Magic IDE convention, not Excel style.
 static string FieldToLetter(int fieldId)
 {
     if (fieldId <= 0) return "?";
-    var result = "";
-    var n = fieldId;
-    while (n > 0)
+
+    int index = fieldId - 1; // Convert to 0-based
+
+    if (index < 26)
     {
-        n--;
-        result = (char)('A' + (n % 26)) + result;
-        n /= 26;
+        // A-Z: indices 0-25 (FieldId 1-26)
+        return ((char)('A' + index)).ToString();
     }
-    return result;
+    else if (index < 702)
+    {
+        // BA-ZZ: indices 26-701 (FieldId 27-702)
+        // BA=26, BB=27... BZ=51, CA=52, CB=53... CZ=77, DA=78...
+        int first = index / 26;    // 1=B, 2=C, 3=D, 4=E, 5=F...
+        int second = index % 26;   // 0=A, 1=B, 2=C...
+        return $"{(char)('A' + first)}{(char)('A' + second)}";
+    }
+    else
+    {
+        // BAA-ZZZ: indices 702+ (FieldId 703+)
+        int adjusted = index - 702;
+        int first = adjusted / 676 + 1;  // Start at B
+        int remainder = adjusted % 676;
+        int second = remainder / 26;
+        int third = remainder % 26;
+        return $"{(char)('A' + first)}{(char)('A' + second)}{(char)('A' + third)}";
+    }
 }
 
 // Shared helper: convert {type,id} variable ref to IDE letter
