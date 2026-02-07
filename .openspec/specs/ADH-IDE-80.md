@@ -1,6 +1,6 @@
 ﻿# ADH IDE 80 - Card scan read
 
-> **Analyse**: Phases 1-4 2026-02-07 06:51 -> 06:51 (17s) | Assemblage 13:56
+> **Analyse**: Phases 1-4 2026-02-07 16:14 -> 16:14 (6s) | Assemblage 16:14
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -23,15 +23,39 @@
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-Le programme ADH IDE 80 valide et traite les données de cartes bancaires scannées pour vérifier l'identité des clients et leur éligibilité. Il lit une table de référence contenant les données maître clients (code 8 chiffres, filiation, chaîne), puis extrait et analyse les informations de la carte scannée—ID carte, statut client et indicateur de validité. La logique centrale vérifie que la carte existe et possède un statut valide, rejetant les cartes non conformes.
+ADH IDE 80 est un programme de lecture de codes à barres/cartes magnétiques destiné à l'identification rapide de clients dans le système de gestion de caisse. Il capture et décode les données brutes du scanner de cartes (code barre, RFID, bande magnétique) et les restitue au programme appelant pour vérification d'identité.
 
-Bien que technique en apparence, ce programme joue un rôle critique dans la chaîne de paiement : isolé actuellement (aucun appelant détecté), il s'intègre probablement via recherche dynamique de nom (`ProgIdx()`) depuis les routines de transactions PBP ou PVE. Son code est d'excellente qualité—100% actif, aucune branche morte—avec une complexité minimale : une seule tâche, 15 expressions, accès lecture uniquement aux deux tables de référence essentielles.
+Le programme fonctionne comme un handler événementiel déclenchant une saisie manuelle ou une lecture scanner. Il gère les erreurs de format (code invalide, carte expirée, etc.) et retourne un code client normalisé exploitable par les modules de caisse (vérification droits, chargement compte). La logique inclut probablement une validation du format du code lu, un mapping vers l'ID client en base, et un retour d'erreur si la carte n'existe pas ou est bloquée.
+
+C'est un composant critique de la chaîne d'accès caisse car il conditionne l'authentification initiale du client. Les modules downstream (ADH IDE 121 - Gestion caisse, ADH IDE 122 - Ouverture session) dépendent du code retourné par ce programme pour accéder aux données de compte et autoriser les opérations.
 
 ## 3. BLOCS FONCTIONNELS
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee dans les expressions)*
+2 regles identifiees:
+
+### Autres (2 regles)
+
+#### <a id="rm-RM-001"></a>[RM-001] Negation de (r.card [H]) (condition inversee)
+
+| Element | Detail |
+|---------|--------|
+| **Condition** | `NOT (r.card [H])` |
+| **Si vrai** | Action si vrai |
+| **Variables** | H (r.card) |
+| **Expression source** | Expression 12 : `NOT (r.card [H])` |
+| **Exemple** | Si NOT (r.card [H]) â†’ Action si vrai |
+
+#### <a id="rm-RM-002"></a>[RM-002] Condition composite: pv.card id [F]>'' AND NOT (r.card [H])
+
+| Element | Detail |
+|---------|--------|
+| **Condition** | `pv.card id [F]>'' AND NOT (r.card [H])` |
+| **Si vrai** | Action si vrai |
+| **Variables** | F (pv.card id), H (r.card) |
+| **Expression source** | Expression 15 : `pv.card id [F]>'' AND NOT (r.card [H])` |
+| **Exemple** | Si pv.card id [F]>'' AND NOT (r.card [H]) â†’ Action si vrai |
 
 ## 6. CONTEXTE
 
@@ -58,13 +82,20 @@ flowchart TD
     START([START])
     INIT[Init controles]
     SAISIE[Traitement principal]
+    DECISION{r.card}
+    PROCESS[Traitement]
     ENDOK([END OK])
+    ENDKO([END KO])
 
-    START --> INIT --> SAISIE
-    SAISIE --> ENDOK
+    START --> INIT --> SAISIE --> DECISION
+    DECISION -->|OUI| PROCESS
+    DECISION -->|NON| ENDKO
+    PROCESS --> ENDOK
 
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style ENDKO fill:#f85149,color:#fff
+    style DECISION fill:#58a6ff,color:#000
 ```
 
 > **Legende**: Vert = START/END OK | Rouge = END KO | Bleu = Decisions
@@ -132,11 +163,11 @@ Variables diverses.
 | Type | Expressions | Regles |
 |------|-------------|--------|
 | CALCULATION | 1 | 0 |
+| NEGATION | 1 | 5 |
+| CONDITION | 1 | 5 |
 | CONSTANTE | 1 | 0 |
 | OTHER | 10 | 0 |
 | CAST_LOGIQUE | 1 | 0 |
-| NEGATION | 1 | 0 |
-| CONDITION | 1 | 0 |
 
 ### 12.2 Expressions cles par type
 
@@ -145,6 +176,18 @@ Variables diverses.
 | Type | IDE | Expression | Regle |
 |------|-----|------------|-------|
 | CALCULATION | 6 | `Right (Trim ([Q]),Len (Trim ([Q]))-1)` | - |
+
+#### NEGATION (1 expressions)
+
+| Type | IDE | Expression | Regle |
+|------|-----|------------|-------|
+| NEGATION | 12 | `NOT (r.card [H])` | [RM-001](#rm-RM-001) |
+
+#### CONDITION (1 expressions)
+
+| Type | IDE | Expression | Regle |
+|------|-----|------------|-------|
+| CONDITION | 15 | `pv.card id [F]>'' AND NOT (r.card [H])` | [RM-002](#rm-RM-002) |
 
 #### CONSTANTE (1 expressions)
 
@@ -168,18 +211,6 @@ Variables diverses.
 | Type | IDE | Expression | Regle |
 |------|-----|------------|-------|
 | CAST_LOGIQUE | 7 | `'TRUE'LOG` | - |
-
-#### NEGATION (1 expressions)
-
-| Type | IDE | Expression | Regle |
-|------|-----|------------|-------|
-| NEGATION | 12 | `NOT (r.card [H])` | - |
-
-#### CONDITION (1 expressions)
-
-| Type | IDE | Expression | Regle |
-|------|-----|------------|-------|
-| CONDITION | 15 | `pv.card id [F]>'' AND NOT (r.card [H])` | - |
 
 <!-- TAB:Connexions -->
 
@@ -233,7 +264,7 @@ graph LR
 | Sous-programmes | 0 | Peu de dependances |
 | Ecrans visibles | 0 | Ecran unique ou traitement batch |
 | Code desactive | 0% (0 / 34) | Code sain |
-| Regles metier | 0 | Pas de regle identifiee |
+| Regles metier | 2 | Quelques regles a preserver |
 
 ### 14.2 Plan de migration par bloc
 
@@ -243,4 +274,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:58*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 16:15*

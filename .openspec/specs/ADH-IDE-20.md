@@ -1,6 +1,6 @@
 ﻿# ADH IDE 20 - Definition monnaie
 
-> **Analyse**: Phases 1-4 2026-02-07 06:38 -> 06:38 (16s) | Assemblage 13:03
+> **Analyse**: Phases 1-4 2026-02-07 16:15 -> 16:16 (6s) | Assemblage 16:16
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -184,4 +184,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 13:03*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 16:16*

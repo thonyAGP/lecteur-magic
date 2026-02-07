@@ -1,13 +1,13 @@
-﻿# ADH IDE 4 - Program_4
+﻿# ADH IDE 60 - Creation entete facture
 
-> **Analyse**: 2026-02-07 16:07
+> **Analyse**: 2026-02-07 16:16
 > **Pipeline**: V7.2 Enrichi
 
 ## RESUME EXECUTIF
 
-- **Fonction**: Program_4
-- **Tables modifiees**: 0
-- **Complexite**: **BASSE** (0/100)
+- **Fonction**: Creation entete facture
+- **Tables modifiees**: 1
+- **Complexite**: **BASSE** (7/100)
 - **Statut**: ORPHELIN_POTENTIEL
 - **Raison**: Aucun caller direct detecte - verifier PublicName et ECF
 
@@ -23,9 +23,9 @@
 | Metrique | Valeur |
 |----------|--------|
 | Taches | 1 |
-| Lignes Logic | 1 |
-| Expressions | 0 |
-| Tables | 0 |
+| Lignes Logic | 23 |
+| Expressions | 7 |
+| Tables |  |
 
 ---
 *Spec SUMMARY generee par Pipeline V7.2*
