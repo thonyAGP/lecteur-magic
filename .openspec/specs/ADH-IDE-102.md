@@ -1,6 +1,6 @@
 ﻿# ADH IDE 102 - Maj lignes saisies archive V3
 
-> **Analyse**: Phases 1-4 2026-02-07 06:59 -> 06:59 (17s) | Assemblage 06:59
+> **Analyse**: Phases 1-4 2026-02-07 03:47 -> 03:48 (27s) | Assemblage 15:17
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,33 @@
 | IDE Position | 102 |
 | Nom Programme | Maj lignes saisies archive V3 |
 | Fichier source | `Prg_102.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 7/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Maj lignes saisies archive V3** assure la gestion complete de ce processus.
+Le programme ADH IDE 102 met à jour les lignes saisies archivées dans la table `projet` (version). Appelé depuis le contexte "Garantie sur compte PMS-584" (IDE 0), ce programme traite les données de facturation archivées et effectue une mise à jour de masse des enregistrements. La présence du champ P.Flague (drapeau booléen) dans la condition principale suggère un traitement conditionnel basé sur un marqueur de statut pour identifier les lignes à traiter.
 
-**Donnees modifiees** : 1 tables en ecriture (projet).
+Le programme modifie exclusivement la table `projet` via un UPDATE en mode Modification. Les variables principales manipulées sont la Société, le Compte, P.Flague, le Numéro de Facture et le Nom du Fichier PDF. Une règle métier contrôle la logique : évaluer le drapeau P.Flague pour chaque enregistrement, puis mettre à jour les colonnes de facturation avec les valeurs actuelles enrichies de la date du jour. Les variables de retour logiques indiquent les statuts de validation croisés avec Compta et Vente.
 
-**Logique metier** : 1 regles identifiees couvrant conditions metier.
+Le programme exécute une unique tâche contenant 63 lignes de logique sans conditionnel désactivé. Le flux est linéaire : accéder aux lignes saisies de la table version, évaluer le drapeau P.Flague pour chaque enregistrement, puis mettre à jour les colonnes de facturation. C'est un traitement d'archivage autonome et auto-contenu, sans dépendances externes, ce qui confirme qu'il gère entièrement la mise à jour dans son propre contexte.
 
 ## 3. BLOCS FONCTIONNELS
+
+### 3.1 Saisie (1 tache)
+
+L'operateur saisit les donnees de la transaction via 1 ecran (Maj des lignes saisies).
+
+---
+
+#### <a id="t1"></a>102 - Maj des lignes saisies [[ECRAN]](#ecran-t1)
+
+**Role** : Saisie des donnees : Maj des lignes saisies.
+**Ecran** : 562 x 0 DLU | [Voir mockup](#ecran-t1)
+
 
 ## 5. REGLES METIER
 
@@ -49,7 +61,7 @@
 
 ## 6. CONTEXTE
 
-- **Appele par**: (aucun)
+- **Appele par**: [Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md)
 - **Appelle**: 0 programmes | **Tables**: 4 (W:1 R:0 L:3) | **Taches**: 1 | **Expressions**: 14
 
 <!-- TAB:Ecrans -->
@@ -60,10 +72,11 @@
 
 ## 9. NAVIGATION
 
-### 9.3 Structure hierarchique (0 tache)
+### 9.3 Structure hierarchique (1 tache)
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
+| **102.1** | [**Maj des lignes saisies** (102)](#t1) [mockup](#ecran-t1) | - | 562x0 | Saisie |
 
 ### 9.4 Algorigramme
 
@@ -95,8 +108,8 @@ flowchart TD
 |----|-----|-------------|------|---|---|---|--------|
 | 746 | projet |  | DB |   | **W** |   | 1 |
 | 866 | maj_appli_tpe |  | DB |   |   | L | 1 |
-| 870 | Rayons_Boutique |  | DB |   |   | L | 1 |
 | 871 | Activite |  | DB |   |   | L | 1 |
+| 870 | Rayons_Boutique |  | DB |   |   | L | 1 |
 
 ### Colonnes par table (1 / 1 tables avec colonnes identifiees)
 
@@ -121,7 +134,7 @@ flowchart TD
 
 ### 11.1 Parametres entrants (5)
 
-Variables recues en parametre.
+Variables recues du programme appelant ([Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md)).
 
 | Lettre | Nom | Type | Usage dans |
 |--------|-----|------|-----------|
@@ -194,22 +207,19 @@ Variables persistantes pendant toute la session.
 
 ### 13.1 Chaine depuis Main (Callers)
 
-**Chemin**: (pas de callers directs)
+Main -> ... -> [Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md) -> **Maj lignes saisies archive V3 (IDE 102)**
 
 ```mermaid
 graph LR
     T102[102 Maj lignes saisies...]
     style T102 fill:#58a6ff
-    NONE[Aucun caller]
-    NONE -.-> T102
-    style NONE fill:#6b7280,stroke-dasharray: 5 5
 ```
 
 ### 13.2 Callers
 
 | IDE | Nom Programme | Nb Appels |
 |-----|---------------|-----------|
-| - | (aucun) | - |
+| [0](ADH-IDE-0.md) | Garantie sur compte PMS-584 | 2 |
 
 ### 13.3 Callees (programmes appeles)
 
@@ -244,6 +254,12 @@ graph LR
 
 ### 14.2 Plan de migration par bloc
 
+#### Saisie (1 tache: 1 ecran, 0 traitement)
+
+- **Strategie** : Formulaire React/Blazor avec validation Zod/FluentValidation.
+- Reproduire 1 ecran : Maj des lignes saisies
+- Validation temps reel cote client + serveur
+
 ### 14.3 Dependances critiques
 
 | Dependance | Type | Appels | Impact |
@@ -251,4 +267,4 @@ graph LR
 | projet | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 06:59*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:18*

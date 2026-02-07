@@ -1,6 +1,6 @@
 ﻿# ADH IDE 110 - Print creation garanti PMS-584
 
-> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:49 (28s) | Assemblage 07:02
+> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:49 (28s) | Assemblage 15:27
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,48 +14,19 @@
 | IDE Position | 110 |
 | Nom Programme | Print creation garanti PMS-584 |
 | Fichier source | `Prg_110.xml` |
-| Dossier IDE | Garantie |
+| Dossier IDE | Impression |
 | Taches | 16 (1 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 1 |
+| Complexite | **BASSE** (score 18/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Print creation garanti PMS-584** assure la gestion complete de ce processus, accessible depuis [Garantie sur compte (IDE 111)](ADH-IDE-111.md), [Garantie sur compte PMS-584 (IDE 112)](ADH-IDE-112.md), [Garantie sur compte (IDE 288)](ADH-IDE-288.md).
+Le programme **ADH IDE 110** gère l'impression du justificatif de création de garantie PMS-584. Ce programme est appelé depuis trois points d'entrée différents liés à la gestion des garanties sur compte (IDE 111, 112, 288), ce qui suggère qu'il centralise la logique d'impression pour différents scénarios de garantie. Son rôle principal est de produire un document papier attestant la création d'une nouvelle garantie, élément critique dans le workflow de traçabilité des garanties clients.
 
-Le flux de traitement s'organise en **2 blocs fonctionnels** :
+La structure du programme repose sur six tâches successives d'impression et de formatage. Il débute par l'initialisation de l'impression ("Print creation garantie TIK V1"), puis enchaîne quatre cycles alternant **impression sur Printer 1** et **Printer 4** pour éditer l'extrait de compte du titulaire. Cette alternance entre deux imprimantes suggère soit une redondance pour fiabilité, soit une distribution des tâches vers deux périphériques physiques distincts (imprimante principale + imprimante de secours, ou séparation fonctionnelle). Avant de terminer, le programme réinitialise l'imprimante actuelle via l'appel à **ADH IDE 182** ("Raz Current Printer").
 
-- **Impression** (11 taches) : generation de tickets et documents
-- **Traitement** (5 taches) : traitements metier divers
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Impression (11 taches)
-
-- **T1** - Print creation garantie TIK V1
-- **T2** - Printer 1
-- **T3** - edition extrait compte
-- **T4** - edition extrait compte
-- **T5** - Printer 4
-- **T6** - edition extrait compte
-- **T7** - edition extrait compte
-- **T11** - Printer 8
-- **T12** - edition extrait compte
-- **T13** - Printer 9
-- **T14** - edition extrait compte
-
-Delegue a : [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-#### Phase 2 : Traitement (5 taches)
-
-- **T8** - Iteration **[ECRAN]**
-- **T9** - Veuillez patienter... **[ECRAN]**
-- **T10** - recup nom adherent
-- **T15** - recup terminal
-- **T16** - recup terminal
-
-</details>
+Ce programme garantit que chaque création de garantie génère une trace physique documentée, essentielle pour la conformité réglementaire et la piste d'audit. Le protocole multi-impression et la réinitialisation finale assurent un état cohérent de l'infrastructure d'impression après le traitement, évitant les blocages ou conflits d'état sur les périphériques partagés.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -188,7 +159,7 @@ Traitements internes.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -321,14 +292,17 @@ Ecran unique: **Veuillez patienter...**
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 16 taches]
+    B1[Impression (11t)]
+    START --> B1
+    B2[Traitement (5t)]
+    B1 --> B2
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    B2 --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -338,23 +312,16 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 1 |
-| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
-| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
 | 39 | depot_garantie___dga | Depots et garanties | DB | R |   |   | 7 |
-| 91 | garantie_________gar | Depots et garanties | DB |   |   | L | 7 |
-| 368 | pms_village |  | DB | R |   |   | 1 |
-| 818 | Circuit supprime |  | DB |   |   | L | 1 |
 | 878 | categorie_operation_mw | Operations comptables | DB | R |   |   | 2 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 1 |
+| 368 | pms_village |  | DB | R |   |   | 1 |
+| 91 | garantie_________gar | Depots et garanties | DB |   |   | L | 7 |
+| 31 | gm-complet_______gmc |  | DB |   |   | L | 1 |
+| 818 | Circuit supprime |  | DB |   |   | L | 1 |
+| 34 | hebergement______heb | Hebergement (chambres) | DB |   |   | L | 1 |
 
 ### Colonnes par table (2 / 4 tables avec colonnes identifiees)
-
-<details>
-<summary>Table 30 - gm-recherche_____gmr (R) - 1 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
 
 <details>
 <summary>Table 39 - depot_garantie___dga (R) - 7 usages</summary>
@@ -370,6 +337,20 @@ flowchart TD
 | G | W1 massicot | R | Alpha |
 | H | W1 selection feuille | R | Alpha |
 | I | W1 selection rouleau | R | Alpha |
+
+</details>
+
+<details>
+<summary>Table 878 - categorie_operation_mw (R) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 30 - gm-recherche_____gmr (R) - 1 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -397,13 +378,6 @@ flowchart TD
 | Q | W0 date de fin | R | Date |
 | R | W0 TPE ICMP | R | Logical |
 | S | v.comment | R | Alpha |
-
-</details>
-
-<details>
-<summary>Table 878 - categorie_operation_mw (R) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
 
 </details>
 
@@ -648,4 +622,4 @@ graph LR
 | [Raz Current Printer (IDE 182)](ADH-IDE-182.md) | Sous-programme | 1x | Normale - Impression ticket/document |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:02*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:27*

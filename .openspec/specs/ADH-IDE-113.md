@@ -1,6 +1,6 @@
 ﻿# ADH IDE 113 - Test Activation ECO
 
-> **Analyse**: Phases 1-4 2026-02-07 07:03 -> 07:03 (17s) | Assemblage 07:03
+> **Analyse**: Phases 1-4 2026-02-07 07:03 -> 07:03 (17s) | Assemblage 15:28
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,26 @@
 | IDE Position | 113 |
 | Nom Programme | Test Activation ECO |
 | Fichier source | `Prg_113.xml` |
-| Dossier IDE | Garantie |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 0 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 0/100) |
+| <span style="color:red">Statut</span> | <span style="color:red">**ORPHELIN_POTENTIEL**</span> |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Test Activation ECO** assure la gestion complete de ce processus.
+Le programme **ADH IDE 113 - Test Activation ECO** valide l'activation de produits économiques (ECO) pour les comptes clients. Il construit un identifiant composite combinant le numéro de compte et le type de traitement, puis évalue l'activation selon deux critères : la présence d'au moins une transaction (Counter > 0) et une création récente (moins de 24 heures). Ce test binaire retourne TRUE si le produit ECO est actif, FALSE sinon.
+
+Le programme est minimaliste et autonome—aucune modification de base de données, aucun appel à d'autres programmes. Il fonctionne comme une routine isolée d'audit ou de validation par lot, probablement utilisée pour vérifier périodiquement le statut d'activation des produits ECO dans la base de comptes. Un drapeau de notification (p.mail envoyé) permet de déclencher des alertes email lors d'une activation confirmée.
+
+Ce programme d'orphelin potentiel—sans appelants détectés et sans nom public—suggère qu'il pourrait être un ancien code de test ou une fonction administrative invoquée par des tâches planifiées plutôt que par le flux opérationnel principal du système.
 
 ## 3. BLOCS FONCTIONNELS
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Aucune regle metier identifiee dans les expressions)*
 
 ## 6. CONTEXTE
 
@@ -193,4 +198,4 @@ graph LR
 |------------|------|--------|--------|
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:03*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:30*

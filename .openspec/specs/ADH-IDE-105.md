@@ -1,6 +1,6 @@
 ﻿# ADH IDE 105 - Maj des lignes saisies V3
 
-> **Analyse**: Phases 1-4 2026-02-07 07:00 -> 07:00 (17s) | Assemblage 07:00
+> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:48 (28s) | Assemblage 15:22
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,21 +14,39 @@
 | IDE Position | 105 |
 | Nom Programme | Maj des lignes saisies V3 |
 | Fichier source | `Prg_105.xml` |
-| Dossier IDE | Factures |
+| Dossier IDE | General |
 | Taches | 1 (0 ecrans visibles) |
 | Tables modifiees | 1 |
 | Programmes appeles | 0 |
-| :warning: Statut | **ORPHELIN_POTENTIEL** |
+| Complexite | **BASSE** (score 7/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Maj des lignes saisies V3** assure la gestion complete de ce processus.
+La veille a été exécutée. Maintenant, je peux analyser le programme Magic ADH IDE 105.
 
-**Donnees modifiees** : 1 tables en ecriture (comptable________cte).
+---
 
-**Logique metier** : 2 regles identifiees couvrant conditions metier, valeurs par defaut.
+**Programme ADH IDE 105 - Maj des lignes saisies V3**
+
+Le programme IDE 105 assure la mise à jour des lignes d'écritures comptables après modification des données de facture ou de garantie. Il intervient dans la chaîne de traitement des documents commerciaux (factures, garanties) en synchronisant les modifications vers la table `comptable________cte`, qui constitue le registre comptable centralisé. Ce programme est déclenché depuis trois points d'entrée critiques : la gestion des garanties sur compte PMS-584 (IDE 0), le checkout de factures (IDE 54), et l'interface comptable et vente V3 (IDE 97).
+
+Son rôle est de valider et mettre à jour les enregistrements comptables existants en fonction des changements apportés aux documents source. Plutôt que de créer de nouvelles lignes, il modifie les écritures existantes pour refléter les corrections, les annulations partielles, ou les réajustements de montants. Cette approche garantit la traçabilité et la cohérence des données comptables en conservant les références originales.
+
+L'intégration du programme dans trois workflows distincts (garanties, facturation, comptabilité) indique qu'il s'agit d'un composant transversal de synchronisation, appelé systématiquement après toute modification de document affectant les écritures. Son appartenance au bloc ADH.ecf (Sessions_Reprises) le rend accessible depuis d'autres projets si besoin.
 
 ## 3. BLOCS FONCTIONNELS
+
+### 3.1 Saisie (1 tache)
+
+L'operateur saisit les donnees de la transaction via 1 ecran (Maj des lignes saisies V3).
+
+---
+
+#### <a id="t1"></a>105 - Maj des lignes saisies V3 [[ECRAN]](#ecran-t1)
+
+**Role** : Saisie des donnees : Maj des lignes saisies V3.
+**Ecran** : 1070 x 0 DLU | [Voir mockup](#ecran-t1)
+
 
 ## 5. REGLES METIER
 
@@ -60,7 +78,7 @@
 
 ## 6. CONTEXTE
 
-- **Appele par**: (aucun)
+- **Appele par**: [Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md), [Factures_Check_Out (IDE 54)](ADH-IDE-54.md), [Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md)
 - **Appelle**: 0 programmes | **Tables**: 4 (W:1 R:0 L:3) | **Taches**: 1 | **Expressions**: 23
 
 <!-- TAB:Ecrans -->
@@ -71,10 +89,11 @@
 
 ## 9. NAVIGATION
 
-### 9.3 Structure hierarchique (0 tache)
+### 9.3 Structure hierarchique (1 tache)
 
 | Position | Tache | Type | Dimensions | Bloc |
 |----------|-------|------|------------|------|
+| **105.1** | [**Maj des lignes saisies V3** (105)](#t1) [mockup](#ecran-t1) | - | 1070x0 | Saisie |
 
 ### 9.4 Algorigramme
 
@@ -142,7 +161,7 @@ flowchart TD
 
 ### 11.1 Parametres entrants (8)
 
-Variables recues en parametre.
+Variables recues du programme appelant ([Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md)).
 
 | Lettre | Nom | Type | Usage dans |
 |--------|-----|------|-----------|
@@ -273,22 +292,63 @@ Variables persistantes pendant toute la session.
 
 ### 13.1 Chaine depuis Main (Callers)
 
-**Chemin**: (pas de callers directs)
+Main -> ... -> [Garantie sur compte PMS-584 (IDE 0)](ADH-IDE-0.md) -> **Maj des lignes saisies V3 (IDE 105)**
+
+Main -> ... -> [Factures_Check_Out (IDE 54)](ADH-IDE-54.md) -> **Maj des lignes saisies V3 (IDE 105)**
+
+Main -> ... -> [Factures (Tble Compta&Vent) V3 (IDE 97)](ADH-IDE-97.md) -> **Maj des lignes saisies V3 (IDE 105)**
 
 ```mermaid
 graph LR
     T105[105 Maj des lignes sai...]
     style T105 fill:#58a6ff
-    NONE[Aucun caller]
-    NONE -.-> T105
-    style NONE fill:#6b7280,stroke-dasharray: 5 5
+    CC313[313 Easy Check-Out ===...]
+    style CC313 fill:#8b5cf6
+    CC287[287 Solde Easy Check Out]
+    style CC287 fill:#8b5cf6
+    CC190[190 Menu solde dun compte]
+    style CC190 fill:#8b5cf6
+    CC163[163 Menu caisse GM - s...]
+    style CC163 fill:#8b5cf6
+    CC193[193 Solde compte fin s...]
+    style CC193 fill:#8b5cf6
+    CC283[283 Easy Check-Out ===...]
+    style CC283 fill:#8b5cf6
+    CC64[64 Solde Easy Check Out]
+    style CC64 fill:#8b5cf6
+    CC280[280 Lanceur Facture]
+    style CC280 fill:#8b5cf6
+    CC54[54 Factures_Check_Out]
+    style CC54 fill:#3fb950
+    CC97[97 Factures Tble Compt...]
+    style CC97 fill:#3fb950
+    CC64 --> CC54
+    CC280 --> CC54
+    CC283 --> CC54
+    CC287 --> CC54
+    CC313 --> CC54
+    CC163 --> CC54
+    CC190 --> CC54
+    CC193 --> CC54
+    CC64 --> CC97
+    CC280 --> CC97
+    CC283 --> CC97
+    CC287 --> CC97
+    CC313 --> CC97
+    CC163 --> CC97
+    CC190 --> CC97
+    CC193 --> CC97
+    CC54 --> T105
+    CC97 --> T105
 ```
 
 ### 13.2 Callers
 
 | IDE | Nom Programme | Nb Appels |
 |-----|---------------|-----------|
-| - | (aucun) | - |
+| [0](ADH-IDE-0.md) | Garantie sur compte PMS-584 | 2 |
+| [54](ADH-IDE-54.md) | Factures_Check_Out | 2 |
+| [97](ADH-IDE-97.md) | Factures (Tble Compta&Vent) V3 | 2 |
 
 ### 13.3 Callees (programmes appeles)
 
@@ -323,6 +383,12 @@ graph LR
 
 ### 14.2 Plan de migration par bloc
 
+#### Saisie (1 tache: 1 ecran, 0 traitement)
+
+- **Strategie** : Formulaire React/Blazor avec validation Zod/FluentValidation.
+- Reproduire 1 ecran : Maj des lignes saisies V3
+- Validation temps reel cote client + serveur
+
 ### 14.3 Dependances critiques
 
 | Dependance | Type | Appels | Impact |
@@ -330,4 +396,4 @@ graph LR
 | comptable________cte | Table WRITE (Database) | 1x | Schema + repository |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:00*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:23*

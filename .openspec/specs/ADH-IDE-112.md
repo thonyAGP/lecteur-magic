@@ -1,6 +1,6 @@
 ﻿# ADH IDE 112 - Garantie sur compte PMS-584
 
-> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:49 (28s) | Assemblage 07:03
+> **Analyse**: Phases 1-4 2026-02-07 03:48 -> 03:49 (28s) | Assemblage 15:27
 > **Pipeline**: V7.2 Enrichi
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
@@ -14,93 +14,21 @@
 | IDE Position | 112 |
 | Nom Programme | Garantie sur compte PMS-584 |
 | Fichier source | `Prg_112.xml` |
-| Dossier IDE | Garantie |
+| Dossier IDE | Comptabilite |
 | Taches | 29 (4 ecrans visibles) |
 | Tables modifiees | 7 |
 | Programmes appeles | 17 |
+| Complexite | **MOYENNE** (score 48/100) |
 
 ## 2. DESCRIPTION FONCTIONNELLE
 
-**Garantie sur compte PMS-584** assure la gestion complete de ce processus, accessible depuis [Menu caisse GM - scroll (IDE 163)](ADH-IDE-163.md).
+**Gestion des Garanties sur Compte PMS-584**
 
-Le flux de traitement s'organise en **6 blocs fonctionnels** :
+Ce programme gère les dépôts de garantie pour les comptes GM, permettant aux clients de constituer des garanties sur leurs comptes via le système PMS-584. Il offre une interface complète avec recherche par devise (zoom devises IDE 267), consultation des types de dépôts (zoom type dépôt IDE 268), et validation réseau avant chaque opération. Le programme supporte plusieurs workflows : création de garanties (édition via IDE 107, 109, 110), annulation de garanties (impression IDE 108), versement/retrait (impression IDE 171), avec traçabilité complète via logs (table log_booker).
 
-- **Traitement** (17 taches) : traitements metier divers
-- **Calcul** (5 taches) : calculs de montants, stocks ou compteurs
-- **Impression** (2 taches) : generation de tickets et documents
-- **Creation** (2 taches) : insertion d'enregistrements en base (mouvements, prestations)
-- **Saisie** (2 taches) : ecrans de saisie utilisateur (formulaires, champs, donnees)
-- **Reglement** (1 tache) : gestion des moyens de paiement et reglements
+L'interface combine un système de listing chaîné sophistiqué (IDEs 181-186 pour gestion de l'imprimante, défilement et chargement des valeurs par défaut) avec des validations métier : calcul de drapeaux pour différencier les types d'opération, mise à jour des soldes en devise dans la table compte_gm, et activation/désactivation des cartes ECO (IDE 113, 83). Les données sont consolidées dans la table gm-complet pour l'affichage et synchronisées avec les compteurs centralisés (table compteurs).
 
-**Donnees modifiees** : 7 tables en ecriture (gm-complet_______gmc, depot_garantie___dga, compte_gm________cgm, compteurs________cpt, pv_accounting_date, log_booker, Table_945).
-
-<details>
-<summary>Detail : phases du traitement</summary>
-
-#### Phase 1 : Traitement (17 taches)
-
-- **T1** - (sans nom)
-- **T2** - Test reseau
-- **T3** - Depôt de garantie **[ECRAN]**
-- **T5** - Scroll depôt objet
-- **T7** - MAJ solde devise depot
-- **T8** - CARD?
-- **T9** - CARD?
-- **T10** - Abandon
-- **T11** - SendMail
-- **T18** - MAJ CMP
-- **T19** - Param OK ?
-- **T20** - Param OK ?
-- **T21** - Envoi mail garantie
-- **T22** - Envoi mail garantie
-- **T24** - Depôt de garantie **[ECRAN]**
-- **T25** - Scroll depôt objet
-- **T27** - MAJ solde devise depot
-
-Delegue a : [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Recuperation du titre (IDE 43)](ADH-IDE-43.md), [Appel programme (IDE 44)](ADH-IDE-44.md), [Deactivate all cards (IDE 83)](ADH-IDE-83.md), [Test Activation ECO (IDE 113)](ADH-IDE-113.md), [Chained Listing Load Default (IDE 186)](ADH-IDE-186.md), [Club Med Pass Filiations (IDE 114)](ADH-IDE-114.md)
-
-#### Phase 2 : Calcul (5 taches)
-
-- **T4** - Calcul flag
-- **T13** - Recup compteur verst/retrait
-- **T16** - Recup compteur verst/retrait
-- **T28** - Calcul flag
-- **T29** - Reaffichage info compte
-
-#### Phase 3 : Saisie (2 taches)
-
-- **T6** - Saisie depôt objet **[ECRAN]**
-- **T26** - Saisie depôt objet **[ECRAN]**
-
-#### Phase 4 : Creation (2 taches)
-
-- **T12** - Creation Versement v2
-- **T15** - Creation Versement T2H
-
-#### Phase 5 : Impression (2 taches)
-
-- **T14** - Création reedition_ticket
-- **T17** - Création reedition_ticket
-
-Delegue a : [Set Listing Number (IDE 181)](ADH-IDE-181.md), [Get Printer for chained list (IDE 184)](ADH-IDE-184.md), [Chained Listing Printer Choice (IDE 185)](ADH-IDE-185.md), [Print creation garantie (IDE 107)](ADH-IDE-107.md), [Print annulation garantie (IDE 108)](ADH-IDE-108.md), [Print creation garantie TIK V1 (IDE 109)](ADH-IDE-109.md), [Print versement retrait (IDE 171)](ADH-IDE-171.md), [Chained Listing Load Default (IDE 186)](ADH-IDE-186.md), [Print creation garanti PMS-584 (IDE 110)](ADH-IDE-110.md), [Raz Current Printer (IDE 182)](ADH-IDE-182.md)
-
-#### Phase 6 : Reglement (1 tache)
-
-- **T23** - Vérif Mop mobilité
-
-#### Tables impactees
-
-| Table | Operations | Role metier |
-|-------|-----------|-------------|
-| compte_gm________cgm | **W**/L (7 usages) | Comptes GM (generaux) |
-| depot_garantie___dga | R/**W**/L (6 usages) | Depots et garanties |
-| gm-complet_______gmc | R/**W**/L (4 usages) |  |
-| Table_945 | **W** (2 usages) |  |
-| compteurs________cpt | **W** (2 usages) | Comptes GM (generaux) |
-| pv_accounting_date | **W** (2 usages) |  |
-| log_booker | **W** (2 usages) |  |
-
-</details>
+Le programme illustre un cas d'usage bancaire critique : chaque opération est tracée dans log_booker et table_945, l'imprimante est réinitialisée après chaque utilisation (IDE 182), et les dates comptables sont centralisées (table pv_accounting_date). La gestion des autorisations Club Med Pass via IDE 114 suggère une intégration avec le programme de filiations partenaires, enrichissant le contexte des dépôts de garantie pour les clients fidélité.
 
 ## 3. BLOCS FONCTIONNELS
 
@@ -363,7 +291,7 @@ Gestion des moyens de paiement : 1 tache de reglement.
 
 ## 5. REGLES METIER
 
-*(Aucune regle metier identifiee)*
+*(Programme d'impression - logique technique sans conditions metier)*
 
 ## 6. CONTEXTE
 
@@ -1679,14 +1607,28 @@ flowchart TD
 ```mermaid
 flowchart TD
     START([START])
-    PROCESS[Traitement 29 taches]
+    B1[Traitement (17t)]
+    START --> B1
+    B2[Calcul (5t)]
+    B1 --> B2
+    B3[Saisie (2t)]
+    B2 --> B3
+    B4[Creation (2t)]
+    B3 --> B4
+    B5[Impression (2t)]
+    B4 --> B5
+    B6[Reglement (1t)]
+    B5 --> B6
+    WRITE[MAJ 7 tables]
+    B6 --> WRITE
     ENDOK([END])
-    START --> PROCESS --> ENDOK
+    WRITE --> ENDOK
     style START fill:#3fb950,color:#000
     style ENDOK fill:#3fb950,color:#000
+    style WRITE fill:#ffeb3b,color:#000
 ```
 
-> *algo-data indisponible. Utiliser `/algorigramme` pour generer.*
+> *Algorigramme simplifie base sur les blocs fonctionnels. Utiliser `/algorigramme` pour une synthese metier detaillee.*
 
 <!-- TAB:Donnees -->
 
@@ -1696,41 +1638,142 @@ flowchart TD
 
 | ID | Nom | Description | Type | R | W | L | Usages |
 |----|-----|-------------|------|---|---|---|--------|
-| 23 | reseau_cloture___rec | Donnees reseau/cloture | DB | R |   |   | 2 |
-| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 2 |
-| 31 | gm-complet_______gmc |  | DB | R | **W** | L | 4 |
 | 39 | depot_garantie___dga | Depots et garanties | DB | R | **W** | L | 6 |
-| 40 | comptable________cte |  | DB |   |   | L | 2 |
+| 31 | gm-complet_______gmc |  | DB | R | **W** | L | 4 |
 | 47 | compte_gm________cgm | Comptes GM (generaux) | DB |   | **W** | L | 7 |
-| 50 | moyens_reglement_mor | Reglements / paiements | DB |   |   | L | 1 |
-| 66 | imputations______imp |  | DB |   |   | L | 2 |
 | 68 | compteurs________cpt | Comptes GM (generaux) | DB |   | **W** |   | 2 |
+| 945 | Table_945 |  | MEM |   | **W** |   | 2 |
+| 911 | log_booker |  | DB |   | **W** |   | 2 |
+| 370 | pv_accounting_date |  | DB |   | **W** |   | 2 |
+| 91 | garantie_________gar | Depots et garanties | DB | R |   | L | 5 |
+| 30 | gm-recherche_____gmr | Index de recherche | DB | R |   |   | 2 |
+| 23 | reseau_cloture___rec | Donnees reseau/cloture | DB | R |   |   | 2 |
+| 40 | comptable________cte |  | DB |   |   | L | 2 |
+| 285 | email |  | DB |   |   | L | 2 |
 | 69 | initialisation___ini |  | DB |   |   | L | 2 |
+| 66 | imputations______imp |  | DB |   |   | L | 2 |
 | 70 | date_comptable___dat |  | DB |   |   | L | 2 |
 | 88 | historik_station | Historique / journal | DB |   |   | L | 2 |
-| 89 | moyen_paiement___mop |  | DB |   |   | L | 1 |
-| 91 | garantie_________gar | Depots et garanties | DB | R |   | L | 5 |
-| 139 | moyens_reglement_mor | Reglements / paiements | DB |   |   | L | 1 |
 | 140 | moyen_paiement___mop |  | DB |   |   | L | 1 |
-| 285 | email |  | DB |   |   | L | 2 |
-| 312 | ez_card |  | DB |   |   | L | 1 |
-| 370 | pv_accounting_date |  | DB |   | **W** |   | 2 |
 | 910 | classification_memory |  | DB |   |   | L | 1 |
-| 911 | log_booker |  | DB |   | **W** |   | 2 |
-| 945 | Table_945 |  | MEM |   | **W** |   | 2 |
+| 50 | moyens_reglement_mor | Reglements / paiements | DB |   |   | L | 1 |
+| 312 | ez_card |  | DB |   |   | L | 1 |
+| 89 | moyen_paiement___mop |  | DB |   |   | L | 1 |
+| 139 | moyens_reglement_mor | Reglements / paiements | DB |   |   | L | 1 |
 
 ### Colonnes par table (10 / 10 tables avec colonnes identifiees)
 
 <details>
-<summary>Table 23 - reseau_cloture___rec (R) - 2 usages</summary>
+<summary>Table 39 - depot_garantie___dga (R/**W**/L) - 6 usages</summary>
 
 | Lettre | Variable | Acces | Type |
 |--------|----------|-------|------|
-| A | V.ClotureEnCours | R | Logical |
-| B | V.numero chrono | R | Numeric |
-| C | V.montant | R | Numeric |
-| D | V.ret-lien CTE ann. | R | Numeric |
-| E | V.CompteurTicket | R | Numeric |
+| A | Lien Depot garantie | W | Logical |
+| BF | W0 conf reactivation Garantie | W | Numeric |
+| BP | W0 imprime garantie ? | W | Logical |
+| BQ | W0 imprime annul garantie ? | W | Logical |
+| H | > flag depot | W | Alpha |
+| O | > choix garantie | W | Alpha |
+| T | V.Création Garantie | W | Logical |
+| W | v.Fichier ticket garantie | W | Alpha |
+
+</details>
+
+<details>
+<summary>Table 31 - gm-complet_______gmc (R/**W**/L) - 4 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | W1 fin tâche MAJ | W | Alpha |
+| B | W0 choix action | W | Alpha |
+| C | W0 carte de credit | W | Alpha |
+| D | W0 test lien MOP | W | Numeric |
+| E | W0 test lien MOR | W | Numeric |
+| F | W0 type operation | W | Alpha |
+| G | W0 date depôt | W | Date |
+| H | W0 heure depôt | W | Time |
+| I | W0 operateur | W | Alpha |
+| J | W0 typ-depôt-numeric | W | Numeric |
+| K | W0 type depôt | W | Alpha |
+| L | W0 libelle depôt | W | Alpha |
+| M | v_Express_Chek_out | W | Logical |
+| N | v_Reponse | W | Numeric |
+| O | W0 devise | W | Alpha |
+| P | W0 montant depôt | W | Numeric |
+| Q | W0 date retrait | W | Date |
+| R | W0 heure retrait | W | Time |
+| S | W0 etat depôt | W | Alpha |
+| T | W0 validation | W | Alpha |
+| U | W0 confirme annulation CMP | W | Numeric |
+| V | W0 nb Club Med Pass | W | Numeric |
+| W | v.titre | W | Alpha |
+| X | Btn Valider | W | Alpha |
+
+</details>
+
+<details>
+<summary>Table 47 - compte_gm________cgm (**W**/L) - 7 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| E | V.CompteurTicket | W | Numeric |
+| K | > solde compte | W | Numeric |
+| L | > etat compte | W | Alpha |
+
+</details>
+
+<details>
+<summary>Table 68 - compteurs________cpt (**W**) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 945 - Table_945 (**W**) - 2 usages</summary>
+
+*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+
+</details>
+
+<details>
+<summary>Table 911 - log_booker (**W**) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | Lien Depot garantie | W | Logical |
+| B | v.Fichier envoi email | W | Alpha |
+
+</details>
+
+<details>
+<summary>Table 370 - pv_accounting_date (**W**) - 2 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| BA | W0 date retrait | W | Date |
+| BJ | W0 Date creation | W | Date |
+| BM | W0 Date annulation | W | Date |
+| CG | v.Date&Heure alpha | W | Alpha |
+| G | W0 date depôt | W | Date |
+| I | v.date depôt | W | Date |
+| M | > date solde | W | Date |
+| Q | W0 date retrait | W | Date |
+
+</details>
+
+<details>
+<summary>Table 91 - garantie_________gar (R/L) - 5 usages</summary>
+
+| Lettre | Variable | Acces | Type |
+|--------|----------|-------|------|
+| A | Lien Depot garantie | R | Logical |
+| BF | W0 conf reactivation Garantie | R | Numeric |
+| BP | W0 imprime garantie ? | R | Logical |
+| BQ | W0 imprime annul garantie ? | R | Logical |
+| O | > choix garantie | R | Alpha |
+| T | V.Création Garantie | R | Logical |
+| W | v.Fichier ticket garantie | R | Alpha |
 
 </details>
 
@@ -1807,116 +1850,15 @@ flowchart TD
 </details>
 
 <details>
-<summary>Table 31 - gm-complet_______gmc (R/**W**/L) - 4 usages</summary>
+<summary>Table 23 - reseau_cloture___rec (R) - 2 usages</summary>
 
 | Lettre | Variable | Acces | Type |
 |--------|----------|-------|------|
-| A | W1 fin tâche MAJ | W | Alpha |
-| B | W0 choix action | W | Alpha |
-| C | W0 carte de credit | W | Alpha |
-| D | W0 test lien MOP | W | Numeric |
-| E | W0 test lien MOR | W | Numeric |
-| F | W0 type operation | W | Alpha |
-| G | W0 date depôt | W | Date |
-| H | W0 heure depôt | W | Time |
-| I | W0 operateur | W | Alpha |
-| J | W0 typ-depôt-numeric | W | Numeric |
-| K | W0 type depôt | W | Alpha |
-| L | W0 libelle depôt | W | Alpha |
-| M | v_Express_Chek_out | W | Logical |
-| N | v_Reponse | W | Numeric |
-| O | W0 devise | W | Alpha |
-| P | W0 montant depôt | W | Numeric |
-| Q | W0 date retrait | W | Date |
-| R | W0 heure retrait | W | Time |
-| S | W0 etat depôt | W | Alpha |
-| T | W0 validation | W | Alpha |
-| U | W0 confirme annulation CMP | W | Numeric |
-| V | W0 nb Club Med Pass | W | Numeric |
-| W | v.titre | W | Alpha |
-| X | Btn Valider | W | Alpha |
-
-</details>
-
-<details>
-<summary>Table 39 - depot_garantie___dga (R/**W**/L) - 6 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | Lien Depot garantie | W | Logical |
-| BF | W0 conf reactivation Garantie | W | Numeric |
-| BP | W0 imprime garantie ? | W | Logical |
-| BQ | W0 imprime annul garantie ? | W | Logical |
-| H | > flag depot | W | Alpha |
-| O | > choix garantie | W | Alpha |
-| T | V.Création Garantie | W | Logical |
-| W | v.Fichier ticket garantie | W | Alpha |
-
-</details>
-
-<details>
-<summary>Table 47 - compte_gm________cgm (**W**/L) - 7 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| E | V.CompteurTicket | W | Numeric |
-| K | > solde compte | W | Numeric |
-| L | > etat compte | W | Alpha |
-
-</details>
-
-<details>
-<summary>Table 68 - compteurs________cpt (**W**) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
-
-</details>
-
-<details>
-<summary>Table 91 - garantie_________gar (R/L) - 5 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | Lien Depot garantie | R | Logical |
-| BF | W0 conf reactivation Garantie | R | Numeric |
-| BP | W0 imprime garantie ? | R | Logical |
-| BQ | W0 imprime annul garantie ? | R | Logical |
-| O | > choix garantie | R | Alpha |
-| T | V.Création Garantie | R | Logical |
-| W | v.Fichier ticket garantie | R | Alpha |
-
-</details>
-
-<details>
-<summary>Table 370 - pv_accounting_date (**W**) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| BA | W0 date retrait | W | Date |
-| BJ | W0 Date creation | W | Date |
-| BM | W0 Date annulation | W | Date |
-| CG | v.Date&Heure alpha | W | Alpha |
-| G | W0 date depôt | W | Date |
-| I | v.date depôt | W | Date |
-| M | > date solde | W | Date |
-| Q | W0 date retrait | W | Date |
-
-</details>
-
-<details>
-<summary>Table 911 - log_booker (**W**) - 2 usages</summary>
-
-| Lettre | Variable | Acces | Type |
-|--------|----------|-------|------|
-| A | Lien Depot garantie | W | Logical |
-| B | v.Fichier envoi email | W | Alpha |
-
-</details>
-
-<details>
-<summary>Table 945 - Table_945 (**W**) - 2 usages</summary>
-
-*Table utilisee uniquement en Link ou aucune colonne Real identifiee dans le DataView.*
+| A | V.ClotureEnCours | R | Logical |
+| B | V.numero chrono | R | Numeric |
+| C | V.montant | R | Numeric |
+| D | V.ret-lien CTE ann. | R | Numeric |
+| E | V.CompteurTicket | R | Numeric |
 
 </details>
 
@@ -2303,4 +2245,4 @@ graph LR
 | [Appel programme (IDE 44)](ADH-IDE-44.md) | Sous-programme | 2x | Haute - Sous-programme |
 
 ---
-*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 07:03*
+*Spec DETAILED generee par Pipeline V7.2 - 2026-02-07 15:28*
