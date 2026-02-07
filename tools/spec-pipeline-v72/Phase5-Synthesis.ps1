@@ -12,7 +12,8 @@ param(
     [int]$IdePosition,
 
     [string]$OutputPath,
-    [string]$SpecsOutputPath
+    [string]$SpecsOutputPath,
+    [string]$Folder = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -250,6 +251,166 @@ function Reformulate-BusinessRule {
         return $NaturalLanguage.Trim()
     }
     return $Decoded
+}
+
+# ============================================================
+# LLM ENRICHMENT FUNCTION (V7.2+ - Uses Claude CLI)
+# ============================================================
+function Invoke-ClaudeEnrichment {
+    param(
+        [Parameter(Mandatory=$true)]$Discovery,
+        [Parameter(Mandatory=$true)]$Mapping,
+        $Decoded,
+        $UiForms,
+        [string]$Project,
+        [int]$IdePosition,
+        [string]$ProgramName,
+        [hashtable]$BlocMap,
+        [array]$CalleesCtx,
+        [array]$BusinessRules
+    )
+
+    # Check if claude CLI is available
+    $claudePath = Get-Command "claude" -ErrorAction SilentlyContinue
+    if (-not $claudePath) {
+        Write-Host "  [LLM] Claude CLI not found, using template fallback" -ForegroundColor DarkYellow
+        return $null
+    }
+
+    # Build context data for the prompt
+    $contextData = @{
+        program_name = $ProgramName
+        ide = $IdePosition
+        project = $Project
+        task_count = $Discovery.statistics.task_count
+        callee_count = $Discovery.statistics.callee_count
+        expression_count = $Discovery.statistics.expression_count
+        logic_lines = $Discovery.statistics.logic_line_count
+        tables_write = @($Discovery.tables.by_access.WRITE | ForEach-Object { $_.logical_name })
+        tables_read = @($Discovery.tables.by_access.READ | ForEach-Object { $_.logical_name })
+        callers = @($Discovery.call_graph.callers | ForEach-Object { @{ ide = $_.ide; name = $_.name } })
+        callees = @($Discovery.call_graph.callees | ForEach-Object { @{ ide = $_.ide; name = $_.name; calls = $_.calls_count } })
+        blocs = @($BlocMap.Keys | ForEach-Object { @{ name = $_; task_count = $BlocMap[$_].Count } })
+        business_rules_count = $BusinessRules.Count
+        orphan_status = $Discovery.orphan_analysis.status
+    }
+
+    # Add task details
+    if ($UiForms -and $UiForms.forms) {
+        $contextData.tasks = @($UiForms.forms | ForEach-Object {
+            @{
+                id = $_.task_isn2
+                name = $_.name
+                has_screen = ($_.dimensions.width -gt 0)
+                width = $_.dimensions.width
+                height = $_.dimensions.height
+            }
+        })
+    }
+
+    # Add parameters (variables P0)
+    if ($Mapping -and $Mapping.variables -and $Mapping.variables.local) {
+        $params = @($Mapping.variables.local | Where-Object { $_.name -match '^P[0O][\.\s]|^[Pp][Ii]?[\.\s]' })
+        $contextData.parameters = @($params | ForEach-Object { @{ letter = $_.letter; name = $_.name; type = $_.data_type } })
+    }
+
+    $contextJson = $contextData | ConvertTo-Json -Depth 5 -Compress
+
+    # Build callers text for prompt
+    $callersText = ""
+    if ($Discovery.call_graph.callers -and $Discovery.call_graph.callers.Count -gt 0) {
+        $callersList = ($Discovery.call_graph.callers | ForEach-Object { "$($_.name) (IDE $($_.ide))" }) -join ", "
+        $callersText = "Appele depuis: $callersList"
+    }
+
+    # Build callees text for prompt
+    $calleesText = ""
+    if ($Discovery.call_graph.callees -and $Discovery.call_graph.callees.Count -gt 0) {
+        $calleesList = ($Discovery.call_graph.callees | ForEach-Object { "$($_.name) (IDE $($_.ide))" }) -join ", "
+        $calleesText = "Appelle: $calleesList"
+    }
+
+    # Build tables text
+    $tablesText = ""
+    if ($Discovery.tables.by_access.WRITE -and $Discovery.tables.by_access.WRITE.Count -gt 0) {
+        $tablesList = ($Discovery.tables.by_access.WRITE | ForEach-Object { $_.logical_name }) -join ", "
+        $tablesText = "Tables modifiees: $tablesList"
+    }
+
+    # Build task names for context
+    $taskNames = @()
+    if ($UiForms -and $UiForms.forms) {
+        $taskNames = @($UiForms.forms | ForEach-Object { $_.name } | Where-Object { $_ -and $_.Trim() })
+    }
+    $taskNamesText = if ($taskNames.Count -gt 0) { "Taches: " + ($taskNames[0..([Math]::Min(5, $taskNames.Count-1))] -join ", ") } else { "" }
+
+    # Build the prompt - ultra specific to THIS program
+    $prompt = @"
+PROGRAMME: $Project IDE $IdePosition - $ProgramName
+$callersText
+$calleesText
+$tablesText
+$taskNamesText
+
+Ecris 2-3 paragraphes courts decrivant ce programme Magic.
+Commence DIRECTEMENT par le contenu, sans intro comme "Voici" ou "Je vais".
+Utilise UNIQUEMENT les informations ci-dessus, ne rien inventer.
+Pas de titre markdown (###), pas de separateur (---).
+Maximum 150 mots.
+"@
+
+    try {
+        Write-Host "  [LLM] Calling Claude CLI for enrichment..." -ForegroundColor Cyan
+
+        # Set UTF-8 encoding for proper character handling
+        $prevOutputEncoding = [Console]::OutputEncoding
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+        # Call claude CLI with prompt directly (--print mode)
+        $result = & claude -p $prompt --output-format json --model haiku 2>&1
+
+        # Restore encoding
+        [Console]::OutputEncoding = $prevOutputEncoding
+
+        # Convert array to string if needed
+        if ($result -is [array]) {
+            $result = $result -join "`n"
+        }
+
+        # Check for errors
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "  [LLM] Claude CLI returned error code $LASTEXITCODE" -ForegroundColor Red
+            return $null
+        }
+
+        # Parse JSON response
+        try {
+            $jsonResponse = $result | ConvertFrom-Json
+            if ($jsonResponse.result) {
+                $enrichedContent = $jsonResponse.result
+            } elseif ($jsonResponse.content) {
+                $enrichedContent = $jsonResponse.content
+            } else {
+                # Fallback: treat as plain text
+                $enrichedContent = $result
+            }
+        } catch {
+            # JSON parsing failed, use raw text
+            $enrichedContent = $result
+        }
+
+        # Post-process: remove intro phrases and cleanup
+        $enrichedContent = $enrichedContent -replace '(?s)^.*?(Voici|Je vais|Voici ma|Bien sur|D.accord).*?\n+', ''
+        $enrichedContent = $enrichedContent -replace '^---\s*\n', ''
+        $enrichedContent = $enrichedContent.Trim()
+
+        Write-Host "  [LLM] Enrichment received ($($enrichedContent.Length) chars)" -ForegroundColor Green
+        return $enrichedContent
+
+    } catch {
+        Write-Host "  [LLM] CLI call failed: $_" -ForegroundColor Red
+        return $null
+    }
 }
 
 function Calculate-ComplexityScore {
@@ -560,20 +721,25 @@ Add-Line
 Add-Line "## 1. FICHE D'IDENTITE"
 Add-Line
 
+# Use real folder from Progs.xml if available, fallback to regex-based detection
 $domaineName = "General"
-$pnLower = $programName.ToLower()
-if ($pnLower -match 'caisse|session|coffre|approvisionnement') { $domaineName = "Caisse" }
-elseif ($pnLower -match 'vente|transaction|vrl|vsl|article') { $domaineName = "Ventes" }
-elseif ($pnLower -match 'change|devise|taux') { $domaineName = "Change" }
-elseif ($pnLower -match 'facture|tva') { $domaineName = "Facturation" }
-elseif ($pnLower -match 'extrait|solde|compte') { $domaineName = "Comptabilite" }
-elseif ($pnLower -match 'garantie|depot|caution') { $domaineName = "Garanties" }
-elseif ($pnLower -match 'menu|choix') { $domaineName = "Navigation" }
-elseif ($pnLower -match 'print|ticket|edition') { $domaineName = "Impression" }
-elseif ($pnLower -match 'telephone|phone') { $domaineName = "Telephonie" }
-elseif ($pnLower -match 'zoom|recherche|selection') { $domaineName = "Consultation" }
-elseif ($pnLower -match 'ventil') { $domaineName = "Ventilation" }
-elseif ($pnLower -match 'devers') { $domaineName = "Transfert" }
+if ($Folder) {
+    $domaineName = $Folder
+} else {
+    $pnLower = $programName.ToLower()
+    if ($pnLower -match 'caisse|session|coffre|approvisionnement') { $domaineName = "Caisse" }
+    elseif ($pnLower -match 'vente|transaction|vrl|vsl|article') { $domaineName = "Ventes" }
+    elseif ($pnLower -match 'change|devise|taux') { $domaineName = "Change" }
+    elseif ($pnLower -match 'facture|tva') { $domaineName = "Facturation" }
+    elseif ($pnLower -match 'extrait|solde|compte') { $domaineName = "Comptabilite" }
+    elseif ($pnLower -match 'garantie|depot|caution') { $domaineName = "Garanties" }
+    elseif ($pnLower -match 'menu|choix') { $domaineName = "Navigation" }
+    elseif ($pnLower -match 'print|ticket|edition') { $domaineName = "Impression" }
+    elseif ($pnLower -match 'telephone|phone') { $domaineName = "Telephonie" }
+    elseif ($pnLower -match 'zoom|recherche|selection') { $domaineName = "Consultation" }
+    elseif ($pnLower -match 'ventil') { $domaineName = "Ventilation" }
+    elseif ($pnLower -match 'devers') { $domaineName = "Transfert" }
+}
 
 Add-Line "| Attribut | Valeur |"
 Add-Line "|----------|--------|"
@@ -581,30 +747,66 @@ Add-Line "| Projet | $Project |"
 Add-Line "| IDE Position | $IdePosition |"
 Add-Line "| Nom Programme | $programName |"
 Add-Line "| Fichier source | ``Prg_$IdePosition.xml`` |"
-Add-Line "| Domaine metier | $domaineName |"
+Add-Line "| Dossier IDE | $domaineName |"
 Add-Line "| Taches | $taskCount ($($visibleForms.Count) ecrans visibles) |"
 Add-Line "| Tables modifiees | $writeCount |"
 Add-Line "| Programmes appeles | $calleeCount |"
+Add-Line "| Complexite | **$($complexity.level)** (score $($complexity.score)/100) |"
 if ($discovery.orphan_analysis.status -eq "ORPHELIN" -or $discovery.orphan_analysis.status -eq "ORPHELIN_POTENTIEL") {
-    Add-Line "| :warning: Statut | **$($discovery.orphan_analysis.status)** |"
+    Add-Line "| <span style=`"color:red`">Statut</span> | <span style=`"color:red`">**$($discovery.orphan_analysis.status)**</span> |"
 }
 Add-Line
 
-# --- 2. Description fonctionnelle (V7.2: 2 niveaux) ---
+# --- 2. Description fonctionnelle (V7.2: LLM enrichment + fallback) ---
 Add-Line "## 2. DESCRIPTION FONCTIONNELLE"
 Add-Line
 
-# Level 1: Synthese (always visible)
-$purposeCtx = ""
-if ($discovery.call_graph.callers.Count -gt 0) {
-    $callerLinks = ($discovery.call_graph.callers | ForEach-Object {
-        Format-SpecLink -Name $_.name -Ide $_.ide -Proj $Project
-    }) -join ', '
-    $purposeCtx = ", accessible depuis $callerLinks"
+# V7.2: Try LLM enrichment first (unless we have preserved content)
+$llmSection2 = $null
+if (-not $preservedSection2) {
+    $llmSection2 = Invoke-ClaudeEnrichment `
+        -Discovery $discovery `
+        -Mapping $mapping `
+        -Decoded $decoded `
+        -UiForms $uiForms `
+        -Project $Project `
+        -IdePosition $IdePosition `
+        -ProgramName $programName `
+        -BlocMap $blocMap `
+        -CalleesCtx $calleesCtx `
+        -BusinessRules $businessRules
 }
 
-$descParts = @()
-$descParts += "**$programName** assure la gestion complete de ce processus$purposeCtx."
+# Use LLM content if available, otherwise preserved, otherwise template fallback
+if ($llmSection2) {
+    # LLM enriched content
+    foreach ($line in ($llmSection2 -split "`r?`n")) {
+        Add-Line $line
+    }
+    Add-Line
+    Write-Host "  [Section 2] LLM enriched content used" -ForegroundColor Green
+} elseif ($preservedSection2) {
+    # Preserved enriched content from previous run (already includes ## 2. header, skip lines)
+    $s2Lines = ($preservedSection2 -split "`r?`n") | Select-Object -Skip 2
+    foreach ($line in $s2Lines) {
+        Add-Line $line
+    }
+    Write-Host "  [Section 2] Preserved enriched content reused" -ForegroundColor Cyan
+} else {
+    # Template fallback (original logic)
+    Write-Host "  [Section 2] Using template fallback" -ForegroundColor DarkYellow
+
+    # Level 1: Synthese (always visible)
+    $purposeCtx = ""
+    if ($discovery.call_graph.callers.Count -gt 0) {
+        $callerLinks = ($discovery.call_graph.callers | ForEach-Object {
+            Format-SpecLink -Name $_.name -Ide $_.ide -Proj $Project
+        }) -join ', '
+        $purposeCtx = ", accessible depuis $callerLinks"
+    }
+
+    $descParts = @()
+    $descParts += "**$programName** assure la gestion complete de ce processus$purposeCtx."
 
 # Workflow from blocks
 $sigBlocs = @()
@@ -734,6 +936,7 @@ if ($blocMap.Count -gt 1 -or $allForms.Count -gt 3) {
     Add-Line "</details>"
     Add-Line
 }
+} # End of template fallback else block
 
 # --- 3. Blocs fonctionnels (V7.2: ancres + liens + detail tache par tache) ---
 Add-Line "## 3. BLOCS FONCTIONNELS"
@@ -1643,7 +1846,8 @@ Add-Line
 Add-Line "## 10. TABLES"
 Add-Line
 
-$usedTables = @($tableUnified.Values | Where-Object { $_.R -or $_.W -or $_.L } | Sort-Object { [int]$_.id })
+# V7.2: Trier par importance W > R > L (puis par usage decroissant)
+$usedTables = @($tableUnified.Values | Where-Object { $_.R -or $_.W -or $_.L } | Sort-Object @{Expression={$_.W}; Descending=$true}, @{Expression={$_.R}; Descending=$true}, @{Expression={$_.L}; Descending=$true}, @{Expression={$_.usage_total}; Descending=$true})
 
 # V7.2: Single unified table (merged 10.1 + 10.2)
 Add-Line "### Tables utilisees ($($usedTables.Count))"
