@@ -87,4 +87,46 @@ describe('useSessionStore', () => {
     expect(state.currentSession).toBeNull();
     expect(state.status).toBe('closed');
   });
+
+  describe('history', () => {
+    it('should start with empty history', () => {
+      expect(useSessionStore.getState().history).toEqual([]);
+    });
+
+    it('should start with isLoadingHistory as false', () => {
+      expect(useSessionStore.getState().isLoadingHistory).toBe(false);
+    });
+  });
+
+  describe('updateDevise with multiple fields', () => {
+    it('should merge multiple partial fields into the devise', () => {
+      useSessionStore.getState().setSession(mockSession);
+      useSessionStore.getState().updateDevise('EUR', {
+        totalVentes: 1000,
+        totalEncaissements: 800,
+      });
+
+      const state = useSessionStore.getState();
+      const eur = state.currentSession?.devises.find((d) => d.deviseCode === 'EUR');
+      expect(eur?.totalVentes).toBe(1000);
+      expect(eur?.totalEncaissements).toBe(800);
+      expect(eur?.fondCaisse).toBe(500); // unchanged
+    });
+  });
+
+  describe('setSession status sync', () => {
+    it('should sync status from session with different statuses', () => {
+      const closingSession: Session = { ...mockSession, status: 'closing' };
+      useSessionStore.getState().setSession(closingSession);
+
+      expect(useSessionStore.getState().status).toBe('closing');
+    });
+
+    it('should sync status from opening session', () => {
+      const openingSession: Session = { ...mockSession, status: 'opening' };
+      useSessionStore.getState().setSession(openingSession);
+
+      expect(useSessionStore.getState().status).toBe('opening');
+    });
+  });
 });

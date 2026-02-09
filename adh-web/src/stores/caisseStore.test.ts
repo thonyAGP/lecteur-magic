@@ -114,4 +114,43 @@ describe('useCaisseStore', () => {
 
     expect(useCaisseStore.getState().getTotalByDevise('GBP')).toBe(0);
   });
+
+  describe('getCounting', () => {
+    it('should return only entries with quantite > 0', () => {
+      useCaisseStore.getState().setDenominations(mockDenominations);
+      useCaisseStore.getState().updateCount(1, 3);
+      useCaisseStore.getState().updateCount(2, 0);
+      useCaisseStore.getState().updateCount(3, 5);
+
+      const result = useCaisseStore.getState().getCounting();
+
+      expect(result).toHaveLength(2);
+      expect(result).toEqual([
+        { denominationId: 1, quantite: 3 },
+        { denominationId: 3, quantite: 5 },
+      ]);
+    });
+
+    it('should return empty array when no counts exist', () => {
+      const result = useCaisseStore.getState().getCounting();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should strip total from returned entries', () => {
+      useCaisseStore.getState().setDenominations(mockDenominations);
+      useCaisseStore.getState().updateCount(1, 2);
+
+      const result = useCaisseStore.getState().getCounting();
+
+      expect(result[0]).toEqual({ denominationId: 1, quantite: 2 });
+      expect(result[0]).not.toHaveProperty('total');
+    });
+  });
+
+  describe('isLoadingDenominations', () => {
+    it('should start as false', () => {
+      expect(useCaisseStore.getState().isLoadingDenominations).toBe(false);
+    });
+  });
 });

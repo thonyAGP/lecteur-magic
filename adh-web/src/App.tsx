@@ -1,6 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ScreenLayout } from '@/components/layout';
 import { useAuthStore } from '@/stores';
+import {
+  CaisseMenuPage,
+  SessionOuverturePage,
+  SessionFermeturePage,
+  SessionHistoriquePage,
+  ReimpressionPage,
+} from '@/pages';
 
 function LoginPage() {
   const login = useAuthStore((s) => s.login);
@@ -65,6 +72,11 @@ export function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/caisse" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/caisse/menu" element={<ProtectedRoute><CaisseMenuPage /></ProtectedRoute>} />
+        <Route path="/caisse/ouverture" element={<ProtectedRoute><SessionOuverturePage /></ProtectedRoute>} />
+        <Route path="/caisse/fermeture" element={<ProtectedRoute><SessionFermeturePage /></ProtectedRoute>} />
+        <Route path="/caisse/historique" element={<ProtectedRoute><SessionHistoriquePage /></ProtectedRoute>} />
+        <Route path="/caisse/reimpression" element={<ProtectedRoute><ReimpressionPage /></ProtectedRoute>} />
         <Route path="/caisse/vente" element={<ProtectedRoute><VentePage /></ProtectedRoute>} />
         <Route path="/caisse/extrait" element={<ProtectedRoute><ExtraitPage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
