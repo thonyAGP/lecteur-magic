@@ -20,3 +20,21 @@ export interface CaisseConfig {
   devisePrincipale: string;
   devisesAutorisees: string[];
 }
+
+export type CaisseMenuAction =
+  | 'ouverture'
+  | 'fermeture'
+  | 'comptage'
+  | 'historique'
+  | 'reimpression'
+  | 'consultation'
+  | 'parametres';
+
+export interface CaisseMenuItem {
+  action: CaisseMenuAction;
+  label: string;
+  icon: string;
+  description: string;
+  enabled: boolean;
+  requiresOpenSession: boolean;
+}

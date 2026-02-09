@@ -1,0 +1,5 @@
+export { CaisseMenuPage } from './CaisseMenuPage';
+export { SessionOuverturePage } from './SessionOuverturePage';
+export { SessionFermeturePage } from './SessionFermeturePage';
+export { SessionHistoriquePage } from './SessionHistoriquePage';
+export { ReimpressionPage } from './ReimpressionPage';

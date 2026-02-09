@@ -2,11 +2,14 @@ import { apiClient, type ApiResponse, type PaginatedResponse } from './apiClient
 import type {
   Session,
   OpenSessionRequest,
+  CloseSessionRequest,
   SessionSummary,
+  SessionDetailsResponse,
   Transaction,
   CreateTransactionRequest,
   Denomination,
   SaveCountingRequest,
+  DeviseInfo,
   Account,
   ExtraitCompte,
   PaginationParams,
@@ -17,13 +20,17 @@ export const sessionApi = {
   getCurrent: () =>
     apiClient.get<ApiResponse<Session>>('/sessions/current'),
   open: (data: OpenSessionRequest) =>
-    apiClient.post<ApiResponse<Session>>('/sessions/open', data),
-  close: (sessionId: number) =>
-    apiClient.post<ApiResponse<void>>(`/sessions/${sessionId}/close`),
-  getHistory: (params: PaginationParams) =>
-    apiClient.get<PaginatedResponse<SessionSummary>>('/sessions/history', {
+    apiClient.post<ApiResponse<Session>>('/sessions/ouvrir', data),
+  close: (data: CloseSessionRequest) =>
+    apiClient.post<ApiResponse<void>>('/sessions/fermer', data),
+  getHistory: (params: PaginationParams & { caisseId?: number }) =>
+    apiClient.get<PaginatedResponse<SessionSummary>>('/sessions', {
       params,
     }),
+  getDetails: (sessionId: number) =>
+    apiClient.get<ApiResponse<SessionDetailsResponse>>(
+      `/sessions/${sessionId}/details`,
+    ),
 };
 
 // Transaction endpoints
@@ -42,6 +49,8 @@ export const denominationApi = {
     apiClient.get<ApiResponse<Denomination[]>>(
       `/denominations/${deviseCode}`,
     ),
+  getCatalog: () =>
+    apiClient.get<ApiResponse<DeviseInfo[]>>('/denominations/catalog'),
   saveCounting: (data: SaveCountingRequest) =>
     apiClient.post<ApiResponse<void>>('/denominations/counting', data),
 };

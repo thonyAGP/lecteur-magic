@@ -1,13 +1,22 @@
 export interface Session {
   id: number;
   dateOuverture: string;
+  dateFermeture?: string;
   status: 'open' | 'closed';
   caisseId: number;
+  userId: number;
 }
 
 export interface OpenSessionRequest {
   caisseId: number;
   userId: number;
+  comptage: { denominationId: number; quantite: number }[];
+}
+
+export interface CloseSessionRequest {
+  sessionId: number;
+  comptage: { denominationId: number; quantite: number }[];
+  justification?: string;
 }
 
 export interface SessionSummary {
@@ -15,6 +24,12 @@ export interface SessionSummary {
   dateOuverture: string;
   dateFermeture?: string;
   totalVentes: number;
+}
+
+export interface SessionDetailsResponse {
+  session: Session;
+  comptageOuverture: { denominationId: number; quantite: number; total: number }[];
+  comptageFermeture?: { denominationId: number; quantite: number; total: number }[];
 }
 
 export interface Transaction {
@@ -42,11 +57,19 @@ export interface Denomination {
   deviseCode: string;
   valeur: number;
   type: 'billet' | 'piece';
+  libelle?: string;
+  ordre?: number;
 }
 
 export interface SaveCountingRequest {
   sessionId: number;
   items: { denominationId: number; quantite: number }[];
+}
+
+export interface DeviseInfo {
+  code: string;
+  libelle: string;
+  denominations: Denomination[];
 }
 
 export interface Account {
