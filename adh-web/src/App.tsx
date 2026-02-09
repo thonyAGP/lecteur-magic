@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ScreenLayout } from '@/components/layout';
 import { useAuthStore } from '@/stores';
 import {
@@ -12,13 +12,25 @@ import {
 
 function LoginPage() {
   const login = useAuthStore((s) => s.login);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const navigate = useNavigate();
+
+  if (isAuthenticated) {
+    return <Navigate to="/caisse/menu" replace />;
+  }
+
+  const handleLogin = async () => {
+    await login({ login: 'test', password: 'test', societe: 'ADH' });
+    navigate('/caisse/menu');
+  };
+
   return (
     <div className="flex items-center justify-center h-screen bg-surface">
       <div className="w-96 p-8 bg-surface rounded-lg border border-border shadow-lg">
         <h1 className="text-2xl font-bold text-primary mb-6">ADH Caisse</h1>
         <p className="text-on-surface-muted mb-4">Migration Lot 0 - Connexion</p>
         <button
-          onClick={() => login({ login: 'test', password: 'test', societe: 'ADH' })}
+          onClick={handleLogin}
           className="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
         >
           Connexion (dev mode)
