@@ -11,3 +11,6 @@ export { useClubMedPassStore } from './clubmedPassStore';
 export { useDataCatchStore } from './datacatchStore';
 export { useSeparationStore } from './separationStore';
 export { useFusionStore } from './fusionStore';
+export { useParametresStore } from './parametresStore';
+export { useDashboardStore } from './dashboardStore';
+export { useNotificationStore } from './notificationStore';

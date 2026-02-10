@@ -13,3 +13,5 @@ export { DataCatchPage } from './DataCatchPage';
 export { SeparationPage } from './SeparationPage';
 export { FusionPage } from './FusionPage';
 export { AccountOpsPage } from './AccountOpsPage';
+export { ParametresPage } from './ParametresPage';
+export { DashboardPage } from './DashboardPage';

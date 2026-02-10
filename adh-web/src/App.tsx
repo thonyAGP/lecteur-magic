@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { ScreenLayout } from '@/components/layout';
 import { useAuthStore } from '@/stores';
 import {
   CaisseMenuPage,
@@ -17,7 +16,11 @@ import {
   SeparationPage,
   FusionPage,
   AccountOpsPage,
+  ParametresPage,
+  DashboardPage,
 } from '@/pages';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { ToastContainer } from '@/components/ui/Toast';
 
 function LoginPage() {
   const login = useAuthStore((s) => s.login);
@@ -49,17 +52,6 @@ function LoginPage() {
   );
 }
 
-function DashboardPage() {
-  return (
-    <ScreenLayout>
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Tableau de bord</h2>
-        <p className="text-on-surface-muted">Session de caisse en cours...</p>
-      </div>
-    </ScreenLayout>
-  );
-}
-
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   if (!isAuthenticated) return <Navigate to="/login" replace />;
@@ -68,11 +60,14 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export function App() {
   return (
+    <ErrorBoundary>
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/caisse" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/caisse/menu" element={<ProtectedRoute><CaisseMenuPage /></ProtectedRoute>} />
+        <Route path="/caisse/parametres" element={<ProtectedRoute><ParametresPage /></ProtectedRoute>} />
+        <Route path="/caisse/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/caisse/ouverture" element={<ProtectedRoute><SessionOuverturePage /></ProtectedRoute>} />
         <Route path="/caisse/fermeture" element={<ProtectedRoute><SessionFermeturePage /></ProtectedRoute>} />
         <Route path="/caisse/historique" element={<ProtectedRoute><SessionHistoriquePage /></ProtectedRoute>} />
@@ -90,6 +85,8 @@ export function App() {
         <Route path="/caisse/compte/:type" element={<ProtectedRoute><AccountOpsPage /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
