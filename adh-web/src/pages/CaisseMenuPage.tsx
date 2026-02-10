@@ -159,6 +159,22 @@ function buildMenuItems(sessionStatus: 'open' | 'closed'): CaisseMenuItem[] {
       enabled: isOpen,
       requiresOpenSession: true,
     },
+    {
+      action: 'dashboard',
+      label: 'Tableau de bord',
+      icon: 'bar-chart',
+      description: 'Vue d\'ensemble de l\'activite',
+      enabled: true,
+      requiresOpenSession: false,
+    },
+    {
+      action: 'parametres',
+      label: 'Parametres',
+      icon: 'settings',
+      description: 'Configuration caisse et profil',
+      enabled: true,
+      requiresOpenSession: false,
+    },
   ];
 }
 
@@ -169,7 +185,8 @@ const actionRoutes: Record<CaisseMenuAction, string> = {
   historique: '/caisse/historique',
   reimpression: '/caisse/reimpression',
   consultation: '/caisse/historique',
-  parametres: '/caisse/menu',
+  parametres: '/caisse/parametres',
+  dashboard: '/caisse/dashboard',
   vente_gp: '/caisse/vente/GP',
   vente_boutique: '/caisse/vente/Boutique',
   extrait: '/caisse/extrait',

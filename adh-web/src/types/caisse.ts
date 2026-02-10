@@ -41,7 +41,8 @@ export type CaisseMenuAction =
   | 'fusion'
   | 'changement_compte'
   | 'solde_compte'
-  | 'telephone';
+  | 'telephone'
+  | 'dashboard';
 
 export interface CaisseMenuItem {
   action: CaisseMenuAction;

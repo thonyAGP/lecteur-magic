@@ -13,3 +13,5 @@ export * from './clubmedpass';
 export * from './datacatch';
 export * from './separation';
 export * from './fusion';
+export * from './admin';
+export * from './notification';

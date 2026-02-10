@@ -32,3 +32,7 @@ export type { DialogProps, DialogTriggerProps, DialogContentProps } from './Dial
 
 export { Combobox } from './Combobox';
 export type { ComboboxProps, ComboboxOption } from './Combobox';
+
+export { ErrorBoundary } from './ErrorBoundary';
+
+export { Toast, ToastContainer } from './Toast';
