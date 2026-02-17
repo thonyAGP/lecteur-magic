@@ -1,8 +1,8 @@
-﻿# PMS-1359 - Analyse Technique Detaillee
+# PMS-1359 - Analyse Technique Detaillee
 
 > **Jira** : [PMS-1359](https://clubmed.atlassian.net/browse/PMS-1359)
 > **Protocole** : `.claude/protocols/ticket-analysis.md` applique
-> **Date analyse** : 2026-01-22
+> **Date analyse** : 2026-01-22 (v1), 2026-02-17 (v2 - root cause trouvee)
 
 ---
 
@@ -14,362 +14,176 @@
 |---------|--------|
 | **Titre** | Edition Cloture (suite) |
 | **Type** | Story (nouvelle fonctionnalite) |
-| **Statut Jira** | En cours |
+| **Statut Jira** | Resolu (mais bug persistant) |
 | **Priorite** | Basse |
 | **Reporter** | Jessica Palermo |
 | **Assignee** | Anthony Leberre |
 | **Label** | VIL |
 | **Cree le** | 2025-08-26 |
-| **Mis a jour** | 2026-01-22 |
+| **Commit initial** | `9422490b5` (01/10/2025) |
 
-### Description originale (citation)
+### Description originale
 
-> "En se basant sur le ticket il faudrait faire la meme chose afin d'indiquer qu'il y a eu une difference entre le FDR final de la veille et le FDR initial de ce jour."
->
-> "Voici un ex de Tignes : Le 20/08 le coffre 1 ferme avec [IMAGE] et le lendemain il ouvre [IMAGE]. Il faudrait mettre ** sur le document qui arrive ce jour dans la colonne FDR initial afin de prevenir que le montant de fermeture de la veille etait different de celui ci."
->
-> "Il se peut que la case soit vide, il faudra donc avoir quand meme les **"
+> "Il faudrait mettre `**` sur le document qui arrive ce jour dans la colonne FDR initial
+> afin de prevenir que le montant de fermeture de la veille etait different de celui ci.
+> Il se peut que la case soit vide, il faudra donc avoir quand meme les `**`"
 
-### Extraction des indices
+### Retours recette (probleme persistant)
 
-| Indice | Valeur | Interpretation |
-|--------|--------|----------------|
-| Village exemple | Tignes | Village ski avec coffres multiples |
-| Date exemple | 20/08 | Saison ete |
-| Elements cites | COFFRE, RECEPTION | Deux types de postes concernes |
-| Marqueur demande | `**` | Indicateur visuel d'ecart |
-| Cas special | "case vide" | Gerer l'absence de donnees |
+| Date | Commentaire Jessica |
+|------|-------------------|
+| 2025-10-24 | Voit des etoiles sur coffre 2 alors qu'elle a touche la caisse de Nunziato |
+| 2026-02-06 | Screenshots montrant que ca ne fonctionne toujours pas |
+| 2026-02-06 | "Le 4/02 j'etais a 300 EUR de monnaie, j'aurais du voir les etoiles" |
 
 ---
 
-## 2. Localisation Programmes
+## 2. Localisation Programme
 
-### Appel MCP : magic_get_position("VIL", 558)
-
-**Commande executee** :
-```
-magic_get_position(project="VIL", programId=558)
-```
-
-**Resultat** :
 | Parametre | Valeur |
 |-----------|--------|
-| Projet | VIL |
-| Program ID (XML) | 558 |
+| **Projet** | VIL |
 | **Position IDE** | **22** |
 | **Nom** | **Print recap sessions** |
+| **Fichier XML** | Prg_558.xml (ISN=558) |
 
-**Reference complete** : **VIL IDE 22 - Print recap sessions**
+### Arborescence concernee
 
-> **IMPORTANT** : Le fichier source est `Prg_558.xml` (ISN=558) mais dans l'IDE Magic, ce programme apparait en position **22**. Ne JAMAIS confondre ISN et position IDE.
-
-### Appel MCP : magic_get_tree("VIL", 558)
-
-**Commande executee** :
 ```
-magic_get_tree(project="VIL", programId=558)
+VIL IDE 22 - Print recap sessions
+├── 22.16 (ISN_2=18) - Edition
+│   └── 22.16.1 (ISN_2=19) - Reception     ← TACHE PRINCIPALE
+│       └── 22.16.1.1 (ISN_2=56) - Update FDR Precedent  ← LOGIQUE LECTURE
+│           ├── 22.16.1.1.1 (ISN_2=57) - CAISSE v1
+│           └── 22.16.1.1.2 (ISN_2=58) - CAISSE T2H
 ```
-
-**Resultat** : Arborescence de 38 taches sur 5 niveaux (0 a 4).
-
-**Structure complete niveau 1** (16 sous-taches directes) :
-```
-VIL IDE 22 (Main: Print recap sessions)
-├── 22.1  Telecollectes TPE auto v1
-├── 22.2  Telecollectes TPE auto T2H
-├── 22.3  Recap Change vente
-├── 22.4  Update FDR
-├── 22.5  Lecture 18 v1
-├── 22.6  Lecture 18 T2H
-├── 22.7  Lecture Ventes v1
-├── 22.8  Lecture Ventes T2H
-├── 22.9  Telecollectes v1
-├── 22.10 Telecollectes T2H
-├── 22.11 Recap OD
-├── 22.12 Recap Change achat
-├── 22.13 Recap Ecarts
-├── 22.14 Comptage Reception
-├── 22.15 PC Coffre 1
-└── 22.16 Edition  <-- BRANCHE CONCERNEE
-```
-
-**Extrait branche 22.16 (Edition)** :
-```
-22.16 (ISN_2=18) Edition
-└── 22.16.1 (ISN_2=19) Reception
-    ├── 22.16.1.1 (ISN_2=56) Update FDR Precedent  <-- TACHE CLE
-    │   ├── 22.16.1.1.1 (ISN_2=57) CAISSE v1
-    │   └── 22.16.1.1.2 (ISN_2=58) CAISSE T2H
-    └── 22.16.1.1 (ISN_2=20) Telecollecte
-```
-
-### Programmes identifies
-
-| Fichier XML | IDE Verifie | Nom | Role dans le flux |
-|-------------|-------------|-----|-------------------|
-| Prg_558.xml | **VIL IDE 22** | Print recap sessions | Programme principal edition recap |
-
-> **Note methodologique** : Fichier source `Prg_558.xml` (ISN=558) correspond a la position IDE **22** dans l'arborescence VIL.
 
 ---
 
 ## 3. Tables Identifiees
 
-### Appel MCP : magic_get_table (implicite via logic)
-
-| N° Table | Nom physique | Nom logique | Cle | Role |
-|----------|--------------|-------------|-----|------|
-| **246** | caisse_session | histo_sessions_caisse | Key 1 | Sessions principales (dates, chrono, utilisateur) |
-| **249** | caisse_session_detail | histo_sessions_caisse_detail | Key 1, SortType=22 | Details montants (FDR, ecarts) |
-| **471** | comptage_coffre_devise | %club_user%_caisse_coffre_compcais_devise | - | Comptage devises coffre (source principale) |
-
-### Relations entre tables
-
-```
-Table 471 (comptage_coffre_devise)
-    │
-    │ MAIN SOURCE
-    ▼
-┌──────────────────────────────────────────────────┐
-│ Tache 22.16.1.1 - Update FDR Precedent           │
-│                                                   │
-│  LINK → Table 246 (caisse_session)               │
-│         - Filtre: utilisateur, chrono-1, date    │
-│         - Recupere: session precedente           │
-│                                                   │
-│  LINK → Table 249 (caisse_session_detail)        │
-│         - Filtre: utilisateur, chrono-1, type='F'│
-│         - Recupere: montant FDR fermeture        │
-└──────────────────────────────────────────────────┘
-```
+| N° Table | Nom logique | Role |
+|----------|-------------|------|
+| **246** | histo_sessions_caisse | Session J-1 (chrono-1, user, date) |
+| **249** | histo_sessions_caisse_detail | Montant FDR fermeture type='F' |
+| **471** | comptage_coffre_devise | Source principale (comptage) |
+| **594** | temp recap sessions | Table temporaire edition |
 
 ---
 
-## 4. Tracage Flux
+## 4. ROOT CAUSE IDENTIFIEE
 
-### Appel MCP : magic_get_logic("VIL", 558, 56)
+### Expressions creees mais NON BRANCHEES dans le template
 
-**Commande executee** :
-```
-magic_get_logic(project="VIL", programId=558, taskIsn2=56)
-```
+Dans la tache 22.16.1 (Reception), 4 expressions gèrent l'affichage `*`/`**` :
 
-**Resultat** : Tache 22.16.1.1 (ISN_2=56) - "Update FDR Precedent"
+| Expression | Formule | But | Dans MERGE_PARM ? |
+|------------|---------|-----|:------------------:|
+| **33** | `Trim(Str({0,5},{2,4})&IF({0,76},'*',''))` | FDR Final + `*` si ecart ligne | **OUI** |
+| **34** | `Trim(Str({0,5},{2,4})&IF({0,75},'*',''))` | FDR Final + `*` si ecart ligne | **OUI** |
+| **35** | `Trim(Str({0,4},{2,4})&IF({0,78},'**',''))` | FDR Initial + `**` si ecart FDR | **NON** |
+| **36** | `Trim(Str({0,4},{2,4})&IF({0,79},'**',''))` | FDR Initial + `**` si ecart FDR | **NON** |
 
-### Logic Unit 1 : Record Main (Handler M - Level R)
+**Les expressions 33/34 (FDR Final avec `*`) FONCTIONNENT** car elles sont referencees
+dans les MERGE_PARM du template `sessions2.htm`.
 
-**Condition globale** : Expression 89
+**Les expressions 35/36 (FDR Initial avec `**`) NE FONCTIONNENT PAS** car elles ne sont
+referencees NULLE PART dans les MERGE_PARM.
 
-| Ligne | Operation | Details |
-|-------|-----------|---------|
-| 1 | DATAVIEW_SRC | Main source (Table 471), Type=M, Index 3 |
-| 2 | Remark | "On va selectionner l'utilisateur que l'on traite" |
-| 3 | Select | FieldID=1, Column 1, Range=Exp 9 |
-| 4 | Remark | "lecture descending" |
-| 5 | Select | FieldID=2, Column 2, "chrono en cours" |
-| 6 | Select | FieldID=3, Column 7, Range=Exp 1 |
-| 7 | Remark | " " |
-| 8 | **Link** | Table n°246, Key 1, Mode=Read, Direction=Ascending |
-| 9 | Select | FieldID=4, Column 1, Locate=Exp 2 |
-| 10 | Select | FieldID=5, Column 2, "chrono_precedent", Locate=Exp 3 |
-| 11 | Select | FieldID=6, Column 7 |
-| 12 | END_LINK | Fin Link table 246 |
-| 13-14 | Remark | "On remontera ici que l'on a bien trouve une session precedente..." |
-| 15 | **Link** | Table n°249, Key 1, Mode=Read, SortType=22 |
-| 16 | Select | FieldID=7, Column 1, Locate=Exp 2 |
-| 17 | Select | FieldID=8, Column 2, Locate=Exp 3 |
-| 18 | Select | FieldID=9, Column 3 |
-| 19 | Select | FieldID=10, Column 4, Locate=Exp 4 |
-| 20 | Select | FieldID=11, Column 5, Locate=Exp 5 |
-| 21 | Select | FieldID=12, Column 8 |
-| 22 | END_LINK | Fin Link table 249 |
+### MERGE_PARM actuels vs corriges
 
-### Logic Unit 2 : Task Prefix (Handler P - Level T)
+**Form 3 - "Merge Coffre 2"** (ligne 18094 du XML) :
 
-**Condition** : Expression 89
+| Tag HTML | Expression actuelle | Expression correcte |
+|----------|-------------------|-------------------|
+| `FDRICOFFRE2` | `Exp="8"` (somme numerique) | `Exp="35"` (FDR + `**` si ecart) |
+| `FDRCOFFRE2` | `Exp="34"` (FDR Final + `*`) | OK - deja correct |
 
-| Ligne | Operation | Variable | Details |
-|-------|-----------|----------|---------|
-| 2 | **Update** | **EU** (v.FDR fermeture de la veille) | With: Exp 11 = `0` (valeur 0), Forced=Yes |
-| 3 | **Update** | **EV** (v.Session de Fermeture prec exi) | With: Exp 10 = `'FALSE'LOG` (FALSE), Forced=Yes |
+**Form 4 - "Merge Recept."** (ligne 18135 du XML) :
 
-> Ces Update initialisent les variables EU et EV de la tache parente (22.16.1) a des valeurs par defaut.
+| Tag HTML | Expression actuelle | Expression correcte |
+|----------|-------------------|-------------------|
+| `FDRIRECEP2` | `Exp="9"` (valeur brute) | `Exp="36"` (FDR + `**` si ecart) |
+| `FDRRECEP` | `Exp="33"` (FDR Final + `*`) | OK - deja correct |
 
-### Logic Unit 3 : Record Suffix (Handler S - Level R)
+### Variables ecart (correctement implementees)
 
-**Condition** : Expression 89
+| Variable | Column | Nom | Type | Correcte ? |
+|----------|--------|-----|------|:----------:|
+| **EX** | 39 | v.Ecart F.D.R. COFFRE2 | Logical | OUI |
+| **EY** | 40 | v.Ecart F.D.R. RECEPTION ? | Logical | OUI |
+| **EU** | 41 | v.FDR fermeture de la veille | Numeric | OUI |
+| **EV** | 42 | v.Session de Fermeture prec exi | Logical | OUI |
 
-| Ligne | Operation | Condition/Details |
-|-------|-----------|-------------------|
-| 5 | **Block IF** | Exp 6 : `FJ<>0` → `montant <> 0` |
-| 6 | **Call SubTask** | 1 = CAISSE v1, Cnd Exp 7 : `NOT VG.Hostname` |
-| 7 | **Call SubTask** | 2 = CAISSE T2H, Cnd Exp 8 : `VG.Hostname` |
-| 9 | **Block End** | `}` |
+La logique de lecture J-1 (tache 22.16.1.1) et les flags ecart sont corrects.
+Seul le branchement dans le template d'impression manque.
 
-### Diagramme du flux complet
+---
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│ VIL IDE 22 - Print recap sessions                                        │
-│ Programme principal d'edition des recapitulatifs de sessions             │
-└───────────────────────────────────┬─────────────────────────────────────┘
-                                    │
-                    ... (15 autres sous-taches) ...
-                                    │
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│ Tache 22.16 (ISN_2=18) - Edition                                         │
-│ Sous-tache gerant la partie edition du recap                             │
-└───────────────────────────────────┬─────────────────────────────────────┘
-                                    │ CallTask
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│ Tache 22.16.1 (ISN_2=19) - Reception                                     │
-│                                                                          │
-│ VARIABLES FDR DEFINIES ICI :                                             │
-│   - Col 18 : v.total FDR Init (Numeric 11.3)                            │
-│   - Col 19 : v.total FDR Final (Numeric 11.3)                           │
-│   - Col 39 : v.Ecart F.D.R. COFFRE2 (Logical)                           │
-│   - Col 40 : v.Ecart F.D.R. RECEPTION ? (Logical)                       │
-│   - Col 41 : v.FDR fermeture de la veille (Numeric 11.3)                │
-│   - Col 42 : v.Session de Fermeture prec exi (Logical)                  │
-└───────────────────────────────────┬─────────────────────────────────────┘
-                                    │ CallTask
-                                    ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│ Tache 22.16.1.1 (ISN_2=56) - Update FDR Precedent                        │
-│ ══════════════════════════════════════════════════                       │
-│                                                                          │
-│ RECORD MAIN :                                                            │
-│   Source: Table 471 (comptage_coffre_devise)                            │
-│   Link → Table 246 (caisse_session) : chrono_precedent                  │
-│   Link → Table 249 (caisse_session_detail) : montant FDR                │
-│                                                                          │
-│ TASK PREFIX :                                                            │
-│   Update FieldID 81 ← Expression 11                                      │
-│   Update FieldID 82 ← Expression 10                                      │
-│                                                                          │
-│ RECORD SUFFIX :                                                          │
-│   IF (Exp 6) THEN                                                        │
-│     CallTask 57 si NOT VG.25 (CAISSE v1)                                │
-│     CallTask 58 si NOT VG.39 (CAISSE T2H)                               │
-│   END IF                                                                 │
-└───────────────────────────────────┬─────────────────────────────────────┘
-                          ┌─────────┴─────────┐
-                          ▼                   ▼
-            ┌─────────────────────┐ ┌─────────────────────┐
-            │ Tache 22.16.1.1.1   │ │ Tache 22.16.1.1.2   │
-            │ (ISN_2=57)          │ │ (ISN_2=58)          │
-            │ CAISSE v1           │ │ CAISSE T2H          │
-            └─────────────────────┘ └─────────────────────┘
+## 5. Fix Propose
+
+### Modification XML dans Prg_558.xml
+
+**Fix 1 - Form "Merge Coffre 2" (ligne 18094)** :
+
+```xml
+<!-- AVANT -->
+<MERGE_PARM Exp="8" PIC_U="30" TXT_U="FDRICOFFRE2" id="10"/>
+<!-- APRES -->
+<MERGE_PARM Exp="35" PIC_U="30" TXT_U="FDRICOFFRE2" id="10"/>
 ```
 
----
+**Fix 2 - Form "Merge Recept." (ligne 18135)** :
 
-## 5. Analyse Expressions
+```xml
+<!-- AVANT -->
+<MERGE_PARM Exp="9" PIC_U="30" TXT_U="FDRIRECEP2" id="54"/>
+<!-- APRES -->
+<MERGE_PARM Exp="36" PIC_U="30" TXT_U="FDRIRECEP2" id="54"/>
+```
 
-### Expressions de la tache 22.16.1.1 (ISN_2=56)
+### Points a verifier
 
-| # | Formule (variables) | Formule (traduction) | Type | Description |
-|---|---------------------|----------------------|------|-------------|
-| 1 | `CA` | `p.Date Comptable` | Date | Date comptable du Main niveau 3 |
-| 2 | `EZ` | `utilisateur` | Unicode | Utilisateur courant |
-| 3 | `FA-1` | `chrono_en_cours - 1` | Numeric | Chrono session precedente |
-| 4 | `'F'` | `'F'` (Fermeture) | Alpha | Constante type fermeture |
-| 5 | `'F'` | `'F'` (Fermeture) | Alpha | Constante type fermeture |
-| 6 | `FJ<>0` | `montant <> 0` | Boolean | Donnees FDR trouvees |
-| 7 | `NOT VG.Hostname` | `NOT (VG.Hostname au lieu de...)` | Boolean | Condition CAISSE v1 |
-| 8 | `VG.Hostname` | `VG.Hostname au lieu de...` | Boolean | Condition CAISSE T2H |
-| 9 | `IF(Trim(DI)='COFFRE 2'...)` | `IF(type_utilisateur='COFFRE 2'...)` | Alpha | Formatage conditionnel |
-| 10 | `'FALSE'LOG` | `FALSE` (valeur logique) | Boolean | Constante FALSE |
-| 11 | `0` | `0` (valeur numerique) | Numeric | Constante 0 |
+1. **Expression 8 vs 35** : Verifier que Expression 35 produit bien la meme valeur
+   FDR Initial que Expression 8, en plus du `**`. Si Exp 8 fait un calcul different
+   (somme), il faudra peut-etre garder Exp 8 pour d'autres tags et ajouter un
+   NOUVEAU MERGE_PARM avec Exp 35.
 
-### Variables de la tache 22.16.1.1 (Update FDR Precedent)
+2. **Croisement coffres** : Jessica voit des etoiles sur coffre 2 quand elle touche
+   une autre caisse. A verifier si le filtre utilisateur dans la tache 22.16.1.1
+   (Expression 9 = `IF(Trim(DI)='COFFRE 2'...)`) est correct.
 
-**Main Source (Table 471)** :
-| Variable | Nom | Type |
-|----------|-----|------|
-| **EZ** | utilisateur | Unicode |
-| **FA** | chrono en cours | Numeric |
-| **FB** | date_comptable | Date |
-
-**Link Table 246 (histo_sessions_caisse)** :
-| Variable | Nom | Type |
-|----------|-----|------|
-| **FC** | utilisateur | Unicode |
-| **FD** | chrono_precedent | Numeric |
-| **FE** | date_comptable | Date |
-
-**Link Table 249 (histo_sessions_caisse_detail)** :
-| Variable | Nom | Type |
-|----------|-----|------|
-| **FF** | utilisateur | Unicode |
-| **FG** | chrono_session | Numeric |
-| **FH** | chrono_detail | Numeric |
-| **FI** | type | Unicode |
-| **FJ** | montant | Numeric |
-
-> **Note** : L'expression 6 utilise `FJ<>0` soit `montant <> 0` pour verifier qu'on a trouve des donnees FDR.
-
-### Variables parentes utilisees dans les expressions
-
-| Variable | Niveau | Nom | Tache source |
-|----------|--------|-----|--------------|
-| **CA** | 3 | p.Date Comptable | Main (22) |
-| **CB** | 3 | (chrono ou valeur) | Main (22) |
-| **DI** | 1 | type coffre | Reception (22.16.1) |
-| **BE** | VG | variable globale | Main VIL |
-
-### Variables FDR dans la tache parente 22.16.1 (ISN_2=19) - Reception
-
-> Ces variables sont visibles dans la capture d'ecran de l'IDE Magic (colonnes EU et EV mises a jour en Task Prefix).
-
-| Variable | Nom | Type | Role |
-|----------|-----|------|------|
-| **ET** | v.total FDR Init | Numeric | FDR initial du jour courant |
-| **EU** | v.FDR fermeture de la veille | Numeric | Montant FDR cloture J-1 |
-| **EV** | v.Session de Fermeture prec exi | Logical | TRUE si session J-1 existe |
-| **EW** | v.total FDR Final | Numeric | FDR final du jour courant |
-| **EX** | v.Ecart F.D.R. COFFRE2 | Logical | TRUE si ecart detecte sur COFFRE2 |
-| **EY** | v.Ecart F.D.R. RECEPTION ? | Logical | TRUE si ecart detecte sur RECEPTION |
+3. **Cas "case vide"** : Si FDR Initial = 0 (case vide), verifier que les expressions
+   35/36 affichent quand meme `**` si ecart. `Str(0, picture)` pourrait retourner
+   une chaine vide ou "0" — `Trim("0**")` vs `Trim("**")`.
 
 ---
 
-## 6. Verification Implementation
+## 6. Tests de Recette
 
-### Elements demandes vs implementes
-
-| Element demande | Implemente ? | Preuve | Localisation |
-|-----------------|--------------|--------|--------------|
-| Stocker FDR veille | OUI | Variable `v.FDR fermeture de la veille` | Col 41, Tache 22.16.1 |
-| Detecter session precedente | OUI | Variable `v.Session de Fermeture prec exi` | Col 42, Tache 22.16.1 |
-| Flag ecart COFFRE2 | OUI | Variable `v.Ecart F.D.R. COFFRE2` | Col 39, Tache 22.16.1 |
-| Flag ecart RECEPTION | OUI | Variable `v.Ecart F.D.R. RECEPTION ?` | Col 40, Tache 22.16.1 |
-| Lecture session J-1 | OUI | Link Table 246 avec chrono-1 | Tache 22.16.1.1 ligne 8-12 |
-| Lecture montant FDR | OUI | Link Table 249 avec type='F' | Tache 22.16.1.1 ligne 15-22 |
-
-### Commit reference
-
-- **Hash** : `9422490b5`
-- **Date** : 01/10/2025
-- **Auteur** : (non disponible)
+| # | Scenario | Resultat attendu |
+|---|----------|------------------|
+| 1 | FDR Initial = FDR Fermeture veille | Pas de `**` sur FDRI |
+| 2 | FDR Initial != FDR Fermeture veille | `**` affiche apres le montant |
+| 3 | FDR Initial vide, fermeture veille existante | `**` affiche (case "vide") |
+| 4 | Premiere session (pas de J-1) | Pas de `**` |
+| 5 | COFFRE2 modifie, RECEPTION non | `**` uniquement sur ligne COFFRE2 |
+| 6 | RECEPTION modifie, COFFRE2 non | `**` uniquement sur ligne RECEPTION |
+| 7 | Multi-sessions meme jour | Verifier chrono correct |
 
 ---
 
-## 7. Checklist Validation Protocole
+## 7. Checklist Validation
 
-- [x] Tous les programmes ont un IDE verifie par `magic_get_position`
-- [x] Les tables sont identifiees avec leurs numeros
-- [x] Au moins une expression est decodee avec formule lisible
-- [x] La localisation identifie : Programme + Tache + Ligne
-- [x] Le diagramme de flux ASCII est present
-- [x] Les deux index.json sont a jour
-
----
-
-*Analyse realisee le 2026-01-22*
-*Protocole : ticket-analysis.md v1.0*
+- [x] Programme identifie avec position IDE verifiee
+- [x] Tables identifiees avec numeros
+- [x] Expressions decodees avec formules lisibles
+- [x] Root cause documentee avec localisation exacte
+- [x] Diagramme flux present
+- [x] Fix propose avec lignes XML exactes
+- [x] Tests de recette definis
 
 ---
 
-*DerniÃ¨re mise Ã  jour : 2026-01-22T18:55*
+*Analyse v1 : 2026-01-22 (structure + variables)*
+*Analyse v2 : 2026-02-17 (root cause : MERGE_PARM non branches)*

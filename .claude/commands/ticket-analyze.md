@@ -42,6 +42,45 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "tools/scripts/ticket-doc-ge
 powershell -NoProfile -ExecutionPolicy Bypass -File ".claude/scripts/jira-download-attachments.ps1" -IssueKey "$ARGUMENTS"
 ```
 
+## Phase 1.5 : VALIDATION COMPREHENSION (OBLIGATOIRE)
+
+> **STOP** - Ne JAMAIS passer a l'analyse technique sans avoir valide la comprehension du ticket avec l'utilisateur.
+
+### 1.5.1 Reformuler et questionner
+
+Apres lecture du ticket Jira, TOUJOURS :
+1. **Reformuler** le probleme en 3-4 phrases simples
+2. **Identifier** les zones d'ombre (ce qui n'est pas explicite)
+3. **Poser des questions** via `AskUserQuestion` avec choix multiples
+
+### 1.5.2 Questions type a poser
+
+Utiliser `AskUserQuestion` avec 2-4 questions couvrant :
+
+| Categorie | Exemple de question |
+|-----------|-------------------|
+| **Statut reel** | Le ticket est-il resolu, en cours, ou bug persistant ? |
+| **Document/Ecran** | Quel ecran ou edition est concerne ? |
+| **Logique metier** | Quelle est la comparaison exacte attendue ? |
+| **Programmes connus** | Connais-tu les programmes Magic impliques ? |
+
+**Options** : Toujours inclure des choix concrets + l'option "Autre" (automatique).
+**multiSelect** : Activer quand les reponses ne sont pas mutuellement exclusives.
+
+### 1.5.3 Deuxieme passe (si necessaire)
+
+Apres les reponses :
+- Si des zones d'ombre persistent → poser 1-2 questions supplementaires
+- Si l'utilisateur a fourni des indices (commits, programmes, branches) → les exploiter AVANT l'analyse MCP
+- Si tout est clair → passer a Phase 2
+
+### 1.5.4 Recherche prealable
+
+Avant l'analyse MCP en profondeur :
+1. Chercher dans le repo Git les commits lies au ticket (`git log --grep="TICKET-KEY"`)
+2. Lire les analyses existantes (`.openspec/tickets/TICKET-KEY/`)
+3. Identifier ce qui a DEJA ete fait vs ce qui reste a investiguer
+
 ## Phase 2 : LOCALISATION Programmes
 
 ### 2.1 Utiliser les indices extraits automatiquement
