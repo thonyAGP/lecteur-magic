@@ -1,4 +1,4 @@
-﻿# PMS-1359 - Resolution
+# PMS-1359 - Resolution
 
 > **Jira** : [PMS-1359](https://clubmed.atlassian.net/browse/PMS-1359)
 
@@ -6,87 +6,64 @@
 
 ## Diagnostic
 
-### Type de ticket
-
 | Critere | Valeur |
 |---------|--------|
-| **Type** | Story (nouvelle fonctionnalite) |
-| **Ce n'est PAS** | Un bug a corriger |
-| **Objectif** | Ajouter un indicateur visuel (`**`) sur l'edition de cloture |
+| **Type** | Bug d'implementation (cablage manquant) |
+| **Severite** | Moyenne - fonctionnalite implementee a moitie |
+| **Programme** | VIL IDE 22 - Print recap sessions |
+| **Tache** | 22.16.1 (ISN_2=19) - Reception |
 
-### Besoin metier
+### Root Cause
 
-Les responsables de village veulent etre alertes quand le FDR (Fond De Roulement) d'ouverture du jour est different du FDR de fermeture de la veille.
+Les expressions 35 et 36 qui ajoutent `**` au FDR Initial quand il y a un ecart
+avec la fermeture de la veille **existent dans le code** mais ne sont **pas referencees**
+dans les MERGE_PARM des formulaires d'impression HTML (`sessions2.htm`).
 
-**Scenario concret** :
-1. **J (20/08)** : Le coffre 1 ferme avec FDR = 1000 EUR
-2. **J+1 (21/08)** : Le coffre 1 ouvre avec FDR = 900 EUR (quelqu'un a pris 100 EUR)
-3. **Attendu** : L'edition de cloture du 21/08 affiche `**` pour alerter
+Les tags HTML `FDRICOFFRE2` et `FDRIRECEP2` utilisent encore les anciennes expressions
+(8 et 9) qui affichent juste la valeur numerique sans indicateur `**`.
 
-### Cas particulier
+### Chronologie du bug
 
-- Si la "case est vide" (pas de donnees), afficher quand meme `**` si applicable.
-
----
-
-## Conclusion
-
-### Statut implementation
-
-| Element | Statut |
-|---------|--------|
-| **Logique Magic** | IMPLEMENTE |
-| **Variables creees** | 6 variables FDR dans Tache 22.16.1 |
-| **Lecture J-1** | IMPLEMENTE via Link Table 246/249 |
-| **Flags ecart** | IMPLEMENTE (COFFRE2 et RECEPTION) |
-| **Commit** | `9422490b5` (01/10/2025) |
-
-### Ce qui a ete implemente
-
-| Fonctionnalite | Variable | Status |
-|----------------|----------|--------|
-| Stocker FDR fermeture veille | `v.FDR fermeture de la veille` | OK |
-| Detecter si session J-1 existe | `v.Session de Fermeture prec exi` | OK |
-| Flag ecart COFFRE2 | `v.Ecart F.D.R. COFFRE2` | OK |
-| Flag ecart RECEPTION | `v.Ecart F.D.R. RECEPTION ?` | OK |
+1. **01/10/2025** : Commit `9422490b5` — creation expressions 35/36 + variables ecart
+2. **01/10/2025** : Oubli de brancher Exp 35/36 dans les MERGE_PARM
+3. **24/10/2025** : Jessica teste et signale que ca ne marche pas
+4. **06/02/2026** : Jessica confirme que ca ne fonctionne toujours pas
 
 ---
 
-## Tests de recette recommandes
+## Fix
 
-| # | Scenario | Donnees | Resultat attendu |
-|---|----------|---------|------------------|
-| 1 | FDR identique | J: FDR=1000, J+1: FDR=1000 | Pas de `**` |
-| 2 | FDR different | J: FDR=1000, J+1: FDR=900 | `**` affiche |
-| 3 | Premiere session | Pas de J-1 | Comportement a definir |
-| 4 | COFFRE2 uniquement | Ecart sur COFFRE2 seulement | `**` sur ligne COFFRE2 |
-| 5 | RECEPTION uniquement | Ecart sur RECEPTION seulement | `**` sur ligne RECEPTION |
-| 6 | Case vide avec ecart | J: FDR=100, J+1: vide | `**` affiche |
+### 2 lignes a modifier dans Prg_558.xml
 
----
+**1. MERGE_PARM FDRICOFFRE2 (Form "Merge Coffre 2")** :
 
-## Points de vigilance
+```xml
+<!-- Ligne 18094 - changer Exp="8" en Exp="35" -->
+<MERGE_PARM Exp="35" PIC_U="30" TXT_U="FDRICOFFRE2" id="10"/>
+```
 
-### A verifier lors de la recette
+**2. MERGE_PARM FDRIRECEP2 (Form "Merge Recept.")** :
 
-1. **Affichage du `**`** : Les flags logiques (`v.Ecart F.D.R. COFFRE2`, `v.Ecart F.D.R. RECEPTION ?`) sont-ils bien utilises dans la partie Forms/Output de l'edition ?
+```xml
+<!-- Ligne 18135 - changer Exp="9" en Exp="36" -->
+<MERGE_PARM Exp="36" PIC_U="30" TXT_U="FDRIRECEP2" id="54"/>
+```
 
-2. **Cas "case vide"** : Si `v.Session de Fermeture prec exi` = FALSE, quel comportement ? La spec Jira dit "il faudra donc avoir quand meme les **" mais la condition exacte n'est pas claire.
+### Verification pre-fix
 
-3. **Multi-coffres** : Le village Tignes a plusieurs coffres. Verifier que chaque coffre est traite independamment.
+Avant d'appliquer, verifier dans l'IDE Magic :
+1. Que Expression 35 retourne bien le FDR Initial formate (pas juste `**`)
+2. Que Expression 8 n'est pas utilisee par d'autres MERGE_PARM pour d'autres valeurs
+3. Que le PIC_U="30" est compatible (Expression 35 retourne du Alpha, PIC_U "30" = 30 chars)
 
 ---
 
 ## Decision
 
-**STATUT FINAL** : `IMPLEMENTE - EN ATTENTE RECETTE`
+**STATUT** : `BUG CONFIRME - FIX IDENTIFIE`
 
-L'implementation cote Magic est terminee. Le ticket peut passer en recette fonctionnelle pour validation par le metier.
-
----
-
-*Resolution documentee le 2026-01-22*
+Fix minimal : 2 attributs a changer dans les MERGE_PARM.
 
 ---
 
-*DerniÃ¨re mise Ã  jour : 2026-01-22T18:55*
+*Resolution documentee le 2026-02-17*
