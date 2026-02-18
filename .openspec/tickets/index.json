@@ -163,11 +163,12 @@
                          },
                          {
                              "hasLocalData":  true,
-                             "status":  "en-cours",
+                             "status":  "analyse-complete",
                              "key":  "PMS-1479",
                              "summary":  "Taxe sejour libelle Caisse au lieu de TAXE DE SEJOUR - Bug ecriture OD",
                              "lastAnalysis":  "2026-02-17",
-                             "program":  "ADH IDE 61/105",
+                             "program":  "ADH IDE 247 (DEVERSEMENT) + Vente GP",
+                             "rootCause":  "Vente ecrit service label au lieu de description OD dans col 6 source, DEVERSEMENT copie fidelement",
                              "createdDate":  "2026-02-04"
                          }
                      ],
