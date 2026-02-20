@@ -21,6 +21,7 @@ import { runMigration, getMigrateStatus, createBatch } from '../migrate/migrate-
 import { DEFAULT_PHASE_MODELS } from '../migrate/migrate-types.js';
 import type { MigrateConfig, MigratePhase } from '../migrate/migrate-types.js';
 import { configureClaudeMode } from '../migrate/migrate-claude.js';
+import { startMigration, addMigrateEvent, endMigration, getMigrateActiveState } from './migrate-state.js';
 
 export interface RouteContext {
   projectDir: string;
@@ -349,17 +350,27 @@ export const handleMigrateStream = async (
   };
 
   const sse = createSSEStream(res);
-  migrateConfig.onEvent = (event) => sse.send(event);
 
-  sse.send({ type: 'migrate_started', batch: batchId, programs: programIds.length, targetDir, dryRun, mode: claudeMode });
+  // Buffer events for dashboard reconnection after page refresh
+  startMigration(batchId, programIds.length, targetDir, claudeMode, dryRun);
+
+  const bufferedSend = (event: unknown) => {
+    addMigrateEvent(event);
+    sse.send(event);
+  };
+
+  migrateConfig.onEvent = (event) => bufferedSend(event);
+
+  bufferedSend({ type: 'migrate_started', batch: batchId, programs: programIds.length, targetDir, dryRun, mode: claudeMode });
 
   try {
     const result = await runMigration(programIds, batchId, batchName, migrateConfig);
-    sse.send({ type: 'migrate_result', data: result });
+    bufferedSend({ type: 'migrate_result', data: result });
   } catch (err) {
-    sse.send({ type: 'error', message: String(err) });
+    bufferedSend({ type: 'error', message: String(err) });
   }
 
+  endMigration();
   sse.close();
 };
 
@@ -407,4 +418,8 @@ export const handleMigrateBatchCreate = (
   } catch (err) {
     json(res, { error: err instanceof Error ? err.message : String(err) }, 400);
   }
+};
+
+export const handleMigrateActive = (_ctx: RouteContext, res: ServerResponse): void => {
+  json(res, getMigrateActiveState());
 };

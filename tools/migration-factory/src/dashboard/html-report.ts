@@ -1572,7 +1572,58 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     };
   });
 
-  // Migrate Module (Streaming SSE)
+  // ─── Shared helpers ────────────────────────────────────────────
+  function formatElapsed(ms) {
+    var totalSec = Math.floor(ms / 1000);
+    var h = Math.floor(totalSec / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var s = totalSec % 60;
+    if (h > 0) return h + 'h ' + m + 'm ' + s + 's';
+    if (m > 0) return m + 'm ' + s + 's';
+    return s + 's';
+  }
+
+  function showMigratePanel(title) {
+    panelTitle.textContent = title;
+    panelContent.innerHTML = '<div class="pipeline-progress">'
+      + '<div class="progress-bar"><div class="progress-fill" id="mbar"></div></div>'
+      + '<div class="p-status" id="mstatus">Connecting...</div>'
+      + '<div class="p-elapsed" id="melapsed" style="font-size:12px;color:#8b949e;margin:4px 0;"></div>'
+      + '<div class="p-log" id="mlog"></div></div>';
+    panel.classList.add('visible');
+  }
+
+  function startElapsedTimer(startedAt) {
+    var elDiv = document.getElementById('melapsed');
+    if (!elDiv) return 0;
+    var tid = setInterval(function() {
+      var el = document.getElementById('melapsed');
+      if (!el) { clearInterval(tid); return; }
+      el.textContent = 'Elapsed: ' + formatElapsed(Date.now() - startedAt);
+    }, 1000);
+    elDiv.textContent = 'Elapsed: ' + formatElapsed(Date.now() - startedAt);
+    return tid;
+  }
+
+  function addMLog(text) {
+    var mlog = document.getElementById('mlog');
+    if (!mlog) return;
+    var line = document.createElement('div');
+    line.textContent = text;
+    mlog.appendChild(line);
+    mlog.scrollTop = mlog.scrollHeight;
+  }
+
+  function updateMigrateProgress(done, total) {
+    var mbar = document.getElementById('mbar');
+    var mstatus = document.getElementById('mstatus');
+    if (!mbar || !mstatus) return;
+    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    mbar.style.width = pct + '%';
+    mstatus.textContent = done + '/' + total + ' (' + pct + '%)';
+  }
+
+  // ─── Migrate Module (Streaming SSE) ──────────────────────────
   btnMigrate.addEventListener('click', function() {
     var batch = batchSelect.value;
     if (!batch) { showPanel('Error', 'Select a batch first'); return; }
@@ -1591,25 +1642,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       + '&parallel=' + parallelCount
       + '&mode=' + claudeMode;
 
-    panelTitle.textContent = 'Migrate: ' + batch + ' [' + claudeMode.toUpperCase() + ']' + (dryRun ? ' (DRY-RUN)' : '');
-    panelContent.innerHTML = '<div class="pipeline-progress">'
-      + '<div class="progress-bar"><div class="progress-fill" id="mbar"></div></div>'
-      + '<div class="p-status" id="mstatus">Connecting...</div>'
-      + '<div class="p-log" id="mlog"></div></div>';
-    panel.classList.add('visible');
-
-    var mbar = document.getElementById('mbar');
-    var mstatus = document.getElementById('mstatus');
-    var mlog = document.getElementById('mlog');
+    showMigratePanel('Migrate: ' + batch + ' [' + claudeMode.toUpperCase() + ']' + (dryRun ? ' (DRY-RUN)' : ''));
+    var migrationStart = Date.now();
+    var elapsedTid = startElapsedTimer(migrationStart);
     var totalProgs = 0;
     var doneProgs = 0;
-
-    function addMLog(text) {
-      var line = document.createElement('div');
-      line.textContent = text;
-      mlog.appendChild(line);
-      mlog.scrollTop = mlog.scrollHeight;
-    }
 
     var es = new EventSource(url);
     es.onmessage = function(ev) {
@@ -1617,40 +1654,45 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
 
       if (msg.type === 'migrate_started') {
         totalProgs = msg.programs;
-        mstatus.textContent = 'Starting migration: ' + totalProgs + ' programs -> ' + msg.targetDir;
+        document.getElementById('mstatus').textContent = 'Starting migration: ' + totalProgs + ' programs -> ' + msg.targetDir;
         addMLog('Migration started: ' + totalProgs + ' programs');
         return;
       }
 
       if (msg.type === 'stream_end') {
         es.close();
+        clearInterval(elapsedTid);
         setLoading(btnMigrate, false);
         return;
       }
 
       if (msg.type === 'migrate_result') {
         var r = msg.data;
-        mbar.style.width = '100%';
-        mstatus.textContent = 'Done: ' + r.summary.completed + '/' + r.summary.total
+        clearInterval(elapsedTid);
+        var mbar = document.getElementById('mbar');
+        var mstatus = document.getElementById('mstatus');
+        if (mbar) mbar.style.width = '100%';
+        if (mstatus) mstatus.textContent = 'Done: ' + r.summary.completed + '/' + r.summary.total
           + ' completed, ' + r.summary.totalFiles + ' files, '
           + (r.summary.tscClean ? 'TSC clean' : 'TSC errors') + ', '
           + (r.summary.testsPass ? 'tests pass' : 'tests fail')
           + ', coverage ' + r.summary.reviewAvgCoverage + '%';
+        var melapsed = document.getElementById('melapsed');
+        if (melapsed) melapsed.textContent = 'Total: ' + formatElapsed(Date.now() - migrationStart);
         addMLog('Migration completed');
         return;
       }
 
       if (msg.type === 'error') {
         addMLog('ERROR: ' + (msg.message || ''));
-        mstatus.textContent = 'Error: ' + (msg.message || '');
+        var mstatus = document.getElementById('mstatus');
+        if (mstatus) mstatus.textContent = 'Error: ' + (msg.message || '');
         return;
       }
 
       if (msg.type === 'program_completed' || msg.type === 'program_failed') {
         doneProgs++;
-        var pct = totalProgs > 0 ? Math.round((doneProgs / totalProgs) * 100) : 0;
-        mbar.style.width = pct + '%';
-        mstatus.textContent = doneProgs + '/' + totalProgs + ' (' + pct + '%)';
+        updateMigrateProgress(doneProgs, totalProgs);
       }
 
       addMLog('[' + (msg.phase || '') + '] ' + (msg.message || msg.type));
@@ -1658,10 +1700,64 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
 
     es.onerror = function() {
       es.close();
+      clearInterval(elapsedTid);
       setLoading(btnMigrate, false);
       addMLog('Connection lost');
-      mstatus.textContent = 'Connection lost - check server';
+      var mstatus = document.getElementById('mstatus');
+      if (mstatus) mstatus.textContent = 'Connection lost - check server';
     };
   });
+
+  // ─── Reconnect on page load if migration is active ───────────
+  fetch('/api/migrate/active').then(function(r) { return r.json(); }).then(function(state) {
+    if (!state.running && state.events.length === 0) return;
+
+    var isDone = !state.running;
+    showMigratePanel('Migrate: ' + state.batch + ' [' + state.mode.toUpperCase() + ']' + (state.dryRun ? ' (DRY-RUN)' : ''));
+    setLoading(btnMigrate, !isDone);
+
+    // Replay buffered events
+    state.events.forEach(function(msg) {
+      addMLog('[' + (msg.phase || msg.type || '') + '] ' + (msg.message || msg.type || ''));
+    });
+
+    updateMigrateProgress(state.completedPrograms, state.totalPrograms);
+
+    if (isDone) {
+      var melapsed = document.getElementById('melapsed');
+      if (melapsed) melapsed.textContent = 'Completed';
+      return;
+    }
+
+    // Live elapsed timer
+    var elapsedTid = startElapsedTimer(state.startedAt);
+    var lastEventCount = state.events.length;
+
+    // Poll for updates every 3s
+    var pollTid = setInterval(function() {
+      fetch('/api/migrate/active').then(function(r) { return r.json(); }).then(function(s) {
+        // Append new events
+        for (var i = lastEventCount; i < s.events.length; i++) {
+          var evt = s.events[i];
+          addMLog('[' + (evt.phase || evt.type || '') + '] ' + (evt.message || evt.type || ''));
+        }
+        lastEventCount = s.events.length;
+
+        updateMigrateProgress(s.completedPrograms, s.totalPrograms);
+
+        if (!s.running) {
+          clearInterval(pollTid);
+          clearInterval(elapsedTid);
+          setLoading(btnMigrate, false);
+          var melapsed = document.getElementById('melapsed');
+          if (melapsed) melapsed.textContent = 'Total: ' + formatElapsed(Date.now() - s.startedAt);
+          var mstatus = document.getElementById('mstatus');
+          if (mstatus) mstatus.textContent = 'Migration completed - ' + s.completedPrograms + '/' + s.totalPrograms;
+          var mbar = document.getElementById('mbar');
+          if (mbar) mbar.style.width = '100%';
+        }
+      });
+    }, 3000);
+  }).catch(function() { /* server may not support this endpoint yet */ });
 })();
 `;
