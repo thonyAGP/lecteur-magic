@@ -11,10 +11,11 @@ import path from 'node:path';
 import {
   json, handleStatus, handleGaps, handlePreflight, handlePipelineRun, handlePipelineStream,
   handleVerify, handleProjects, handleCalibrate, handleGenerate, handleGenerateStream,
-  handleMigrateStream, handleMigrateStatus, handleMigrateBatchCreate,
+  handleMigrateStream, handleMigrateStatus, handleMigrateBatchCreate, handleMigrateActive,
 } from './api-routes.js';
 import type { RouteContext } from './api-routes.js';
 import { generateServerDashboard } from './dashboard-html.js';
+import { endMigration } from './migrate-state.js';
 
 export interface ActionServerConfig {
   port: number;
@@ -122,7 +123,10 @@ export const startActionServer = async (config: ActionServerConfig): Promise<htt
           await handleMigrateStream(ctx, url.searchParams, res);
         } finally {
           pipelineRunning = false;
+          endMigration();
         }
+      } else if (pathname === '/api/migrate/active' && req.method === 'GET') {
+        handleMigrateActive(ctx, res);
       } else if (pathname === '/api/migrate/status' && req.method === 'GET') {
         handleMigrateStatus(ctx, res);
       } else if (pathname === '/api/migrate/batch' && req.method === 'POST') {
