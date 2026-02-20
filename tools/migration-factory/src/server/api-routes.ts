@@ -282,16 +282,19 @@ export const handleMigrateStream = async (
 ): Promise<void> => {
   const batch = query.get('batch');
   const programs = query.get('programs');
-  const targetDir = query.get('targetDir');
+  const rawTargetDir = query.get('targetDir');
   const dryRun = query.get('dryRun') === 'true';
   const parallel = Number(query.get('parallel') ?? '1');
   const maxPasses = Number(query.get('maxPasses') ?? '5');
   const model = query.get('model') ?? 'sonnet';
 
-  if (!targetDir) {
+  if (!rawTargetDir) {
     json(res, { error: 'Missing targetDir parameter' }, 400);
     return;
   }
+
+  // Resolve relative paths against project dir
+  const targetDir = path.isAbsolute(rawTargetDir) ? rawTargetDir : path.resolve(ctx.projectDir, rawTargetDir);
 
   const config = resolveConfig(ctx);
   const trackerFile = path.join(config.migrationDir, config.contractSubDir, 'tracker.json');
