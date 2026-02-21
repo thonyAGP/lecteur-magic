@@ -253,6 +253,7 @@ const runProgramGeneration = async (
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating spec`, { phase: MP.SPEC, programId });
       const specResult = await runSpecPhase(programId, config);
       completePhase(prog, MP.SPEC, { file: specResult.specFile, duration: specResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: spec done`, { phase: MP.SPEC, programId });
       if (!specResult.skipped) files.push(specResult.specFile);
       saveMigrateTracker(trackerFile, migrateData);
     }
@@ -263,6 +264,7 @@ const runProgramGeneration = async (
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating contract`, { phase: MP.CONTRACT, programId });
       const contractResult = runContractPhase(programId, config);
       completePhase(prog, MP.CONTRACT, { file: contractResult.contractFile, duration: contractResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: contract done`, { phase: MP.CONTRACT, programId });
       saveMigrateTracker(trackerFile, migrateData);
     }
 
@@ -300,8 +302,10 @@ const runProgramGeneration = async (
     // Phase 3: TYPES
     if (!isPhaseCompleted(prog, MP.TYPES)) {
       startPhase(prog, MP.TYPES);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating types`, { phase: MP.TYPES, programId });
       const typesResult = await runTypesPhase(programId, analysis, config);
       completePhase(prog, MP.TYPES, { file: typesResult.file, duration: typesResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: types done`, { phase: MP.TYPES, programId });
       if (!typesResult.skipped) files.push(typesResult.file);
       saveMigrateTracker(trackerFile, migrateData);
     }
@@ -309,8 +313,10 @@ const runProgramGeneration = async (
     // Phase 4: STORE
     if (!isPhaseCompleted(prog, MP.STORE)) {
       startPhase(prog, MP.STORE);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating store`, { phase: MP.STORE, programId });
       const storeResult = await runStorePhase(programId, analysis, config);
       completePhase(prog, MP.STORE, { file: storeResult.file, duration: storeResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: store done`, { phase: MP.STORE, programId });
       if (!storeResult.skipped) files.push(storeResult.file);
       saveMigrateTracker(trackerFile, migrateData);
     }
@@ -318,8 +324,10 @@ const runProgramGeneration = async (
     // Phase 5: API
     if (!isPhaseCompleted(prog, MP.API)) {
       startPhase(prog, MP.API);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating api`, { phase: MP.API, programId });
       const apiResult = await runApiPhase(programId, analysis, config);
       completePhase(prog, MP.API, { file: apiResult.file, duration: apiResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: api done`, { phase: MP.API, programId });
       if (!apiResult.skipped) files.push(apiResult.file);
       saveMigrateTracker(trackerFile, migrateData);
     }
@@ -327,8 +335,10 @@ const runProgramGeneration = async (
     // Phase 6: PAGE
     if (!isPhaseCompleted(prog, MP.PAGE)) {
       startPhase(prog, MP.PAGE);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating page`, { phase: MP.PAGE, programId });
       const pageResult = await runPagePhase(programId, analysis, config);
       completePhase(prog, MP.PAGE, { file: pageResult.file, duration: pageResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: page done`, { phase: MP.PAGE, programId });
       if (!pageResult.skipped) files.push(pageResult.file);
       saveMigrateTracker(trackerFile, migrateData);
     }
@@ -336,19 +346,23 @@ const runProgramGeneration = async (
     // Phase 7: COMPONENTS
     if (!isPhaseCompleted(prog, MP.COMPONENTS)) {
       startPhase(prog, MP.COMPONENTS);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating components`, { phase: MP.COMPONENTS, programId });
       const compResult = await runComponentsPhase(programId, analysis, config);
       for (const r of compResult.files) {
         if (!r.skipped) files.push(r.file);
       }
       completePhase(prog, MP.COMPONENTS, { duration: compResult.totalDuration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: components done`, { phase: MP.COMPONENTS, programId });
       saveMigrateTracker(trackerFile, migrateData);
     }
 
     // Phase 8: TESTS-UNIT
     if (!isPhaseCompleted(prog, MP.TESTS_UNIT)) {
       startPhase(prog, MP.TESTS_UNIT);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating unit tests`, { phase: MP.TESTS_UNIT, programId });
       const testUnitResult = await runTestsUnitPhase(programId, analysis, config);
       completePhase(prog, MP.TESTS_UNIT, { file: testUnitResult.file, duration: testUnitResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: unit tests done`, { phase: MP.TESTS_UNIT, programId });
       if (!testUnitResult.skipped) files.push(testUnitResult.file);
       saveMigrateTracker(trackerFile, migrateData);
     }
@@ -356,8 +370,10 @@ const runProgramGeneration = async (
     // Phase 9: TESTS-UI
     if (!isPhaseCompleted(prog, MP.TESTS_UI)) {
       startPhase(prog, MP.TESTS_UI);
+      emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating UI tests`, { phase: MP.TESTS_UI, programId });
       const testUiResult = await runTestsUiPhase(programId, analysis, config);
       completePhase(prog, MP.TESTS_UI, { file: testUiResult.file, duration: testUiResult.duration });
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: UI tests done`, { phase: MP.TESTS_UI, programId });
       if (!testUiResult.skipped) files.push(testUiResult.file);
       saveMigrateTracker(trackerFile, migrateData);
     }
