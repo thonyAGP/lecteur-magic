@@ -9,6 +9,7 @@ export interface MigrateActiveState {
     startedAt: number;
     totalPrograms: number;
     completedPrograms: number;
+    failedPrograms: number;
     targetDir: string;
     mode: string;
     dryRun: boolean;

@@ -36,14 +36,15 @@ describe('migrate-state', () => {
     expect((state.events[0] as Record<string, unknown>).type).toBe('phase_started');
   });
 
-  it('should count completed programs', () => {
+  it('should count completed and failed programs separately', () => {
     startMigration('B1', 5, '/t', 'cli', false);
     addMigrateEvent({ type: 'program_completed', programId: '69' });
     addMigrateEvent({ type: 'program_completed', programId: '70' });
     addMigrateEvent({ type: 'program_failed', programId: '71' });
 
     const state = getMigrateActiveState();
-    expect(state.completedPrograms).toBe(3);
+    expect(state.completedPrograms).toBe(2);
+    expect(state.failedPrograms).toBe(1);
   });
 
   it('should update totalPrograms from migrate_started event', () => {
