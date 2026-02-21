@@ -351,6 +351,7 @@ export const handleMigrateStream = async (
     phaseModels: DEFAULT_PHASE_MODELS,
     cliBin: 'claude',
     onEvent: undefined,
+    autoCommit: true,
   };
 
   const sse = createSSEStream(res);

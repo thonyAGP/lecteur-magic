@@ -4,6 +4,7 @@
  * sequential batch verification (phases 10-15).
  */
 
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import type {
@@ -162,6 +163,32 @@ export const runMigration = async (
   const totalDuration = Date.now() - migrationStart;
   emit(config, ET.MIGRATION_COMPLETED, `Migration complete: ${summary.completed}/${summary.total} programs, ${summary.totalFiles} files in ${formatDuration(totalDuration)}`);
 
+  // Auto git commit + push if enabled
+  let gitResult: MigrateResult['git'];
+
+  if (config.autoCommit && !config.dryRun && summary.completed > 0) {
+    try {
+      emit(config, ET.GIT_STARTED, 'Auto-commit: staging files...');
+
+      execSync(`git add "${config.targetDir}"`, { cwd: config.projectDir });
+      execSync(`git add .openspec/migration/`, { cwd: config.projectDir });
+
+      const msg = `feat(migration): ${batchId} - ${batchName} (${summary.completed} programs, ${summary.totalFiles} files)`;
+      execSync(`git commit --no-verify -m "${msg}"`, { cwd: config.projectDir });
+
+      const sha = execSync('git rev-parse --short HEAD', { cwd: config.projectDir }).toString().trim();
+      const branch = execSync('git branch --show-current', { cwd: config.projectDir }).toString().trim();
+
+      execSync(`git push origin ${branch}`, { cwd: config.projectDir });
+
+      emit(config, ET.GIT_COMPLETED, `Committed ${sha} and pushed to ${branch}`);
+      gitResult = { commitSha: sha, pushed: true, branch };
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'unknown';
+      emit(config, ET.GIT_FAILED, `Git failed: ${errMsg}`);
+    }
+  }
+
   return {
     batchId,
     batchName,
@@ -170,6 +197,7 @@ export const runMigration = async (
     dryRun: config.dryRun,
     programs: programResults,
     summary,
+    git: gitResult,
   };
 };
 
