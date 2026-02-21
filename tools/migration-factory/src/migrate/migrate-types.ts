@@ -162,6 +162,8 @@ export interface MigrateConfig {
   phaseModels?: Partial<Record<MigratePhase, string>>;
   /** Directory for decision logging (prompts, responses, JSONL). */
   logDir?: string;
+  /** Auto git add + commit + push after successful migration. Default false for CLI, true from dashboard. */
+  autoCommit?: boolean;
 }
 
 /**
@@ -202,6 +204,9 @@ export const MigrateEventType = {
   PHASE_FAILED: 'phase_failed',
   VERIFY_PASS: 'verify_pass',
   FIX_APPLIED: 'fix_applied',
+  GIT_STARTED: 'git_started',
+  GIT_COMPLETED: 'git_completed',
+  GIT_FAILED: 'git_failed',
   ERROR: 'error',
 } as const;
 export type MigrateEventType = (typeof MigrateEventType)[keyof typeof MigrateEventType];
@@ -225,6 +230,7 @@ export interface MigrateResult {
   dryRun: boolean;
   programs: ProgramMigrateResult[];
   summary: MigrateSummary;
+  git?: { commitSha: string; pushed: boolean; branch: string };
 }
 
 export interface ProgramMigrateResult {
