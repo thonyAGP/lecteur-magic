@@ -10,6 +10,7 @@ let state = {
     startedAt: 0,
     totalPrograms: 0,
     completedPrograms: 0,
+    failedPrograms: 0,
     targetDir: '',
     mode: '',
     dryRun: false,
@@ -24,6 +25,7 @@ export const startMigration = (batch, totalPrograms, targetDir, mode, dryRun, pr
         startedAt: Date.now(),
         totalPrograms,
         completedPrograms: 0,
+        failedPrograms: 0,
         targetDir,
         mode,
         dryRun,
@@ -37,8 +39,11 @@ export const addMigrateEvent = (event) => {
     }
     state.events.push(event);
     const e = event;
-    if (e.type === 'program_completed' || e.type === 'program_failed') {
+    if (e.type === 'program_completed') {
         state.completedPrograms++;
+    }
+    if (e.type === 'program_failed') {
+        state.failedPrograms++;
     }
     if (e.type === 'migrate_started') {
         state.totalPrograms = e.programs || state.totalPrograms;

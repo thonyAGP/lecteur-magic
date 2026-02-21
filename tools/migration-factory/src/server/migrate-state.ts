@@ -10,6 +10,7 @@ export interface MigrateActiveState {
   startedAt: number;
   totalPrograms: number;
   completedPrograms: number;
+  failedPrograms: number;
   targetDir: string;
   mode: string;
   dryRun: boolean;
@@ -25,6 +26,7 @@ let state: MigrateActiveState = {
   startedAt: 0,
   totalPrograms: 0,
   completedPrograms: 0,
+  failedPrograms: 0,
   targetDir: '',
   mode: '',
   dryRun: false,
@@ -41,6 +43,7 @@ export const startMigration = (batch: string, totalPrograms: number, targetDir: 
     startedAt: Date.now(),
     totalPrograms,
     completedPrograms: 0,
+    failedPrograms: 0,
     targetDir,
     mode,
     dryRun,
@@ -56,8 +59,11 @@ export const addMigrateEvent = (event: unknown): void => {
   state.events.push(event);
 
   const e = event as Record<string, unknown>;
-  if (e.type === 'program_completed' || e.type === 'program_failed') {
+  if (e.type === 'program_completed') {
     state.completedPrograms++;
+  }
+  if (e.type === 'program_failed') {
+    state.failedPrograms++;
   }
   if (e.type === 'migrate_started') {
     state.totalPrograms = (e.programs as number) || state.totalPrograms;

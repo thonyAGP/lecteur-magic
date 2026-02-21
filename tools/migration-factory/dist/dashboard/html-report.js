@@ -1945,7 +1945,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     'tests-unit','tests-ui','verify-tsc','fix-tsc','verify-tests','fix-tests','integrate','review'];
 
   var migrateState = {
-    totalProgs: 0, doneProgs: 0,
+    totalProgs: 0, doneProgs: 0, failedProgs: 0,
     programList: [],
     programPhases: {},
     migrationStart: 0, elapsedTid: 0, logCollapsed: false
@@ -2055,9 +2055,15 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     var bar = document.getElementById('mp-module-bar');
     var label = document.getElementById('mp-module-label');
     if (!bar || !label) return;
-    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    var processed = done + migrateState.failedProgs;
+    var pct = total > 0 ? Math.round((processed / total) * 100) : 0;
     bar.style.width = pct + '%';
-    label.textContent = done + '/' + total + ' programmes (' + pct + '%)';
+    if (migrateState.failedProgs > 0) {
+      bar.style.background = 'linear-gradient(90deg, var(--green) 0%, #f59e0b 100%)';
+      label.textContent = done + '/' + total + ' OK, ' + migrateState.failedProgs + ' failed (' + pct + '%)';
+    } else {
+      label.textContent = done + '/' + total + ' programmes (' + pct + '%)';
+    }
     if (migrateBadge) { migrateBadge.textContent = done + '/' + total; migrateBadge.style.display = ''; }
   }
 
@@ -2178,7 +2184,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         migrateState.programPhases[pid].status = 'failed';
       }
       updateProgramIcon(pid, 'failed');
-      migrateState.doneProgs++;
+      migrateState.failedProgs++;
       updateModuleProgress(migrateState.doneProgs, migrateState.totalProgs);
       updateProgramProgress(null, null);
       addMLog('[FAIL] IDE ' + pid + ': ' + (msg.message || ''));
@@ -2191,18 +2197,25 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       var bar = document.getElementById('mp-module-bar');
       if (bar) bar.style.width = '100%';
       var label = document.getElementById('mp-module-label');
+      var failed = r && r.summary ? r.summary.failed : migrateState.failedProgs;
       if (label && r && r.summary) {
         label.textContent = 'Done: ' + r.summary.completed + '/' + r.summary.total
-          + ' completed, ' + r.summary.totalFiles + ' files'
+          + ' completed' + (failed > 0 ? ', ' + failed + ' failed' : '')
+          + ', ' + r.summary.totalFiles + ' files'
           + (r.summary.tscClean ? ', TSC clean' : ', TSC errors')
           + (r.summary.testsPass ? ', tests pass' : ', tests fail')
           + ', coverage ' + r.summary.reviewAvgCoverage + '%';
       }
       var elapsed = document.getElementById('mp-elapsed');
       if (elapsed) elapsed.textContent = 'Total: ' + formatElapsed(Date.now() - migrateState.migrationStart);
-      if (migrateBadge) { migrateBadge.textContent = 'Done'; migrateBadge.style.background = 'var(--green)'; }
+      if (failed > 0) {
+        if (bar) bar.style.background = 'linear-gradient(90deg, var(--green) 0%, #f85149 100%)';
+        if (migrateBadge) { migrateBadge.textContent = r.summary.completed + '/' + r.summary.total; migrateBadge.style.background = '#f59e0b'; }
+      } else {
+        if (migrateBadge) { migrateBadge.textContent = 'Done'; migrateBadge.style.background = 'var(--green)'; }
+      }
       document.getElementById('mp-prog-section').style.display = 'none';
-      addMLog('Migration completed');
+      addMLog('Migration completed' + (failed > 0 ? ' (' + failed + ' failed)' : ''));
       if (r && r.git) addMLog('[git] Committed ' + r.git.commitSha + ' pushed to ' + r.git.branch);
       return;
     }
@@ -2325,14 +2338,17 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       processMigrateEvent(msg);
     });
 
-    // Sync done count from server state
-    migrateState.doneProgs = state.completedPrograms;
-    updateModuleProgress(state.completedPrograms, state.totalPrograms);
+    // Sync done count from server state (replay already set doneProgs/failedProgs)
+    updateModuleProgress(migrateState.doneProgs, state.totalPrograms);
 
     if (isDone) {
       var elapsed = document.getElementById('mp-elapsed');
       if (elapsed) elapsed.textContent = 'Completed';
-      if (migrateBadge) { migrateBadge.textContent = 'Done'; migrateBadge.style.background = 'var(--green)'; }
+      if (migrateState.failedProgs > 0) {
+        if (migrateBadge) { migrateBadge.textContent = migrateState.doneProgs + '/' + state.totalPrograms; migrateBadge.style.background = '#f59e0b'; }
+      } else {
+        if (migrateBadge) { migrateBadge.textContent = 'Done'; migrateBadge.style.background = 'var(--green)'; }
+      }
       return;
     }
 
