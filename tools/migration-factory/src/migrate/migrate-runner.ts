@@ -309,11 +309,13 @@ const runProgramGeneration = async (
   // Start token accumulator for this program
   startTokenAccumulator();
 
+  const aborted = () => config.abortSignal?.aborted === true;
+
   emit(config, ET.PROGRAM_STARTED, `Starting IDE ${programId}`, { programId });
 
   try {
     // Phase 0: SPEC
-    if (!isPhaseCompleted(prog, MP.SPEC)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.SPEC)) {
       startPhase(prog, MP.SPEC);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating spec`, { phase: MP.SPEC, programId });
       const specResult = await runSpecPhase(programId, config);
@@ -324,7 +326,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 1: CONTRACT
-    if (!isPhaseCompleted(prog, MP.CONTRACT)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.CONTRACT)) {
       startPhase(prog, MP.CONTRACT);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating contract`, { phase: MP.CONTRACT, programId });
       const contractResult = runContractPhase(programId, config);
@@ -334,7 +336,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 2: ANALYZE
-    if (!isPhaseCompleted(prog, MP.ANALYZE)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.ANALYZE)) {
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: analyzing (Claude CLI)`, { phase: MP.ANALYZE, programId });
       startPhase(prog, MP.ANALYZE);
       const analyzeResult = await runAnalyzePhase(programId, config);
@@ -365,7 +367,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 3: TYPES
-    if (!isPhaseCompleted(prog, MP.TYPES)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.TYPES)) {
       startPhase(prog, MP.TYPES);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating types`, { phase: MP.TYPES, programId });
       const typesResult = await runTypesPhase(programId, analysis, config);
@@ -376,7 +378,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 4: STORE
-    if (!isPhaseCompleted(prog, MP.STORE)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.STORE)) {
       startPhase(prog, MP.STORE);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating store`, { phase: MP.STORE, programId });
       const storeResult = await runStorePhase(programId, analysis, config);
@@ -387,7 +389,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 5: API
-    if (!isPhaseCompleted(prog, MP.API)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.API)) {
       startPhase(prog, MP.API);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating api`, { phase: MP.API, programId });
       const apiResult = await runApiPhase(programId, analysis, config);
@@ -398,7 +400,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 6: PAGE
-    if (!isPhaseCompleted(prog, MP.PAGE)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.PAGE)) {
       startPhase(prog, MP.PAGE);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating page`, { phase: MP.PAGE, programId });
       const pageResult = await runPagePhase(programId, analysis, config);
@@ -409,7 +411,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 7: COMPONENTS
-    if (!isPhaseCompleted(prog, MP.COMPONENTS)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.COMPONENTS)) {
       startPhase(prog, MP.COMPONENTS);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating components`, { phase: MP.COMPONENTS, programId });
       const compResult = await runComponentsPhase(programId, analysis, config);
@@ -422,7 +424,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 8: TESTS-UNIT
-    if (!isPhaseCompleted(prog, MP.TESTS_UNIT)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.TESTS_UNIT)) {
       startPhase(prog, MP.TESTS_UNIT);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating unit tests`, { phase: MP.TESTS_UNIT, programId });
       const testUnitResult = await runTestsUnitPhase(programId, analysis, config);
@@ -433,7 +435,7 @@ const runProgramGeneration = async (
     }
 
     // Phase 9: TESTS-UI
-    if (!isPhaseCompleted(prog, MP.TESTS_UI)) {
+    if (!aborted() && !isPhaseCompleted(prog, MP.TESTS_UI)) {
       startPhase(prog, MP.TESTS_UI);
       emit(config, ET.PHASE_STARTED, `IDE ${programId}: generating UI tests`, { phase: MP.TESTS_UI, programId });
       const testUiResult = await runTestsUiPhase(programId, analysis, config);
@@ -443,6 +445,9 @@ const runProgramGeneration = async (
       saveMigrateTracker(trackerFile, migrateData);
     }
 
+    if (aborted()) {
+      emit(config, ET.PROGRAM_FAILED, `IDE ${programId}: aborted`, { programId });
+    }
     markProgramCompleted(prog);
     saveMigrateTracker(trackerFile, migrateData);
 
