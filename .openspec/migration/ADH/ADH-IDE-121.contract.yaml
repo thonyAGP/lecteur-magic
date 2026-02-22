@@ -1,0 +1,239 @@
+program:
+  id: 121
+  name: ""
+  complexity: MEDIUM
+  callers: []
+  callees: []
+  tasks_count: 32
+  tables_count: 4
+  expressions_count: 7
+rules:
+  - id: RM-001
+    description: "Condition: Param VIL open sessions [N] egale 'O'"
+    condition: Param VIL open sessions [N]='O'
+    variables:
+      - FA
+    status: IMPL
+    target_file: adh-web/src/stores/saisieContenuCaisseStore.ts
+    gap_notes: ""
+variables:
+  - local_id: FA
+    name: Param VIL open sessions
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+tables:
+  - id: 246
+    name: histo_sessions_caisse
+    mode: RW
+    status: IMPL
+    target_file: adh-web/src/stores/controleFermetureCaisseStore.ts
+    gap_notes: ""
+  - id: 248
+    name: sessions_coffre2
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/__tests__/gestionCaisseStore.test.ts
+    gap_notes: ""
+  - id: 244
+    name: saisie_approvisionnement
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 227
+    name: concurrence_sessions
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 249
+    name: histo_sessions_caisse_detail
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 740
+    name: pv_stock_movements
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 697
+    name: droits_applications
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 70
+    name: date_comptable___dat
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/components/caisse/gestionCaisse/HeaderSectionPanel.tsx
+    gap_notes: ""
+  - id: 198
+    name: coupures_monnaie_locale
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 232
+    name: gestion_devise_session
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/pages/DeviseSessionPage.tsx
+    gap_notes: ""
+  - id: 23
+    name: reseau_cloture___rec
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/services/api/endpoints-facturationAppel.ts
+    gap_notes: ""
+  - id: 197
+    name: articles_en_stock
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/components/caisse/controleFermetureCaisse/PointagesFinauxPanel.tsx
+    gap_notes: ""
+callees:
+  - id: 116
+    name: Calcul concurrence sessions
+    calls: 12
+    context: Calcul de donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 134
+    name: Mise à jour detail session WS
+    calls: 3
+    context: Mise a jour donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 139
+    name: Ticket appro remise
+    calls: 3
+    context: Impression ticket/document
+    status: IMPL
+    target: adh-web/src/pages/ApproTicketPage.tsx
+    gap_notes: ""
+  - id: 48
+    name: Contrôles - Integrite dates
+    calls: 2
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 122
+    name: Ouverture caisse
+    calls: 2
+    context: Ouverture session
+    status: IMPL
+    target: adh-web/src/components/caisse/controleOuvertureCaisse/BackendValidationServicePanel.tsx
+    gap_notes: ""
+  - id: 131
+    name: Fermeture caisse
+    calls: 2
+    context: Fermeture session
+    status: IMPL
+    target: adh-web/src/pages/CaisseMenuPage.tsx
+    gap_notes: ""
+  - id: 155
+    name: Controle fermeture caisse WS
+    calls: 2
+    context: Controle/validation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 43
+    name: Recuperation du titre
+    calls: 1
+    context: Recuperation donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 119
+    name: Affichage sessions
+    calls: 1
+    context: Affichage donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 123
+    name: Apport coffre
+    calls: 1
+    context: Approvisionnement
+    status: IMPL
+    target: adh-web/src/components/caisse/apportCoffre/HeaderPanel.tsx
+    gap_notes: ""
+  - id: 124
+    name: Apport articles
+    calls: 1
+    context: Approvisionnement
+    status: IMPL
+    target: adh-web/src/pages/ApportArticlesPage.tsx
+    gap_notes: ""
+  - id: 125
+    name: Remise en caisse
+    calls: 1
+    context: Programme fidelite
+    status: IMPL
+    target: adh-web/src/components/caisse/saisieContenuCaisse/HeaderPanel.tsx
+    gap_notes: ""
+  - id: 132
+    name: Historique session
+    calls: 1
+    context: Historique/consultation
+    status: IMPL
+    target: adh-web/src/pages/CaisseMenuPage.tsx
+    gap_notes: ""
+  - id: 140
+    name: Init apport article session WS
+    calls: 1
+    context: Reinitialisation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 141
+    name: Init devise session WS
+    calls: 1
+    context: Reinitialisation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 151
+    name: Reimpression tickets fermeture
+    calls: 1
+    context: Impression ticket/document
+    status: IMPL
+    target: adh-web/src/pages/CaisseMenuPage.tsx
+    gap_notes: ""
+  - id: 156
+    name: Verif session caisse ouverte2
+    calls: 1
+    context: Controle/validation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 231
+    name: Raisons utilisation ADH
+    calls: 1
+    context: Parametrage
+    status: MISSING
+    target: ""
+    gap_notes: ""
+overall:
+  rules_total: 1
+  rules_impl: 1
+  rules_partial: 0
+  rules_missing: 0
+  rules_na: 0
+  variables_key_count: 1
+  callees_total: 18
+  callees_impl: 8
+  callees_missing: 10
+  coverage_pct: 47
+  status: enriched
+  generated: 2026-02-22T20:41:25.945Z
+  notes: Auto-generated from ADH-IDE-121.md

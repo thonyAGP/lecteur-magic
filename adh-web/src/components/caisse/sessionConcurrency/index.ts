@@ -1,1 +1,1 @@
-export { BackgroundValidationPanel } from './BackgroundValidationPanel.js';
+export { ConflictWarningPanel } from './ConflictWarningPanel.js';

@@ -1,0 +1,320 @@
+program:
+  id: 131
+  name: ""
+  complexity: MEDIUM
+  callers: []
+  callees: []
+  tasks_count: 22
+  tables_count: 3
+  expressions_count: 12
+rules:
+  - id: RM-001
+    description: "Condition: Action [S] egale 0"
+    condition: Action [S]=0
+    variables:
+      - FF
+    status: IMPL
+    target_file: adh-web/src/stores/saisieContenuCaisseStore.ts
+    gap_notes: ""
+  - id: RM-002
+    description: "Condition: Montant apport coffre [CF]<>0 OR Montant apport produits [CG]<>0 OR Montant versement monnaie
+      [BZ]<>0 OR Montant versement cartes [CB]<>0 OR Montant versement cheques [CC]<>0 OR Nbre devise versement [CE]<>0
+      OR Nbre devise apport [CH] different de 0"
+    condition: Montant apport coffre [CF]<>0 OR Montant apport produits [CG]<>0 OR Montant versement monnaie [BZ]<>0 OR
+      Montant versement cartes [CB]<>0 OR Montant versement cheques [CC]<>0 OR Nbre devise versement [CE]<>0 OR Nbre
+      devise apport [CH]<>0
+    variables:
+      - GL
+      - GM
+      - GO
+      - GP
+      - GR
+      - GS
+    status: IMPL
+    target_file: adh-web/src/services/printer/generators/ouvertureTicketGenerator.ts
+    gap_notes: ""
+  - id: RM-003
+    description: Negation de P.Session ouvertes VIL ? [Q] (condition inversee)
+    condition: NOT P.Session ouvertes VIL ? [Q]
+    variables:
+      - FD
+    status: IMPL
+    target_file: adh-web/src/types/calculEquivalent.ts
+    gap_notes: ""
+variables:
+  - local_id: FF
+    name: Action
+    type: Real
+    status: IMPL
+    target_file: adh-web/src/App.tsx
+    gap_notes: ""
+  - local_id: GL
+    name: Montant versement
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GM
+    name: Montant versement monnaie
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GO
+    name: Montant versement cartes
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GP
+    name: Montant versement cheques
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GR
+    name: Nbre devise versement
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GS
+    name: Montant apport coffre
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GT
+    name: Montant apport produits
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: GU
+    name: Nbre devise apport
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FD
+    name: P.Session ouvertes VIL ?
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+tables:
+  - id: 242
+    name: pointage_article
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/components/caisse/controleFermetureCaisse/PointagesFinauxPanel.tsx
+    gap_notes: ""
+  - id: 243
+    name: pointage_devise
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/components/caisse/controleFermetureCaisse/PointagesFinauxPanel.tsx
+    gap_notes: ""
+  - id: 241
+    name: pointage_appro_remise
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/components/caisse/controleFermetureCaisse/PointagesFinauxPanel.tsx
+    gap_notes: ""
+  - id: 232
+    name: gestion_devise_session
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/pages/DeviseSessionPage.tsx
+    gap_notes: ""
+  - id: 249
+    name: histo_sessions_caisse_detail
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 139
+    name: moyens_reglement_mor
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/pages/SoldeOuverturePage.tsx
+    gap_notes: ""
+  - id: 50
+    name: moyens_reglement_mor
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/pages/SoldeOuverturePage.tsx
+    gap_notes: ""
+  - id: 67
+    name: tables___________tab
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/pages/IntegriteDatesPage.tsx
+    gap_notes: ""
+  - id: 693
+    name: devise_in
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/components/caisse/transaction/schemas.ts
+    gap_notes: ""
+  - id: 250
+    name: histo_sessions_caisse_devise
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+callees:
+  - id: 134
+    name: Mise à jour detail session WS
+    calls: 14
+    context: Mise a jour donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 136
+    name: Generation ticket WS
+    calls: 7
+    context: Impression ticket/document
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 142
+    name: Devise update session WS
+    calls: 5
+    context: Mise a jour donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 144
+    name: Devises finales F/F Nbre WS
+    calls: 4
+    context: Sous-programme
+    status: IMPL
+    target: adh-web/src/__tests__/sessionTimestampStore.test.ts
+    gap_notes: ""
+  - id: 145
+    name: Devises finales F/F Qte WS
+    calls: 4
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 155
+    name: Controle fermeture caisse WS
+    calls: 3
+    context: Controle/validation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 133
+    name: Mise a jour comptage caisse WS
+    calls: 2
+    context: Mise a jour donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 135
+    name: Generation tableau recap WS
+    calls: 2
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 146
+    name: Devises tableau recap WS
+    calls: 2
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 147
+    name: Devises des tickets WS
+    calls: 2
+    context: Impression ticket/document
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 148
+    name: Devises RAZ WS
+    calls: 2
+    context: Reinitialisation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 154
+    name: Tableau recap fermeture
+    calls: 2
+    context: Fermeture session
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 43
+    name: Recuperation du titre
+    calls: 1
+    context: Recuperation donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 120
+    name: Saisie contenu caisse
+    calls: 1
+    context: Sous-programme
+    status: IMPL
+    target: adh-web/src/pages/DeviseSessionPage.tsx
+    gap_notes: ""
+  - id: 123
+    name: Apport coffre
+    calls: 1
+    context: Approvisionnement
+    status: IMPL
+    target: adh-web/src/components/caisse/apportCoffre/HeaderPanel.tsx
+    gap_notes: ""
+  - id: 124
+    name: Apport articles
+    calls: 1
+    context: Approvisionnement
+    status: IMPL
+    target: adh-web/src/pages/ApportArticlesPage.tsx
+    gap_notes: ""
+  - id: 125
+    name: Remise en caisse
+    calls: 1
+    context: Programme fidelite
+    status: IMPL
+    target: adh-web/src/components/caisse/saisieContenuCaisse/HeaderPanel.tsx
+    gap_notes: ""
+  - id: 127
+    name: Calcul solde ouverture WS
+    calls: 1
+    context: Calcul de donnees
+    status: IMPL
+    target: adh-web/src/pages/DeviseSessionPage.tsx
+    gap_notes: ""
+  - id: 130
+    name: Ecart fermeture caisse
+    calls: 1
+    context: Fermeture session
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 138
+    name: Ticket fermeture session
+    calls: 1
+    context: Impression ticket/document
+    status: MISSING
+    target: ""
+    gap_notes: ""
+overall:
+  rules_total: 3
+  rules_impl: 3
+  rules_partial: 0
+  rules_missing: 0
+  rules_na: 0
+  variables_key_count: 10
+  callees_total: 20
+  callees_impl: 6
+  callees_missing: 14
+  coverage_pct: 42
+  status: enriched
+  generated: 2026-02-22T20:41:26.143Z
+  notes: Auto-generated from ADH-IDE-131.md
