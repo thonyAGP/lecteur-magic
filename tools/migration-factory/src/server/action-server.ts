@@ -12,6 +12,7 @@ import {
   json, handleStatus, handleGaps, handlePreflight, handlePipelineRun, handlePipelineStream,
   handleVerify, handleProjects, handleCalibrate, handleGenerate, handleGenerateStream,
   handleMigrateStream, handleMigrateStatus, handleMigrateBatchCreate, handleMigrateActive,
+  handleMigrateAbort,
   handleAnalyze, handleAnalyzeGet,
 } from './api-routes.js';
 import type { RouteContext } from './api-routes.js';
@@ -126,6 +127,8 @@ export const startActionServer = async (config: ActionServerConfig): Promise<htt
           pipelineRunning = false;
           endMigration();
         }
+      } else if (pathname === '/api/migrate/abort' && req.method === 'POST') {
+        handleMigrateAbort(res);
       } else if (pathname === '/api/migrate/active' && req.method === 'GET') {
         handleMigrateActive(ctx, res);
       } else if (pathname === '/api/migrate/status' && req.method === 'GET') {

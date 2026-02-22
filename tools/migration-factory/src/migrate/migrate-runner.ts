@@ -120,6 +120,10 @@ export const runMigration = async (
   }
 
   for (const chunk of chunks) {
+    if (config.abortSignal?.aborted) {
+      emit(config, ET.MIGRATION_COMPLETED, 'Migration aborted by user');
+      break;
+    }
     const results = await Promise.all(
       chunk.map(id => runProgramGeneration(id, config, trackerFile)),
     );
