@@ -13,6 +13,7 @@ export interface MigrateActiveState {
     targetDir: string;
     mode: string;
     dryRun: boolean;
+    estimatedHours: number;
     programList: Array<{
         id: string | number;
         name: string;
@@ -23,6 +24,6 @@ export declare const getMigrateActiveState: () => MigrateActiveState;
 export declare const startMigration: (batch: string, totalPrograms: number, targetDir: string, mode: string, dryRun: boolean, programList?: Array<{
     id: string | number;
     name: string;
-}>) => void;
+}>, estimatedHours?: number) => void;
 export declare const addMigrateEvent: (event: unknown) => void;
 export declare const endMigration: () => void;

@@ -44,21 +44,20 @@ const renderHeader = (r) => {
 <header>
   <h1>Migration Dashboard</h1>
   <div class="subtitle">${escHtml(r.projectName)} &mdash; ${r.graph.livePrograms} programmes LIVE</div>
-  <div class="last-updated">Derniere mise a jour : ${dateStr} a ${timeStr}</div>
+  <div class="last-updated">Derni\u00e8re mise \u00e0 jour : ${dateStr} \u00e0 ${timeStr}</div>
 </header>`;
 };
 const renderKpiCards = (r) => {
     const { graph, pipeline, modules, decommission } = r;
     const live = graph.livePrograms || 1;
-    const migrated = pipeline.enriched + pipeline.verified;
-    const migratedPct = Math.round(migrated / live * 100);
+    const verifiedPct = Math.round(pipeline.verified / live * 100);
     const deliveredPct = modules.total > 0 ? Math.round(modules.deliverable / modules.total * 100) : 0;
     return `
 <section class="kpi-grid">
   ${kpiCard('Programmes LIVE', String(graph.livePrograms), `${graph.orphanPrograms} orphelins, ${graph.sharedPrograms} partages`, 'var(--blue)')}
-  ${kpiCard('Migrated', `${migrated}/${live}`, `${migratedPct}% (${pipeline.verified} verified, ${pipeline.enriched} enriched)`, 'var(--green)')}
+  ${kpiCard('V\u00e9rifi\u00e9s', `${pipeline.verified}/${live}`, `${verifiedPct}% (${pipeline.enriched} enrichis, ${pipeline.contracted} analys\u00e9s)`, 'var(--green)')}
   ${kpiCard('Modules livrables', `${modules.deliverable}/${modules.total}`, `${deliveredPct}% des modules`, 'var(--purple)')}
-  ${kpiCard('Decomissionnable', `${decommission.decommissionable}/${decommission.totalLive}`, `${decommission.decommissionPct}% du legacy`, 'var(--orange)')}
+  ${kpiCard('D\u00e9commissionnables', `${decommission.decommissionable}/${decommission.totalLive}`, `${decommission.decommissionPct}% du legacy`, 'var(--orange)')}
 </section>`;
 };
 const kpiCard = (label, value, detail, color) => `
@@ -84,17 +83,17 @@ const renderPipelineSection = (pipeline, live) => {
 <section class="card">
   <h2>Pipeline de migration</h2>
   <div class="pipeline">
-    ${pBar(pipeline.verified, 'var(--green)', 'Verified')}
-    ${pBar(pipeline.enriched, 'var(--blue)', 'Enriched')}
-    ${pBar(pipeline.contracted, 'var(--yellow)', 'Contracted')}
-    ${pBar(pipeline.pending, 'var(--gray)', 'Pending')}
+    ${pBar(pipeline.verified, 'var(--green)', 'V\u00e9rifi\u00e9')}
+    ${pBar(pipeline.enriched, 'var(--blue)', 'Enrichi')}
+    ${pBar(pipeline.contracted, 'var(--yellow)', 'Analys\u00e9')}
+    ${pBar(pipeline.pending, 'var(--gray)', 'En attente')}
   </div>
   <div class="pipeline-donut-row">
     ${renderDonut([
-        { value: pipeline.verified, color: 'var(--green)', label: 'Verified' },
-        { value: pipeline.enriched, color: 'var(--blue)', label: 'Enriched' },
-        { value: pipeline.contracted, color: 'var(--yellow)', label: 'Contracted' },
-        { value: pipeline.pending, color: 'var(--gray)', label: 'Pending' },
+        { value: pipeline.verified, color: 'var(--green)', label: 'V\u00e9rifi\u00e9' },
+        { value: pipeline.enriched, color: 'var(--blue)', label: 'Enrichi' },
+        { value: pipeline.contracted, color: 'var(--yellow)', label: 'Analys\u00e9' },
+        { value: pipeline.pending, color: 'var(--gray)', label: 'En attente' },
     ], total)}
   </div>
 </section>`;
@@ -136,7 +135,7 @@ const renderEstimationSection = (r) => {
     if (!est)
         return '';
     const { totalEstimatedHours, remainingHours, avgScore, gradeDistribution, top10 } = est;
-    const completedHours = totalEstimatedHours - remainingHours;
+    const completedHours = Math.round((totalEstimatedHours - remainingHours) * 10) / 10;
     const progressPct = totalEstimatedHours > 0 ? Math.round(completedHours / totalEstimatedHours * 100) : 0;
     // Donut for grade distribution
     const gradeColors = { S: 'var(--red)', A: 'var(--orange)', B: 'var(--yellow)', C: 'var(--blue)', D: 'var(--green)' };
@@ -150,7 +149,7 @@ const renderEstimationSection = (r) => {
       <td class="center">${gradeBadge(p.score.grade)}</td>
       <td class="center">${p.score.normalizedScore}</td>
       <td class="center">${p.score.estimatedHours}h</td>
-      <td><span class="status-pill status-${p.status}">${p.status}</span></td>
+      <td><span class="status-pill status-${p.status}">${statusFr(p.status)}</span></td>
     </tr>`).join('');
     return `
 <section class="card">
@@ -158,17 +157,17 @@ const renderEstimationSection = (r) => {
   <div class="estimation-grid">
     <div class="estimation-kpi">
       ${kpiCard('Effort total', `${totalEstimatedHours}h`, `Score moyen: ${avgScore}`, 'var(--purple)')}
-      ${kpiCard('Effort restant', `${remainingHours}h`, `${progressPct}% complete`, 'var(--orange)')}
+      ${kpiCard('Effort restant', `${remainingHours}h`, `${progressPct}% termin\u00e9`, 'var(--orange)')}
     </div>
     <div class="estimation-donut">
-      ${gradeTotal > 0 ? renderDonut(gradeSegments, gradeTotal) : '<div class="no-data">Pas de donnees</div>'}
+      ${gradeTotal > 0 ? renderDonut(gradeSegments, gradeTotal) : '<div class="no-data">Pas de donn\u00e9es</div>'}
     </div>
   </div>
   <div class="effort-bar-container">
     <div class="bar-track bar-large">
       <div class="bar-fill" style="width: ${progressPct}%; background: linear-gradient(90deg, var(--green), var(--blue))"></div>
     </div>
-    <div class="effort-bar-label">${completedHours}h completes / ${totalEstimatedHours}h total (${progressPct}%)</div>
+    <div class="effort-bar-label">${completedHours}h termin\u00e9s / ${totalEstimatedHours}h total (${progressPct}%)</div>
   </div>
   ${top10.length > 0 ? `
   <h3 style="margin-top:16px;margin-bottom:8px;font-size:14px;color:var(--text-dim)">Top 10 programmes les plus complexes</h3>
@@ -185,7 +184,7 @@ const renderEstimationSection = (r) => {
 const renderModulesSection = (modules) => {
     const { list } = modules;
     if (list.length === 0)
-        return '<section class="card"><h2>Modules</h2><p>Aucun module detecte.</p></section>';
+        return '<section class="card"><h2>Modules</h2><p>Aucun module d\u00e9tect\u00e9.</p></section>';
     const rows = list.map(m => renderModuleRow(m)).join('');
     return `
 <section class="card">
@@ -195,12 +194,12 @@ const renderModulesSection = (modules) => {
     <button class="filter-btn" data-filter="deliverable">Livrables (${modules.deliverable})</button>
     <button class="filter-btn" data-filter="close">Proches &ge;80% (${modules.close})</button>
     <button class="filter-btn" data-filter="progress">En cours (${modules.inProgress})</button>
-    <button class="filter-btn" data-filter="notstarted">Non demarre (${modules.notStarted})</button>
+    <button class="filter-btn" data-filter="notstarted">Non d\u00e9marr\u00e9 (${modules.notStarted})</button>
   </div>
   <div class="module-sort">
     <span class="sort-label">Trier par:</span>
-    <button class="sort-btn active" data-sort="priority">Priorite</button>
-    <button class="sort-btn" data-sort="readiness">Readiness</button>
+    <button class="sort-btn active" data-sort="priority">Priorit\u00e9</button>
+    <button class="sort-btn" data-sort="readiness">Avancement</button>
     <button class="sort-btn" data-sort="name">Nom</button>
   </div>
   <div class="module-list">
@@ -210,13 +209,15 @@ const renderModulesSection = (modules) => {
 };
 const renderModuleRow = (m) => {
     const statusClass = m.deliverable ? 'deliverable'
-        : m.readinessPct >= 80 ? 'close'
+        : m.readinessPct >= 50 ? 'close'
             : m.readinessPct > 0 ? 'progress'
-                : 'notstarted';
+                : (m.enriched + m.contracted) > 0 ? 'progress'
+                    : 'notstarted';
     const statusBadge = m.deliverable ? '<span class="badge badge-green">LIVRABLE</span>'
-        : m.readinessPct >= 80 ? '<span class="badge badge-blue">PROCHE</span>'
+        : m.readinessPct >= 50 ? '<span class="badge badge-blue">PROCHE</span>'
             : m.readinessPct > 0 ? '<span class="badge badge-yellow">EN COURS</span>'
-                : '<span class="badge badge-gray">NON DEMARRE</span>';
+                : (m.enriched + m.contracted) > 0 ? '<span class="badge badge-yellow">EN COURS</span>'
+                    : '<span class="badge badge-gray">NON D\u00c9MARR\u00c9</span>';
     const blockerText = m.blockerIds.length > 0
         ? `<div class="module-blockers">Bloqueurs: ${m.blockerIds.slice(0, 5).join(', ')}${m.blockerIds.length > 5 ? '...' : ''}</div>`
         : '';
@@ -232,17 +233,17 @@ const renderModuleRow = (m) => {
     const gradeColorMap = { S: 'tag-red', A: 'tag-orange', B: 'tag-yellow', C: 'tag-blue', D: 'tag-green' };
     const gradeTagClass = gradeColorMap[m.complexityGrade ?? ''] ?? 'tag-orange';
     const gradeLabel = m.complexityGrade
-        ? `<span class="tag ${gradeTagClass}">Complexite ${escHtml(m.complexityGrade)}</span>`
+        ? `<span class="tag ${gradeTagClass}">Complexit\u00e9 ${escHtml(m.complexityGrade)}</span>`
         : '';
     const hoursLabel = m.estimatedHours != null
         ? `<span class="tag tag-dim">~${m.estimatedHours}h</span>`
         : '';
     const depsText = (m.dependsOn?.length ?? 0) > 0
-        ? `Depend de: ${m.dependsOn.join(', ')}`
-        : 'Depend de: (aucun)';
+        ? `D\u00e9pend de: ${m.dependsOn.join(', ')}`
+        : 'D\u00e9pend de: (aucun)';
     const unblockText = (m.dependedBy?.length ?? 0) > 0
-        ? `Debloque: ${m.dependedBy.length} module${m.dependedBy.length > 1 ? 's' : ''}`
-        : 'Debloque: 0 modules';
+        ? `D\u00e9bloque: ${m.dependedBy.length} module${m.dependedBy.length > 1 ? 's' : ''}`
+        : 'D\u00e9bloque: 0 modules';
     return `
     <div class="module-row" data-status="${statusClass}" data-rank="${m.rank ?? 999}" data-readiness="${m.readinessPct}" data-name="${escHtml(m.rootName)}">
       <div class="module-header">
@@ -257,13 +258,13 @@ const renderModuleRow = (m) => {
           <div class="bar-fill bar-enriched" style="width: ${pct(m.enriched, m.memberCount)}%; left: ${pct(m.verified, m.memberCount)}%"></div>
           <div class="bar-fill bar-contracted" style="width: ${pct(m.contracted, m.memberCount)}%; left: ${pct(m.verified + m.enriched, m.memberCount)}%"></div>
         </div>
-        <span class="module-pct">${m.readinessPct}%</span>
+        <span class="module-pct">${m.readinessPct}% v\u00e9rifi\u00e9</span>
       </div>
       <div class="module-breakdown">
-        <span class="tag tag-green">${m.verified} verified</span>
-        <span class="tag tag-blue">${m.enriched} enriched</span>
-        <span class="tag tag-yellow">${m.contracted} contracted</span>
-        <span class="tag tag-gray">${m.pending} pending</span>
+        <span class="tag tag-green">${m.verified} v\u00e9rifi\u00e9s</span>
+        <span class="tag tag-blue">${m.verified + m.enriched} enrichis</span>
+        <span class="tag tag-yellow">${m.verified + m.enriched + m.contracted} analys\u00e9s</span>
+        <span class="tag tag-gray">${m.pending} en attente</span>
       </div>
       <div class="module-deps">
         <span>${escHtml(unblockText)}</span>
@@ -299,7 +300,7 @@ const renderMigrationSequence = (r) => {
     }).join('');
     return `
 <section class="card">
-  <h2>Sequence de migration</h2>
+  <h2>S\u00e9quence de migration</h2>
   <div class="wave-sequence">
     ${waveBlocks}
   </div>
@@ -311,26 +312,26 @@ const renderDecommissionSection = (d, live) => `
   <div class="decommission-grid">
     <div class="decom-stat">
       <div class="decom-value decom-ok">${d.decommissionable}</div>
-      <div class="decom-label">Decomissionnables</div>
+      <div class="decom-label">D\u00e9commissionnables</div>
     </div>
     <div class="decom-stat">
       <div class="decom-value decom-blocked">${d.blockedByStatus}</div>
-      <div class="decom-label">Bloques (non migres)</div>
+      <div class="decom-label">Bloqu\u00e9s (non migr\u00e9s)</div>
     </div>
     <div class="decom-stat">
       <div class="decom-value decom-wait">${d.blockedByCallers}</div>
-      <div class="decom-label">Migres mais callers actifs</div>
+      <div class="decom-label">Migr\u00e9s mais callers actifs</div>
     </div>
     <div class="decom-stat">
       <div class="decom-value decom-shared">${d.sharedBlocked}</div>
-      <div class="decom-label">Partages bloques</div>
+      <div class="decom-label">Partag\u00e9s bloqu\u00e9s</div>
     </div>
   </div>
   <div class="decom-bar-container">
     <div class="bar-track bar-large">
       <div class="bar-fill" style="width: ${d.decommissionPct}%; background: var(--green)"></div>
     </div>
-    <div class="decom-bar-label">${d.decommissionPct}% du legacy decomissionnable (${d.decommissionable}/${d.totalLive})</div>
+    <div class="decom-bar-label">${d.decommissionPct}% du legacy d\u00e9commissionnable (${d.decommissionable}/${d.totalLive})</div>
   </div>
 </section>`;
 const renderProgramTable = (programs) => {
@@ -345,7 +346,7 @@ const renderProgramTable = (programs) => {
       <td>${escHtml(String(p.id))}</td>
       <td>${escHtml(p.name)}</td>
       <td class="center">${p.level}</td>
-      <td><span class="status-pill status-${p.status}">${p.status}</span></td>
+      <td><span class="status-pill status-${p.status}">${statusFr(p.status)}</span></td>
       <td class="center">${gradeCell}</td>
       <td class="center">${scoreCell}</td>
       <td class="center">${estCell}</td>
@@ -360,12 +361,12 @@ const renderProgramTable = (programs) => {
     <input type="text" id="prog-search" placeholder="Rechercher par nom ou ID..." class="search-input">
     <select id="status-filter" class="filter-select">
       <option value="">Tous les statuts</option>
-      <option value="verified">Verified</option>
-      <option value="enriched">Enriched</option>
-      <option value="contracted">Contracted</option>
-      <option value="pending">Pending</option>
+      <option value="verified">V\u00e9rifi\u00e9</option>
+      <option value="enriched">Enrichi</option>
+      <option value="contracted">Analys\u00e9</option>
+      <option value="pending">En attente</option>
     </select>
-    <label class="checkbox-label"><input type="checkbox" id="decom-only"> Decomissionnables</label>
+    <label class="checkbox-label"><input type="checkbox" id="decom-only"> D\u00e9commissionnables uniquement</label>
   </div>
   <div class="table-scroll">
     <table id="program-table">
@@ -391,7 +392,7 @@ const renderProgramTable = (programs) => {
 };
 const renderFooter = (r) => `
 <footer>
-  <p>Genere le ${new Date(r.generated).toLocaleString('fr-FR')} par Migration Factory</p>
+  <p>G\u00e9n\u00e9r\u00e9 le ${new Date(r.generated).toLocaleString('fr-FR')} par Migration Factory</p>
 </footer>`;
 // ═══════════════════════════════════════════════════════════════════
 // Multi-Project Report
@@ -425,7 +426,7 @@ ${MULTI_CSS}
 <header>
   <h1>SPECMAP Migration Dashboard</h1>
   <div class="subtitle">${report.global.totalProjects} projets &middot; ${report.global.activeProjects} actif${report.global.activeProjects > 1 ? 's' : ''} &middot; ${report.global.totalLivePrograms} programmes LIVE</div>
-  <div class="last-updated">Derniere mise a jour : ${dateStr} a ${timeStr}</div>
+  <div class="last-updated">Derni\u00e8re mise \u00e0 jour : ${dateStr} \u00e0 ${timeStr}</div>
 </header>
 
 <nav class="project-tabs-bar">
@@ -434,32 +435,32 @@ ${MULTI_CSS}
 </nav>
 
 <div class="action-bar" id="action-bar">
-  <span class="server-badge disconnected" id="server-badge">Offline</span>
+  <span class="server-badge disconnected" id="server-badge">Hors ligne</span>
   <select id="batch-select" class="action-select" disabled>
-    <option value="">Select batch...</option>
+    <option value="">S\u00e9lectionner un batch...</option>
   </select>
-  <button class="action-btn" id="btn-preflight" disabled title="Run 'migration-factory serve' to enable">Preflight</button>
-  <button class="action-btn primary" id="btn-run" disabled title="Run 'migration-factory serve' to enable">Run Pipeline</button>
-  <button class="action-btn" id="btn-verify" disabled title="Run 'migration-factory serve' to enable">Verify</button>
-  <button class="action-btn" id="btn-gaps" disabled title="Run 'migration-factory serve' to enable">Gaps</button>
-  <button class="action-btn" id="btn-calibrate" disabled title="Run 'migration-factory serve' to enable">Calibrate</button>
-  <button class="action-btn" id="btn-generate" disabled title="Run 'migration-factory serve' to enable" style="background:#7c3aed;color:#fff">Generate Code</button>
-  <button class="action-btn" id="btn-migrate" disabled title="Run 'migration-factory serve' to enable" style="background:#059669;color:#fff">Migrate Module</button>
-  <button class="action-btn" id="btn-migrate-auto" disabled title="Run 'migration-factory serve' to enable" style="background:#0d9488;color:#fff">Migration Auto</button>
-  <button class="action-btn" id="btn-analyze" disabled title="Run 'migration-factory serve' to enable" style="background:#6366f1;color:#fff">Analyze Project</button>
+  <button class="action-btn" id="btn-preflight" disabled title="Lancez 'migration-factory serve' pour activer">Pr\u00e9-requis</button>
+  <button class="action-btn primary" id="btn-run" disabled title="Lancez 'migration-factory serve' pour activer">Lancer Pipeline</button>
+  <button class="action-btn" id="btn-verify" disabled title="Lancez 'migration-factory serve' pour activer">V\u00e9rifier</button>
+  <button class="action-btn" id="btn-gaps" disabled title="Lancez 'migration-factory serve' pour activer">Gaps</button>
+  <button class="action-btn" id="btn-calibrate" disabled title="Lancez 'migration-factory serve' pour activer">Calibrer</button>
+  <button class="action-btn" id="btn-generate" disabled title="Lancez 'migration-factory serve' pour activer" style="background:#7c3aed;color:#fff">G\u00e9n\u00e9rer Code</button>
+  <button class="action-btn" id="btn-migrate" disabled title="Lancez 'migration-factory serve' pour activer" style="background:#059669;color:#fff">Migrer Module</button>
+  <button class="action-btn" id="btn-migrate-auto" disabled title="Lancez 'migration-factory serve' pour activer" style="background:#0d9488;color:#fff">Migration Auto</button>
+  <button class="action-btn" id="btn-analyze" disabled title="Lancez 'migration-factory serve' pour activer" style="background:#6366f1;color:#fff">Analyser Projet</button>
   <select id="sel-enrich" disabled title="Enrichment mode" style="padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--card-bg);color:var(--text-main);font-size:12px">
-    <option value="none">No enrich</option>
-    <option value="heuristic" selected>Heuristic</option>
+    <option value="none">Sans enrichissement</option>
+    <option value="heuristic" selected>Heuristique</option>
     <option value="claude">Claude API</option>
     <option value="claude-cli">Claude CLI</option>
   </select>
-  <label style="margin-left:auto;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:4px"><input type="checkbox" id="chk-dry" disabled> Dry Run</label>
-  <button class="action-btn" id="btn-help" style="padding:4px 10px;font-weight:700;font-size:14px;border-radius:50%;min-width:28px" title="Help &amp; Documentation">?</button>
+  <label style="margin-left:auto;font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:4px"><input type="checkbox" id="chk-dry" disabled> Simulation</label>
+  <button class="action-btn" id="btn-help" style="padding:4px 10px;font-weight:700;font-size:14px;border-radius:50%;min-width:28px" title="Aide &amp; Documentation">?</button>
 </div>
 <div class="action-panel" id="action-panel">
   <div class="action-panel-header">
-    <strong id="panel-title">Results</strong>
-    <button class="action-btn" id="btn-close" style="padding:2px 8px;font-size:11px">Close</button>
+    <strong id="panel-title">R\u00e9sultats</strong>
+    <button class="action-btn" id="btn-close" style="padding:2px 8px;font-size:11px">Fermer</button>
   </div>
   <pre id="panel-content"></pre>
 </div>
@@ -499,7 +500,7 @@ ${MULTI_CSS}
     <!-- Section 3: Program grid -->
     <div class="mp-grid-section" id="mp-grid-section" style="display:none">
       <table class="mp-grid">
-        <thead><tr><th>IDE</th><th>Programme</th><th></th><th>Duree</th><th>Phases</th></tr></thead>
+        <thead><tr><th>IDE</th><th>Programme</th><th></th><th>Dur\u00e9e</th><th>Phases</th></tr></thead>
         <tbody id="mp-grid-body"></tbody>
       </table>
     </div>
@@ -514,31 +515,31 @@ ${MULTI_CSS}
 <!-- Confirmation modal before migration launch -->
 <div class="modal-backdrop" id="migrate-confirm-modal">
   <div class="modal-content">
-    <h3 style="margin:0 0 16px 0;font-size:18px">Launch Migration</h3>
+    <h3 style="margin:0 0 16px 0;font-size:18px">Lancer la migration</h3>
     <div class="modal-field">
       <label>Batch</label>
       <div id="modal-batch-info" style="font-weight:600"></div>
     </div>
     <div class="modal-field">
-      <label for="modal-target-dir">Target directory</label>
-      <input type="text" id="modal-target-dir" class="modal-input" value="adh-web" placeholder="e.g., adh-web">
+      <label for="modal-target-dir">R\u00e9pertoire cible</label>
+      <input type="text" id="modal-target-dir" class="modal-input" value="adh-web" placeholder="ex: adh-web">
       <div id="modal-target-resolved" style="font-size:11px;color:#8b949e;margin-top:2px"></div>
     </div>
     <div class="modal-field">
-      <label for="modal-parallel">Parallel programs (0 = auto)</label>
+      <label for="modal-parallel">Programmes en parall\u00e8le (0 = auto)</label>
       <input type="number" id="modal-parallel" class="modal-input" value="0" min="0" max="8" style="width:80px">
     </div>
     <div class="modal-field">
-      <label>Claude mode</label>
+      <label>Mode Claude</label>
       <div id="modal-claude-mode" style="font-size:13px;color:#8b949e"></div>
     </div>
     <div class="modal-field">
-      <label>Dry Run</label>
+      <label>Simulation</label>
       <div id="modal-dry-run" style="font-size:13px;color:#8b949e"></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
-      <button class="action-btn" id="modal-cancel">Cancel</button>
-      <button class="action-btn primary" id="modal-launch" style="background:#059669;border-color:#059669">Launch Migration</button>
+      <button class="action-btn" id="modal-cancel">Annuler</button>
+      <button class="action-btn primary" id="modal-launch" style="background:#059669;border-color:#059669">Lancer la migration</button>
     </div>
   </div>
 </div>
@@ -555,74 +556,74 @@ ${MULTI_CSS}
       <h3>Qu'est-ce que c'est ?</h3>
       <p>La <strong>Migration Factory</strong> est un outil de migration de programmes legacy Magic Unipaas vers des applications web modernes React/TypeScript.</p>
       <p>Elle orchestre le pipeline SPECMAP complet : <strong>EXTRACT &rarr; MAP &rarr; GAP &rarr; CONTRACT &rarr; ENRICH &rarr; VERIFY</strong></p>
-      <p>Chaque programme Magic correspond a un module fonctionnel (ecran, processus, rapport). La migration traite chaque programme individuellement en 16 phases automatisees.</p>
+      <p>Chaque programme Magic correspond \u00e0 un module fonctionnel (\u00e9cran, processus, rapport). La migration traite chaque programme individuellement en 16 phases automatis\u00e9es.</p>
     </div>
 
     <div class="help-section">
       <h3>Architecture</h3>
       <ul>
-        <li>Chaque <strong>programme Magic</strong> = 1 module fonctionnel (ecran, process, rapport)</li>
+        <li>Chaque <strong>programme Magic</strong> = 1 module fonctionnel (\u00e9cran, process, rapport)</li>
         <li>La migration traite chaque programme <strong>individuellement en 16 phases</strong></li>
-        <li>Un <strong>agent Claude CLI</strong> est lance par programme (ou N en parallele)</li>
+        <li>Un <strong>agent Claude CLI</strong> est lanc\u00e9 par programme (ou N en parall\u00e8le)</li>
         <li>Les <strong>batches</strong> regroupent les programmes par domaine fonctionnel</li>
-        <li>Fichiers generes : types TS, store Zustand, endpoints API, page React, composants, tests</li>
-        <li>Apres migration : verification automatique (TSC + tests) + commit git automatique</li>
+        <li>Fichiers g\u00e9n\u00e9r\u00e9s : types TS, store Zustand, endpoints API, page React, composants, tests</li>
+        <li>Apr\u00e8s migration : v\u00e9rification automatique (TSC + tests) + commit git automatique</li>
       </ul>
     </div>
 
     <div class="help-section">
       <h3>Boutons d'action</h3>
       <table class="help-table">
-        <tr><td><strong>Preflight</strong></td><td>Verifier les pre-requis avant de lancer un batch (contrats, dependances, gaps)</td></tr>
-        <tr><td><strong>Run Pipeline</strong></td><td>Executer le pipeline SPECMAP sur un batch (contrat &rarr; verification)</td></tr>
-        <tr><td><strong>Verify</strong></td><td>Auto-verifier les contrats dont tous les items sont IMPL ou N/A</td></tr>
-        <tr><td><strong>Gaps</strong></td><td>Afficher le rapport de gaps consolide par contrat</td></tr>
-        <tr><td><strong>Calibrate</strong></td><td>Recalculer l'estimation heures/point depuis les contrats verifies</td></tr>
-        <tr><td><strong>Generate Code</strong></td><td>Generer les fichiers React/TS squelette depuis les contrats</td></tr>
-        <tr><td><strong>Migrate Module</strong></td><td>Pipeline complet de migration en 16 phases (spec &rarr; code &rarr; test &rarr; review). Ouvre une modale de confirmation.</td></tr>
-        <tr><td><strong>Migration Auto</strong></td><td>Identique a Migrate Module mais sans modale (cible: adh-web, parallele: auto)</td></tr>
-        <tr><td><strong>Analyser</strong></td><td>Detecter les modules fonctionnels et estimer l'effort de migration</td></tr>
+        <tr><td><strong>Pr\u00e9-requis</strong></td><td>V\u00e9rifier les pr\u00e9-requis avant de lancer un batch (contrats, d\u00e9pendances, gaps)</td></tr>
+        <tr><td><strong>Lancer Pipeline</strong></td><td>Ex\u00e9cuter le pipeline SPECMAP sur un batch (contrat &rarr; v\u00e9rification)</td></tr>
+        <tr><td><strong>V\u00e9rifier</strong></td><td>Auto-v\u00e9rifier les contrats dont tous les items sont IMPL ou N/A</td></tr>
+        <tr><td><strong>Gaps</strong></td><td>Afficher le rapport de gaps consolid\u00e9 par contrat</td></tr>
+        <tr><td><strong>Calibrer</strong></td><td>Recalculer l'estimation heures/point depuis les contrats v\u00e9rifi\u00e9s</td></tr>
+        <tr><td><strong>G\u00e9n\u00e9rer Code</strong></td><td>G\u00e9n\u00e9rer les fichiers React/TS squelette depuis les contrats</td></tr>
+        <tr><td><strong>Migrer Module</strong></td><td>Pipeline complet de migration en 16 phases (spec &rarr; code &rarr; test &rarr; review). Ouvre une modale de confirmation.</td></tr>
+        <tr><td><strong>Migration Auto</strong></td><td>Identique \u00e0 Migrer Module mais sans modale (cible: adh-web, parall\u00e8le: auto)</td></tr>
+        <tr><td><strong>Analyser Projet</strong></td><td>D\u00e9tecter les modules fonctionnels et estimer l'effort de migration</td></tr>
       </table>
     </div>
 
     <div class="help-section">
       <h3>Modes d'enrichissement</h3>
       <table class="help-table">
-        <tr><td><strong>Sans enrichissement</strong></td><td>Genere uniquement le squelette (types, composants vides)</td></tr>
-        <tr><td><strong>Heuristique</strong></td><td>Remplit automatiquement types et valeurs par defaut depuis le contrat</td></tr>
-        <tr><td><strong>Claude API</strong></td><td>Utilise l'API Anthropic (necessite ANTHROPIC_API_KEY) pour enrichir le code via IA</td></tr>
+        <tr><td><strong>Sans enrichissement</strong></td><td>G\u00e9n\u00e8re uniquement le squelette (types, composants vides)</td></tr>
+        <tr><td><strong>Heuristique</strong></td><td>Remplit automatiquement types et valeurs par d\u00e9faut depuis le contrat</td></tr>
+        <tr><td><strong>Claude API</strong></td><td>Utilise l'API Anthropic (n\u00e9cessite ANTHROPIC_API_KEY) pour enrichir le code via IA</td></tr>
         <tr><td><strong>Claude CLI</strong></td><td>Utilise la commande locale <code>claude --print</code> pour enrichir via IA</td></tr>
       </table>
     </div>
 
     <div class="help-section">
       <h3>Phases de migration (16)</h3>
-      <p>Chaque programme passe par ces 16 phases lors de <strong>Migrate Module</strong> :</p>
+      <p>Chaque programme passe par ces 16 phases lors de <strong>Migrer Module</strong> :</p>
       <ol class="help-phases">
-        <li><strong>spec</strong> &mdash; Extraction de la specification depuis le code legacy</li>
-        <li><strong>contract</strong> &mdash; Generation du contrat de migration</li>
-        <li><strong>analyze</strong> &mdash; Analyse du programme (domaine, complexite, dependances)</li>
-        <li><strong>types</strong> &mdash; Generation des types TypeScript</li>
-        <li><strong>store</strong> &mdash; Generation du store Zustand</li>
-        <li><strong>api</strong> &mdash; Generation des endpoints API</li>
-        <li><strong>page</strong> &mdash; Generation de la page React</li>
-        <li><strong>components</strong> &mdash; Generation des composants React</li>
-        <li><strong>tests-unit</strong> &mdash; Generation des tests unitaires</li>
-        <li><strong>tests-ui</strong> &mdash; Generation des tests UI</li>
-        <li><strong>verify-tsc</strong> &mdash; Verification TypeScript (tsc --noEmit)</li>
+        <li><strong>spec</strong> &mdash; Extraction de la sp\u00e9cification depuis le code legacy</li>
+        <li><strong>contract</strong> &mdash; G\u00e9n\u00e9ration du contrat de migration</li>
+        <li><strong>analyze</strong> &mdash; Analyse du programme (domaine, complexit\u00e9, d\u00e9pendances)</li>
+        <li><strong>types</strong> &mdash; G\u00e9n\u00e9ration des types TypeScript</li>
+        <li><strong>store</strong> &mdash; G\u00e9n\u00e9ration du store Zustand</li>
+        <li><strong>api</strong> &mdash; G\u00e9n\u00e9ration des endpoints API</li>
+        <li><strong>page</strong> &mdash; G\u00e9n\u00e9ration de la page React</li>
+        <li><strong>components</strong> &mdash; G\u00e9n\u00e9ration des composants React</li>
+        <li><strong>tests-unit</strong> &mdash; G\u00e9n\u00e9ration des tests unitaires</li>
+        <li><strong>tests-ui</strong> &mdash; G\u00e9n\u00e9ration des tests UI</li>
+        <li><strong>verify-tsc</strong> &mdash; V\u00e9rification TypeScript (tsc --noEmit)</li>
         <li><strong>fix-tsc</strong> &mdash; Correction automatique des erreurs TypeScript</li>
-        <li><strong>verify-tests</strong> &mdash; Execution des tests (vitest)</li>
-        <li><strong>fix-tests</strong> &mdash; Correction automatique des tests echoues</li>
-        <li><strong>integrate</strong> &mdash; Integration dans le routeur et l'index</li>
+        <li><strong>verify-tests</strong> &mdash; Ex\u00e9cution des tests (vitest)</li>
+        <li><strong>fix-tests</strong> &mdash; Correction automatique des tests \u00e9chou\u00e9s</li>
+        <li><strong>integrate</strong> &mdash; Int\u00e9gration dans le routeur et l'index</li>
         <li><strong>review</strong> &mdash; Revue finale et nettoyage</li>
       </ol>
     </div>
 
     <div class="help-section">
       <h3>Batches</h3>
-      <p>Les batches regroupent les programmes par domaine fonctionnel. Ils sont generes automatiquement par la commande <code>plan</code> :</p>
+      <p>Les batches regroupent les programmes par domaine fonctionnel. Ils sont g\u00e9n\u00e9r\u00e9s automatiquement par la commande <code>plan</code> :</p>
       <table class="help-table">
-        <tr><td><strong>B1</strong></td><td>Ouverture session (8 progs) &mdash; 100% VERIFIED</td></tr>
+        <tr><td><strong>B1</strong></td><td>Ouverture session (8 progs) &mdash; 100% v\u00e9rifi\u00e9</td></tr>
         <tr><td><strong>B2</strong></td><td>Caisse (17 progs)</td></tr>
         <tr><td><strong>B3</strong></td><td>General 1/2 (25 progs)</td></tr>
         <tr><td><strong>B4</strong></td><td>General 2/2 (23 progs)</td></tr>
@@ -639,12 +640,12 @@ ${MULTI_CSS}
     <div class="help-section">
       <h3>Commandes CLI</h3>
       <pre class="help-cli">migration-factory serve --port 3070 --dir ADH    # Lancer le dashboard
-migration-factory report --multi                   # Generer rapport HTML statique
+migration-factory report --multi                   # G\u00e9n\u00e9rer rapport HTML statique
 migration-factory pipeline run --batch B2          # Lancer le pipeline SPECMAP
 migration-factory migrate --batch B2 --target adh-web  # Migration complete
-migration-factory migrate --batch B2 --target adh-web --parallel 0  # auto-parallel (detecte les CPUs)
+migration-factory migrate --batch B2 --target adh-web --parallel 0  # auto-parallel (d\u00e9tecte les CPUs)
 migration-factory migrate status                   # Voir la progression
-migration-factory verify                           # Auto-verifier les contrats
+migration-factory verify                           # Auto-v\u00e9rifier les contrats
 migration-factory gaps                             # Rapport de gaps
 migration-factory calibrate                        # Recalculer les estimations
 migration-factory analyze --dir ADH                # Analyser les modules</pre>
@@ -653,12 +654,12 @@ migration-factory analyze --dir ADH                # Analyser les modules</pre>
     <div class="help-section">
       <h3>Conseils</h3>
       <ul>
-        <li>Cochez <strong>Dry Run</strong> pour simuler sans modifier de fichiers</li>
-        <li>Vous pouvez <strong>rafraichir la page (F5)</strong> pendant une migration &mdash; elle se reconnectera automatiquement</li>
-        <li>Le timer affiche le temps ecoule et une <strong>estimation du temps restant (ETA)</strong> apres le 1er programme termine</li>
-        <li>Le nombre d'agents paralleles est auto-determine (0=auto) et affiche dans l'en-tete</li>
-        <li>Les tokens consommes et le cout estime sont affiches en temps reel (mode API uniquement)</li>
-        <li>Apres migration, verifiez toujours le resultat avec <code>tsc --noEmit</code> et <code>vitest run</code></li>
+        <li>Cochez <strong>Simulation</strong> pour simuler sans modifier de fichiers</li>
+        <li>Vous pouvez <strong>rafra\u00eechir la page (F5)</strong> pendant une migration &mdash; elle se reconnectera automatiquement</li>
+        <li>Le timer affiche le temps \u00e9coul\u00e9 et une <strong>estimation du temps restant (ETA)</strong> apr\u00e8s le 1er programme termin\u00e9</li>
+        <li>Le nombre d'agents parall\u00e8les est auto-d\u00e9termin\u00e9 (0=auto) et affich\u00e9 dans l'en-t\u00eate</li>
+        <li>Les tokens consomm\u00e9s et le co\u00fbt estim\u00e9 sont affich\u00e9s en temps r\u00e9el (mode API uniquement)</li>
+        <li>Apr\u00e8s migration, v\u00e9rifiez toujours le r\u00e9sultat avec <code>tsc --noEmit</code> et <code>vitest run</code></li>
       </ul>
     </div>
   </div>
@@ -671,7 +672,7 @@ migration-factory analyze --dir ADH                # Analyser les modules</pre>
 ${projectContents}
 
 <footer>
-  <p>Genere le ${dateStr} a ${timeStr} par Migration Factory</p>
+  <p>G\u00e9n\u00e9r\u00e9 le ${dateStr} \u00e0 ${timeStr} par Migration Factory</p>
 </footer>
 
 </div>
@@ -700,16 +701,16 @@ const renderGlobalView = (report) => {
       <div class="project-card project-card-idle">
         <div class="project-card-name">${escHtml(p.name)}</div>
         <div class="project-card-desc">${escHtml(p.description)}</div>
-        <div class="project-card-status"><span class="badge badge-gray">NON DEMARRE</span></div>
+        <div class="project-card-status"><span class="badge badge-gray">NON D\u00c9MARR\u00c9</span></div>
         <div class="project-card-stat">${p.programCount > 0 ? p.programCount + ' programmes' : ''}</div>
       </div>`;
         }
         const live = r.graph.livePrograms;
         const vPct = live > 0 ? Math.round(r.pipeline.verified / live * 100) : 0;
-        const statusBadge = vPct >= 100 ? '<span class="badge badge-green">COMPLETE</span>'
+        const statusBadge = vPct >= 100 ? '<span class="badge badge-green">TERMIN\u00c9</span>'
             : vPct > 0 ? '<span class="badge badge-blue">EN COURS</span>'
-                : r.pipeline.contracted > 0 ? '<span class="badge badge-yellow">CONTRACTED</span>'
-                    : '<span class="badge badge-gray">PENDING</span>';
+                : r.pipeline.contracted > 0 ? '<span class="badge badge-yellow">ANALYS\u00c9</span>'
+                    : '<span class="badge badge-gray">EN ATTENTE</span>';
         return `
       <div class="project-card project-card-active" data-goto="${escHtml(p.name)}">
         <div class="project-card-name">${escHtml(p.name)}</div>
@@ -723,8 +724,8 @@ const renderGlobalView = (report) => {
         </div>
         <div class="project-card-stats">
           <span>${live} LIVE</span>
-          <span>${r.pipeline.verified} verified</span>
-          <span>${r.pipeline.contracted} contracted</span>
+          <span>${r.pipeline.verified} v\u00e9rifi\u00e9s</span>
+          <span>${r.pipeline.contracted} analys\u00e9s</span>
           <span>${r.modules.total} modules</span>
         </div>
       </div>`;
@@ -744,17 +745,17 @@ const renderGlobalView = (report) => {
 <section class="kpi-grid">
   ${kpiCard('Projets actifs', `${g.activeProjects}/${g.totalProjects}`, `${g.totalProjects - g.activeProjects} en attente`, 'var(--purple)')}
   ${kpiCard('Programmes LIVE', String(g.totalLivePrograms), 'Tous projets confondus', 'var(--blue)')}
-  ${kpiCard('Migrated', `${g.totalVerified + g.totalEnriched}/${g.totalLivePrograms}`, `${g.overallProgressPct}% (${g.totalVerified} verified, ${g.totalEnriched} enriched)`, 'var(--green)')}
-  ${kpiCard('Contracted', String(g.totalContracted), `${g.totalContracted} contrats en cours`, 'var(--yellow)')}
+  ${kpiCard('V\u00e9rifi\u00e9s', `${g.totalVerified}/${g.totalLivePrograms}`, `${g.overallProgressPct}% (${g.totalEnriched} enrichis, ${g.totalContracted} analys\u00e9s)`, 'var(--green)')}
+  ${kpiCard('Analys\u00e9s', String(g.totalContracted), `${g.totalContracted} programmes analys\u00e9s`, 'var(--yellow)')}
 </section>
 
 <section class="card">
   <h2>Pipeline globale</h2>
   <div class="pipeline">
-    ${pBar(g.totalVerified, 'var(--green)', 'Verified')}
-    ${pBar(g.totalEnriched, 'var(--blue)', 'Enriched')}
-    ${pBar(g.totalContracted, 'var(--yellow)', 'Contracted')}
-    ${pBar(g.totalPending, 'var(--gray)', 'Pending')}
+    ${pBar(g.totalVerified, 'var(--green)', 'V\u00e9rifi\u00e9')}
+    ${pBar(g.totalEnriched, 'var(--blue)', 'Enrichi')}
+    ${pBar(g.totalContracted, 'var(--yellow)', 'Analys\u00e9')}
+    ${pBar(g.totalPending, 'var(--gray)', 'En attente')}
   </div>
 </section>
 
@@ -783,6 +784,7 @@ const renderProjectTab = (entry) => {
 // ─── Helpers ────────────────────────────────────────────────────
 const escHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const pct = (value, total) => total > 0 ? Math.round(value / total * 100) : 0;
+const statusFr = (s) => ({ pending: 'en attente', contracted: 'analys\u00e9', enriched: 'enrichi', verified: 'v\u00e9rifi\u00e9' })[s] ?? s;
 // ─── CSS ────────────────────────────────────────────────────────
 const CSS = `
 :root {
@@ -1630,7 +1632,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   var btnClose = document.getElementById('btn-close');
 
   // Activate UI
-  badge.textContent = 'Connected';
+  badge.textContent = 'Connect\\u00e9';
   badge.className = 'server-badge connected';
   batchSelect.disabled = false;
   btnPreflight.disabled = false;
@@ -1672,7 +1674,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       if (b.status === 'verified') return; // Skip completed batches
       var opt = document.createElement('option');
       opt.value = b.id;
-      opt.textContent = b.id + ' - ' + b.name + ' (' + b.programCount + ' progs, ' + b.verified + '/' + b.programCount + ' verified)';
+      opt.textContent = b.id + ' - ' + b.name + ' (' + b.programCount + ' progs, ' + b.verified + '/' + b.programCount + ' v\\u00e9rifi\\u00e9s)';
       batchSelect.appendChild(opt);
     });
   });
@@ -1680,23 +1682,23 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   // Preflight
   btnPreflight.addEventListener('click', function() {
     var batch = batchSelect.value;
-    if (!batch) { showPanel('Error', 'Select a batch first'); return; }
+    if (!batch) { showPanel('Erreur', 'S\\u00e9lectionnez un batch d\\'abord'); return; }
     setLoading(btnPreflight, true);
     fetch('/api/preflight?batch=' + encodeURIComponent(batch))
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var lines = ['Preflight: ' + data.batchId + ' - ' + data.batchName, ''];
+        var lines = ['Pr\\u00e9-requis : ' + data.batchId + ' - ' + data.batchName, ''];
         data.checks.forEach(function(c) {
           lines.push((c.passed ? 'OK' : 'FAIL') + '  ' + c.check + ': ' + c.message);
         });
         if (data.programs.length > 0) {
-          lines.push('', 'Programs:');
+          lines.push('', 'Programmes :');
           data.programs.forEach(function(p) {
             lines.push('  IDE ' + p.id + ' - ' + p.name + ' [' + p.action + ']' + (p.gaps > 0 ? ' (' + p.gaps + ' gaps)' : ''));
           });
         }
-        lines.push('', 'Summary: ' + data.summary.willContract + ' contract, ' + data.summary.willVerify + ' verify, ' + data.summary.needsEnrichment + ' enrich, ' + data.summary.alreadyDone + ' done, ' + data.summary.blocked + ' blocked');
-        showPanel('Preflight: ' + batch, lines.join('\\n'));
+        lines.push('', 'R\\u00e9sum\\u00e9 : ' + data.summary.willContract + ' \\u00e0 analyser, ' + data.summary.willVerify + ' \\u00e0 v\\u00e9rifier, ' + data.summary.needsEnrichment + ' \\u00e0 enrichir, ' + data.summary.alreadyDone + ' termin\\u00e9s, ' + data.summary.blocked + ' bloqu\\u00e9s');
+        showPanel('Pr\\u00e9-requis : ' + batch, lines.join('\\n'));
       })
       .finally(function() { setLoading(btnPreflight, false); });
   });
@@ -1704,7 +1706,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   // Run Pipeline (Streaming SSE)
   btnRun.addEventListener('click', function() {
     var batch = batchSelect.value;
-    if (!batch) { showPanel('Error', 'Select a batch first'); return; }
+    if (!batch) { showPanel('Erreur', 'S\\u00e9lectionnez un batch d\\'abord'); return; }
     setLoading(btnRun, true);
     var dryRun = chkDry.checked;
     var url = '/api/pipeline/stream?batch=' + encodeURIComponent(batch) + '&dryRun=' + dryRun;
@@ -1736,12 +1738,12 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
 
       if (msg.type === 'preflight') {
         totalProgs = msg.data.programs.length;
-        pstatus.textContent = 'Preflight OK: ' + totalProgs + ' programs ('
-          + msg.data.summary.alreadyDone + ' done, '
-          + msg.data.summary.ready + ' ready)';
-        addLog('Preflight: ' + msg.data.summary.ready + ' ready, '
-          + msg.data.summary.alreadyDone + ' already done, '
-          + msg.data.summary.blocked + ' blocked');
+        pstatus.textContent = 'Pr\\u00e9-requis OK : ' + totalProgs + ' programmes ('
+          + msg.data.summary.alreadyDone + ' termin\\u00e9s, '
+          + msg.data.summary.ready + ' pr\\u00eats)';
+        addLog('Pr\\u00e9-requis : ' + msg.data.summary.ready + ' pr\\u00eats, '
+          + msg.data.summary.alreadyDone + ' d\\u00e9j\\u00e0 termin\\u00e9s, '
+          + msg.data.summary.blocked + ' bloqu\\u00e9s');
         return;
       }
 
@@ -1755,17 +1757,17 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         var r = msg.data;
         var elapsed = ((new Date(r.completed).getTime() - new Date(r.started).getTime()) / 1000).toFixed(1);
         pbar.style.width = '100%';
-        pstatus.textContent = 'Done in ' + elapsed + 's: '
-          + r.summary.verified + ' verified, '
-          + r.summary.contracted + ' contracted, '
-          + r.summary.errors + ' errors';
-        addLog('Pipeline completed in ' + elapsed + 's');
+        pstatus.textContent = 'Termin\\u00e9 en ' + elapsed + 's : '
+          + r.summary.verified + ' v\\u00e9rifi\\u00e9s, '
+          + r.summary.contracted + ' analys\\u00e9s, '
+          + r.summary.errors + ' erreurs';
+        addLog('Pipeline termin\\u00e9 en ' + elapsed + 's');
         return;
       }
 
       if (msg.type === 'error') {
         addLog('ERROR: ' + (msg.message || ''));
-        pstatus.textContent = 'Error: ' + (msg.message || '');
+        pstatus.textContent = 'Erreur : ' + (msg.message || '');
         return;
       }
 
@@ -1794,8 +1796,8 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var lines = ['Verify ' + (data.dryRun ? '(DRY-RUN)' : '') + ' result:', ''];
-        lines.push(data.verified + ' verified, ' + data.notReady + ' not ready, ' + data.alreadyVerified + ' already verified');
+        var lines = ['V\\u00e9rification ' + (data.dryRun ? '(SIMULATION)' : '') + ' r\\u00e9sultat :', ''];
+        lines.push(data.verified + ' v\\u00e9rifi\\u00e9s, ' + data.notReady + ' non pr\\u00eats, ' + data.alreadyVerified + ' d\\u00e9j\\u00e0 v\\u00e9rifi\\u00e9s');
         if (data.details && data.details.length > 0) {
           lines.push('', 'Details:');
           data.details.forEach(function(d) {
@@ -1804,7 +1806,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
             lines.push(line);
           });
         }
-        showPanel('Verify', lines.join('\\n'));
+        showPanel('V\\u00e9rification', lines.join('\\n'));
       })
       .finally(function() { setLoading(btnVerify, false); });
   });
@@ -1815,9 +1817,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     fetch('/api/gaps')
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var lines = ['Gap Report', ''];
+        var lines = ['Rapport de Gaps', ''];
         if (data.contracts.length === 0) {
-          lines.push('No gaps found - all contracts are complete!');
+          lines.push('Aucun gap trouv\\u00e9 - tous les contrats sont complets !');
         } else {
           data.contracts.forEach(function(cg) {
             var pct = cg.total > 0 ? Math.round((cg.impl / cg.total) * 100) : 0;
@@ -1825,11 +1827,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
             cg.gaps.slice(0, 5).forEach(function(g) {
               lines.push('  ' + g.type + ' ' + g.id + ': ' + g.status + (g.notes ? ' - ' + g.notes : ''));
             });
-            if (cg.gaps.length > 5) lines.push('  ... and ' + (cg.gaps.length - 5) + ' more');
+            if (cg.gaps.length > 5) lines.push('  ... et ' + (cg.gaps.length - 5) + ' de plus');
           });
         }
-        lines.push('', 'Total: ' + data.grandTotalGaps + ' gaps (' + data.globalPct + '% complete)');
-        showPanel('Gaps', lines.join('\\n'));
+        lines.push('', 'Total : ' + data.grandTotalGaps + ' gaps (' + data.globalPct + '% complet)');
+        showPanel('Rapport de Gaps', lines.join('\\n'));
       })
       .finally(function() { setLoading(btnGaps, false); });
   });
@@ -1844,15 +1846,15 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var lines = ['Calibration' + (chkDry.checked ? ' (DRY-RUN)' : ''), ''];
-        lines.push('Verified contracts: ' + data.dataPoints);
-        lines.push('Previous: ' + data.previousHpp + ' h/pt -> Calibrated: ' + data.calibratedHpp + ' h/pt');
-        lines.push('Estimated: ' + data.totalEstimated + 'h | Actual: ' + data.totalActual + 'h');
-        lines.push('Accuracy: ' + data.accuracyPct + '%');
+        var lines = ['Calibration' + (chkDry.checked ? ' (SIMULATION)' : ''), ''];
+        lines.push('Contrats v\\u00e9rifi\\u00e9s : ' + data.dataPoints);
+        lines.push('Avant : ' + data.previousHpp + ' h/pt -> Calibr\\u00e9 : ' + data.calibratedHpp + ' h/pt');
+        lines.push('Estim\\u00e9 : ' + data.totalEstimated + 'h | R\\u00e9el : ' + data.totalActual + 'h');
+        lines.push('Pr\\u00e9cision : ' + data.accuracyPct + '%');
         if (data.details && data.details.length > 0) {
-          lines.push('', 'Details:');
+          lines.push('', 'D\\u00e9tails :');
           data.details.forEach(function(d) {
-            lines.push('  IDE ' + d.programId + ': score=' + d.score + ' est=' + d.estimated + 'h act=' + d.actual + 'h');
+            lines.push('  IDE ' + d.programId + ' : score=' + d.score + ' est=' + d.estimated + 'h r\\u00e9el=' + d.actual + 'h');
           });
         }
         showPanel('Calibration', lines.join('\\n'));
@@ -1870,39 +1872,39 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var lines = ['Project Analysis: ' + data.projectName, ''];
-        lines.push('Live programs: ' + data.totalLivePrograms);
-        lines.push('Batches preserved: ' + data.batchesPreserved + ' | Created: ' + data.batchesCreated + ' | Unassigned: ' + data.unassignedCount);
+        var lines = ['Analyse du projet : ' + data.projectName, ''];
+        lines.push('Programmes LIVE : ' + data.totalLivePrograms);
+        lines.push('Batches conserv\\u00e9s : ' + data.batchesPreserved + ' | Cr\\u00e9\\u00e9s : ' + data.batchesCreated + ' | Non assign\\u00e9s : ' + data.unassignedCount);
         lines.push('');
         if (data.batches) {
           data.batches.forEach(function(b) {
-            var flag = b.isNew ? 'NEW' : 'EXISTING';
-            lines.push(b.id + '  ' + b.name + '  [' + b.domain + ']  ' + b.memberCount + ' progs  Complexite ' + b.complexityGrade + '  ~' + b.estimatedHours + 'h  ' + flag);
+            var flag = b.isNew ? 'NOUVEAU' : 'EXISTANT';
+            lines.push(b.id + '  ' + b.name + '  [' + b.domain + ']  ' + b.memberCount + ' progs  Complexit\\u00e9 ' + b.complexityGrade + '  ~' + b.estimatedHours + 'h  ' + flag);
           });
         }
         if (!chkDry.checked) {
-          lines.push('', 'Batches persisted.');
+          lines.push('', 'Batches sauvegard\\u00e9s.');
         }
-        showPanel('Project Analysis', lines.join('\\n'));
+        showPanel('Analyse du projet', lines.join('\\n'));
       })
-      .catch(function(err) { showPanel('Error', String(err)); })
+      .catch(function(err) { showPanel('Erreur', String(err)); })
       .finally(function() { setLoading(btnAnalyze, false); });
   });
 
   // Generate Code (Streaming SSE)
   btnGenerate.addEventListener('click', function() {
     var batch = batchSelect.value;
-    if (!batch) { showPanel('Error', 'Select a batch first'); return; }
-    var outputDir = prompt('Output directory for generated files:', './adh-web/src');
+    if (!batch) { showPanel('Erreur', 'S\\u00e9lectionnez un batch d\\'abord'); return; }
+    var outputDir = prompt('R\\u00e9pertoire de sortie pour les fichiers g\\u00e9n\\u00e9r\\u00e9s :', './adh-web/src');
     if (!outputDir) return;
     setLoading(btnGenerate, true);
     var dryRun = chkDry.checked;
     var enrichMode = document.getElementById('sel-enrich').value || 'none';
     var url = '/api/generate/stream?batch=' + encodeURIComponent(batch) + '&outputDir=' + encodeURIComponent(outputDir) + '&dryRun=' + dryRun + '&enrich=' + enrichMode;
 
-    var enrichLabel = enrichMode !== 'none' ? ' [enrich: ' + enrichMode + ']' : '';
-    var lines = ['Code Generation' + (dryRun ? ' (DRY-RUN)' : '') + enrichLabel + ' - Batch ' + batch, 'Output: ' + outputDir, ''];
-    showPanel('Generate Code', lines.join('\\n'));
+    var enrichLabel = enrichMode !== 'none' ? ' [enrichissement: ' + enrichMode + ']' : '';
+    var lines = ['G\\u00e9n\\u00e9ration de code' + (dryRun ? ' (SIMULATION)' : '') + enrichLabel + ' - Batch ' + batch, 'Sortie : ' + outputDir, ''];
+    showPanel('G\\u00e9n\\u00e9ration de code', lines.join('\\n'));
 
     var es = new EventSource(url);
     es.onmessage = function(ev) {
@@ -1915,13 +1917,13 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       }
 
       if (msg.type === 'codegen_started') {
-        lines.push('Starting: ' + msg.total + ' programs');
+        lines.push('D\\u00e9marrage : ' + msg.total + ' programmes');
       } else if (msg.type === 'codegen_program') {
         lines.push('[' + msg.progress + '] IDE ' + msg.programId + ' ' + msg.programName + ': ' + msg.written + ' written, ' + msg.skipped + ' skipped');
       } else if (msg.type === 'codegen_skip') {
         lines.push('SKIP IDE ' + msg.programId + ': ' + msg.message);
       } else if (msg.type === 'codegen_completed') {
-        lines.push('', 'Done: ' + msg.processed + ' programs, ' + msg.totalWritten + ' files ' + (msg.dryRun ? 'would be written' : 'written') + ', ' + msg.totalSkipped + ' skipped');
+        lines.push('', 'Termin\\u00e9 : ' + msg.processed + ' programmes, ' + msg.totalWritten + ' fichiers ' + (msg.dryRun ? '\\u00e0 \\u00e9crire' : '\\u00e9crits') + ', ' + msg.totalSkipped + ' ignor\\u00e9s');
       } else if (msg.type === 'error') {
         lines.push('ERROR: ' + msg.message);
       }
@@ -1932,7 +1934,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     es.onerror = function() {
       es.close();
       setLoading(btnGenerate, false);
-      lines.push('Connection lost');
+      lines.push('Connexion perdue');
       panelContent.textContent = lines.join('\\n');
     };
   });
@@ -1978,7 +1980,8 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     activeBtn: null, parallelCount: 0,
     programStartTimes: {}, programDurations: [],
     tokensIn: 0, tokensOut: 0,
-    eventsProcessed: 0
+    eventsProcessed: 0,
+    estimatedHours: 0
   };
 
   function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -2036,24 +2039,33 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   });
 
   function computeETA() {
-    var durations = migrateState.programDurations;
-    if (durations.length === 0) return '';
     var remaining = migrateState.totalProgs - migrateState.doneProgs - migrateState.failedProgs;
     if (remaining <= 0) return '';
+    var durations = migrateState.programDurations;
     // Filter out trivial programs (<5s) that skipped all phases (no Claude calls)
     var real = [];
     for (var i = 0; i < durations.length; i++) { if (durations[i] >= 5000) real.push(durations[i]); }
-    // If no real durations yet, use elapsed/completed as fallback
-    if (real.length === 0) {
-      if (migrateState.doneProgs + migrateState.failedProgs === 0) return '';
-      var elapsed = Date.now() - migrateState.migrationStart;
-      var avgMs = elapsed / (migrateState.doneProgs + migrateState.failedProgs);
+    // 2+ real durations: average of real durations
+    if (real.length >= 2) {
+      var sum = 0;
+      for (var i = 0; i < real.length; i++) sum += real[i];
+      var avgMs = sum / real.length;
       return ' | ETA: ~' + formatElapsed(remaining * avgMs);
     }
-    var sum = 0;
-    for (var i = 0; i < real.length; i++) sum += real[i];
-    var avgMs = sum / real.length;
-    return ' | ETA: ~' + formatElapsed(remaining * avgMs);
+    // 1 real duration: projection from elapsed
+    if (real.length === 1 || (durations.length > 0 && real.length === 0)) {
+      var completed = migrateState.doneProgs + migrateState.failedProgs;
+      if (completed > 0) {
+        var elapsed = Date.now() - migrateState.migrationStart;
+        var avgMs = elapsed / completed;
+        return ' | ETA: ~' + formatElapsed(remaining * avgMs);
+      }
+    }
+    // 0 completed but we have a pre-calculated estimate
+    if (migrateState.estimatedHours > 0) {
+      return ' | ETA: ~' + formatElapsed(migrateState.estimatedHours * 3600000);
+    }
+    return ' | Estimation en cours...';
   }
 
   function formatTokens(n) { return n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : Math.round(n / 1000) + 'K'; }
@@ -2195,12 +2207,13 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     if (msg.type === 'migrate_started') {
       migrateState.totalProgs = msg.programs || 0;
       migrateState.doneProgs = 0;
+      migrateState.estimatedHours = msg.estimatedHours || 0;
       if (msg.programList && msg.programList.length) {
         migrateState.programList = msg.programList;
         buildProgramGrid(msg.programList);
       }
       updateModuleProgress(0, migrateState.totalProgs);
-      addMLog('Migration started: ' + migrateState.totalProgs + ' programs');
+      addMLog('Migration d\\u00e9marr\\u00e9e : ' + migrateState.totalProgs + ' programmes' + (migrateState.estimatedHours > 0 ? ' (~' + migrateState.estimatedHours.toFixed(1) + 'h estim\\u00e9es)' : ''));
       return;
     }
 
@@ -2319,7 +2332,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       migrateState.doneProgs++;
       updateModuleProgress(migrateState.doneProgs, migrateState.totalProgs);
       updateProgramProgress(null, null);
-      addMLog(isSkipped ? '[skip] IDE ' + pid + ': already migrated' : '[done] IDE ' + pid + ': ' + (msg.message || ''));
+      addMLog(isSkipped ? '[ignor\\u00e9] IDE ' + pid + ' : d\\u00e9j\\u00e0 migr\\u00e9' : '[termin\\u00e9] IDE ' + pid + ' : ' + (msg.message || ''));
       return;
     }
 
@@ -2362,7 +2375,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         }
         var allSkipped = r.summary.skipped === r.summary.total;
         if (allSkipped) {
-          label.textContent = 'Done: ' + r.summary.total + '/' + r.summary.total + ' already migrated (nothing to do)' + costStr;
+          label.textContent = 'Termin\\u00e9 : ' + r.summary.total + '/' + r.summary.total + ' d\\u00e9j\\u00e0 migr\\u00e9s (rien \\u00e0 faire)' + costStr;
         } else {
           label.textContent = 'Done: ' + r.summary.completed + '/' + r.summary.total
             + ' completed' + (failed > 0 ? ', ' + failed + ' failed' : '')
@@ -2383,9 +2396,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         if (migrateBadge) { migrateBadge.textContent = 'Done'; migrateBadge.style.background = 'var(--green)'; }
       }
       document.getElementById('mp-prog-section').style.display = 'none';
-      addMLog('Migration completed' + (failed > 0 ? ' (' + failed + ' failed)' : ''));
+      addMLog('Migration termin\\u00e9e' + (failed > 0 ? ' (' + failed + ' \\u00e9chou\\u00e9(s))' : ''));
       if (r && r.git) addMLog('[git] Committed ' + r.git.commitSha + ' pushed to ' + r.git.branch);
-      addMLog('Migration terminee.');
+      addMLog('Migration termin\\u00e9e.');
       return;
     }
 
@@ -2422,7 +2435,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       + '&parallel=' + parallelCount
       + '&mode=' + claudeMode;
 
-    var headerPrefix = isAuto ? 'Migration Auto' : 'Migrate';
+    var headerPrefix = isAuto ? 'Migration Auto' : 'Migration';
     var parallelInfo = migrateState.parallelCount > 0 ? ' x' + migrateState.parallelCount + ' agents' : ' (auto-parallel)';
     showMigrateOverlay(headerPrefix + ': ' + batch + ' [' + claudeMode.toUpperCase() + ']' + parallelInfo);
     migrateAbortBtn.style.display = 'inline-block';
@@ -2497,7 +2510,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   // ─── Migrate Module (opens confirmation modal) ────────────────
   btnMigrate.addEventListener('click', function() {
     var batch = batchSelect.value;
-    if (!batch) { showPanel('Error', 'Select a batch first'); return; }
+    if (!batch) { showPanel('Erreur', 'S\\u00e9lectionnez un batch d\\'abord'); return; }
 
     var enrichSel = document.getElementById('sel-enrich').value || 'none';
     var claudeMode = enrichSel === 'claude' ? 'api' : 'cli';
@@ -2525,7 +2538,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   // ─── Migration Auto (skip modal, launch immediately) ─────────
   btnMigrateAuto.addEventListener('click', function() {
     var batch = batchSelect.value;
-    if (!batch) { showPanel('Error', 'Select a batch first'); return; }
+    if (!batch) { showPanel('Erreur', 'S\\u00e9lectionnez un batch d\\'abord'); return; }
     var enrichSel = document.getElementById('sel-enrich').value || 'none';
     var claudeMode = enrichSel === 'claude' ? 'api' : 'cli';
     var dryRun = chkDry.checked;

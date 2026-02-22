@@ -14,6 +14,7 @@ export interface MigrateActiveState {
   targetDir: string;
   mode: string;
   dryRun: boolean;
+  estimatedHours: number;
   programList: Array<{ id: string | number; name: string }>;
   events: unknown[];
 }
@@ -30,13 +31,14 @@ let state: MigrateActiveState = {
   targetDir: '',
   mode: '',
   dryRun: false,
+  estimatedHours: 0,
   programList: [],
   events: [],
 };
 
 export const getMigrateActiveState = (): MigrateActiveState => ({ ...state, programList: [...state.programList], events: [...state.events] });
 
-export const startMigration = (batch: string, totalPrograms: number, targetDir: string, mode: string, dryRun: boolean, programList: Array<{ id: string | number; name: string }> = []): void => {
+export const startMigration = (batch: string, totalPrograms: number, targetDir: string, mode: string, dryRun: boolean, programList: Array<{ id: string | number; name: string }> = [], estimatedHours = 0): void => {
   state = {
     running: true,
     batch,
@@ -47,6 +49,7 @@ export const startMigration = (batch: string, totalPrograms: number, targetDir: 
     targetDir,
     mode,
     dryRun,
+    estimatedHours,
     programList,
     events: [],
   };
@@ -67,6 +70,7 @@ export const addMigrateEvent = (event: unknown): void => {
   }
   if (e.type === 'migrate_started') {
     state.totalPrograms = (e.programs as number) || state.totalPrograms;
+    if (typeof e.estimatedHours === 'number') state.estimatedHours = e.estimatedHours;
   }
 };
 

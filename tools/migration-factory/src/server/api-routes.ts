@@ -318,6 +318,7 @@ export const handleMigrateStream = async (
   let programIds: (string | number)[];
   let batchId: string;
   let batchName: string;
+  let batchEstimatedHours = 0;
 
   if (batch) {
     const tracker = readTracker(trackerFile);
@@ -329,6 +330,7 @@ export const handleMigrateStream = async (
     programIds = batchDef.priorityOrder;
     batchId = batchDef.id;
     batchName = batchDef.name;
+    batchEstimatedHours = batchDef.estimatedHours ?? 0;
   } else if (programs) {
     programIds = programs.split(',').map(s => s.trim()).filter(Boolean);
     batchId = `auto-${Date.now()}`;
@@ -368,7 +370,7 @@ export const handleMigrateStream = async (
   const sse = createSSEStream(res);
 
   // Buffer events for dashboard reconnection after page refresh
-  startMigration(batchId, programIds.length, targetDir, claudeMode, dryRun, programList);
+  startMigration(batchId, programIds.length, targetDir, claudeMode, dryRun, programList, batchEstimatedHours);
 
   const bufferedSend = (event: unknown) => {
     addMigrateEvent(event);
@@ -377,7 +379,7 @@ export const handleMigrateStream = async (
 
   migrateConfig.onEvent = (event) => bufferedSend(event);
 
-  bufferedSend({ type: 'migrate_started', batch: batchId, programs: programIds.length, targetDir, dryRun, mode: claudeMode, programList });
+  bufferedSend({ type: 'migrate_started', batch: batchId, programs: programIds.length, targetDir, dryRun, mode: claudeMode, programList, estimatedHours: batchEstimatedHours || null });
 
   try {
     const result = await runMigration(programIds, batchId, batchName, migrateConfig);
