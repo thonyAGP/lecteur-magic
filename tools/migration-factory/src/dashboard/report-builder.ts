@@ -200,7 +200,7 @@ const buildModulesFromBatches = (
       }
     }
     const total = b.priorityOrder.length || 1;
-    const readinessPct = Math.round((vCount / total) * 100);
+    const readinessPct = Math.round(((vCount + eCount) / total) * 100);
     const deliverable = vCount === total && total > 0;
 
     return {
@@ -266,8 +266,8 @@ export const buildMultiProjectReport = (input: MultiProjectInput): MultiProjectR
     totalPending: activeReports.reduce((s, r) => s + r.pipeline.pending, 0),
     overallProgressPct: (() => {
       const total = activeReports.reduce((s, r) => s + r.graph.livePrograms, 0);
-      const verified = activeReports.reduce((s, r) => s + r.pipeline.verified, 0);
-      return total > 0 ? Math.round(verified / total * 100) : 0;
+      const migrated = activeReports.reduce((s, r) => s + r.pipeline.verified + r.pipeline.enriched, 0);
+      return total > 0 ? Math.round(migrated / total * 100) : 0;
     })(),
   };
 

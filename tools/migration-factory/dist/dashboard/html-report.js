@@ -50,12 +50,13 @@ const renderHeader = (r) => {
 const renderKpiCards = (r) => {
     const { graph, pipeline, modules, decommission } = r;
     const live = graph.livePrograms || 1;
-    const verifiedPct = Math.round(pipeline.verified / live * 100);
+    const migrated = pipeline.enriched + pipeline.verified;
+    const migratedPct = Math.round(migrated / live * 100);
     const deliveredPct = modules.total > 0 ? Math.round(modules.deliverable / modules.total * 100) : 0;
     return `
 <section class="kpi-grid">
   ${kpiCard('Programmes LIVE', String(graph.livePrograms), `${graph.orphanPrograms} orphelins, ${graph.sharedPrograms} partages`, 'var(--blue)')}
-  ${kpiCard('Verified', `${pipeline.verified}/${live}`, `${verifiedPct}% des programmes migres`, 'var(--green)')}
+  ${kpiCard('Migrated', `${migrated}/${live}`, `${migratedPct}% (${pipeline.verified} verified, ${pipeline.enriched} enriched)`, 'var(--green)')}
   ${kpiCard('Modules livrables', `${modules.deliverable}/${modules.total}`, `${deliveredPct}% des modules`, 'var(--purple)')}
   ${kpiCard('Decomissionnable', `${decommission.decommissionable}/${decommission.totalLive}`, `${decommission.decommissionPct}% du legacy`, 'var(--orange)')}
 </section>`;
@@ -719,8 +720,8 @@ const renderGlobalView = (report) => {
 <section class="kpi-grid">
   ${kpiCard('Projets actifs', `${g.activeProjects}/${g.totalProjects}`, `${g.totalProjects - g.activeProjects} en attente`, 'var(--purple)')}
   ${kpiCard('Programmes LIVE', String(g.totalLivePrograms), 'Tous projets confondus', 'var(--blue)')}
-  ${kpiCard('Verified', `${g.totalVerified}/${g.totalLivePrograms}`, `${g.overallProgressPct}% progression globale`, 'var(--green)')}
-  ${kpiCard('Contracted', String(g.totalContracted), `${g.totalEnriched} enriched`, 'var(--yellow)')}
+  ${kpiCard('Migrated', `${g.totalVerified + g.totalEnriched}/${g.totalLivePrograms}`, `${g.overallProgressPct}% (${g.totalVerified} verified, ${g.totalEnriched} enriched)`, 'var(--green)')}
+  ${kpiCard('Contracted', String(g.totalContracted), `${g.totalContracted} contrats en cours`, 'var(--yellow)')}
 </section>
 
 <section class="card">
@@ -2217,6 +2218,8 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       document.getElementById('mp-prog-section').style.display = 'none';
       addMLog('Migration completed' + (failed > 0 ? ' (' + failed + ' failed)' : ''));
       if (r && r.git) addMLog('[git] Committed ' + r.git.commitSha + ' pushed to ' + r.git.branch);
+      addMLog('Dashboard will refresh in 5s...');
+      setTimeout(function() { location.reload(); }, 5000);
       return;
     }
 
