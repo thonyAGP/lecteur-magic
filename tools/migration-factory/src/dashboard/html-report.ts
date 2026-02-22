@@ -60,14 +60,13 @@ const renderHeader = (r: FullMigrationReport): string => {
 const renderKpiCards = (r: FullMigrationReport): string => {
   const { graph, pipeline, modules, decommission } = r;
   const live = graph.livePrograms || 1;
-  const migrated = pipeline.enriched + pipeline.verified;
-  const migratedPct = Math.round(migrated / live * 100);
+  const verifiedPct = Math.round(pipeline.verified / live * 100);
   const deliveredPct = modules.total > 0 ? Math.round(modules.deliverable / modules.total * 100) : 0;
 
   return `
 <section class="kpi-grid">
   ${kpiCard('Programmes LIVE', String(graph.livePrograms), `${graph.orphanPrograms} orphelins, ${graph.sharedPrograms} partages`, 'var(--blue)')}
-  ${kpiCard('Migr\u00e9s', `${migrated}/${live}`, `${migratedPct}% (${pipeline.verified} v\u00e9rifi\u00e9s, ${pipeline.enriched} enrichis)`, 'var(--green)')}
+  ${kpiCard('V\u00e9rifi\u00e9s', `${pipeline.verified}/${live}`, `${verifiedPct}% (${pipeline.enriched} enrichis, ${pipeline.contracted} analys\u00e9s)`, 'var(--green)')}
   ${kpiCard('Modules livrables', `${modules.deliverable}/${modules.total}`, `${deliveredPct}% des modules`, 'var(--purple)')}
   ${kpiCard('D\u00e9commissionnables', `${decommission.decommissionable}/${decommission.totalLive}`, `${decommission.decommissionPct}% du legacy`, 'var(--orange)')}
 </section>`;
@@ -236,13 +235,15 @@ const renderModulesSection = (modules: FullMigrationReport['modules']): string =
 
 const renderModuleRow = (m: ModuleSummary): string => {
   const statusClass = m.deliverable ? 'deliverable'
-    : m.readinessPct >= 80 ? 'close'
+    : m.readinessPct >= 50 ? 'close'
     : m.readinessPct > 0 ? 'progress'
+    : (m.enriched + m.contracted) > 0 ? 'progress'
     : 'notstarted';
 
   const statusBadge = m.deliverable ? '<span class="badge badge-green">LIVRABLE</span>'
-    : m.readinessPct >= 80 ? '<span class="badge badge-blue">PROCHE</span>'
+    : m.readinessPct >= 50 ? '<span class="badge badge-blue">PROCHE</span>'
     : m.readinessPct > 0 ? '<span class="badge badge-yellow">EN COURS</span>'
+    : (m.enriched + m.contracted) > 0 ? '<span class="badge badge-yellow">EN COURS</span>'
     : '<span class="badge badge-gray">NON D\u00c9MARR\u00c9</span>';
 
   const blockerText = m.blockerIds.length > 0
@@ -293,7 +294,7 @@ const renderModuleRow = (m: ModuleSummary): string => {
           <div class="bar-fill bar-enriched" style="width: ${pct(m.enriched, m.memberCount)}%; left: ${pct(m.verified, m.memberCount)}%"></div>
           <div class="bar-fill bar-contracted" style="width: ${pct(m.contracted, m.memberCount)}%; left: ${pct(m.verified + m.enriched, m.memberCount)}%"></div>
         </div>
-        <span class="module-pct">${m.readinessPct}%</span>
+        <span class="module-pct">${m.readinessPct}% v\u00e9rifi\u00e9</span>
       </div>
       <div class="module-breakdown">
         <span class="tag tag-green">${m.verified} v\u00e9rifi\u00e9s</span>
@@ -799,7 +800,7 @@ const renderGlobalView = (report: MultiProjectReport): string => {
 <section class="kpi-grid">
   ${kpiCard('Projets actifs', `${g.activeProjects}/${g.totalProjects}`, `${g.totalProjects - g.activeProjects} en attente`, 'var(--purple)')}
   ${kpiCard('Programmes LIVE', String(g.totalLivePrograms), 'Tous projets confondus', 'var(--blue)')}
-  ${kpiCard('Migr\u00e9s', `${g.totalVerified + g.totalEnriched}/${g.totalLivePrograms}`, `${g.overallProgressPct}% (${g.totalVerified} v\u00e9rifi\u00e9s, ${g.totalEnriched} enrichis)`, 'var(--green)')}
+  ${kpiCard('V\u00e9rifi\u00e9s', `${g.totalVerified}/${g.totalLivePrograms}`, `${g.overallProgressPct}% (${g.totalEnriched} enrichis, ${g.totalContracted} analys\u00e9s)`, 'var(--green)')}
   ${kpiCard('Analys\u00e9s', String(g.totalContracted), `${g.totalContracted} programmes analys\u00e9s`, 'var(--yellow)')}
 </section>
 
@@ -2052,7 +2053,8 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     activeBtn: null, parallelCount: 0,
     programStartTimes: {}, programDurations: [],
     tokensIn: 0, tokensOut: 0,
-    eventsProcessed: 0
+    eventsProcessed: 0,
+    estimatedHours: 0
   };
 
   function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -2110,24 +2112,33 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   });
 
   function computeETA() {
-    var durations = migrateState.programDurations;
-    if (durations.length === 0) return '';
     var remaining = migrateState.totalProgs - migrateState.doneProgs - migrateState.failedProgs;
     if (remaining <= 0) return '';
+    var durations = migrateState.programDurations;
     // Filter out trivial programs (<5s) that skipped all phases (no Claude calls)
     var real = [];
     for (var i = 0; i < durations.length; i++) { if (durations[i] >= 5000) real.push(durations[i]); }
-    // If no real durations yet, use elapsed/completed as fallback
-    if (real.length === 0) {
-      if (migrateState.doneProgs + migrateState.failedProgs === 0) return '';
-      var elapsed = Date.now() - migrateState.migrationStart;
-      var avgMs = elapsed / (migrateState.doneProgs + migrateState.failedProgs);
+    // 2+ real durations: average of real durations
+    if (real.length >= 2) {
+      var sum = 0;
+      for (var i = 0; i < real.length; i++) sum += real[i];
+      var avgMs = sum / real.length;
       return ' | ETA: ~' + formatElapsed(remaining * avgMs);
     }
-    var sum = 0;
-    for (var i = 0; i < real.length; i++) sum += real[i];
-    var avgMs = sum / real.length;
-    return ' | ETA: ~' + formatElapsed(remaining * avgMs);
+    // 1 real duration: projection from elapsed
+    if (real.length === 1 || (durations.length > 0 && real.length === 0)) {
+      var completed = migrateState.doneProgs + migrateState.failedProgs;
+      if (completed > 0) {
+        var elapsed = Date.now() - migrateState.migrationStart;
+        var avgMs = elapsed / completed;
+        return ' | ETA: ~' + formatElapsed(remaining * avgMs);
+      }
+    }
+    // 0 completed but we have a pre-calculated estimate
+    if (migrateState.estimatedHours > 0) {
+      return ' | ETA: ~' + formatElapsed(migrateState.estimatedHours * 3600000);
+    }
+    return ' | Estimation en cours...';
   }
 
   function formatTokens(n) { return n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : Math.round(n / 1000) + 'K'; }
@@ -2269,12 +2280,13 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     if (msg.type === 'migrate_started') {
       migrateState.totalProgs = msg.programs || 0;
       migrateState.doneProgs = 0;
+      migrateState.estimatedHours = msg.estimatedHours || 0;
       if (msg.programList && msg.programList.length) {
         migrateState.programList = msg.programList;
         buildProgramGrid(msg.programList);
       }
       updateModuleProgress(0, migrateState.totalProgs);
-      addMLog('Migration d\\u00e9marr\\u00e9e : ' + migrateState.totalProgs + ' programmes');
+      addMLog('Migration d\\u00e9marr\\u00e9e : ' + migrateState.totalProgs + ' programmes' + (migrateState.estimatedHours > 0 ? ' (~' + migrateState.estimatedHours.toFixed(1) + 'h estim\\u00e9es)' : ''));
       return;
     }
 

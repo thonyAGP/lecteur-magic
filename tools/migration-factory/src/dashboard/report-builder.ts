@@ -159,8 +159,8 @@ export const buildReport = (input: ReportInput): FullMigrationReport => {
     modules: {
       total: moduleList.length,
       deliverable: moduleList.filter(m => m.deliverable).length,
-      close: moduleList.filter(m => !m.deliverable && m.readinessPct >= 80).length,
-      inProgress: moduleList.filter(m => !m.deliverable && m.readinessPct > 0 && m.readinessPct < 80).length,
+      close: moduleList.filter(m => !m.deliverable && m.readinessPct >= 50).length,
+      inProgress: moduleList.filter(m => !m.deliverable && m.readinessPct > 0 && m.readinessPct < 50).length,
       notStarted: moduleList.filter(m => m.readinessPct === 0).length,
       list: moduleList,
     },
@@ -200,7 +200,7 @@ const buildModulesFromBatches = (
       }
     }
     const total = b.priorityOrder.length || 1;
-    const readinessPct = Math.round(((vCount + eCount) / total) * 100);
+    const readinessPct = Math.round((vCount / total) * 100);
     const deliverable = vCount === total && total > 0;
 
     return {
@@ -266,7 +266,7 @@ export const buildMultiProjectReport = (input: MultiProjectInput): MultiProjectR
     totalPending: activeReports.reduce((s, r) => s + r.pipeline.pending, 0),
     overallProgressPct: (() => {
       const total = activeReports.reduce((s, r) => s + r.graph.livePrograms, 0);
-      const migrated = activeReports.reduce((s, r) => s + r.pipeline.verified + r.pipeline.enriched, 0);
+      const migrated = activeReports.reduce((s, r) => s + r.pipeline.verified, 0);
       return total > 0 ? Math.round(migrated / total * 100) : 0;
     })(),
   };

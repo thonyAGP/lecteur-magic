@@ -14,11 +14,12 @@ let state = {
     targetDir: '',
     mode: '',
     dryRun: false,
+    estimatedHours: 0,
     programList: [],
     events: [],
 };
 export const getMigrateActiveState = () => ({ ...state, programList: [...state.programList], events: [...state.events] });
-export const startMigration = (batch, totalPrograms, targetDir, mode, dryRun, programList = []) => {
+export const startMigration = (batch, totalPrograms, targetDir, mode, dryRun, programList = [], estimatedHours = 0) => {
     state = {
         running: true,
         batch,
@@ -29,6 +30,7 @@ export const startMigration = (batch, totalPrograms, targetDir, mode, dryRun, pr
         targetDir,
         mode,
         dryRun,
+        estimatedHours,
         programList,
         events: [],
     };
@@ -47,6 +49,8 @@ export const addMigrateEvent = (event) => {
     }
     if (e.type === 'migrate_started') {
         state.totalPrograms = e.programs || state.totalPrograms;
+        if (typeof e.estimatedHours === 'number')
+            state.estimatedHours = e.estimatedHours;
     }
 };
 export const endMigration = () => {
