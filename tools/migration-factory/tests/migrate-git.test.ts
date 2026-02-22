@@ -63,6 +63,8 @@ vi.mock('../src/migrate/migrate-scaffold.js', () => ({
 }));
 vi.mock('../src/migrate/migrate-claude.js', () => ({
   setClaudeLogDir: vi.fn(),
+  startTokenAccumulator: vi.fn(),
+  flushTokenAccumulator: vi.fn(() => null),
 }));
 
 import { runMigration } from '../src/migrate/migrate-runner.js';

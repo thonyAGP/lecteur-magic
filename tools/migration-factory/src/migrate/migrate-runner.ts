@@ -6,6 +6,7 @@
 
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import type {
   MigrateConfig, MigrateResult, MigrateEvent, MigrateEventType,
@@ -17,7 +18,7 @@ import {
   startPhase, completePhase, failPhase, markProgramCompleted, markProgramFailed,
   isPhaseCompleted,
 } from './migrate-tracker.js';
-import { setClaudeLogDir } from './migrate-claude.js';
+import { setClaudeLogDir, startTokenAccumulator, flushTokenAccumulator } from './migrate-claude.js';
 import { readTracker, writeTracker } from '../core/tracker.js';
 import { loadContracts, parseContract, writeContract } from '../core/contract.js';
 import { PipelineStatus } from '../core/types.js';
@@ -43,6 +44,31 @@ export const formatDuration = (ms: number): string => {
   if (m > 0 || h > 0) parts.push(`${m}m`);
   parts.push(`${s}s`);
   return `${parts.join(' ')} (${ms}ms)`;
+};
+
+// ─── Auto-parallel ────────────────────────────────────────────
+
+/** Resolve parallel count: 0 = auto (based on CPU cores and program count). */
+export const resolveParallelCount = (requested: number, programCount: number): number => {
+  if (requested > 0) return requested;
+  const cpus = os.cpus().length;
+  const maxByHardware = Math.min(cpus, 6);
+  const maxByPrograms = Math.max(1, Math.ceil(programCount / 2));
+  return Math.max(1, Math.min(maxByHardware, maxByPrograms));
+};
+
+// ─── Token cost calculation ──────────────────────────────────
+
+const PRICING: Record<string, { input: number; output: number }> = {
+  sonnet: { input: 3, output: 15 },
+  haiku: { input: 0.25, output: 1.25 },
+  opus: { input: 15, output: 75 },
+};
+
+export const estimateCostUsd = (tokens: { input: number; output: number }, model?: string): number => {
+  const key = model && PRICING[model] ? model : 'sonnet';
+  const p = PRICING[key];
+  return (tokens.input / 1_000_000) * p.input + (tokens.output / 1_000_000) * p.output;
 };
 
 // ─── Main Entry Point ──────────────────────────────────────────
@@ -82,8 +108,12 @@ export const runMigration = async (
   const programResults: ProgramMigrateResult[] = [];
   const analyses = new Map<string | number, AnalysisDocument>();
 
-  // Run programs with concurrency limit
-  const limit = config.parallel;
+  // Resolve parallel count (0 = auto)
+  const limit = resolveParallelCount(config.parallel, programIds.length);
+  if (limit !== config.parallel) {
+    emit(config, ET.PARALLEL_RESOLVED, `Auto-parallel: ${limit} agents (${os.cpus().length} CPUs, ${programIds.length} programs)`, { data: { requested: config.parallel, resolved: limit, cpus: os.cpus().length } });
+  }
+
   const chunks: (string | number)[][] = [];
   for (let i = 0; i < programIds.length; i += limit) {
     chunks.push(programIds.slice(i, i + limit));
@@ -150,6 +180,16 @@ export const runMigration = async (
     }
   }
 
+  // Aggregate token usage
+  const totalTokens = { input: 0, output: 0 };
+  for (const r of programResults) {
+    if (r.tokens) {
+      totalTokens.input += r.tokens.input;
+      totalTokens.output += r.tokens.output;
+    }
+  }
+  const hasTokens = totalTokens.input > 0 || totalTokens.output > 0;
+
   const summary: MigrateSummary = {
     total: programIds.length,
     completed: programResults.filter(r => r.status === 'completed').length,
@@ -159,10 +199,14 @@ export const runMigration = async (
     tscClean,
     testsPass,
     reviewAvgCoverage: reviewCount > 0 ? Math.round(totalCoverage / reviewCount) : 0,
+    ...(hasTokens ? { totalTokens, estimatedCostUsd: estimateCostUsd(totalTokens, config.model) } : {}),
   };
 
   const totalDuration = Date.now() - migrationStart;
-  emit(config, ET.MIGRATION_COMPLETED, `Migration complete: ${summary.completed}/${summary.total} programs, ${summary.totalFiles} files in ${formatDuration(totalDuration)}`);
+  const costInfo = summary.totalTokens
+    ? `, tokens: ${Math.round(summary.totalTokens.input / 1000)}K in / ${Math.round(summary.totalTokens.output / 1000)}K out (~$${summary.estimatedCostUsd?.toFixed(2)})`
+    : '';
+  emit(config, ET.MIGRATION_COMPLETED, `Migration complete: ${summary.completed}/${summary.total} programs, ${summary.totalFiles} files in ${formatDuration(totalDuration)}${costInfo}`);
 
   // Update main tracker batch stats after migration
   if (!config.dryRun && summary.completed > 0) {
@@ -257,6 +301,9 @@ const runProgramGeneration = async (
   const start = Date.now();
   let analysis: AnalysisDocument | null = null;
   const files: string[] = [];
+
+  // Start token accumulator for this program
+  startTokenAccumulator();
 
   emit(config, ET.PROGRAM_STARTED, `Starting IDE ${programId}`, { programId });
 
@@ -410,8 +457,10 @@ const runProgramGeneration = async (
       } catch { /* non-critical */ }
     }
 
+    const programTokens = flushTokenAccumulator();
     const elapsed = Date.now() - start;
-    emit(config, ET.PROGRAM_COMPLETED, `IDE ${programId}: ${files.length} files generated in ${formatDuration(elapsed)}`, { programId });
+    const tokenInfo = programTokens ? `, tokens: ${Math.round(programTokens.input / 1000)}K in / ${Math.round(programTokens.output / 1000)}K out` : '';
+    emit(config, ET.PROGRAM_COMPLETED, `IDE ${programId}: ${files.length} files generated in ${formatDuration(elapsed)}${tokenInfo}`, { programId, data: programTokens ? { tokens: programTokens } : undefined });
 
     return {
       result: {
@@ -423,6 +472,7 @@ const runProgramGeneration = async (
         phasesTotal: 10,
         duration: Date.now() - start,
         errors: [],
+        tokens: programTokens ?? undefined,
       },
       analysis,
     };
@@ -433,6 +483,7 @@ const runProgramGeneration = async (
     markProgramFailed(prog, errorMsg);
     saveMigrateTracker(trackerFile, migrateData);
 
+    const failedTokens = flushTokenAccumulator();
     const failedElapsed = Date.now() - start;
     emit(config, ET.PROGRAM_FAILED, `IDE ${programId} failed at ${currentPhase ?? 'unknown'} after ${formatDuration(failedElapsed)}: ${errorMsg}`, { programId });
 
@@ -446,6 +497,7 @@ const runProgramGeneration = async (
         phasesTotal: 10,
         duration: Date.now() - start,
         errors: [errorMsg],
+        tokens: failedTokens ?? undefined,
       },
       analysis,
     };
