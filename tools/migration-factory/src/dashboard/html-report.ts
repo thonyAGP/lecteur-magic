@@ -530,7 +530,10 @@ ${MULTI_CSS}
         <div class="mp-bar-track"><div class="mp-bar-fill mp-bar-module" id="mp-module-bar"></div></div>
         <span class="mp-bar-label" id="mp-module-label">0/0 (0%)</span>
       </div>
-      <div class="mp-elapsed" id="mp-elapsed"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="mp-elapsed" id="mp-elapsed"></div>
+        <div class="mp-elapsed" id="mp-tokens" style="color:#d2a8ff"></div>
+      </div>
     </div>
     <!-- Section 2: Current program progress bar -->
     <div class="mp-section" id="mp-prog-section" style="display:none">
@@ -569,8 +572,8 @@ ${MULTI_CSS}
       <div id="modal-target-resolved" style="font-size:11px;color:#8b949e;margin-top:2px"></div>
     </div>
     <div class="modal-field">
-      <label for="modal-parallel">Parallel programs</label>
-      <input type="number" id="modal-parallel" class="modal-input" value="1" min="1" max="8" style="width:80px">
+      <label for="modal-parallel">Parallel programs (0 = auto)</label>
+      <input type="number" id="modal-parallel" class="modal-input" value="0" min="0" max="8" style="width:80px">
     </div>
     <div class="modal-field">
       <label>Claude mode</label>
@@ -624,7 +627,7 @@ ${MULTI_CSS}
         <tr><td><strong>Calibrate</strong></td><td>Recalculer l'estimation heures/point depuis les contrats verifies</td></tr>
         <tr><td><strong>Generate Code</strong></td><td>Generer les fichiers React/TS squelette depuis les contrats</td></tr>
         <tr><td><strong>Migrate Module</strong></td><td>Pipeline complet de migration en 16 phases (spec &rarr; code &rarr; test &rarr; review). Ouvre une modale de confirmation.</td></tr>
-        <tr><td><strong>Migration Auto</strong></td><td>Identique a Migrate Module mais sans modale (cible: adh-web, parallele: 1)</td></tr>
+        <tr><td><strong>Migration Auto</strong></td><td>Identique a Migrate Module mais sans modale (cible: adh-web, parallele: auto)</td></tr>
         <tr><td><strong>Analyser</strong></td><td>Detecter les modules fonctionnels et estimer l'effort de migration</td></tr>
       </table>
     </div>
@@ -686,7 +689,7 @@ ${MULTI_CSS}
 migration-factory report --multi                   # Generer rapport HTML statique
 migration-factory pipeline run --batch B2          # Lancer le pipeline SPECMAP
 migration-factory migrate --batch B2 --target adh-web  # Migration complete
-migration-factory migrate --batch B2 --target adh-web --parallel 3  # 3 agents en parallele
+migration-factory migrate --batch B2 --target adh-web --parallel 0  # auto-parallel (detecte les CPUs)
 migration-factory migrate status                   # Voir la progression
 migration-factory verify                           # Auto-verifier les contrats
 migration-factory gaps                             # Rapport de gaps
@@ -700,7 +703,8 @@ migration-factory analyze --dir ADH                # Analyser les modules</pre>
         <li>Cochez <strong>Dry Run</strong> pour simuler sans modifier de fichiers</li>
         <li>Vous pouvez <strong>rafraichir la page (F5)</strong> pendant une migration &mdash; elle se reconnectera automatiquement</li>
         <li>Le timer affiche le temps ecoule et une <strong>estimation du temps restant (ETA)</strong> apres le 1er programme termine</li>
-        <li>Le nombre d'agents paralleles est affiche dans l'en-tete du panneau de migration</li>
+        <li>Le nombre d'agents paralleles est auto-determine (0=auto) et affiche dans l'en-tete</li>
+        <li>Les tokens consommes et le cout estime sont affiches en temps reel (mode API uniquement)</li>
         <li>Apres migration, verifiez toujours le resultat avec <code>tsc --noEmit</code> et <code>vitest run</code></li>
       </ul>
     </div>
@@ -2037,8 +2041,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     programList: [],
     programPhases: {},
     migrationStart: 0, elapsedTid: 0, logCollapsed: false,
-    activeBtn: null, parallelCount: 1,
-    programStartTimes: {}, programDurations: []
+    activeBtn: null, parallelCount: 0,
+    programStartTimes: {}, programDurations: [],
+    tokensIn: 0, tokensOut: 0
   };
 
   function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -2048,6 +2053,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     document.getElementById('mp-module-bar').style.width = '0%';
     document.getElementById('mp-module-label').textContent = '0/0 (0%)';
     document.getElementById('mp-elapsed').textContent = '';
+    var tokEl = document.getElementById('mp-tokens'); if (tokEl) tokEl.textContent = '';
     document.getElementById('mp-prog-section').style.display = 'none';
     document.getElementById('mp-grid-section').style.display = 'none';
     document.getElementById('mp-grid-body').innerHTML = '';
@@ -2090,6 +2096,24 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     if (remaining <= 0) return '';
     var etaMs = remaining * avgMs;
     return ' | ETA: ~' + formatElapsed(etaMs);
+  }
+
+  function formatTokens(n) { return n >= 1000000 ? (n / 1000000).toFixed(1) + 'M' : Math.round(n / 1000) + 'K'; }
+
+  function estimateCost(tokIn, tokOut) {
+    // Default to sonnet pricing: $3/MTok in, $15/MTok out
+    return (tokIn / 1000000) * 3 + (tokOut / 1000000) * 15;
+  }
+
+  function updateTokenDisplay() {
+    var el = document.getElementById('mp-tokens');
+    if (!el) return;
+    if (migrateState.tokensIn === 0 && migrateState.tokensOut === 0) {
+      el.textContent = '';
+      return;
+    }
+    var cost = estimateCost(migrateState.tokensIn, migrateState.tokensOut);
+    el.textContent = 'Tokens: ' + formatTokens(migrateState.tokensIn) + ' in / ' + formatTokens(migrateState.tokensOut) + ' out (~$' + cost.toFixed(2) + ')';
   }
 
   function startElapsedTimer(startedAt) {
@@ -2209,6 +2233,16 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       return;
     }
 
+    if (msg.type === 'parallel_resolved') {
+      var resolved = msg.data && msg.data.resolved ? msg.data.resolved : 0;
+      migrateState.parallelCount = resolved;
+      var title = migrateOverlayTitle.textContent || '';
+      title = title.replace(/\(auto-parallel\)/, 'x' + resolved + ' agents (auto)');
+      migrateOverlayTitle.textContent = title;
+      addMLog('Auto-parallel resolved: ' + resolved + ' agents (' + (msg.data && msg.data.cpus || '?') + ' CPUs)');
+      return;
+    }
+
     if (msg.type === 'program_started') {
       var pid = msg.programId;
       migrateState.programStartTimes[pid] = Date.now();
@@ -2274,6 +2308,12 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         migrateState.programPhases[pid].status = 'done';
         migrateState.programPhases[pid].currentPhase = null;
       }
+      // Accumulate tokens
+      if (msg.data && msg.data.tokens) {
+        migrateState.tokensIn += msg.data.tokens.input || 0;
+        migrateState.tokensOut += msg.data.tokens.output || 0;
+        updateTokenDisplay();
+      }
       updateProgramIcon(pid, 'done');
       migrateState.doneProgs++;
       updateModuleProgress(migrateState.doneProgs, migrateState.totalProgs);
@@ -2309,12 +2349,20 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       var label = document.getElementById('mp-module-label');
       var failed = r && r.summary ? r.summary.failed : migrateState.failedProgs;
       if (label && r && r.summary) {
+        var costStr = '';
+        if (r.summary.totalTokens) {
+          migrateState.tokensIn = r.summary.totalTokens.input;
+          migrateState.tokensOut = r.summary.totalTokens.output;
+          costStr = ', ~$' + (r.summary.estimatedCostUsd || 0).toFixed(2);
+          updateTokenDisplay();
+        }
         label.textContent = 'Done: ' + r.summary.completed + '/' + r.summary.total
           + ' completed' + (failed > 0 ? ', ' + failed + ' failed' : '')
           + ', ' + r.summary.totalFiles + ' files'
           + (r.summary.tscClean ? ', TSC clean' : ', TSC errors')
           + (r.summary.testsPass ? ', tests pass' : ', tests fail')
-          + ', coverage ' + r.summary.reviewAvgCoverage + '%';
+          + ', coverage ' + r.summary.reviewAvgCoverage + '%'
+          + costStr;
       }
       var elapsed = document.getElementById('mp-elapsed');
       if (elapsed) elapsed.textContent = 'Total: ' + formatElapsed(Date.now() - migrateState.migrationStart);
@@ -2355,7 +2403,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     confirmModal.classList.remove('visible');
     setLoading(sourceBtn || btnMigrate, true);
     migrateState.activeBtn = sourceBtn || btnMigrate;
-    migrateState.parallelCount = parseInt(parallelCount) || 1;
+    migrateState.parallelCount = parseInt(parallelCount) || 0;
+    migrateState.tokensIn = 0;
+    migrateState.tokensOut = 0;
 
     var url = '/api/migrate/stream?batch=' + encodeURIComponent(batch)
       + '&targetDir=' + encodeURIComponent(targetDir)
@@ -2364,7 +2414,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       + '&mode=' + claudeMode;
 
     var headerPrefix = isAuto ? 'Migration Auto' : 'Migrate';
-    var parallelInfo = migrateState.parallelCount > 1 ? ' x' + migrateState.parallelCount + ' agents' : '';
+    var parallelInfo = migrateState.parallelCount > 0 ? ' x' + migrateState.parallelCount + ' agents' : ' (auto-parallel)';
     showMigrateOverlay(headerPrefix + ': ' + batch + ' [' + claudeMode.toUpperCase() + ']' + parallelInfo + (dryRun ? ' (DRY-RUN)' : ''));
     migrateState.migrationStart = Date.now();
     migrateState.elapsedTid = startElapsedTimer(migrateState.migrationStart);
@@ -2411,7 +2461,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     document.getElementById('modal-batch-info').textContent = batch;
     document.getElementById('modal-target-dir').value = 'adh-web';
     document.getElementById('modal-target-resolved').textContent = '(resolved server-side relative to project root)';
-    document.getElementById('modal-parallel').value = '1';
+    document.getElementById('modal-parallel').value = '0';
     document.getElementById('modal-claude-mode').textContent = claudeMode.toUpperCase() + ' (enrichment: ' + enrichSel + ')';
     document.getElementById('modal-dry-run').textContent = dryRun ? 'Yes (no files modified)' : 'No (files will be written)';
 
@@ -2433,7 +2483,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     var enrichSel = document.getElementById('sel-enrich').value || 'none';
     var claudeMode = enrichSel === 'claude' ? 'api' : 'cli';
     var dryRun = chkDry.checked;
-    launchMigration(batch, 'adh-web', '1', claudeMode, dryRun, btnMigrateAuto, true);
+    launchMigration(batch, 'adh-web', '0', claudeMode, dryRun, btnMigrateAuto, true);
   });
 
   // ─── Reconnect on page load if migration is active ───────────

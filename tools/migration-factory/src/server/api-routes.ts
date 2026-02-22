@@ -290,7 +290,7 @@ export const handleMigrateStream = async (
   const programs = query.get('programs');
   const rawTargetDir = query.get('targetDir');
   const dryRun = query.get('dryRun') === 'true';
-  const parallel = Number(query.get('parallel') ?? '1');
+  const parallel = Number(query.get('parallel') ?? '0');
   const maxPasses = Number(query.get('maxPasses') ?? '5');
   const model = query.get('model') ?? 'sonnet';
   const claudeMode = (query.get('mode') ?? 'cli') as 'api' | 'cli';

@@ -207,6 +207,7 @@ export const MigrateEventType = {
   GIT_STARTED: 'git_started',
   GIT_COMPLETED: 'git_completed',
   GIT_FAILED: 'git_failed',
+  PARALLEL_RESOLVED: 'parallel_resolved',
   ERROR: 'error',
 } as const;
 export type MigrateEventType = (typeof MigrateEventType)[keyof typeof MigrateEventType];
@@ -242,6 +243,7 @@ export interface ProgramMigrateResult {
   phasesTotal: number;
   duration: number;
   errors: string[];
+  tokens?: { input: number; output: number };
 }
 
 export interface MigrateSummary {
@@ -253,6 +255,8 @@ export interface MigrateSummary {
   tscClean: boolean;
   testsPass: boolean;
   reviewAvgCoverage: number;
+  totalTokens?: { input: number; output: number };
+  estimatedCostUsd?: number;
 }
 
 // ─── Review Report ──────────────────────────────────────────────

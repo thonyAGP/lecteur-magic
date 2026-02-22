@@ -21,6 +21,20 @@ let _mode: 'api' | 'cli' = 'cli';
 let _apiKey: string | undefined;
 let _globalLogDir: string | undefined;
 
+// ─── Token accumulator (for tracking per-program usage) ─────────
+let _tokenAccumulator: { input: number; output: number } | null = null;
+
+/** Start accumulating tokens for the current program. */
+export const startTokenAccumulator = (): void => { _tokenAccumulator = { input: 0, output: 0 }; };
+
+/** Stop accumulating and return total tokens since start. Returns null if no API calls tracked tokens. */
+export const flushTokenAccumulator = (): { input: number; output: number } | null => {
+  const result = _tokenAccumulator;
+  _tokenAccumulator = null;
+  if (result && result.input === 0 && result.output === 0) return null;
+  return result;
+};
+
 /** Configure Claude invocation mode before starting migration. */
 export const configureClaudeMode = (mode: 'api' | 'cli', apiKey?: string): void => {
   _mode = mode;
@@ -59,6 +73,7 @@ export interface ClaudeCallOptions {
 export interface ClaudeCallResult {
   output: string;
   durationMs: number;
+  tokens?: { input: number; output: number };
 }
 
 // ─── Main entry point (transparent switch) ───────────────────────
@@ -67,6 +82,12 @@ export const callClaude = async (options: ClaudeCallOptions): Promise<ClaudeCall
   const result = _mode === 'api'
     ? await callClaudeApi(options)
     : await callClaudeCli(options);
+
+  // Accumulate tokens if tracker is active
+  if (_tokenAccumulator && result.tokens) {
+    _tokenAccumulator.input += result.tokens.input;
+    _tokenAccumulator.output += result.tokens.output;
+  }
 
   const logDir = options.logDir ?? _globalLogDir;
   if (logDir) {
@@ -97,9 +118,14 @@ const callClaudeApi = async (options: ClaudeCallOptions): Promise<ClaudeCallResu
     .map(b => b.text)
     .join('');
 
+  const tokens = response.usage
+    ? { input: response.usage.input_tokens, output: response.usage.output_tokens }
+    : undefined;
+
   return {
     output: text.trim(),
     durationMs: Date.now() - start,
+    tokens,
   };
 };
 
@@ -216,6 +242,7 @@ const logClaudeCall = (options: ClaudeCallOptions, result: ClaudeCallResult): vo
       promptLength: options.prompt.length,
       responseLength: result.output.length,
       durationMs: result.durationMs,
+      tokens: result.tokens,
     };
     appendFileSync(join(logDir, 'decisions.jsonl'), JSON.stringify(entry) + '\n', 'utf8');
   } catch {
