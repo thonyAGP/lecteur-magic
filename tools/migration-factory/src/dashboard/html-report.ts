@@ -518,7 +518,9 @@ ${MULTI_CSS}
   <div class="migrate-panel-header" id="migrate-panel-toggle">
     <strong id="migrate-overlay-title">Migration</strong>
     <div style="display:flex;align-items:center;gap:6px">
+      <span id="mp-dry-badge" style="display:none;background:#f59e0b;color:#000;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">DRY-RUN</span>
       <span id="migrate-panel-badge" class="migrate-badge" style="display:none"></span>
+      <button class="action-btn" id="migrate-overlay-abort" style="display:none;padding:2px 10px;font-size:11px;background:#f85149;color:#fff;border:none;border-radius:4px;cursor:pointer" title="Annuler la migration">Annuler</button>
       <button class="action-btn" id="migrate-overlay-minimize" style="padding:2px 8px;font-size:11px" title="Minimize/Expand">_</button>
       <button class="action-btn" id="migrate-overlay-close" style="padding:2px 8px;font-size:11px" title="Close">X</button>
     </div>
@@ -2075,9 +2077,23 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     migrateMinimize.textContent = migrateOverlay.classList.contains('collapsed') ? '+' : '_';
   }
 
+  var migrateAbortBtn = document.getElementById('migrate-overlay-abort');
+  var mpDryBadge = document.getElementById('mp-dry-badge');
+
   migrateOverlayClose.addEventListener('click', closeMigrateOverlay);
   migrateMinimize.addEventListener('click', function(e) { e.stopPropagation(); toggleMigratePanel(); });
   migratePanelToggle.addEventListener('dblclick', toggleMigratePanel);
+
+  migrateAbortBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (!confirm('Annuler la migration en cours ?')) return;
+    fetch('/api/migrate/abort', { method: 'POST' }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data.aborted) {
+        addMLog('Migration aborted by user');
+        migrateAbortBtn.style.display = 'none';
+      }
+    });
+  });
 
   // Log toggle
   var mpLogToggle = document.getElementById('mp-log-toggle');
@@ -2432,7 +2448,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
 
     var headerPrefix = isAuto ? 'Migration Auto' : 'Migrate';
     var parallelInfo = migrateState.parallelCount > 0 ? ' x' + migrateState.parallelCount + ' agents' : ' (auto-parallel)';
-    showMigrateOverlay(headerPrefix + ': ' + batch + ' [' + claudeMode.toUpperCase() + ']' + parallelInfo + (dryRun ? ' (DRY-RUN)' : ''));
+    showMigrateOverlay(headerPrefix + ': ' + batch + ' [' + claudeMode.toUpperCase() + ']' + parallelInfo);
+    migrateAbortBtn.style.display = 'inline-block';
+    mpDryBadge.style.display = dryRun ? 'inline-block' : 'none';
     migrateState.migrationStart = Date.now();
     migrateState.elapsedTid = startElapsedTimer(migrateState.migrationStart);
     migrateState.totalProgs = 0;
@@ -2451,6 +2469,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         es.close();
         clearInterval(migrateState.elapsedTid);
         setLoading(migrateState.activeBtn || btnMigrate, false);
+        migrateAbortBtn.style.display = 'none';
         return;
       }
 
@@ -2461,6 +2480,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       es.close();
       clearInterval(migrateState.elapsedTid);
       setLoading(migrateState.activeBtn || btnMigrate, false);
+      migrateAbortBtn.style.display = 'none';
       addMLog('Connection lost');
     };
   }
@@ -2508,7 +2528,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     if (!state.running && state.events.length === 0) return;
 
     var isDone = !state.running;
-    showMigrateOverlay('Migrate: ' + state.batch + ' [' + state.mode.toUpperCase() + ']' + (state.dryRun ? ' (DRY-RUN)' : ''));
+    showMigrateOverlay('Migrate: ' + state.batch + ' [' + state.mode.toUpperCase() + ']');
+    mpDryBadge.style.display = state.dryRun ? 'inline-block' : 'none';
+    migrateAbortBtn.style.display = isDone ? 'none' : 'inline-block';
     setLoading(btnMigrate, !isDone);
 
     // Set programList first so grid builds during replay

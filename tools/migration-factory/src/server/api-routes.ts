@@ -338,6 +338,8 @@ export const handleMigrateStream = async (
     return;
   }
 
+  _migrateAbortController = new AbortController();
+
   const migrateConfig: MigrateConfig = {
     projectDir: ctx.projectDir,
     targetDir,
@@ -352,6 +354,7 @@ export const handleMigrateStream = async (
     cliBin: 'claude',
     onEvent: undefined,
     autoCommit: true,
+    abortSignal: _migrateAbortController.signal,
   };
 
   // Build program list with names for dashboard grid
@@ -383,6 +386,7 @@ export const handleMigrateStream = async (
     bufferedSend({ type: 'error', message: String(err) });
   }
 
+  _migrateAbortController = null;
   endMigration();
   sse.close();
 };
@@ -435,6 +439,20 @@ export const handleMigrateBatchCreate = (
 
 export const handleMigrateActive = (_ctx: RouteContext, res: ServerResponse): void => {
   json(res, getMigrateActiveState());
+};
+
+// ─── Abort running migration ────────────────────────────────────
+
+let _migrateAbortController: AbortController | null = null;
+
+export const handleMigrateAbort = (res: ServerResponse): void => {
+  if (_migrateAbortController) {
+    _migrateAbortController.abort();
+    _migrateAbortController = null;
+    json(res, { aborted: true });
+  } else {
+    json(res, { aborted: false, message: 'No migration running' });
+  }
 };
 
 // ─── Analyze Project (v11) ───────────────────────────────────────

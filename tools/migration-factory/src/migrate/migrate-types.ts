@@ -164,6 +164,8 @@ export interface MigrateConfig {
   logDir?: string;
   /** Auto git add + commit + push after successful migration. Default false for CLI, true from dashboard. */
   autoCommit?: boolean;
+  /** AbortSignal to cancel migration in progress. */
+  abortSignal?: AbortSignal;
 }
 
 /**
