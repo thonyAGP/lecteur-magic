@@ -184,7 +184,7 @@ export const buildReport = (input: ReportInput): FullMigrationReport => {
 
 // ─── Build modules from tracker batches ──────────────────────────
 
-const buildModulesFromBatches = (
+export const buildModulesFromBatches = (
   batches: Batch[],
   programStatuses: Map<string | number, PipelineStatus>,
 ): ModuleSummary[] =>

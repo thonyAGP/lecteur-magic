@@ -144,7 +144,7 @@ export const buildReport = (input) => {
     };
 };
 // ─── Build modules from tracker batches ──────────────────────────
-const buildModulesFromBatches = (batches, programStatuses) => batches.map((b, i) => {
+export const buildModulesFromBatches = (batches, programStatuses) => batches.map((b, i) => {
     let vCount = 0, eCount = 0, cCount = 0, pCount = 0;
     for (const pid of b.priorityOrder) {
         const status = programStatuses.get(pid) ?? 'pending';

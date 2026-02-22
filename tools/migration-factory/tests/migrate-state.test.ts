@@ -88,4 +88,43 @@ describe('migrate-state', () => {
     expect(state1.events).toHaveLength(1);
     expect(state2.events).toHaveLength(2);
   });
+
+  // ─── estimatedHours tracking (anti-regression) ──────────────────
+
+  it('should store estimatedHours from startMigration', () => {
+    startMigration('B2', 17, '/target', 'cli', false, [], 25.7);
+    const state = getMigrateActiveState();
+    expect(state.estimatedHours).toBe(25.7);
+  });
+
+  it('should update estimatedHours from migrate_started event', () => {
+    startMigration('B2', 17, '/target', 'cli', false);
+    addMigrateEvent({ type: 'migrate_started', programs: 17, estimatedHours: 12.5 });
+
+    const state = getMigrateActiveState();
+    expect(state.estimatedHours).toBe(12.5);
+  });
+
+  it('should keep estimatedHours=0 if not provided', () => {
+    startMigration('B2', 17, '/target', 'cli', false);
+    const state = getMigrateActiveState();
+    expect(state.estimatedHours).toBe(0);
+  });
+
+  it('should preserve programList through events', () => {
+    const programs = [{ id: 69, name: 'EXTRAIT_COMPTE' }, { id: 70, name: 'EXTRAIT_NOM' }];
+    startMigration('B1', 2, '/t', 'cli', false, programs, 5.0);
+    addMigrateEvent({ type: 'program_completed', programId: '69' });
+
+    const state = getMigrateActiveState();
+    expect(state.programList).toHaveLength(2);
+    expect(state.programList[0].name).toBe('EXTRAIT_COMPTE');
+    expect(state.estimatedHours).toBe(5.0);
+  });
+
+  it('should track dryRun flag', () => {
+    startMigration('B1', 5, '/t', 'cli', true);
+    const state = getMigrateActiveState();
+    expect(state.dryRun).toBe(true);
+  });
 });
