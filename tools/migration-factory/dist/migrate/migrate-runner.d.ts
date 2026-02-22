@@ -11,6 +11,11 @@ export declare const estimateCostUsd: (tokens: {
     input: number;
     output: number;
 }, model?: string) => number;
+/**
+ * Determine if a program should be skipped during migration.
+ * ONLY verified programs are skipped - enriched programs must be re-generated.
+ */
+export declare const shouldSkipProgram: (contractStatus: string | undefined) => boolean;
 export declare const runMigration: (programIds: (string | number)[], batchId: string, batchName: string, config: MigrateConfig) => Promise<MigrateResult>;
 export declare const runSinglePhase: (phase: MigratePhase, programIds: (string | number)[], config: MigrateConfig) => Promise<void>;
 export interface MigrateStatusView {

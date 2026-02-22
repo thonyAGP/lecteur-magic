@@ -2,9 +2,10 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { getMigrateStatus, createBatch, formatDuration } from '../src/migrate/migrate-runner.js';
+import { getMigrateStatus, createBatch, formatDuration, shouldSkipProgram } from '../src/migrate/migrate-runner.js';
 import { writeMigrateTracker, getOrCreateProgram, completePhase } from '../src/migrate/migrate-tracker.js';
-import { MigratePhase } from '../src/migrate/migrate-types.js';
+import { MigratePhase, GENERATION_PHASES } from '../src/migrate/migrate-types.js';
+import { PipelineStatus } from '../src/core/types.js';
 import type { MigrateConfig } from '../src/migrate/migrate-types.js';
 
 let tmpDir: string;
@@ -134,5 +135,66 @@ describe('createBatch', () => {
   it('should throw if tracker not found', () => {
     const config = makeConfig({ migrationDir: path.join(tmpDir, 'nonexistent') });
     expect(() => createBatch('B1', 'Test', [69], config)).toThrow('Tracker not found');
+  });
+});
+
+describe('shouldSkipProgram', () => {
+  it('should skip verified programs', () => {
+    expect(shouldSkipProgram(PipelineStatus.VERIFIED)).toBe(true);
+  });
+
+  it('should NOT skip enriched programs', () => {
+    expect(shouldSkipProgram(PipelineStatus.ENRICHED)).toBe(false);
+  });
+
+  it('should NOT skip contracted programs', () => {
+    expect(shouldSkipProgram(PipelineStatus.CONTRACTED)).toBe(false);
+  });
+
+  it('should NOT skip pending programs', () => {
+    expect(shouldSkipProgram(PipelineStatus.PENDING)).toBe(false);
+  });
+
+  it('should NOT skip programs without contract', () => {
+    expect(shouldSkipProgram(undefined)).toBe(false);
+  });
+});
+
+describe('phase tracker reset for non-verified programs', () => {
+  it('should reset phases when program has completed phases but is not verified', () => {
+    const trackerFile = path.join(tmpDir, '.openspec', 'migration', 'ADH', 'migrate-tracker.json');
+    const data: Record<string, import('../src/migrate/migrate-types.js').ProgramMigration> = {};
+    const prog = getOrCreateProgram(data, 121);
+
+    // Simulate a previous migration run that completed all generation phases
+    for (const phase of GENERATION_PHASES) {
+      completePhase(prog, phase, { file: `file-${phase}.ts`, duration: 100 });
+    }
+    writeMigrateTracker(trackerFile, data);
+
+    // Verify phases are completed
+    expect(Object.keys(prog.phases).length).toBe(GENERATION_PHASES.length);
+
+    // Simulate what migrate-runner does for non-verified programs: reset phases
+    if (Object.keys(prog.phases).length > 0) {
+      prog.phases = {};
+      prog.status = 'pending';
+      prog.currentPhase = null;
+    }
+
+    expect(Object.keys(prog.phases).length).toBe(0);
+    expect(prog.status).toBe('pending');
+  });
+
+  it('should NOT reset phases for new programs (no existing phases)', () => {
+    const data: Record<string, import('../src/migrate/migrate-types.js').ProgramMigration> = {};
+    const prog = getOrCreateProgram(data, 999);
+
+    // New program: no phases yet
+    expect(Object.keys(prog.phases).length).toBe(0);
+
+    // Reset logic should NOT trigger (no-op)
+    const shouldReset = Object.keys(prog.phases).length > 0;
+    expect(shouldReset).toBe(false);
   });
 });

@@ -57,6 +57,13 @@ export const estimateCostUsd = (tokens, model) => {
     const p = PRICING[key];
     return (tokens.input / 1_000_000) * p.input + (tokens.output / 1_000_000) * p.output;
 };
+/**
+ * Determine if a program should be skipped during migration.
+ * ONLY verified programs are skipped - enriched programs must be re-generated.
+ */
+export const shouldSkipProgram = (contractStatus) => {
+    return contractStatus === PipelineStatus.VERIFIED;
+};
 // ─── Main Entry Point ──────────────────────────────────────────
 export const runMigration = async (programIds, batchId, batchName, config) => {
     const started = new Date().toISOString();
@@ -261,20 +268,18 @@ const runProgramGeneration = async (programId, config, trackerFile) => {
     startTokenAccumulator();
     const aborted = () => config.abortSignal?.aborted === true;
     emit(config, ET.PROGRAM_STARTED, `Starting IDE ${programId}`, { programId });
-    // Skip if contract is verified OR (contract exists as enriched+ AND all generation phases already completed in tracker)
+    // Skip ONLY if contract is verified (fully migrated and validated)
+    // Enriched programs must be re-generated even if phases exist in tracker from a previous run
     const contractFile = path.join(config.migrationDir, config.contractSubDir, `${config.contractSubDir}-IDE-${programId}.contract.yaml`);
     const contractExists = fs.existsSync(contractFile);
     const contractStatus = contractExists ? parseContract(contractFile).overall.status : undefined;
-    const allGenPhasesCompleted = GENERATION_PHASES.every(p => isPhaseCompleted(prog, p));
-    const isContractEnrichedOrBetter = contractStatus === PipelineStatus.ENRICHED || contractStatus === PipelineStatus.VERIFIED;
-    const shouldSkip = contractStatus === PipelineStatus.VERIFIED || (isContractEnrichedOrBetter && allGenPhasesCompleted);
+    const shouldSkip = shouldSkipProgram(contractStatus);
     if (shouldSkip) {
         flushTokenAccumulator();
-        const reason = contractStatus === PipelineStatus.VERIFIED ? 'verified' : 'already generated';
         for (const p of GENERATION_PHASES) {
-            emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: ${p} (${reason})`, { phase: p, programId });
+            emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: ${p} (verified)`, { phase: p, programId });
         }
-        emit(config, ET.PROGRAM_COMPLETED, `IDE ${programId}: ${reason} (skipped)`, { programId, data: { skipped: true } });
+        emit(config, ET.PROGRAM_COMPLETED, `IDE ${programId}: d\u00e9j\u00e0 migr\u00e9`, { programId, data: { skipped: true } });
         return {
             result: {
                 programId,
@@ -288,6 +293,14 @@ const runProgramGeneration = async (programId, config, trackerFile) => {
             },
             analysis: null,
         };
+    }
+    // Reset tracker phases for non-verified programs so they get re-generated
+    // Previous runs may have marked phases as completed but the code may still need fixes
+    if (Object.keys(prog.phases).length > 0) {
+        prog.phases = {};
+        prog.status = 'pending';
+        prog.currentPhase = null;
+        saveMigrateTracker(trackerFile, migrateData);
     }
     try {
         // Phase 0: SPEC
