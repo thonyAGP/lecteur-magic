@@ -44,8 +44,15 @@ export const startActionServer = async (config: ActionServerConfig): Promise<htt
     const url = new URL(req.url ?? '/', `http://localhost`);
     const pathname = url.pathname;
 
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // CORS headers (whitelist known origins)
+    const ALLOWED_ORIGINS = [
+      'http://localhost:3070',
+      'http://localhost:3071',
+      'https://specmap-dashboard.vercel.app',
+    ];
+    const origin = req.headers.origin ?? '';
+    const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 

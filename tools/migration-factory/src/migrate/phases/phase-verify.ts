@@ -129,17 +129,35 @@ export const runFixTscPhase = async (
     if (!fs.existsSync(absPath)) continue;
 
     const fileContent = fs.readFileSync(absPath, 'utf8');
-    const errorMessages = fileErrors.map(e => `Line ${e.line}: ${e.code} ${e.message}`);
+    const fileLines = fileContent.split('\n');
 
-    // Try to read related types file
+    // Limit to 5 errors per prompt to avoid overwhelming Claude
+    const limitedErrors = fileErrors.slice(0, 5);
+    const errorMessages = limitedErrors.map(e => {
+      // Include +/- 10 lines around each error for context
+      const startLine = Math.max(0, e.line - 11);
+      const endLine = Math.min(fileLines.length, e.line + 10);
+      const snippet = fileLines.slice(startLine, endLine)
+        .map((l, i) => {
+          const lineNum = startLine + i + 1;
+          const marker = lineNum === e.line ? '>>>' : '   ';
+          return `${marker} ${lineNum}: ${l}`;
+        })
+        .join('\n');
+      return `Line ${e.line}: ${e.code} ${e.message}\nContext:\n${snippet}`;
+    });
+
+    // Collect all related type imports
     let relatedTypes: string | undefined;
-    const typesMatch = fileContent.match(/from\s+['"]@\/types\/([^'"]+)['"]/);
-    if (typesMatch) {
-      const typesFile = path.join(config.targetDir, 'src', 'types', `${typesMatch[1]}.ts`);
+    const typeImports = fileContent.matchAll(/from\s+['"]@\/types\/([^'"]+)['"]/g);
+    const typeParts: string[] = [];
+    for (const match of typeImports) {
+      const typesFile = path.join(config.targetDir, 'src', 'types', `${match[1]}.ts`);
       if (fs.existsSync(typesFile)) {
-        relatedTypes = fs.readFileSync(typesFile, 'utf8');
+        typeParts.push(`// --- ${match[1]}.ts ---\n${fs.readFileSync(typesFile, 'utf8')}`);
       }
     }
+    if (typeParts.length > 0) relatedTypes = typeParts.join('\n\n');
 
     const prompt = buildFixTscPrompt(fileContent, filePath, errorMessages, relatedTypes);
 

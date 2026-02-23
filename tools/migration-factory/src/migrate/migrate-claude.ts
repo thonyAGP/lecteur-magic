@@ -241,6 +241,69 @@ export const parseFileResponse = (raw: string): string => {
   return trimmed;
 };
 
+// ─── Retry with exponential backoff ──────────────────────────────
+
+const RETRYABLE_STATUS_CODES = [429, 500, 502, 503, 529];
+const RETRYABLE_ERROR_PATTERNS = ['ECONNRESET', 'ETIMEDOUT', 'ENOTFOUND', 'overloaded'];
+
+const isRetryable = (err: unknown): boolean => {
+  if (err instanceof Error) {
+    const msg = err.message;
+    if (RETRYABLE_ERROR_PATTERNS.some(p => msg.includes(p))) return true;
+    const statusMatch = msg.match(/status[:\s]*(\d{3})/i);
+    if (statusMatch && RETRYABLE_STATUS_CODES.includes(Number(statusMatch[1]))) return true;
+  }
+  const anyErr = err as { status?: number; statusCode?: number };
+  if (anyErr.status && RETRYABLE_STATUS_CODES.includes(anyErr.status)) return true;
+  if (anyErr.statusCode && RETRYABLE_STATUS_CODES.includes(anyErr.statusCode)) return true;
+  return false;
+};
+
+const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+
+export interface RetryOptions {
+  maxAttempts?: number;
+  baseDelayMs?: number;
+  maxDelayMs?: number;
+  onRetry?: (attempt: number, error: unknown, delayMs: number) => void;
+}
+
+/**
+ * Call Claude with automatic retry on transient errors (429, 500, 502, 503, 529, ECONNRESET).
+ * Uses exponential backoff: delay = min(baseDelay * 2^attempt, maxDelay) + jitter.
+ */
+export const callClaudeWithRetry = async (
+  options: ClaudeCallOptions,
+  retryOpts: RetryOptions = {},
+): Promise<ClaudeCallResult> => {
+  const {
+    maxAttempts = 3,
+    baseDelayMs = 1000,
+    maxDelayMs = 30_000,
+    onRetry,
+  } = retryOpts;
+
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      return await callClaude(options);
+    } catch (err) {
+      lastError = err;
+      if (attempt + 1 >= maxAttempts || !isRetryable(err)) {
+        throw err;
+      }
+      const delay = Math.min(baseDelayMs * Math.pow(2, attempt), maxDelayMs);
+      const jitter = Math.floor(Math.random() * delay * 0.1);
+      const totalDelay = delay + jitter;
+      onRetry?.(attempt + 1, err, totalDelay);
+      await sleep(totalDelay);
+    }
+  }
+
+  throw lastError;
+};
+
 // ─── Decision logging ───────────────────────────────────────────
 
 const logClaudeCall = (options: ClaudeCallOptions, result: ClaudeCallResult): void => {
