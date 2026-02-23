@@ -2466,9 +2466,10 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
       delete migrateState.programStartTimes[pid];
       var durEl = document.getElementById('mp-dur-' + pid);
       if (durEl) {
-        var isExisting = !isSkipped && dur < 3000;
-        durEl.textContent = isSkipped ? 'v\\u00e9rifi\\u00e9' : (isExisting ? 'existant' : formatElapsed(dur));
-        durEl.style.color = isSkipped ? '#6b7280' : (isExisting ? '#8b5cf6' : '#3fb950');
+        var isResumed = msg.data && msg.data.resumed;
+        var isExisting = !isSkipped && !isResumed && dur < 3000;
+        durEl.textContent = isSkipped ? 'v\\u00e9rifi\\u00e9' : (isResumed ? 'reprise' : (isExisting ? 'existant' : formatElapsed(dur)));
+        durEl.style.color = isSkipped ? '#6b7280' : (isResumed ? '#58a6ff' : (isExisting ? '#8b5cf6' : '#3fb950'));
       }
       if (migrateState.programPhases[pid]) {
         if (isSkipped) {

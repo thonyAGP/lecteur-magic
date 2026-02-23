@@ -363,8 +363,44 @@ const runProgramGeneration = async (
     };
   }
 
-  // Reset tracker phases for non-verified programs so they get re-generated
-  // Previous runs may have marked phases as completed but the code may still need fixes
+  // Check if program was fully generated in a previous run (resumable)
+  const allGenPhasesCompleted = GENERATION_PHASES.every(p => isPhaseCompleted(prog, p));
+  const wasFullyGenerated = prog.status === 'completed' && allGenPhasesCompleted;
+
+  if (wasFullyGenerated) {
+    // Resume: skip per-program generation, reuse existing files
+    // Load analysis for batch phases (integrate, review)
+    const project = config.contractSubDir;
+    const analysisFile = path.join(config.migrationDir, project, `${project}-IDE-${programId}.analysis.json`);
+    let resumedAnalysis: AnalysisDocument | null = null;
+    if (fs.existsSync(analysisFile)) {
+      resumedAnalysis = JSON.parse(fs.readFileSync(analysisFile, 'utf8'));
+    }
+
+    // Emit phase events so dashboard shows green dots
+    for (const p of GENERATION_PHASES) {
+      emit(config, ET.PHASE_COMPLETED, `IDE ${programId}: ${p} (reprise)`, { phase: p, programId });
+    }
+
+    flushTokenAccumulator();
+    emit(config, ET.PROGRAM_COMPLETED, `IDE ${programId}: déjà généré (reprise)`, { programId, data: { resumed: true, duration: 0 } });
+
+    return {
+      result: {
+        programId,
+        programName: resumedAnalysis?.domainPascal ?? `IDE-${programId}`,
+        status: 'completed',
+        filesGenerated: 0,
+        phasesCompleted: 10,
+        phasesTotal: 10,
+        duration: 0,
+        errors: [],
+      },
+      analysis: resumedAnalysis,
+    };
+  }
+
+  // Not fully generated: reset and re-generate from scratch
   if (Object.keys(prog.phases).length > 0) {
     prog.phases = {};
     prog.status = 'pending';
