@@ -40,12 +40,12 @@ describe('fermetureSessionsStore', () => {
     it('should load sessions from mock when isRealApi is false', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useFermetureSessionsStore.getState();
-      await store.loadSessions();
+      await useFermetureSessionsStore.getState().loadSessions();
 
-      expect(store.sessions.length).toBeGreaterThan(0);
-      expect(store.isLoading).toBe(false);
-      expect(store.error).toBe(null);
+      const state = useFermetureSessionsStore.getState();
+      expect(state.sessions.length).toBeGreaterThan(0);
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe(null);
     });
 
     it('should filter sessions by status when filter provided', async () => {
@@ -102,12 +102,12 @@ describe('fermetureSessionsStore', () => {
     it('should load types from mock when isRealApi is false', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useFermetureSessionsStore.getState();
-      await store.loadUnilateralBilateralTypes();
+      await useFermetureSessionsStore.getState().loadUnilateralBilateralTypes();
 
-      expect(store.unilateralBilateralTypes.length).toBeGreaterThan(0);
-      expect(store.isLoading).toBe(false);
-      expect(store.error).toBe(null);
+      const state = useFermetureSessionsStore.getState();
+      expect(state.unilateralBilateralTypes.length).toBeGreaterThan(0);
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe(null);
     });
 
     it('should load types from API when isRealApi is true', async () => {

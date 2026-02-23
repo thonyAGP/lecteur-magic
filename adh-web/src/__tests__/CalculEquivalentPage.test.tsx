@@ -8,7 +8,7 @@ vi.mock('@/stores/authStore');
 import { CalculEquivalentPage } from '@/pages/CalculEquivalentPage';
 import { useCalculEquivalentStore } from '@/stores/calculEquivalentStore';
 import { useAuthStore } from '@/stores';
-import type { ConversionParams, ConversionResult } from '@/types/calculEquivalent';
+import type { ConversionResult } from '@/types/calculEquivalent';
 
 const mockCalculerEquivalent = vi.fn();
 const mockClearError = vi.fn();

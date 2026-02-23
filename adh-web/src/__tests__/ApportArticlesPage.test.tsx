@@ -260,7 +260,8 @@ describe('ApportArticlesPage', () => {
       expect(screen.getByText('Confirmer la suppression')).toBeInTheDocument();
     });
 
-    const confirmButton = screen.getByRole('button', { name: 'Supprimer' });
+    const dialog = screen.getByRole('dialog');
+    const confirmButton = within(dialog).getByRole('button', { name: 'Supprimer' });
     fireEvent.click(confirmButton);
 
     expect(mockRemoveArticle).toHaveBeenCalledWith(0);

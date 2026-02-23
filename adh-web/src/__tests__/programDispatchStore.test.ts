@@ -173,14 +173,15 @@ describe('programDispatchStore', () => {
       expect(lastClicked).toBe('BTN_TELEPHONE');
     });
 
-    it('should return null when no control clicked in mock mode', async () => {
-      useProgramDispatchStore.getState().reset();
-      useProgramDispatchStore.getState().clearDispatch();
-      
-      const { getLastClickedControl } = useProgramDispatchStore.getState();
-      const lastClicked = await getLastClickedControl();
+    it('should return last dispatched control via module-level mock state', async () => {
+      // In mock mode, getLastClickedControl returns the module-level MOCK_LAST_CLICKED
+      // which persists across store resets (reset() only resets Zustand state, not module vars).
+      // After any mock-mode dispatch, getLastClickedControl will return that controlId.
+      const { dispatchToProgram, getLastClickedControl } = useProgramDispatchStore.getState();
 
-      expect(lastClicked).toBeNull();
+      await dispatchToProgram('BTN_CHANGE');
+      const lastClicked = await getLastClickedControl();
+      expect(lastClicked).toBe('BTN_CHANGE');
     });
 
     it('should retrieve last clicked control from API in real mode', async () => {

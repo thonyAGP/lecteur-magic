@@ -54,18 +54,19 @@ const MOCK_ADDRESS_MINIMAL: VillageAddress = {
 
 describe('villageAddressStore', () => {
   beforeEach(() => {
-    const initialState = {
+    // Don't call reset() as it overwrites action functions with stubs from initialState
+    useVillageAddressStore.setState({
       villageAddress: null,
       isLoading: false,
       error: null,
-    };
-    useVillageAddressStore.setState(initialState, true);
+    });
+    // Reset to mock mode (some tests switch to real API)
     useDataSourceStore.setState({ isRealApi: false });
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('setVillageAddress', () => {
@@ -109,21 +110,17 @@ describe('villageAddressStore', () => {
     it('should set loading state during operation', async () => {
       const { setVillageAddress } = useVillageAddressStore.getState();
 
-      const setStatePromise = new Promise<void>((resolve) => {
-        const unsubscribe = useVillageAddressStore.subscribe((state) => {
-          if (state.isLoading === true) {
-            resolve();
-            unsubscribe();
-          }
-        });
+      // In mock mode, the operation completes synchronously so isLoading
+      // transitions true→false in a single tick. Verify it's false after completion.
+      let sawLoading = false;
+      const unsubscribe = useVillageAddressStore.subscribe((state) => {
+        if (state.isLoading === true) sawLoading = true;
       });
 
-      const promise = setVillageAddress(MOCK_ADDRESS);
-      await setStatePromise;
+      await setVillageAddress(MOCK_ADDRESS);
+      unsubscribe();
 
-      expect(useVillageAddressStore.getState().isLoading).toBe(true);
-
-      await promise;
+      expect(sawLoading).toBe(true);
       expect(useVillageAddressStore.getState().isLoading).toBe(false);
     });
 
@@ -278,21 +275,17 @@ describe('villageAddressStore', () => {
     it('should set loading state during operation', async () => {
       const { loadVillageAddress } = useVillageAddressStore.getState();
 
-      const setStatePromise = new Promise<void>((resolve) => {
-        const unsubscribe = useVillageAddressStore.subscribe((state) => {
-          if (state.isLoading === true) {
-            resolve();
-            unsubscribe();
-          }
-        });
+      // In mock mode, the operation completes synchronously so isLoading
+      // transitions true→false in a single tick. Verify it's false after completion.
+      let sawLoading = false;
+      const unsubscribe = useVillageAddressStore.subscribe((state) => {
+        if (state.isLoading === true) sawLoading = true;
       });
 
-      const promise = loadVillageAddress();
-      await setStatePromise;
+      await loadVillageAddress();
+      unsubscribe();
 
-      expect(useVillageAddressStore.getState().isLoading).toBe(true);
-
-      await promise;
+      expect(sawLoading).toBe(true);
       expect(useVillageAddressStore.getState().isLoading).toBe(false);
     });
 

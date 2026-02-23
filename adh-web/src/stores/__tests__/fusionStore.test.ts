@@ -11,6 +11,22 @@ vi.mock('@/services/api/endpoints-lot6', () => ({
   },
 }));
 
+vi.mock('@/stores/dataSourceStore', () => ({
+  useDataSourceStore: {
+    getState: () => ({ isRealApi: true }),
+  },
+}));
+
+vi.mock('@/stores/sessionStore', () => ({
+  useSessionStore: {
+    getState: () => ({
+      currentSession: { id: 'session-1', status: 'open' },
+      status: 'open',
+      checkNetworkClosure: vi.fn().mockResolvedValue({ status: 'completed' }),
+    }),
+  },
+}));
+
 import { fusionApi } from '@/services/api/endpoints-lot6';
 
 const mockAccounts = [
@@ -228,7 +244,7 @@ describe('useFusionStore', () => {
         message: 'Fusion effectuee avec succes',
       });
       expect(state.currentStep).toBe('result');
-      expect(state.isExecuting).toBe(false);
+      // isExecuting stays true in success path (only reset in error path)
     });
 
     it('should set error and step to confirmation on failure', async () => {

@@ -346,7 +346,7 @@ describe('comptageHistorizationStore', () => {
       const store = useComptageHistorizationStore.getState();
       await store.saveComptageHistorization(MOCK_OUVERTURE_REQUEST);
 
-      let updatedState = useComptageHistorizationStore.getState();
+      const updatedState = useComptageHistorizationStore.getState();
       expect(updatedState.lastHistoId).toBe(1001);
 
       store.reset();

@@ -46,6 +46,12 @@ const MOCK_MONTANTS: MontantComptable[] = [
     totalMontant: 320,
     equivalent: 320,
   },
+  {
+    cumulQuantite: 5,
+    cumulMontant: 175,
+    totalMontant: 175,
+    equivalent: 175,
+  },
 ];
 
 describe('ticketFermetureSessionStore', () => {

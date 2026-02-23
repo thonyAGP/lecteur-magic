@@ -115,8 +115,9 @@ export function ApproTicketPage() {
           <>
             <div className="space-y-4 bg-surface-card border border-border rounded-lg p-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Village</label>
+                <label htmlFor="village" className="block text-sm font-medium mb-2">Village</label>
                 <Input
+                  id="village"
                   value={village}
                   onChange={(e) => setVillage(e.target.value.toUpperCase())}
                   placeholder="Code village (ex: PHU, OPI, DAH)"
@@ -125,8 +126,9 @@ export function ApproTicketPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Session ID</label>
+                <label htmlFor="session-id" className="block text-sm font-medium mb-2">Session ID</label>
                 <Input
+                  id="session-id"
                   type="number"
                   value={sessionId}
                   onChange={(e) => setSessionId(e.target.value)}
@@ -135,8 +137,9 @@ export function ApproTicketPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Devise locale</label>
+                <label htmlFor="devise-locale" className="block text-sm font-medium mb-2">Devise locale</label>
                 <Input
+                  id="devise-locale"
                   value={deviseLocale}
                   onChange={(e) => setDeviseLocale(e.target.value.toUpperCase())}
                   placeholder="Code devise (ex: EUR, USD)"
@@ -145,10 +148,11 @@ export function ApproTicketPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label htmlFor="montant-appro" className="block text-sm font-medium mb-2">
                   Montant appro produit (optionnel)
                 </label>
                 <Input
+                  id="montant-appro"
                   type="number"
                   value={montantApproProduit}
                   onChange={(e) => setMontantApproProduit(e.target.value)}
