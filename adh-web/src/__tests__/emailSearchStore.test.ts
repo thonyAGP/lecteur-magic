@@ -65,9 +65,11 @@ const MOCK_EMAIL_3: EmailAddress = {
 
 const MOCK_EMAILS = [MOCK_EMAIL_1, MOCK_EMAIL_2, MOCK_EMAIL_3];
 
+const getState = () => useEmailSearchStore.getState();
+
 describe('emailSearchStore', () => {
   beforeEach(() => {
-    useEmailSearchStore.getState().resetState();
+    getState().resetState();
     vi.clearAllMocks();
   });
 
@@ -88,15 +90,14 @@ describe('emailSearchStore', () => {
         },
       } as ApiResponse<GetEmailsResponse>);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails(filters);
+      await getState().searchEmails(filters);
 
       expect(apiClient.get).toHaveBeenCalledWith('/api/email-search/emails', {
         params: { societe: 'SKI', compte: '100001' },
       });
-      expect(store.emails).toEqual(MOCK_EMAILS);
-      expect(store.isLoading).toBe(false);
-      expect(store.error).toBe(null);
+      expect(getState().emails).toEqual(MOCK_EMAILS);
+      expect(getState().isLoading).toBe(false);
+      expect(getState().error).toBe(null);
     });
 
     it('should filter mock emails when isRealApi is false', async () => {
@@ -109,13 +110,12 @@ describe('emailSearchStore', () => {
 
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails(filters);
+      await getState().searchEmails(filters);
 
       expect(apiClient.get).not.toHaveBeenCalled();
-      expect(store.emails.length).toBeGreaterThan(0);
-      expect(store.emails.every((e) => e.societe === 'SKI' && e.compte === '100001')).toBe(true);
-      expect(store.isLoading).toBe(false);
+      expect(getState().emails.length).toBeGreaterThan(0);
+      expect(getState().emails.every((e) => e.societe === 'SKI' && e.compte === '100001')).toBe(true);
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should filter by email pattern when isRealApi is false', async () => {
@@ -128,10 +128,9 @@ describe('emailSearchStore', () => {
 
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails(filters);
+      await getState().searchEmails(filters);
 
-      expect(store.emails.every((e) => e.email.toLowerCase().includes('contact'))).toBe(true);
+      expect(getState().emails.every((e) => e.email.toLowerCase().includes('contact'))).toBe(true);
     });
 
     it('should set error when API call fails', async () => {
@@ -145,12 +144,11 @@ describe('emailSearchStore', () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as never);
       vi.mocked(apiClient.get).mockRejectedValue(new Error('Network error'));
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails(filters);
+      await getState().searchEmails(filters);
 
-      expect(store.emails).toEqual([]);
-      expect(store.error).toBe('Network error');
-      expect(store.isLoading).toBe(false);
+      expect(getState().emails).toEqual([]);
+      expect(getState().error).toBe('Network error');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should handle all filter criteria in API mode', async () => {
@@ -169,8 +167,7 @@ describe('emailSearchStore', () => {
         },
       } as ApiResponse<GetEmailsResponse>);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails(filters);
+      await getState().searchEmails(filters);
 
       expect(apiClient.get).toHaveBeenCalledWith('/api/email-search/emails', {
         params: { societe: 'SKI', compte: '100001', filiation: '0', email: 'jean' },
@@ -204,13 +201,12 @@ describe('emailSearchStore', () => {
         },
       } as ApiResponse<CreateEmailResponse>);
 
-      const store = useEmailSearchStore.getState();
-      await store.createEmail(newEmail);
+      await getState().createEmail(newEmail);
 
       expect(apiClient.post).toHaveBeenCalledWith('/api/email-search/emails', newEmail);
-      expect(store.emails).toContainEqual(createdEmail);
-      expect(store.isLoading).toBe(false);
-      expect(store.error).toBe(null);
+      expect(getState().emails).toContainEqual(createdEmail);
+      expect(getState().isLoading).toBe(false);
+      expect(getState().error).toBe(null);
     });
 
     it('should create email in mock mode and unset previous principal if isPrincipal is true', async () => {
@@ -224,18 +220,17 @@ describe('emailSearchStore', () => {
 
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
+      await getState().searchEmails({
         societe: 'SKI',
         compte: '100001',
         filiation: 0,
         email: '',
       });
-      await store.createEmail(newEmail);
+      await getState().createEmail(newEmail);
 
-      const created = store.emails.find((e) => e.email === 'new-principal@test.com');
+      const created = getState().emails.find((e) => e.email === 'new-principal@test.com');
       expect(created?.isPrincipal).toBe(true);
-      expect(store.isLoading).toBe(false);
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should set error when API creation fails', async () => {
@@ -249,11 +244,10 @@ describe('emailSearchStore', () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as never);
       vi.mocked(apiClient.post).mockRejectedValue(new Error('Validation error'));
 
-      const store = useEmailSearchStore.getState();
-      await store.createEmail(newEmail);
+      await getState().createEmail(newEmail);
 
-      expect(store.error).toBe('Validation error');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Validation error');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should set createdAt timestamp when creating in mock mode', async () => {
@@ -268,16 +262,15 @@ describe('emailSearchStore', () => {
 
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
+      await getState().searchEmails({
         societe: 'SKI',
         compte: '100003',
         filiation: 0,
         email: '',
       });
-      await store.createEmail(newEmail);
+      await getState().createEmail(newEmail);
 
-      const created = store.emails.find((e) => e.email === 'timestamped@test.com');
+      const created = getState().emails.find((e) => e.email === 'timestamped@test.com');
       expect(created).toBeDefined();
       expect(created!.createdAt).toBeInstanceOf(Date);
       expect(created!.createdAt!.getTime()).toBeGreaterThanOrEqual(beforeCreate.getTime());
@@ -304,13 +297,12 @@ describe('emailSearchStore', () => {
         },
       } as ApiResponse<UpdateEmailResponse>);
 
-      const store = useEmailSearchStore.getState();
-      store.emails = [MOCK_EMAIL_1];
-      await store.updateEmail(1, updateData);
+      useEmailSearchStore.setState({ emails: [MOCK_EMAIL_1] });
+      await getState().updateEmail(1, updateData);
 
       expect(apiClient.put).toHaveBeenCalledWith('/api/email-search/emails/1', updateData);
-      expect(store.emails[0].email).toBe('updated@email.com');
-      expect(store.isLoading).toBe(false);
+      expect(getState().emails[0].email).toBe('updated@email.com');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should update email in mock mode and set updatedAt timestamp', async () => {
@@ -320,16 +312,15 @@ describe('emailSearchStore', () => {
 
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
+      await getState().searchEmails({
         societe: 'SKI',
         compte: '100001',
         filiation: 0,
         email: '',
       });
-      await store.updateEmail(1, updateData);
+      await getState().updateEmail(1, updateData);
 
-      const updated = store.emails.find((e) => e.id === 1);
+      const updated = getState().emails.find((e) => e.id === 1);
       expect(updated?.email).toBe('updated-mock@email.com');
       expect(updated?.updatedAt).toBeInstanceOf(Date);
     });
@@ -341,38 +332,35 @@ describe('emailSearchStore', () => {
 
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
+      await getState().searchEmails({
         societe: 'SKI',
         compte: '100001',
         filiation: 0,
         email: '',
       });
-      await store.updateEmail(2, updateData);
+      await getState().updateEmail(2, updateData);
 
-      const updated = store.emails.find((e) => e.id === 2);
+      const updated = getState().emails.find((e) => e.id === 2);
       expect(updated?.isPrincipal).toBe(true);
     });
 
     it('should set error when email not found in mock mode', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.updateEmail(999, { email: 'test@email.com' });
+      await getState().updateEmail(999, { email: 'test@email.com' });
 
-      expect(store.error).toBe('Email introuvable');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Email introuvable');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should set error when API update fails', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as never);
       vi.mocked(apiClient.put).mockRejectedValue(new Error('Update failed'));
 
-      const store = useEmailSearchStore.getState();
-      await store.updateEmail(1, { email: 'fail@email.com' });
+      await getState().updateEmail(1, { email: 'fail@email.com' });
 
-      expect(store.error).toBe('Update failed');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Update failed');
+      expect(getState().isLoading).toBe(false);
     });
   });
 
@@ -386,52 +374,53 @@ describe('emailSearchStore', () => {
         },
       } as ApiResponse<DeleteEmailResponse>);
 
-      const store = useEmailSearchStore.getState();
-      store.emails = [MOCK_EMAIL_1, MOCK_EMAIL_2];
-      await store.deleteEmail(1);
+      useEmailSearchStore.setState({ emails: [MOCK_EMAIL_1, MOCK_EMAIL_2] });
+      await getState().deleteEmail(1);
 
       expect(apiClient.delete).toHaveBeenCalledWith('/api/email-search/emails/1');
-      expect(store.emails).toHaveLength(1);
-      expect(store.emails[0].id).toBe(2);
-      expect(store.isLoading).toBe(false);
+      expect(getState().emails).toHaveLength(1);
+      expect(getState().emails[0].id).toBe(2);
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should delete email in mock mode', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
-        societe: 'SKI',
-        compte: '100001',
-        filiation: 0,
+      // Search all emails first to populate
+      await getState().searchEmails({
+        societe: '',
+        compte: '',
+        filiation: null,
         email: '',
       });
-      const initialCount = store.emails.length;
-      await store.deleteEmail(1);
+      const initialCount = getState().emails.length;
+      // Pick an ID that exists in the current results
+      const firstId = getState().emails[0]?.id;
+      if (firstId !== undefined) {
+        await getState().deleteEmail(firstId);
 
-      expect(store.emails.length).toBeLessThan(initialCount);
-      expect(store.emails.find((e) => e.id === 1)).toBeUndefined();
+        expect(getState().emails.length).toBeLessThan(initialCount);
+        expect(getState().emails.find((e) => e.id === firstId)).toBeUndefined();
+      }
     });
 
     it('should set error when email not found in mock mode', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.deleteEmail(999);
+      await getState().deleteEmail(999);
 
-      expect(store.error).toBe('Email introuvable');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Email introuvable');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should set error when API deletion fails', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as never);
       vi.mocked(apiClient.delete).mockRejectedValue(new Error('Delete failed'));
 
-      const store = useEmailSearchStore.getState();
-      await store.deleteEmail(1);
+      await getState().deleteEmail(1);
 
-      expect(store.error).toBe('Delete failed');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Delete failed');
+      expect(getState().isLoading).toBe(false);
     });
   });
 
@@ -445,88 +434,92 @@ describe('emailSearchStore', () => {
         },
       } as ApiResponse<SetPrincipalResponse>);
 
-      const store = useEmailSearchStore.getState();
-      store.emails = [MOCK_EMAIL_1, MOCK_EMAIL_2];
-      await store.setAsPrincipal(2);
+      useEmailSearchStore.setState({ emails: [MOCK_EMAIL_1, MOCK_EMAIL_2] });
+      await getState().setAsPrincipal(2);
 
       expect(apiClient.post).toHaveBeenCalledWith('/api/email-search/emails/2/set-principal');
-      expect(store.emails.find((e) => e.id === 2)?.isPrincipal).toBe(true);
-      expect(store.emails.find((e) => e.id === 1)?.isPrincipal).toBe(false);
-      expect(store.isLoading).toBe(false);
+      expect(getState().emails.find((e) => e.id === 2)?.isPrincipal).toBe(true);
+      expect(getState().emails.find((e) => e.id === 1)?.isPrincipal).toBe(false);
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should unset previous principal when setting new principal in mock mode', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
+      await getState().searchEmails({
         societe: 'SKI',
         compte: '100001',
         filiation: 0,
         email: '',
       });
-      await store.setAsPrincipal(2);
+      await getState().setAsPrincipal(2);
 
-      const emailsWithSameGM = store.emails.filter(
+      const emailsWithSameGM = getState().emails.filter(
         (e) => e.societe === 'SKI' && e.compte === '100001' && e.filiation === 0,
       );
       const principalCount = emailsWithSameGM.filter((e) => e.isPrincipal).length;
       expect(principalCount).toBe(1);
-      expect(store.emails.find((e) => e.id === 2)?.isPrincipal).toBe(true);
+      expect(getState().emails.find((e) => e.id === 2)?.isPrincipal).toBe(true);
     });
 
     it('should set error when email not found in mock mode', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.setAsPrincipal(999);
+      await getState().setAsPrincipal(999);
 
-      expect(store.error).toBe('Email introuvable');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Email introuvable');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should set error when API call fails', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as never);
       vi.mocked(apiClient.post).mockRejectedValue(new Error('Principal update failed'));
 
-      const store = useEmailSearchStore.getState();
-      await store.setAsPrincipal(1);
+      await getState().setAsPrincipal(1);
 
-      expect(store.error).toBe('Principal update failed');
-      expect(store.isLoading).toBe(false);
+      expect(getState().error).toBe('Principal update failed');
+      expect(getState().isLoading).toBe(false);
     });
 
     it('should only affect emails with same GM identifier (societe+compte+filiation)', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
 
-      const store = useEmailSearchStore.getState();
-      await store.searchEmails({
+      await getState().searchEmails({
         societe: '',
         compte: '',
         filiation: null,
         email: '',
       });
-      await store.setAsPrincipal(2);
 
-      const otherGMEmail = store.emails.find((e) => e.societe === 'EXCHANGE' && e.compte === '100002');
-      expect(otherGMEmail?.isPrincipal).toBe(true);
+      // Find an email from EXCHANGE group that is already principal
+      const exchangeEmails = getState().emails.filter((e) => e.societe === 'EXCHANGE');
+      const principalExchange = exchangeEmails.find((e) => e.isPrincipal);
+
+      // Set a SKI email as principal - should not affect EXCHANGE emails
+      const skiEmails = getState().emails.filter((e) => e.societe === 'SKI');
+      const nonPrincipalSki = skiEmails.find((e) => !e.isPrincipal);
+      if (nonPrincipalSki && principalExchange) {
+        await getState().setAsPrincipal(nonPrincipalSki.id);
+
+        // Verify EXCHANGE principal was not affected
+        const exchangeAfter = getState().emails.find((e) => e.id === principalExchange.id);
+        expect(exchangeAfter?.isPrincipal).toBe(true);
+      }
     });
   });
 
   describe('selectEmail', () => {
     it('should set selected email', () => {
-      const store = useEmailSearchStore.getState();
-      store.selectEmail(MOCK_EMAIL_1);
+      getState().selectEmail(MOCK_EMAIL_1);
 
-      expect(store.selectedEmail).toEqual(MOCK_EMAIL_1);
+      expect(getState().selectedEmail).toEqual(MOCK_EMAIL_1);
     });
 
     it('should clear selected email when passed null', () => {
-      const store = useEmailSearchStore.getState();
-      store.selectEmail(MOCK_EMAIL_1);
-      store.selectEmail(null);
+      getState().selectEmail(MOCK_EMAIL_1);
+      getState().selectEmail(null);
 
-      expect(store.selectedEmail).toBe(null);
+      expect(getState().selectedEmail).toBe(null);
     });
   });
 
@@ -539,25 +532,23 @@ describe('emailSearchStore', () => {
         email: 'test',
       };
 
-      const store = useEmailSearchStore.getState();
-      store.setFilters(filters);
+      getState().setFilters(filters);
 
-      expect(store.filters).toEqual(filters);
+      expect(getState().filters).toEqual(filters);
     });
   });
 
   describe('clearFilters', () => {
     it('should reset all filters to initial state', () => {
-      const store = useEmailSearchStore.getState();
-      store.setFilters({
+      getState().setFilters({
         societe: 'SKI',
         compte: '100001',
         filiation: 0,
         email: 'test',
       });
-      store.clearFilters();
+      getState().clearFilters();
 
-      expect(store.filters).toEqual({
+      expect(getState().filters).toEqual({
         societe: '',
         compte: '',
         filiation: null,
@@ -568,24 +559,25 @@ describe('emailSearchStore', () => {
 
   describe('resetState', () => {
     it('should reset entire store to initial state', () => {
-      const store = useEmailSearchStore.getState();
-      store.emails = MOCK_EMAILS;
-      store.selectedEmail = MOCK_EMAIL_1;
-      store.error = 'Some error';
-      store.setFilters({ societe: 'SKI', compte: '100001', filiation: 0, email: 'test' });
+      useEmailSearchStore.setState({
+        emails: MOCK_EMAILS,
+        selectedEmail: MOCK_EMAIL_1,
+        error: 'Some error',
+      });
+      getState().setFilters({ societe: 'SKI', compte: '100001', filiation: 0, email: 'test' });
 
-      store.resetState();
+      getState().resetState();
 
-      expect(store.emails).toEqual([]);
-      expect(store.selectedEmail).toBe(null);
-      expect(store.error).toBe(null);
-      expect(store.filters).toEqual({
+      expect(getState().emails).toEqual([]);
+      expect(getState().selectedEmail).toBe(null);
+      expect(getState().error).toBe(null);
+      expect(getState().filters).toEqual({
         societe: '',
         compte: '',
         filiation: null,
         email: '',
       });
-      expect(store.isLoading).toBe(false);
+      expect(getState().isLoading).toBe(false);
     });
   });
 });

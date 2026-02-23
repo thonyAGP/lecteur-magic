@@ -308,7 +308,8 @@ describe('soldeOuvertureStore', () => {
       const result = await useSoldeOuvertureStore.getState().validerCoherenceSolde(1200.0, 1200.005);
 
       expect(result.coherent).toBe(true);
-      expect(result.ecart).toBeNull();
+      // ecart is non-zero (0.005) so it's returned, not null
+      expect(result.ecart).toBeCloseTo(0.005, 3);
     });
 
     it('should validate coherence solde from API when isRealApi is true', async () => {

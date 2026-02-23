@@ -21,7 +21,7 @@ const MOCK_TAUX_USD: TauxChange = {
   nbDecimales: 2,
 };
 
-const MOCK_TAUX_EUR: TauxChange = {
+const _MOCK_TAUX_EUR: TauxChange = {
   societe: '1',
   devise: 'EUR',
   tauxAchat: 1,
@@ -31,7 +31,7 @@ const MOCK_TAUX_EUR: TauxChange = {
   nbDecimales: 2,
 };
 
-const MOCK_TAUX_GBP: TauxChange = {
+const _MOCK_TAUX_GBP: TauxChange = {
   societe: '1',
   devise: 'GBP',
   tauxAchat: 1.175,
@@ -41,7 +41,7 @@ const MOCK_TAUX_GBP: TauxChange = {
   nbDecimales: 2,
 };
 
-const MOCK_TAUX_JPY: TauxChange = {
+const _MOCK_TAUX_JPY: TauxChange = {
   societe: '1',
   devise: 'JPY',
   tauxAchat: 145.2,

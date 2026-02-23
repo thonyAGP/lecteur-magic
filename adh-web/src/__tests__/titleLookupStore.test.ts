@@ -117,13 +117,18 @@ describe('titleLookupStore', () => {
   describe('loadTitles', () => {
     it('should set loading state while loading', async () => {
       expect(useTitleLookupStore.getState().isLoading).toBe(false);
-      
-      const loadPromise = useTitleLookupStore.getState().loadTitles();
-      
-      expect(useTitleLookupStore.getState().isLoading).toBe(true);
-      
-      await loadPromise;
-      
+
+      // In mock mode, loadTitles completes synchronously, so isLoading
+      // transitions true→false in a single tick. Use subscribe to catch it.
+      let sawLoading = false;
+      const unsubscribe = useTitleLookupStore.subscribe((state) => {
+        if (state.isLoading === true) sawLoading = true;
+      });
+
+      await useTitleLookupStore.getState().loadTitles();
+      unsubscribe();
+
+      expect(sawLoading).toBe(true);
       expect(useTitleLookupStore.getState().isLoading).toBe(false);
     });
 

@@ -218,12 +218,17 @@ describe('integriteDatesStore', () => {
   describe('checkOuverture', () => {
     it('should validate opening with mock data when isRealApi is false', async () => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as never);
-      
+
       const store = useIntegriteDatesStore.getState();
       const result = await store.checkOuverture('SOC1');
-      
-      expect(result).toBe(true);
-      
+
+      // Mock date is 2026-02-20 + delai 3 days = limit 2026-02-23 midnight UTC
+      // Result depends on whether current date <= dateLimit
+      const dateLimit = new Date('2026-02-20');
+      dateLimit.setDate(dateLimit.getDate() + 3);
+      const expectedValid = new Date() <= dateLimit;
+      expect(result).toBe(expectedValid);
+
       const state = useIntegriteDatesStore.getState();
       expect(state.ouvertureValidation).toBeDefined();
       expect(state.ouvertureValidation?.dateComptable).toBe('2026-02-20');

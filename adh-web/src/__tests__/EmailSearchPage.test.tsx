@@ -32,7 +32,7 @@ vi.mock('@/components/layout', () => ({
 }));
 
 vi.mock('@/components/ui', () => ({
-  Button: ({ children, onClick, disabled, variant, size }: unknown) => (
+  Button: ({ children, onClick, disabled, variant: _variant, size: _size }: unknown) => (
     <button onClick={onClick as () => void} disabled={disabled as boolean}>
       {children as React.ReactNode}
     </button>
