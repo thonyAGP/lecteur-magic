@@ -12,9 +12,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import type { SpecExtractor, Program } from './core/types.js';
+import type { SpecExtractor } from './core/types.js';
 import { PipelineStatus } from './core/types.js';
-import { createMagicAdapter, type MagicAdapterConfig } from './adapters/magic-adapter.js';
+import { createMagicAdapter } from './adapters/magic-adapter.js';
 import { createGenericAdapter } from './adapters/generic-adapter.js';
 import { resolveDependencies } from './calculators/dependency-resolver.js';
 import { calculateModules } from './calculators/module-calculator.js';
