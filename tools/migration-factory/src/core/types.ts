@@ -134,6 +134,15 @@ export interface ContractCallee {
   gapNotes: string;
 }
 
+export interface ContractRevision {
+  version: number;
+  previousStatus: PipelineStatus;
+  newStatus: PipelineStatus;
+  timestamp: string;
+  coveragePct: number;
+  note?: string;
+}
+
 export interface ContractOverall {
   rulesTotal: number;
   rulesImpl: number;
@@ -149,6 +158,7 @@ export interface ContractOverall {
   generated: string;
   notes: string;
   effort?: ContractEffort;
+  revisions?: ContractRevision[];
 }
 
 // ─── Pipeline Status ─────────────────────────────────────────────

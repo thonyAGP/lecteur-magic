@@ -219,7 +219,11 @@ export function analyze(source: string): {
   };
 }
 
-// Re-export type guards for convenience
+// Local imports for convenience API functions
+import { parse } from './parser/parser';
+import { generateTypeScript } from './visitor/typescript-generator';
+import { generateCSharp } from './visitor/csharp-generator';
+import { generatePython } from './visitor/python-generator';
 import {
   isFunctionCall,
   isFieldReference,
@@ -227,6 +231,6 @@ import {
   isBinaryExpression,
   isUnaryExpression,
 } from './types/ast';
-import { TypeScriptGeneratorOptions } from './visitor/typescript-generator';
-import { CSharpGeneratorOptions } from './visitor/csharp-generator';
-import { PythonGeneratorOptions } from './visitor/python-generator';
+import type { TypeScriptGeneratorOptions } from './visitor/typescript-generator';
+import type { CSharpGeneratorOptions } from './visitor/csharp-generator';
+import type { PythonGeneratorOptions } from './visitor/python-generator';

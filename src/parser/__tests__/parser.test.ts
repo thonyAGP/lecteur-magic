@@ -40,70 +40,70 @@ describe('XML Decoder', () => {
 describe('Lexer', () => {
   test('should tokenize numbers', () => {
     const tokens = tokenize('123');
-    expect(tokens[0].type).toBe(TokenType.NUMBER);
-    expect(tokens[0].value).toBe('123');
+    expect(tokens[0]!.type).toBe(TokenType.NUMBER);
+    expect(tokens[0]!.value).toBe('123');
   });
 
   test('should tokenize decimal numbers', () => {
     const tokens = tokenize('45.67');
-    expect(tokens[0].type).toBe(TokenType.NUMBER);
-    expect(tokens[0].value).toBe('45.67');
+    expect(tokens[0]!.type).toBe(TokenType.NUMBER);
+    expect(tokens[0]!.value).toBe('45.67');
   });
 
   test('should tokenize strings', () => {
     const tokens = tokenize("'hello'");
-    expect(tokens[0].type).toBe(TokenType.STRING);
+    expect(tokens[0]!.type).toBe(TokenType.STRING);
   });
 
   test('should tokenize field references', () => {
     const tokens = tokenize('{0,5}');
-    expect(tokens[0].type).toBe(TokenType.FIELD_REF);
+    expect(tokens[0]!.type).toBe(TokenType.FIELD_REF);
   });
 
   test('should tokenize main program references', () => {
     const tokens = tokenize('{32768,138}');
-    expect(tokens[0].type).toBe(TokenType.FIELD_REF);
+    expect(tokens[0]!.type).toBe(TokenType.FIELD_REF);
   });
 
   test('should tokenize boolean literals', () => {
     const tokens = tokenize("'TRUE'LOG");
-    expect(tokens[0].type).toBe(TokenType.BOOLEAN);
+    expect(tokens[0]!.type).toBe(TokenType.BOOLEAN);
   });
 
   test('should tokenize special references', () => {
     const tokens = tokenize("'{493,-1}'PROG");
-    expect(tokens[0].type).toBe(TokenType.SPECIAL_REF);
+    expect(tokens[0]!.type).toBe(TokenType.SPECIAL_REF);
   });
 
   test('should tokenize operators', () => {
     const tokens = tokenize('+ - * / ^ & = <> < > <= >=');
-    expect(tokens[0].type).toBe(TokenType.PLUS);
-    expect(tokens[1].type).toBe(TokenType.MINUS);
-    expect(tokens[2].type).toBe(TokenType.MULTIPLY);
-    expect(tokens[3].type).toBe(TokenType.DIVIDE);
-    expect(tokens[4].type).toBe(TokenType.POWER);
-    expect(tokens[5].type).toBe(TokenType.CONCAT);
-    expect(tokens[6].type).toBe(TokenType.EQUAL);
-    expect(tokens[7].type).toBe(TokenType.NOT_EQUAL);
-    expect(tokens[8].type).toBe(TokenType.LESS_THAN);
-    expect(tokens[9].type).toBe(TokenType.GREATER_THAN);
-    expect(tokens[10].type).toBe(TokenType.LESS_EQUAL);
-    expect(tokens[11].type).toBe(TokenType.GREATER_EQUAL);
+    expect(tokens[0]!.type).toBe(TokenType.PLUS);
+    expect(tokens[1]!.type).toBe(TokenType.MINUS);
+    expect(tokens[2]!.type).toBe(TokenType.MULTIPLY);
+    expect(tokens[3]!.type).toBe(TokenType.DIVIDE);
+    expect(tokens[4]!.type).toBe(TokenType.POWER);
+    expect(tokens[5]!.type).toBe(TokenType.CONCAT);
+    expect(tokens[6]!.type).toBe(TokenType.EQUAL);
+    expect(tokens[7]!.type).toBe(TokenType.NOT_EQUAL);
+    expect(tokens[8]!.type).toBe(TokenType.LESS_THAN);
+    expect(tokens[9]!.type).toBe(TokenType.GREATER_THAN);
+    expect(tokens[10]!.type).toBe(TokenType.LESS_EQUAL);
+    expect(tokens[11]!.type).toBe(TokenType.GREATER_EQUAL);
   });
 
   test('should tokenize keyword operators', () => {
     const tokens = tokenize('AND OR NOT MOD');
-    expect(tokens[0].type).toBe(TokenType.AND);
-    expect(tokens[1].type).toBe(TokenType.OR);
-    expect(tokens[2].type).toBe(TokenType.NOT);
-    expect(tokens[3].type).toBe(TokenType.MOD);
+    expect(tokens[0]!.type).toBe(TokenType.AND);
+    expect(tokens[1]!.type).toBe(TokenType.OR);
+    expect(tokens[2]!.type).toBe(TokenType.NOT);
+    expect(tokens[3]!.type).toBe(TokenType.MOD);
   });
 
   test('should tokenize function calls', () => {
     const tokens = tokenize('IF(1, 2, 3)');
-    expect(tokens[0].type).toBe(TokenType.IDENTIFIER);
-    expect(tokens[0].value).toBe('IF');
-    expect(tokens[1].type).toBe(TokenType.LPAREN);
+    expect(tokens[0]!.type).toBe(TokenType.IDENTIFIER);
+    expect(tokens[0]!.value).toBe('IF');
+    expect(tokens[1]!.type).toBe(TokenType.LPAREN);
   });
 });
 
@@ -209,7 +209,7 @@ describe('Parser', () => {
     expect(ast.kind).toBe(ASTNodeKind.FunctionCall);
     if (ast.kind === ASTNodeKind.FunctionCall) {
       expect(ast.name).toBe('Upper');
-      expect(ast.arguments[0].kind).toBe(ASTNodeKind.FunctionCall);
+      expect(ast.arguments[0]!.kind).toBe(ASTNodeKind.FunctionCall);
     }
   });
 
@@ -343,8 +343,8 @@ describe('analyze function', () => {
   test('should extract field references', () => {
     const result = analyze('{0,1} + {0,2}');
     expect(result.fieldRefs).toHaveLength(2);
-    expect(result.fieldRefs[0]).toEqual({ context: 0, field: 1 });
-    expect(result.fieldRefs[1]).toEqual({ context: 0, field: 2 });
+    expect(result.fieldRefs[0]!).toEqual({ context: 0, field: 1 });
+    expect(result.fieldRefs[1]!).toEqual({ context: 0, field: 2 });
   });
 
   test('should detect main program references', () => {
