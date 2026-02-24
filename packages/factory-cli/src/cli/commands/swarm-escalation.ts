@@ -31,6 +31,20 @@ export interface EscalationResolveOptions {
   sessionId: string;
 }
 
+export interface EscalationApproveOptions {
+  db?: string;
+  sessionId: string;
+  reason: string;
+  author?: string;
+}
+
+export interface EscalationSkipOptions {
+  db?: string;
+  sessionId: string;
+  reason: string;
+  author?: string;
+}
+
 /**
  * List all escalated sessions
  */
@@ -325,7 +339,7 @@ export async function resolveEscalation(options: EscalationResolveOptions): Prom
     console.log('1️⃣  APPROVE OVERRIDE');
     console.log('   • Human decision to proceed despite concerns');
     console.log('   • Use when issues are acceptable or will be addressed later');
-    console.log('   • Command: (Not yet implemented - Phase 3 I4)');
+    console.log(`   • Command: factory swarm escalation approve ${options.sessionId} --reason "Justification..."`);
     console.log('');
     console.log('2️⃣  REJECT & FIX');
     console.log('   • Address the identified concerns');
@@ -342,7 +356,8 @@ export async function resolveEscalation(options: EscalationResolveOptions): Prom
     console.log('4️⃣  SKIP PROGRAM');
     console.log('   • Defer migration of this program');
     console.log('   • Document reason for skipping');
-    console.log('   • Command: (Not yet implemented - Phase 3 I4)');
+    console.log(`   • Command: factory swarm escalation skip ${options.sessionId} --reason "Raison..."`);
+
     console.log('');
     console.log('───────────────────────────────────────────────────────────────');
     console.log('🔍 NEXT STEPS');
@@ -360,7 +375,153 @@ export async function resolveEscalation(options: EscalationResolveOptions): Prom
     console.log('');
     console.log('═══════════════════════════════════════════════════════════════');
     console.log('');
-    console.log('ℹ️  Resolution workflow commands will be added in Phase 3 I4');
+
+    store.close();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`[ERROR] ${error.message}`);
+    } else {
+      console.error('[ERROR] Unknown error occurred');
+    }
+    process.exit(1);
+  }
+}
+
+/**
+ * Approve escalation - manual override to proceed despite concerns
+ */
+export async function approveEscalation(options: EscalationApproveOptions): Promise<void> {
+  try {
+    const dbPath = options.db || '.swarm-sessions/swarm.db';
+    const store = createSwarmStore(dbPath);
+
+    console.log(`[SWARM] Approving escalation: ${options.sessionId}`);
+
+    // Get session
+    const session = store.getSession(options.sessionId);
+    if (!session) {
+      console.error(`[ERROR] Session not found: ${options.sessionId}`);
+      store.close();
+      process.exit(1);
+    }
+
+    if (session.status !== 'ESCALATED') {
+      console.error(
+        `[ERROR] Session is not escalated (status: ${session.status})`,
+      );
+      store.close();
+      process.exit(1);
+    }
+
+    // Update session status to APPROVED_OVERRIDE
+    const resolution = {
+      decision: 'APPROVED_OVERRIDE' as const,
+      reason: options.reason,
+      author: options.author || 'cli-user',
+      timestamp: new Date().toISOString(),
+    };
+
+    // Update session in database
+    const db = (store as any).db;
+    db.prepare(
+      `UPDATE swarm_sessions
+       SET status = ?,
+           metadata = json_set(
+             COALESCE(metadata, '{}'),
+             '$.resolution',
+             ?
+           ),
+           completed_at = ?
+       WHERE id = ?`,
+    ).run('APPROVED_OVERRIDE', JSON.stringify(resolution), new Date().toISOString(), options.sessionId);
+
+    console.log('');
+    console.log('✅ ESCALATION APPROVED');
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log(`Session:     ${options.sessionId}`);
+    console.log(`Program:     ${session.programName} (ID: ${session.programId})`);
+    console.log(`Decision:    APPROVED_OVERRIDE`);
+    console.log(`Reason:      ${options.reason}`);
+    console.log(`Author:      ${resolution.author}`);
+    console.log(`Timestamp:   ${resolution.timestamp}`);
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('');
+    console.log('ℹ️  Session marked as APPROVED_OVERRIDE. You may proceed with migration.');
+    console.log('   The decision and justification have been recorded.');
+    console.log('');
+
+    store.close();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`[ERROR] ${error.message}`);
+    } else {
+      console.error('[ERROR] Unknown error occurred');
+    }
+    process.exit(1);
+  }
+}
+
+/**
+ * Skip escalation - defer migration of this program
+ */
+export async function skipEscalation(options: EscalationSkipOptions): Promise<void> {
+  try {
+    const dbPath = options.db || '.swarm-sessions/swarm.db';
+    const store = createSwarmStore(dbPath);
+
+    console.log(`[SWARM] Skipping escalation: ${options.sessionId}`);
+
+    // Get session
+    const session = store.getSession(options.sessionId);
+    if (!session) {
+      console.error(`[ERROR] Session not found: ${options.sessionId}`);
+      store.close();
+      process.exit(1);
+    }
+
+    if (session.status !== 'ESCALATED') {
+      console.error(
+        `[ERROR] Session is not escalated (status: ${session.status})`,
+      );
+      store.close();
+      process.exit(1);
+    }
+
+    // Update session status to SKIPPED
+    const resolution = {
+      decision: 'SKIPPED' as const,
+      reason: options.reason,
+      author: options.author || 'cli-user',
+      timestamp: new Date().toISOString(),
+    };
+
+    // Update session in database
+    const db = (store as any).db;
+    db.prepare(
+      `UPDATE swarm_sessions
+       SET status = ?,
+           metadata = json_set(
+             COALESCE(metadata, '{}'),
+             '$.resolution',
+             ?
+           ),
+           completed_at = ?
+       WHERE id = ?`,
+    ).run('SKIPPED', JSON.stringify(resolution), new Date().toISOString(), options.sessionId);
+
+    console.log('');
+    console.log('⏭️  ESCALATION SKIPPED');
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log(`Session:     ${options.sessionId}`);
+    console.log(`Program:     ${session.programName} (ID: ${session.programId})`);
+    console.log(`Decision:    SKIPPED`);
+    console.log(`Reason:      ${options.reason}`);
+    console.log(`Author:      ${resolution.author}`);
+    console.log(`Timestamp:   ${resolution.timestamp}`);
+    console.log('═══════════════════════════════════════════════════════════════');
+    console.log('');
+    console.log('ℹ️  Session marked as SKIPPED. Migration deferred for this program.');
+    console.log('   The decision and reason have been documented.');
     console.log('');
 
     store.close();

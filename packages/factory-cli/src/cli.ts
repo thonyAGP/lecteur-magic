@@ -1212,6 +1212,28 @@ const run = async () => {
               break;
             }
 
+            case 'approve': {
+              const { approveEscalation } = await import('./cli/commands/swarm-escalation.js');
+              await approveEscalation({
+                db: getArg('db'),
+                sessionId: args[3]!,
+                reason: getArg('reason')!,
+                author: getArg('author'),
+              });
+              break;
+            }
+
+            case 'skip': {
+              const { skipEscalation } = await import('./cli/commands/swarm-escalation.js');
+              await skipEscalation({
+                db: getArg('db'),
+                sessionId: args[3]!,
+                reason: getArg('reason')!,
+                author: getArg('author'),
+              });
+              break;
+            }
+
             default:
               console.log('SWARM Escalation Commands - Manage escalated sessions\n');
               console.log('Commandes Escalation :');
@@ -1219,11 +1241,17 @@ const run = async () => {
               console.log('  swarm escalation review <session-id>      Afficher rapport d\'escalation detaille');
               console.log('  swarm escalation resolve <session-id>     Afficher workflow de resolution');
               console.log('');
+              console.log('Resolution Workflow (Phase 3 I4) :');
+              console.log('  swarm escalation approve <session-id> --reason "..."  Approuver override manuel');
+              console.log('  swarm escalation skip <session-id> --reason "..."     Sauter programme (deferer)');
+              console.log('');
               console.log('Options :');
               console.log('  --db <file>        Chemin base SQLite (defaut: .swarm-sessions/swarm.db)');
               console.log('  --format <format>  Format sortie (text|json|table, defaut: text)');
               console.log('  --limit <N>        Limiter nombre resultats (list uniquement)');
               console.log('  --output <file>    Ecrire sortie dans fichier');
+              console.log('  --reason <text>    Justification decision (approve/skip)');
+              console.log('  --author <name>    Auteur decision (defaut: cli-user)');
           }
           break;
         }
@@ -1244,6 +1272,8 @@ const run = async () => {
           console.log('  swarm escalation list                                          Lister escalations');
           console.log('  swarm escalation review <session-id>                           Rapport d\'escalation');
           console.log('  swarm escalation resolve <session-id>                          Workflow resolution');
+          console.log('  swarm escalation approve <session-id> --reason "..."           Approuver override');
+          console.log('  swarm escalation skip <session-id> --reason "..."              Sauter programme');
           console.log('');
           console.log('Options SWARM :');
           console.log('  --db <file>       Chemin base SQLite (defaut: .swarm-sessions/swarm.db)');
