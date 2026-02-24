@@ -44,11 +44,18 @@ export class PromptBuilder {
     context: AgentContext,
   ): LLMMessage[] {
     const systemPrompt = this.getAgentPrompt(agent);
-    const contractSummary = this.summarizeContract(contract);
+
+    // K1.4: Context Compression - full contract only in round 1
+    const contractSummary = this.summarizeContract(contract, context.roundNumber);
     const contextInfo = this.formatContext(context);
 
     return [
-      { role: 'system', content: systemPrompt },
+      {
+        role: 'system',
+        content: systemPrompt,
+        // K1: Mark system prompt for caching (static per agent)
+        cache_control: { type: 'ephemeral' },
+      },
       { role: 'user', content: `${contractSummary}\n\n${contextInfo}` },
     ];
   }
@@ -70,15 +77,18 @@ export class PromptBuilder {
   }
 
   /**
-   * Résume le contrat pour l'agent
+   * Résume le contrat pour l'agent (K1.4: compression après round 1)
    */
-  private summarizeContract(contract: ExtendedMigrationContract): string {
+  private summarizeContract(
+    contract: ExtendedMigrationContract,
+    roundNumber: number = 1,
+  ): string {
     const summary: string[] = [];
 
     summary.push(`# Migration Contract`);
     summary.push(``);
 
-    // Program info (optional in ExtendedMigrationContract)
+    // Program info (always show)
     if (contract.program) {
       summary.push(
         `**Program:** ${contract.program.name || 'N/A'} (IDE ${contract.program.id || 'N/A'})`,
@@ -89,14 +99,21 @@ export class PromptBuilder {
       summary.push(``);
     }
 
+    // K1.4: After round 1, only show counts (not details)
+    const compressed = roundNumber > 1;
+
     // Tables
     const tables = contract.tables || [];
     if (tables.length > 0) {
-      summary.push(`## Tables (${tables.length})`);
-      for (const table of tables) {
-        const tableName = (table as any).name || 'Unknown';
-        const fieldsCount = (table as any).fields?.length || 0;
-        summary.push(`- **${tableName}**: ${fieldsCount} fields`);
+      if (compressed) {
+        summary.push(`**Tables:** ${tables.length} total`);
+      } else {
+        summary.push(`## Tables (${tables.length})`);
+        for (const table of tables) {
+          const tableName = (table as any).name || 'Unknown';
+          const fieldsCount = (table as any).fields?.length || 0;
+          summary.push(`- **${tableName}**: ${fieldsCount} fields`);
+        }
       }
       summary.push(``);
     }
@@ -104,13 +121,17 @@ export class PromptBuilder {
     // Business Rules
     const rules = contract.rules || [];
     if (rules.length > 0) {
-      summary.push(`## Business Rules (${rules.length})`);
-      for (const rule of rules.slice(0, 10)) {
-        // First 10
-        summary.push(`- **${rule.id}**: ${rule.description}`);
-      }
-      if (rules.length > 10) {
-        summary.push(`  ... and ${rules.length - 10} more rules`);
+      if (compressed) {
+        summary.push(`**Business Rules:** ${rules.length} total`);
+      } else {
+        summary.push(`## Business Rules (${rules.length})`);
+        for (const rule of rules.slice(0, 10)) {
+          // First 10
+          summary.push(`- **${rule.id}**: ${rule.description}`);
+        }
+        if (rules.length > 10) {
+          summary.push(`  ... and ${rules.length - 10} more rules`);
+        }
       }
       summary.push(``);
     }
@@ -118,13 +139,17 @@ export class PromptBuilder {
     // Key Expressions
     const expressions = (contract as any).expressions || [];
     if (expressions.length > 0) {
-      summary.push(`## Key Expressions (${expressions.length})`);
-      for (const expr of expressions.slice(0, 5)) {
-        // First 5
-        summary.push(`- **${expr.id}**: ${expr.purpose || 'N/A'}`);
-      }
-      if (expressions.length > 5) {
-        summary.push(`  ... and ${expressions.length - 5} more expressions`);
+      if (compressed) {
+        summary.push(`**Key Expressions:** ${expressions.length} total`);
+      } else {
+        summary.push(`## Key Expressions (${expressions.length})`);
+        for (const expr of expressions.slice(0, 5)) {
+          // First 5
+          summary.push(`- **${expr.id}**: ${expr.purpose || 'N/A'}`);
+        }
+        if (expressions.length > 5) {
+          summary.push(`  ... and ${expressions.length - 5} more expressions`);
+        }
       }
       summary.push(``);
     }
@@ -132,13 +157,23 @@ export class PromptBuilder {
     // RM Markers (unknowns)
     const rmMarkers = (contract as any).remainingMarkers || [];
     if (rmMarkers.length > 0) {
-      summary.push(`## Unknowns (RM Markers: ${rmMarkers.length})`);
-      for (const rm of rmMarkers.slice(0, 3)) {
-        summary.push(`- ${rm}`);
+      if (compressed) {
+        summary.push(`**Unknowns (RM Markers):** ${rmMarkers.length} total`);
+      } else {
+        summary.push(`## Unknowns (RM Markers: ${rmMarkers.length})`);
+        for (const rm of rmMarkers.slice(0, 3)) {
+          summary.push(`- ${rm}`);
+        }
+        if (rmMarkers.length > 3) {
+          summary.push(`  ... and ${rmMarkers.length - 3} more`);
+        }
       }
-      if (rmMarkers.length > 3) {
-        summary.push(`  ... and ${rmMarkers.length - 3} more`);
-      }
+      summary.push(``);
+    }
+
+    // K1.4: Compression note for rounds > 1
+    if (compressed) {
+      summary.push(`_Note: Contract details were provided in round 1._`);
       summary.push(``);
     }
 
