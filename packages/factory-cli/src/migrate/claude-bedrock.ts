@@ -53,8 +53,8 @@ export const getBedrockConfig = (): BedrockConfig | null => {
 const resolveBedrockModelId = (shortName?: string): string => {
   const modelMap: Record<string, string> = {
     haiku: 'anthropic.claude-3-5-haiku-20241022-v1:0',
-    sonnet: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
-    opus: 'anthropic.claude-3-opus-20240229-v1:0',
+    sonnet: 'anthropic.claude-sonnet-4-6-20260205-v1:0', // Sonnet 4.6 (Feb 2026)
+    opus: 'anthropic.claude-opus-4-6-20260205-v1:0', // Opus 4.6 (Feb 2026)
   };
 
   return modelMap[shortName ?? 'sonnet'] ?? modelMap.sonnet;
