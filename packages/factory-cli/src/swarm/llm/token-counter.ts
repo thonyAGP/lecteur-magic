@@ -40,7 +40,7 @@ export class TokenCounter {
   estimateCost(
     inputTokens: number,
     outputTokens: number,
-    pricing: { input: number; output: number },
+    pricing: { input: number; output: number; cachedInput: number },
   ): number {
     const inputCost = (inputTokens / 1_000_000) * pricing.input;
     const outputCost = (outputTokens / 1_000_000) * pricing.output;

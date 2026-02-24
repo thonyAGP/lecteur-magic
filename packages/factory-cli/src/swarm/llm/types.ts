@@ -5,11 +5,20 @@
  */
 
 /**
+ * Cache control pour prompt caching (Phase K1)
+ */
+export interface CacheControl {
+  type: 'ephemeral';
+}
+
+/**
  * Message LLM (format Anthropic)
  */
 export interface LLMMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  /** Prompt caching control (optional, Phase K1) */
+  cache_control?: CacheControl;
 }
 
 /**
@@ -20,6 +29,8 @@ export interface LLMResponse {
   usage: {
     inputTokens: number;
     outputTokens: number;
+    /** Cached input tokens (Phase K1) - read from cache */
+    cachedInputTokens?: number;
     totalCost: number; // en USD
   };
   model: string;
@@ -38,9 +49,14 @@ export interface LLMConfig {
 }
 
 /**
- * Type pour pricing d'un modèle
+ * Type pour pricing d'un modèle (Phase K1: ajout cached input)
  */
-export type ModelPricing = { input: number; output: number };
+export type ModelPricing = {
+  input: number;
+  output: number;
+  /** Cache read pricing (10% of input, Phase K1) */
+  cachedInput: number;
+};
 
 /**
  * Mapping modèles → model IDs Anthropic
@@ -53,11 +69,12 @@ export const MODEL_IDS = {
 
 /**
  * Prix par modèle (USD par 1M tokens)
+ * Phase K1: ajout cachedInput (10% of input)
  */
 export const MODEL_PRICING = {
-  opus: { input: 15, output: 75 },
-  sonnet: { input: 3, output: 15 },
-  haiku: { input: 1, output: 5 },
+  opus: { input: 15, output: 75, cachedInput: 1.5 },
+  sonnet: { input: 3, output: 15, cachedInput: 0.3 },
+  haiku: { input: 1, output: 5, cachedInput: 0.1 },
 };
 
 /**

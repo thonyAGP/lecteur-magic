@@ -22,7 +22,7 @@ export class ClaudeClient {
   private readonly rateLimiter: RateLimiter;
   private readonly tokenCounter: TokenCounter;
   private readonly modelId: string;
-  private readonly pricing: { input: number; output: number };
+  private readonly pricing: { input: number; output: number; cachedInput: number };
 
   constructor(config: LLMConfig) {
     this.config = {
@@ -60,7 +60,7 @@ export class ClaudeClient {
     const response = await this.retryPolicy.execute(async () => {
       try {
         // Conversion format Anthropic (system prompt séparé)
-        const systemPrompt = messages.find((m) => m.role === 'system')?.content;
+        const systemMessage = messages.find((m) => m.role === 'system');
         const userMessages = messages
           .filter((m) => m.role !== 'system')
           .map((m) => ({
@@ -68,11 +68,24 @@ export class ClaudeClient {
             content: m.content,
           }));
 
+        // K1: Support prompt caching - system as text block with cache_control
+        const system = systemMessage
+          ? systemMessage.cache_control
+            ? [
+                {
+                  type: 'text' as const,
+                  text: systemMessage.content,
+                  cache_control: { type: 'ephemeral' as const },
+                },
+              ]
+            : systemMessage.content
+          : undefined;
+
         const apiResponse = await this.client.messages.create({
           model: this.modelId,
           max_tokens: this.config.maxTokens,
           temperature: this.config.temperature,
-          system: systemPrompt,
+          system,
           messages: userMessages,
         });
 
@@ -82,14 +95,17 @@ export class ClaudeClient {
           throw new LLMError('Unexpected content type', 'INVALID_RESPONSE');
         }
 
-        // Calculer coût
+        // K1: Calculer coût avec cached tokens
         const inputTokens = apiResponse.usage.input_tokens;
         const outputTokens = apiResponse.usage.output_tokens;
-        const totalCost = this.tokenCounter.estimateCost(
-          inputTokens,
-          outputTokens,
-          this.pricing,
-        );
+        const cachedInputTokens = (apiResponse.usage as any).cache_read_input_tokens || 0;
+
+        // Calculate cost: regular input + cached input (10% price) + output
+        const regularInputTokens = inputTokens - cachedInputTokens;
+        const totalCost =
+          (regularInputTokens / 1_000_000) * this.pricing.input +
+          (cachedInputTokens / 1_000_000) * this.pricing.cachedInput +
+          (outputTokens / 1_000_000) * this.pricing.output;
 
         // Déterminer finishReason
         let finishReason: 'stop' | 'length' | 'error' = 'stop';
@@ -104,6 +120,7 @@ export class ClaudeClient {
           usage: {
             inputTokens,
             outputTokens,
+            cachedInputTokens: cachedInputTokens > 0 ? cachedInputTokens : undefined,
             totalCost,
           },
           model: this.config.model,
