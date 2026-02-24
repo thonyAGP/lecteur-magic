@@ -1,5 +1,9 @@
 # Migration Factory
 
+![Expression Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/YOUR_ORG/YOUR_REPO/master/.github/badges/expression-coverage.json)
+[![Tests](https://img.shields.io/badge/tests-576%20passing-brightgreen)](./docs/coverage-metrics.md)
+[![Build](https://img.shields.io/badge/build-passing-brightgreen)](#)
+
 Reusable SPECMAP migration pipeline for extracting legacy systems into modern web applications, module by module.
 
 ## What It Does
@@ -37,6 +41,59 @@ npx tsx src/cli.ts dashboard --project /path/to/project
 # Generate HTML visual report
 npx tsx src/cli.ts report --project /path/to/project --output report.html
 ```
+
+## Quality Assurance
+
+### Expression Coverage
+
+Verify 100% traceability of legacy expressions to modern implementations:
+
+```bash
+# Check coverage for all contracts
+pnpm test:expression-coverage
+
+# Check specific programs
+pnpm test:expression-coverage --programs 48,138,154
+
+# Generate JSON report for CI/CD
+pnpm ci:expression-coverage
+
+# Generate coverage badge
+pnpm badge:expression-coverage
+```
+
+See [CI/CD Integration Guide](./docs/ci-cd-integration.md) for full automation setup.
+
+### Code Coverage
+
+Standard test coverage with vitest:
+
+```bash
+# Run tests with coverage
+pnpm test:coverage
+
+# Interactive coverage UI
+pnpm test:coverage:ui
+```
+
+See [Coverage Metrics Guide](./docs/coverage-metrics.md) for details.
+
+### Contract Enrichment
+
+Enrich contracts with legacy expression tracing:
+
+```bash
+# Enrich a contract (creates template for manual filling)
+tsx scripts/enrich-contract-expressions.ts \
+  --contract .openspec/migration/ADH/ADH-IDE-48.contract.yaml
+
+# Dry-run to preview changes
+tsx scripts/enrich-contract-expressions.ts \
+  --contract .openspec/migration/ADH/ADH-IDE-48.contract.yaml \
+  --dry-run
+```
+
+See [Contract Enrichment Guide](./docs/contract-enrichment-guide.md) for workflow.
 
 ## Architecture
 

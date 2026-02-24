@@ -1,0 +1,61 @@
+#!/bin/sh
+# Pre-commit hook to validate expression coverage on modified contracts
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "${YELLOW}🔍 Checking expression coverage on modified contracts...${NC}"
+
+# Get list of modified contract files
+MODIFIED_CONTRACTS=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.openspec/migration/.*\.contract\.yaml$' || true)
+
+if [ -z "$MODIFIED_CONTRACTS" ]; then
+  echo "${GREEN}✓ No contract files modified, skipping expression coverage check${NC}"
+  exit 0
+fi
+
+echo "${YELLOW}Modified contracts:${NC}"
+echo "$MODIFIED_CONTRACTS" | sed 's/^/  - /'
+
+# Extract program IDs from file names
+PROGRAM_IDS=$(echo "$MODIFIED_CONTRACTS" | grep -oP 'ADH-IDE-\K\d+' | tr '\n' ',' | sed 's/,$//')
+
+if [ -z "$PROGRAM_IDS" ]; then
+  echo "${YELLOW}⚠ Could not extract program IDs, skipping check${NC}"
+  exit 0
+fi
+
+echo ""
+echo "${YELLOW}Running expression coverage check for programs: $PROGRAM_IDS${NC}"
+echo ""
+
+# Run expression coverage check
+cd packages/factory-cli || exit 1
+
+pnpm test:expression-coverage \
+  --contract-dir ../../.openspec/migration/ADH \
+  --output-dir ../adh-web/src \
+  --programs "$PROGRAM_IDS" \
+  --threshold 70 \
+  2>&1
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 0 ]; then
+  echo ""
+  echo "${GREEN}✓ Expression coverage check passed${NC}"
+  exit 0
+else
+  echo ""
+  echo "${RED}✗ Expression coverage check failed${NC}"
+  echo ""
+  echo "${YELLOW}Options:${NC}"
+  echo "  1. Fix the missing expressions and add tests"
+  echo "  2. Update the contract with correct mappings"
+  echo "  3. Skip this check with: git commit --no-verify (NOT RECOMMENDED)"
+  echo ""
+  exit 1
+fi
