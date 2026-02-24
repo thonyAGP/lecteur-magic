@@ -448,8 +448,55 @@ Score robustesse après Phase 1: ~45% (+22% vs baseline 23%)
 - Patterns récurrents identifiés (23.5% des expressions)
 - Format legacy_expressions validé et opérationnel
 
-**✅ PHASE 2 (TRAÇABILITÉ) - 75% TERMINÉE** (2 sessions, 2026-02-24)
+- [x] Phase 2.4: CI/CD integration - TERMINÉ (commit `03e80aa1`)
+  - [x] GitHub Actions workflow créé (.github/workflows/expression-coverage.yml)
+    * Auto-check sur PR (contracts/source modifiés)
+    * PR comment avec coverage report
+    * Job summary dans GitHub UI
+    * Badge auto-update sur master
+    * Threshold 70% enforced
+    * JSON artifacts (30 jours retention)
+  - [x] Pre-commit hook créé (.husky/pre-commit-expression-coverage)
+    * Validation locale avant commit
+    * Check seulement programmes modifiés
+    * Block si coverage < threshold
+    * Messages clairs + options fix
+  - [x] Badge generation script (scripts/generate-coverage-badge.ts)
+    * Shields.io compatible JSON
+    * Color coding par coverage %
+    * Auto-generation via GitHub Actions
+    * Manual: pnpm badge:expression-coverage
+  - [x] Package.json scripts ajoutés
+    * test:expression-coverage (path fixé)
+    * badge:expression-coverage
+    * ci:expression-coverage
+  - [x] README.md mis à jour
+    * Badges ajoutés (expression coverage, tests)
+    * Section "Quality Assurance" créée
+    * Documentation liens ajoutés
+  - [x] docs/ci-cd-integration.md créé (630 lignes)
+    * Complete CI/CD setup guide
+    * Workflow explanation détaillée
+    * Pre-commit hook usage
+    * Badge generation guide
+    * Quality gates documentation
+    * Local development workflow
+    * PR workflow best practices
+    * Troubleshooting complet
+    * Integration examples (Slack, Jira, email)
+    * Advanced configuration
+    * Commands reference
 
-Score robustesse après Phase 2: ~65% (+20% vs Phase 1 45%)
+**Learnings Phase 2.4**:
+- GitHub Actions permet automation complète sans overhead
+- Pre-commit hooks détectent problèmes AVANT CI (gain temps)
+- Badge donne visibilité instantanée coverage dans README
+- JSON reports permettent analytics/trending
 
-### À venir (Phase 2 restante)
+**✅ PHASE 2 (TRAÇABILITÉ) - 100% TERMINÉE** (3 sessions, 2026-02-24)
+
+Score robustesse après Phase 2: ~70% (+25% vs Phase 1 45%)
+
+---
+
+## 📊 Phase 3 - Capitalisation (Semaine 3) - À VENIR
