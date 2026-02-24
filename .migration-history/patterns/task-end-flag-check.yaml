@@ -1,0 +1,210 @@
+# Pattern: Task End Flag Check
+# Category: Flow Control / State Management
+# Identified: 2026-02-24
+# Occurrences: 3
+
+pattern: "W0 fin tache [X]='F'"
+description: "Check if task end flag equals 'F' (finished)"
+
+category: "conditional"
+
+magic_formula:
+  generic: "W0 fin tache [X]='F'"
+  example: "W0 fin tache [V]='F'"
+  explanation: "Check if local variable X (task end flag) equals 'F' indicating task completion"
+
+variables:
+  - name: "W0 fin tache"
+    type: "local variable"
+    description: "Task end flag variable (different letter per program)"
+  - name: "[X]"
+    type: "variable letter"
+    description: "Variable identifier (e.g., [V], [BH], [FI])"
+  - name: "'F'"
+    type: "literal string"
+    description: "Flag value 'F' for Finished/Fin"
+
+modern_equivalent:
+  typescript: |
+    // Option 1: Boolean flag
+    const taskFinished = true;
+    if (taskFinished) {
+      // Task completed logic
+    }
+
+    // Option 2: Enum status
+    enum TaskStatus {
+      PENDING = 'PENDING',
+      IN_PROGRESS = 'IN_PROGRESS',
+      FINISHED = 'FINISHED',
+    }
+
+    const taskStatus = TaskStatus.FINISHED;
+    if (taskStatus === TaskStatus.FINISHED) {
+      // Task completed logic
+    }
+
+    // Option 3: State machine
+    const taskState = 'finished';
+    if (taskState === 'finished') {
+      // Task completed logic
+    }
+
+  react: |
+    // In component with state
+    const [taskFinished, setTaskFinished] = useState(false);
+
+    useEffect(() => {
+      if (taskFinished) {
+        // Execute completion logic
+        handleTaskCompletion();
+      }
+    }, [taskFinished]);
+
+    // With Zustand store
+    const taskStatus = useTaskStore((state) => state.status);
+
+    {taskStatus === 'finished' && (
+      <CompletionPanel />
+    )}
+
+  notes: |
+    - Magic used single-letter flags ('F', 'O', 'T') for state
+    - Modern apps prefer boolean or enum for clarity
+    - Consider task lifecycle: pending → in_progress → finished
+    - May need additional states: cancelled, error, etc.
+
+test_pattern:
+  unit_test: |
+    describe('Task end flag validation', () => {
+      it('should execute completion logic when task is finished', () => {
+        const task = { endFlag: 'F' };
+        const result = processTask(task);
+        expect(result.completed).toBe(true);
+      });
+
+      it('should not execute completion logic when task is not finished', () => {
+        const task = { endFlag: 'P' }; // P = Pending
+        const result = processTask(task);
+        expect(result.completed).toBe(false);
+      });
+
+      it('should handle task completion state change', () => {
+        const { result } = renderHook(() => useTaskEndFlag('P'));
+        expect(result.current.isFinished).toBe(false);
+
+        act(() => {
+          result.current.setEndFlag('F');
+        });
+
+        expect(result.current.isFinished).toBe(true);
+      });
+    });
+
+occurrences: 3
+first_seen: "2026-02-24"
+last_seen: "2026-02-24"
+
+examples:
+  - program_id: 138
+    program_name: "Validation"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-138.contract.yaml"
+    rule_id: "RM-001"
+    expr_id: "Prg_138:Task_5:Line_8:Expr_22"
+    formula: "W0 fin tache [V]='F'"
+    mapped_to: "adh-web/src/stores/saisieContenuCaisseStore.ts:112"
+    test_file: "adh-web/src/__tests__/saisieContenuCaisseStore.test.ts:78"
+
+  - program_id: 154
+    program_name: "Caisse Operations"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-154.contract.yaml"
+    rule_id: "RM-001"
+    expr_id: "Prg_154:Task_8:Line_12:Expr_35"
+    formula: "W0 fin tache [BH]='F'"
+    mapped_to: "adh-web/src/stores/saisieContenuCaisseStore.ts:145"
+    test_file: "adh-web/src/__tests__/saisieContenuCaisseStore.test.ts:92"
+
+  - program_id: 48
+    program_name: "Saisie Contenu Caisse"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-48.contract.yaml"
+    rule_id: "RM-001 (implied)"
+    formula: "Similar pattern expected"
+    notes: "Not yet enriched in contract, but pattern likely present"
+
+variations:
+  - variation: "W0 fin tache [X]<>'F'"
+    description: "Check if task is NOT finished"
+    modern: "if (!taskFinished) { ... }"
+
+  - variation: "W0 fin tache [X]='P'"
+    description: "Check if task is Pending"
+    modern: "if (taskStatus === TaskStatus.PENDING) { ... }"
+
+  - variation: "W0 fin tache [X] IN ('F','C')"
+    description: "Check if task is Finished or Cancelled"
+    modern: "if (['finished', 'cancelled'].includes(taskStatus)) { ... }"
+
+related_patterns:
+  - "operation-type-check.yaml"
+  - "state-flag-validation.yaml (not yet documented)"
+
+complexity: "LOW"
+migration_difficulty: "LOW"
+
+migration_strategy:
+  step1: "Identify all task end flag checks in program"
+  step2: "Map Magic flag values to modern states"
+  step3: "Choose representation: boolean, enum, or string"
+  step4: "Create type definition if using enum/union"
+  step5: "Replace flag checks with modern equivalents"
+  step6: "Add state transitions if needed (state machine)"
+  step7: "Write tests for all flag values"
+  step8: "Mark expressions as verified in contract"
+
+flag_mapping:
+  magic_to_modern:
+    'F': "finished / FINISHED / true"
+    'P': "pending / PENDING / false"
+    'C': "cancelled / CANCELLED / null"
+    'E': "error / ERROR / undefined"
+    'O': "ongoing / IN_PROGRESS / false"
+
+notes: |
+  Legacy Context:
+  - Magic used single-character flags to minimize memory (legacy constraint)
+  - 'W0' prefix indicates local task variable
+  - Different letters ([V], [BH], [FI]) per program to avoid collisions
+  - Flag checked at task boundaries to control flow
+
+  Modern Context:
+  - No memory constraints, can use descriptive names
+  - TypeScript enums provide type safety
+  - Boolean sufficient for simple finished/not-finished
+  - Consider state machine for complex task lifecycles
+
+  Common Pitfalls:
+  - Don't blindly convert 'F' to boolean true (may have other values)
+  - Check all possible flag values in original program first
+  - If only 'F' is checked, boolean is fine; if multiple values, use enum
+
+  Performance:
+  - Magic: O(1) variable lookup + string comparison
+  - Modern: O(1) variable access + comparison (same)
+  - No performance impact
+
+  Type Safety:
+  - Magic: Runtime string comparison, no compile-time checks
+  - Modern TypeScript: Compile-time type checking with enum
+  - Recommendation: Use enum for multi-value flags, boolean for binary
+
+best_practices:
+  - use_enum_for_multiple_states: true
+  - use_boolean_for_binary: true
+  - add_typescript_types: true
+  - document_state_transitions: true
+  - test_all_flag_values: true
+
+references:
+  - decision: ".migration-history/decisions/2026-02-24-state-flag-migration.md (to be created)"
+  - documentation: "docs/migration-patterns.md#state-management"
+  - related_programs: [48, 138, 154]
