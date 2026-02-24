@@ -1,0 +1,170 @@
+name: Expression Coverage Check
+
+on:
+  pull_request:
+    paths:
+      - '.openspec/migration/**/*.contract.yaml'
+      - 'packages/adh-web/src/**'
+      - 'packages/factory-cli/src/**'
+      - 'packages/factory-cli/scripts/verify-expression-coverage.ts'
+  push:
+    branches:
+      - master
+    paths:
+      - '.openspec/migration/**/*.contract.yaml'
+
+jobs:
+  expression-coverage:
+    name: Verify Expression Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build factory-cli
+        working-directory: packages/factory-cli
+        run: pnpm build
+
+      - name: Run expression coverage check
+        id: coverage
+        working-directory: packages/factory-cli
+        run: |
+          pnpm test:expression-coverage \
+            --contract-dir ../../.openspec/migration/ADH \
+            --output-dir ../adh-web/src \
+            --threshold 70 \
+            --json > coverage-report.json || echo "coverage_failed=true" >> $GITHUB_OUTPUT
+
+          # Extract metrics
+          TOTAL=$(jq '.overall.total' coverage-report.json)
+          COVERED=$(jq '.overall.covered' coverage-report.json)
+          GAPS=$(jq '.overall.gaps' coverage-report.json)
+          PCT=$(jq '.overall.coveragePct' coverage-report.json)
+
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "covered=$COVERED" >> $GITHUB_OUTPUT
+          echo "gaps=$GAPS" >> $GITHUB_OUTPUT
+          echo "pct=$PCT" >> $GITHUB_OUTPUT
+
+          # Generate summary
+          echo "## Expression Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total Expressions | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Covered | $COVERED |" >> $GITHUB_STEP_SUMMARY
+          echo "| Gaps | $GAPS |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage % | $PCT% |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$GAPS" -gt 0 ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ⚠️ Missing Expressions" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            jq -r '.reports[] | select(.gaps > 0) | "**Program \(.programId)**: \(.gaps) missing"' coverage-report.json >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: expression-coverage-report
+          path: packages/factory-cli/coverage-report.json
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('packages/factory-cli/coverage-report.json', 'utf8'));
+
+            const total = report.overall.total;
+            const covered = report.overall.covered;
+            const gaps = report.overall.gaps;
+            const pct = report.overall.coveragePct;
+
+            const passed = pct >= 70;
+            const icon = passed ? '✅' : '❌';
+
+            let body = `## ${icon} Expression Coverage Report\n\n`;
+            body += `| Metric | Value |\n`;
+            body += `|--------|-------|\n`;
+            body += `| Total Expressions | ${total} |\n`;
+            body += `| Covered | ${covered} |\n`;
+            body += `| Gaps | ${gaps} |\n`;
+            body += `| **Coverage %** | **${pct}%** |\n`;
+            body += `| Threshold | 70% |\n`;
+            body += `| Status | ${passed ? '✅ PASS' : '❌ FAIL'} |\n\n`;
+
+            if (gaps > 0) {
+              body += `### ⚠️ Missing Expressions\n\n`;
+              const gapPrograms = report.reports.filter(r => r.gaps > 0);
+              for (const prog of gapPrograms.slice(0, 10)) {
+                body += `- **Program ${prog.programId}** (${prog.programName}): ${prog.gaps} missing\n`;
+                const details = prog.gapDetails.slice(0, 3);
+                for (const gap of details) {
+                  body += `  - \`${gap.exprId}\`: ${gap.reason}\n`;
+                }
+                if (prog.gapDetails.length > 3) {
+                  body += `  - ... and ${prog.gapDetails.length - 3} more\n`;
+                }
+              }
+              if (gapPrograms.length > 10) {
+                body += `\n*... and ${gapPrograms.length - 10} more programs*\n`;
+              }
+            }
+
+            body += `\n---\n`;
+            body += `📊 [View full report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Generate coverage badge
+        if: github.ref == 'refs/heads/master'
+        run: |
+          PCT=${{ steps.coverage.outputs.pct }}
+          COLOR="red"
+          if [ $(echo "$PCT >= 90" | bc) -eq 1 ]; then COLOR="brightgreen"; fi
+          if [ $(echo "$PCT >= 70 && $PCT < 90" | bc) -eq 1 ]; then COLOR="green"; fi
+          if [ $(echo "$PCT >= 50 && $PCT < 70" | bc) -eq 1 ]; then COLOR="yellow"; fi
+          if [ $(echo "$PCT >= 30 && $PCT < 50" | bc) -eq 1 ]; then COLOR="orange"; fi
+
+          mkdir -p .github/badges
+          echo "{\"schemaVersion\":1,\"label\":\"expression coverage\",\"message\":\"${PCT}%\",\"color\":\"${COLOR}\"}" > .github/badges/expression-coverage.json
+
+      - name: Commit badge
+        if: github.ref == 'refs/heads/master'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .github/badges/expression-coverage.json || true
+          git diff --staged --quiet || git commit -m "chore: update expression coverage badge [skip ci]"
+          git push || true
+
+      - name: Fail if coverage below threshold
+        if: steps.coverage.outputs.coverage_failed == 'true'
+        run: |
+          echo "❌ Expression coverage below threshold (70%)"
+          echo "Current coverage: ${{ steps.coverage.outputs.pct }}%"
+          echo "Missing expressions: ${{ steps.coverage.outputs.gaps }}"
+          exit 1
