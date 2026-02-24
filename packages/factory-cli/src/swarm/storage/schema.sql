@@ -50,6 +50,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_status ON swarm_sessions(status);
 CREATE INDEX IF NOT EXISTS idx_sessions_program ON swarm_sessions(program_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_phase ON swarm_sessions(current_phase);
 CREATE INDEX IF NOT EXISTS idx_sessions_date ON swarm_sessions(created_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_started_at ON swarm_sessions(started_at); -- K3: For time-range analytics queries
 
 -- ============================================================================
 -- PHASE 1: COMPLEXITY ASSESSMENT
@@ -164,6 +165,7 @@ CREATE TABLE IF NOT EXISTS voting_rounds (
 );
 
 CREATE INDEX IF NOT EXISTS idx_rounds_session ON voting_rounds(session_id);
+CREATE INDEX IF NOT EXISTS idx_rounds_number ON voting_rounds(round_number); -- K3: For consensus trend analytics (GROUP BY round_number)
 CREATE INDEX IF NOT EXISTS idx_rounds_stagnation ON voting_rounds(stagnation_detected);
 CREATE INDEX IF NOT EXISTS idx_rounds_veto ON voting_rounds(veto_triggered);
 
@@ -403,3 +405,11 @@ SELECT
 FROM swarm_sessions s
 LEFT JOIN agent_analyses a ON s.id = a.session_id
 GROUP BY s.id;
+
+-- Round scores for consensus trends analysis (K3)
+CREATE VIEW IF NOT EXISTS round_scores AS
+SELECT
+  r.round_number,
+  r.consensus_score,
+  r.consensus_passed as passed
+FROM voting_rounds r;
