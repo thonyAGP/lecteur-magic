@@ -1,0 +1,303 @@
+# Pattern: Operation Type Check
+# Category: Business Logic / Conditional Flow
+# Identified: 2026-02-24
+# Occurrences: 3
+
+pattern: "P. O/T/F [A]='X'"
+description: "Check operation type field equals specific value (O=Opening, T=Transfer, F=Fund)"
+
+category: "conditional"
+
+magic_formula:
+  generic: "P. O/T/F [A]='X'"
+  example: "P. O/T/F [A]='O'"
+  explanation: "Check if field 'O/T/F' in table 'P.' (parameter record) at position [A] equals 'X' (operation type)"
+
+variables:
+  - name: "P."
+    type: "table prefix"
+    description: "Parameter table or record prefix"
+  - name: "O/T/F"
+    type: "field name"
+    description: "Operation Type Field (Opening/Transfer/Fund)"
+  - name: "[A]"
+    type: "field position"
+    description: "Field position in Magic record (letter A = position 1)"
+  - name: "'X'"
+    type: "literal value"
+    description: "Operation type: 'O' (Opening), 'T' (Transfer), 'F' (Fund)"
+
+modern_equivalent:
+  typescript: |
+    // Option 1: Enum with type safety
+    enum OperationType {
+      OPENING = 'O',
+      TRANSFER = 'T',
+      FUND = 'F',
+    }
+
+    interface Operation {
+      type: OperationType;
+      // ... other fields
+    }
+
+    if (operation.type === OperationType.OPENING) {
+      // Handle opening operation
+    }
+
+    // Option 2: Union type
+    type OperationType = 'O' | 'T' | 'F';
+
+    interface Operation {
+      type: OperationType;
+    }
+
+    if (operation.type === 'O') {
+      // Handle opening operation
+    }
+
+    // Option 3: Descriptive strings
+    type OperationType = 'opening' | 'transfer' | 'fund';
+
+    if (operation.type === 'opening') {
+      // Handle opening operation
+    }
+
+  react: |
+    // Component with operation type handling
+    const OperationForm: React.FC<{ operation: Operation }> = ({ operation }) => {
+      return (
+        <>
+          {operation.type === 'O' && <OpeningForm />}
+          {operation.type === 'T' && <TransferForm />}
+          {operation.type === 'F' && <FundForm />}
+        </>
+      );
+    };
+
+    // With switch for cleaner code
+    const renderOperationForm = (type: OperationType) => {
+      switch (type) {
+        case 'O':
+          return <OpeningForm />;
+        case 'T':
+          return <TransferForm />;
+        case 'F':
+          return <FundForm />;
+        default:
+          return <DefaultForm />;
+      }
+    };
+
+  notes: |
+    - Magic used single-letter codes to save space
+    - Modern apps can use descriptive strings or keep codes
+    - TypeScript union types provide compile-time safety
+    - Consider if codes need to match backend/database
+
+test_pattern:
+  unit_test: |
+    describe('Operation type validation', () => {
+      it('should handle opening operation type', () => {
+        const operation = { type: 'O' };
+        const result = processOperation(operation);
+        expect(result.isOpening).toBe(true);
+      });
+
+      it('should handle transfer operation type', () => {
+        const operation = { type: 'T' };
+        const result = processOperation(operation);
+        expect(result.isTransfer).toBe(true);
+      });
+
+      it('should handle fund operation type', () => {
+        const operation = { type: 'F' };
+        const result = processOperation(operation);
+        expect(result.isFund).toBe(true);
+      });
+
+      it('should throw error for invalid operation type', () => {
+        const operation = { type: 'X' as any };
+        expect(() => processOperation(operation)).toThrow('Invalid operation type');
+      });
+    });
+
+  integration_test: |
+    describe('Operation form rendering', () => {
+      it('should render opening form for O type', () => {
+        render(<OperationForm operation={{ type: 'O' }} />);
+        expect(screen.getByTestId('opening-form')).toBeInTheDocument();
+      });
+
+      it('should render transfer form for T type', () => {
+        render(<OperationForm operation={{ type: 'T' }} />);
+        expect(screen.getByTestId('transfer-form')).toBeInTheDocument();
+      });
+
+      it('should render fund form for F type', () => {
+        render(<OperationForm operation={{ type: 'F' }} />);
+        expect(screen.getByTestId('fund-form')).toBeInTheDocument();
+      });
+    });
+
+occurrences: 3
+first_seen: "2026-02-24"
+last_seen: "2026-02-24"
+
+examples:
+  - program_id: 48
+    program_name: "Saisie Contenu Caisse"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-48.contract.yaml"
+    rule_id: "RM-001"
+    expr_id: "Prg_48:Task_2:Line_12:Expr_30"
+    formula: "P. O/T/F [A]='O'"
+    mapped_to: "adh-web/src/stores/saisieContenuCaisseStore.ts:45"
+    test_file: "adh-web/src/__tests__/saisieContenuCaisseStore.test.ts:28"
+    notes: "Check if operation type is Opening"
+
+  - program_id: 48
+    program_name: "Saisie Contenu Caisse"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-48.contract.yaml"
+    rule_id: "RM-004"
+    expr_id: "Prg_48:Task_2:Line_20:Expr_60"
+    formula: "P. O/T/F [A]='T'"
+    mapped_to: ""
+    verified: false
+    notes: "Check if operation type is Transfer - MISSING implementation"
+
+  - program_id: 48
+    program_name: "Saisie Contenu Caisse"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-48.contract.yaml"
+    rule_id: "RM-006"
+    expr_id: "Prg_48:Task_2:Line_22:Expr_65"
+    formula: "P. O/T/F [A]='F'"
+    mapped_to: ""
+    verified: false
+    notes: "Check if operation type is Fund - MISSING implementation"
+
+variations:
+  - variation: "P. O/T/F [A]<>'O'"
+    description: "Check if operation type is NOT opening"
+    modern: "if (operation.type !== 'O') { ... }"
+
+  - variation: "P. O/T/F [A] IN ('O','T')"
+    description: "Check if operation type is Opening OR Transfer"
+    modern: "if (['O', 'T'].includes(operation.type)) { ... }"
+
+  - variation: "IF(P. O/T/F [A]='O',Update(...),Skip)"
+    description: "Conditional action based on operation type"
+    modern: "if (operation.type === 'O') { update(...); }"
+
+related_patterns:
+  - "task-end-flag-check.yaml"
+  - "field-value-comparison.yaml (not yet documented)"
+
+complexity: "LOW"
+migration_difficulty: "LOW"
+
+migration_strategy:
+  step1: "Identify all operation type checks in program"
+  step2: "Map Magic codes to modern values"
+  step3: "Define TypeScript type (enum or union)"
+  step4: "Update operation interface/type"
+  step5: "Replace P. O/T/F [A] references with operation.type"
+  step6: "Add validation for operation type values"
+  step7: "Write tests for each operation type"
+  step8: "Mark expressions as verified in contract"
+
+operation_type_mapping:
+  magic_codes:
+    'O': "Opening / Ouverture"
+    'T': "Transfer / Transfert"
+    'F': "Fund / Fond"
+
+  modern_options:
+    option1_keep_codes:
+      type: "'O' | 'T' | 'F'"
+      pros: ["Matches database", "Backward compatible", "Compact"]
+      cons: ["Not self-documenting", "Need comments"]
+
+    option2_descriptive:
+      type: "'opening' | 'transfer' | 'fund'"
+      pros: ["Self-documenting", "Readable", "TypeScript friendly"]
+      cons: ["Needs mapping if DB uses codes", "Longer strings"]
+
+    option3_enum:
+      type: "enum OperationType { OPENING='O', TRANSFER='T', FUND='F' }"
+      pros: ["Type safe", "Documented", "Matches DB codes"]
+      cons: ["More verbose", "Need import"]
+
+notes: |
+  Legacy Context:
+  - Magic used 'P.' prefix for parameter records
+  - Field 'O/T/F' stored operation type
+  - Single letter codes for memory efficiency
+  - [A] = position 1 in Magic record layout
+
+  Modern Context:
+  - No memory constraints
+  - Can use descriptive names
+  - TypeScript provides compile-time type checking
+  - Consider database schema (may need to keep codes)
+
+  Business Logic:
+  - Opening (O): Caisse session opening
+  - Transfer (T): Transfer between cashiers/locations
+  - Fund (F): Fund/float operations
+
+  Common Pitfalls:
+  - Don't assume all operation types are implemented
+  - Check for MISSING implementations (see RM-004, RM-006 examples)
+  - Validate operation type at boundaries (API, forms)
+  - Handle unknown/invalid operation types gracefully
+
+  Performance:
+  - Magic: O(1) field access + string comparison
+  - Modern: O(1) property access + comparison
+  - No performance difference
+
+  Type Safety:
+  - Magic: Runtime validation only
+  - Modern TypeScript: Compile-time + runtime
+  - Recommendation: Use union type or enum for type safety
+
+best_practices:
+  define_typescript_type: true
+  validate_at_boundaries: true
+  handle_invalid_types: true
+  test_all_operation_types: true
+  document_business_meaning: true
+  check_for_missing_implementations: true
+  validation_example: |
+    const VALID_OPERATION_TYPES = ['O', 'T', 'F'] as const;
+    type OperationType = typeof VALID_OPERATION_TYPES[number];
+
+    function validateOperationType(type: string): type is OperationType {
+      return VALID_OPERATION_TYPES.includes(type as OperationType);
+    }
+
+    // Usage
+    if (validateOperationType(input.type)) {
+      processOperation(input); // type is narrowed to OperationType
+    } else {
+      throw new Error(`Invalid operation type: ${input.type}`);
+    }
+
+implementation_checklist:
+  - "[ ] Map all operation types from Magic program"
+  - "[ ] Define TypeScript type (enum/union)"
+  - "[ ] Update Operation interface"
+  - "[ ] Replace all P. O/T/F [A] references"
+  - "[ ] Add validation function"
+  - "[ ] Write tests for each type (O, T, F)"
+  - "[ ] Test invalid type handling"
+  - "[ ] Update Zod schema if using form validation"
+  - "[ ] Check for MISSING implementations"
+  - "[ ] Mark expressions verified in contract"
+
+references:
+  - decision: ".migration-history/decisions/2026-02-24-operation-type-representation.md (to be created)"
+  - documentation: "docs/migration-patterns.md#operation-types"
+  - schema: "adh-web/src/types/operation.ts"
+  - related_programs: [48]
+  - database_field: "operations.type (VARCHAR(1))"

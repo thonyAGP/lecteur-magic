@@ -1,0 +1,173 @@
+# Pattern: Printer Number Check
+# Category: Configuration Validation
+# Identified: 2026-02-24
+# Occurrences: 4
+
+pattern: "GetParam('CURRENTPRINTERNUM')=N"
+description: "Check if current printer matches a specific number (1 or 9)"
+
+category: "validation"
+
+magic_formula:
+  generic: "GetParam('CURRENTPRINTERNUM')=N"
+  example: "GetParam('CURRENTPRINTERNUM')=1"
+  explanation: "Retrieve global parameter CURRENTPRINTERNUM and compare to expected printer number N"
+
+variables:
+  - name: "CURRENTPRINTERNUM"
+    type: "global parameter"
+    description: "System parameter storing current active printer number"
+  - name: "N"
+    type: "literal number"
+    description: "Expected printer number (typically 1 or 9)"
+
+modern_equivalent:
+  typescript: |
+    // Option 1: Environment variable
+    const currentPrinter = parseInt(process.env.CURRENT_PRINTER_NUM || '1');
+    if (currentPrinter === 1) {
+      // Use printer 1
+    }
+
+    // Option 2: Configuration service
+    const currentPrinter = printerConfig.getCurrentPrinterNum();
+    if (currentPrinter === 1) {
+      // Use printer 1
+    }
+
+    // Option 3: Store (Zustand)
+    const currentPrinter = usePrinterStore((state) => state.currentPrinterNum);
+    if (currentPrinter === 1) {
+      // Use printer 1
+    }
+
+  react: |
+    // In component
+    const { currentPrinterNum } = usePrinterStore();
+
+    {currentPrinterNum === 1 ? (
+      <Printer1Component />
+    ) : currentPrinterNum === 9 ? (
+      <Printer9Component />
+    ) : (
+      <DefaultPrinterComponent />
+    )}
+
+  notes: |
+    - In modern web apps, printer selection is typically handled client-side
+    - Configuration stored in Zustand store or environment variables
+    - May be N/A for pure web apps (no direct printer access)
+    - Legacy Magic used this for server-side print job routing
+
+test_pattern:
+  unit_test: |
+    describe('Printer number validation', () => {
+      it('should use printer 1 when CURRENTPRINTERNUM is 1', () => {
+        const config = { currentPrinterNum: 1 };
+        const result = selectPrinter(config);
+        expect(result.printerNumber).toBe(1);
+      });
+
+      it('should use printer 9 when CURRENTPRINTERNUM is 9', () => {
+        const config = { currentPrinterNum: 9 };
+        const result = selectPrinter(config);
+        expect(result.printerNumber).toBe(9);
+      });
+
+      it('should default to printer 1 if not specified', () => {
+        const config = {};
+        const result = selectPrinter(config);
+        expect(result.printerNumber).toBe(1);
+      });
+    });
+
+occurrences: 4
+first_seen: "2026-02-24"
+last_seen: "2026-02-24"
+
+examples:
+  - program_id: 138
+    program_name: "Validation"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-138.contract.yaml"
+    rule_id: "RM-002"
+    expr_id: "Prg_138:Task_12:Line_15:Expr_45"
+    formula: "GetParam('CURRENTPRINTERNUM')=1"
+    mapped_to: "adh-web/src/services/printer/generators/ouvertureTicketGenerator.ts:62"
+    test_file: "adh-web/src/__tests__/ouvertureTicketGenerator.test.ts:88"
+
+  - program_id: 138
+    program_name: "Validation"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-138.contract.yaml"
+    rule_id: "RM-003"
+    expr_id: "Prg_138:Task_12:Line_18:Expr_48"
+    formula: "GetParam('CURRENTPRINTERNUM')=9"
+    mapped_to: "adh-web/src/stores/approTicketStore.ts:125"
+    test_file: "adh-web/src/__tests__/approTicketStore.test.ts:95"
+
+  - program_id: 154
+    program_name: "Caisse Operations"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-154.contract.yaml"
+    rule_id: "RM-002"
+    expr_id: "Prg_154:Task_15:Line_22:Expr_58"
+    formula: "GetParam('CURRENTPRINTERNUM')=1"
+    mapped_to: "adh-web/src/services/printer/generators/ouvertureTicketGenerator.ts:75"
+    test_file: "adh-web/src/__tests__/ouvertureTicketGenerator.test.ts:102"
+
+  - program_id: 154
+    program_name: "Caisse Operations"
+    contract_file: ".openspec/migration/ADH/ADH-IDE-154.contract.yaml"
+    rule_id: "RM-003"
+    expr_id: "Prg_154:Task_15:Line_25:Expr_62"
+    formula: "GetParam('CURRENTPRINTERNUM')=9"
+    mapped_to: "adh-web/src/stores/approTicketStore.ts:138"
+    test_file: "adh-web/src/__tests__/approTicketStore.test.ts:108"
+
+variations:
+  - variation: "GetParam('CURRENTPRINTERNUM')<>N"
+    description: "Check if current printer is NOT a specific number"
+    modern: "if (currentPrinter !== N) { ... }"
+
+  - variation: "GetParam('CURRENTPRINTERNUM') IN (1,2,3)"
+    description: "Check if current printer is one of several numbers"
+    modern: "if ([1, 2, 3].includes(currentPrinter)) { ... }"
+
+related_patterns:
+  - "global-parameter-check.yaml (not yet documented)"
+
+complexity: "LOW"
+migration_difficulty: "LOW"
+
+migration_strategy:
+  step1: "Identify all GetParam('CURRENTPRINTERNUM') calls in program"
+  step2: "Determine if printer config is needed in web app (may be N/A)"
+  step3: "If needed, create printerConfig service or Zustand store"
+  step4: "Replace GetParam calls with config.currentPrinterNum"
+  step5: "Add tests for each printer number case"
+  step6: "Mark legacy expressions as verified in contract"
+
+notes: |
+  Legacy Context:
+  - Magic Unipaas used server-side printer routing
+  - Global parameters stored in magic.ini or system table
+  - GetParam() was synchronous call to global config
+
+  Modern Context:
+  - Web apps typically don't have direct printer access
+  - Printer selection handled via browser print dialog
+  - Configuration may be N/A for pure web implementations
+  - If server-side printing needed, use microservice pattern
+
+  Common Pitfalls:
+  - Don't try to replicate exact Magic printer routing in web
+  - Consider if printer logic is still needed (may be obsolete)
+  - If needed, centralize in single service/store
+
+  Performance:
+  - Magic: O(1) global lookup
+  - Modern: O(1) store access or env variable
+  - No performance degradation
+
+references:
+  - decision: ".migration-history/decisions/2026-02-24-printer-config-strategy.md (to be created)"
+  - documentation: "docs/migration-patterns.md#printer-configuration"
+  - related_programs: [138, 154]
