@@ -24,7 +24,7 @@ import { runMigration, getMigrateStatus, createBatch } from '../migrate/migrate-
 import { DEFAULT_PHASE_MODELS } from '../migrate/migrate-types.js';
 import type { MigrateConfig, MigratePhase } from '../migrate/migrate-types.js';
 import { configureClaudeMode } from '../migrate/migrate-claude.js';
-import { startMigration, addMigrateEvent, endMigration, getMigrateActiveState } from './migrate-state.js';
+import { startMigration, addMigrateEvent, endMigration, getMigrateActiveState, persistState } from './migrate-state.js';
 import { createMagicAdapter } from '../adapters/magic-adapter.js';
 import { resolveDependencies } from '../calculators/dependency-resolver.js';
 import { analyzeProject, analyzedBatchesToTrackerBatches } from '../calculators/project-analyzer.js';
@@ -438,6 +438,9 @@ export const handleMigrateStream = async (
   // Buffer events for dashboard reconnection after page refresh
   startMigration(batchId, programIds.length, targetDir, claudeMode, dryRun, programList, batchEstimatedHours);
 
+  // Auto-persist state after important events (I2 integration)
+  const stateFile = path.join(config.migrationDir, config.contractSubDir, 'migration-state.json');
+
   const bufferedSend = (event: unknown) => {
     addMigrateEvent(event);
     sse.send(event);
@@ -451,6 +454,11 @@ export const handleMigrateStream = async (
       message: (e.message as string) ?? (e.type as string) ?? '',
       data: e.data as Record<string, unknown> | undefined,
     });
+
+    // Persist state after program completion/failure (I2)
+    if (e.type === 'program_completed' || e.type === 'program_failed' || e.type === 'migrate_started') {
+      persistState(stateFile);
+    }
   };
 
   migrateConfig.onEvent = (event) => bufferedSend(event);
@@ -466,6 +474,11 @@ export const handleMigrateStream = async (
 
   _migrateAbortController = null;
   endMigration();
+
+  // Clear persisted state after completion (I2)
+  const { clearPersistedState } = await import('./migrate-state.js');
+  clearPersistedState(stateFile);
+
   sse.close();
 };
 
