@@ -391,14 +391,15 @@
       "name": "Club Med Pass menu",
       "root": 77,
       "programs": 10,
-      "status": "pending",
+      "status": "enriched",
+      "enriched_date": "2026-02-25",
       "stats": {
         "backend_na": 0,
         "frontend_enrich": 0,
-        "fully_impl": 0,
+        "fully_impl": 5,
         "coverage_avg_frontend": 0,
         "total_partial": 0,
-        "total_missing": 0
+        "total_missing": 5
       },
       "priority_order": [
         77,
@@ -694,6 +695,41 @@
       "errors": [],
       "startedAt": "2026-02-22T20:51:46.396Z",
       "completedAt": "2026-02-23T14:43:45.124Z"
+    },
+    "77": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-02-25T20:04:37.494Z",
+          "completedAt": "2026-02-25T20:04:37.509Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-77.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-02-25T20:04:37.513Z",
+          "completedAt": "2026-02-25T20:04:37.537Z",
+          "duration": 22,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-77.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-02-25T20:04:37.538Z",
+          "completedAt": "2026-02-25T20:05:02.294Z",
+          "duration": 24755,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-77.analysis.json"
+        }
+      },
+      "files": [
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-77.md",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-77.contract.yaml",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-77.analysis.json"
+      ],
+      "errors": [],
+      "startedAt": "2026-02-25T20:04:37.494Z",
+      "completedAt": "2026-02-25T20:05:02.297Z"
     },
     "116": {
       "status": "pending",

@@ -1,0 +1,98 @@
+{"timestamp":"2026-02-25T20:04:37.485Z","level":"info","type":"migrate_started","message":"migrate_started"}
+{"timestamp":"2026-02-25T20:04:37.486Z","level":"info","type":"migration_started","message":"Starting migration for batch B12 (10 programs)"}
+{"timestamp":"2026-02-25T20:04:37.487Z","level":"info","type":"phase_started","message":"Decision log: D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\.migration-log\\B12"}
+{"timestamp":"2026-02-25T20:04:37.489Z","level":"info","type":"parallel_resolved","message":"Auto-parallel: 5 agents (22 CPUs, 10 programs)","data":{"requested":0,"resolved":5,"cpus":22}}
+{"timestamp":"2026-02-25T20:04:37.491Z","level":"info","type":"program_started","programId":77,"message":"Starting IDE 77"}
+{"timestamp":"2026-02-25T20:04:37.494Z","level":"info","type":"phase_started","programId":77,"phase":"spec","message":"IDE 77: generating spec"}
+{"timestamp":"2026-02-25T20:04:37.494Z","level":"info","type":"phase_progress","programId":77,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-25T20:04:37.496Z","level":"info","type":"program_started","programId":78,"message":"Starting IDE 78"}
+{"timestamp":"2026-02-25T20:04:37.496Z","level":"info","type":"phase_started","programId":78,"phase":"spec","message":"IDE 78: generating spec"}
+{"timestamp":"2026-02-25T20:04:37.497Z","level":"info","type":"phase_progress","programId":78,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-25T20:04:37.500Z","level":"info","type":"program_started","programId":79,"message":"Starting IDE 79"}
+{"timestamp":"2026-02-25T20:04:37.501Z","level":"info","type":"phase_started","programId":79,"phase":"spec","message":"IDE 79: generating spec"}
+{"timestamp":"2026-02-25T20:04:37.502Z","level":"info","type":"phase_progress","programId":79,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-25T20:04:37.504Z","level":"info","type":"program_started","programId":80,"message":"Starting IDE 80"}
+{"timestamp":"2026-02-25T20:04:37.504Z","level":"info","type":"phase_started","programId":80,"phase":"spec","message":"IDE 80: generating spec"}
+{"timestamp":"2026-02-25T20:04:37.505Z","level":"info","type":"phase_progress","programId":80,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-25T20:04:37.506Z","level":"info","type":"program_started","programId":81,"message":"Starting IDE 81"}
+{"timestamp":"2026-02-25T20:04:37.507Z","level":"info","type":"phase_started","programId":81,"phase":"spec","message":"IDE 81: generating spec"}
+{"timestamp":"2026-02-25T20:04:37.508Z","level":"info","type":"phase_progress","programId":81,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-25T20:04:37.509Z","level":"info","type":"phase_completed","programId":77,"phase":"spec","message":"IDE 77: spec done"}
+{"timestamp":"2026-02-25T20:04:37.513Z","level":"info","type":"phase_started","programId":77,"phase":"contract","message":"IDE 77: generating contract"}
+{"timestamp":"2026-02-25T20:04:37.514Z","level":"info","type":"phase_progress","programId":77,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-25T20:04:37.537Z","level":"info","type":"phase_completed","programId":77,"phase":"contract","message":"IDE 77: contract done"}
+{"timestamp":"2026-02-25T20:04:37.538Z","level":"info","type":"phase_started","programId":77,"phase":"analyze","message":"IDE 77: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-25T20:04:37.538Z","level":"info","type":"phase_progress","programId":77,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-25T20:04:37.558Z","level":"info","type":"phase_completed","programId":78,"phase":"spec","message":"IDE 78: spec done"}
+{"timestamp":"2026-02-25T20:04:37.560Z","level":"info","type":"phase_started","programId":78,"phase":"contract","message":"IDE 78: generating contract"}
+{"timestamp":"2026-02-25T20:04:37.560Z","level":"info","type":"phase_progress","programId":78,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-25T20:04:37.569Z","level":"info","type":"phase_completed","programId":78,"phase":"contract","message":"IDE 78: contract done"}
+{"timestamp":"2026-02-25T20:04:37.572Z","level":"info","type":"phase_started","programId":78,"phase":"analyze","message":"IDE 78: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-25T20:04:37.572Z","level":"info","type":"phase_progress","programId":78,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-25T20:04:37.578Z","level":"info","type":"phase_completed","programId":79,"phase":"spec","message":"IDE 79: spec done"}
+{"timestamp":"2026-02-25T20:04:37.581Z","level":"info","type":"phase_started","programId":79,"phase":"contract","message":"IDE 79: generating contract"}
+{"timestamp":"2026-02-25T20:04:37.582Z","level":"info","type":"phase_progress","programId":79,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-25T20:04:37.589Z","level":"info","type":"phase_completed","programId":79,"phase":"contract","message":"IDE 79: contract done"}
+{"timestamp":"2026-02-25T20:04:37.590Z","level":"info","type":"phase_started","programId":79,"phase":"analyze","message":"IDE 79: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-25T20:04:37.591Z","level":"info","type":"phase_progress","programId":79,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-25T20:04:37.594Z","level":"info","type":"phase_completed","programId":80,"phase":"spec","message":"IDE 80: spec done"}
+{"timestamp":"2026-02-25T20:04:37.596Z","level":"info","type":"phase_started","programId":80,"phase":"contract","message":"IDE 80: generating contract"}
+{"timestamp":"2026-02-25T20:04:37.596Z","level":"info","type":"phase_progress","programId":80,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-25T20:04:37.601Z","level":"info","type":"phase_completed","programId":80,"phase":"contract","message":"IDE 80: contract done"}
+{"timestamp":"2026-02-25T20:04:37.602Z","level":"info","type":"phase_started","programId":80,"phase":"analyze","message":"IDE 80: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-25T20:04:37.602Z","level":"info","type":"phase_progress","programId":80,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-25T20:04:37.605Z","level":"info","type":"phase_completed","programId":81,"phase":"spec","message":"IDE 81: spec done"}
+{"timestamp":"2026-02-25T20:04:37.606Z","level":"info","type":"phase_started","programId":81,"phase":"contract","message":"IDE 81: generating contract"}
+{"timestamp":"2026-02-25T20:04:37.607Z","level":"info","type":"phase_progress","programId":81,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-25T20:04:37.618Z","level":"info","type":"phase_completed","programId":81,"phase":"contract","message":"IDE 81: contract done"}
+{"timestamp":"2026-02-25T20:04:37.620Z","level":"info","type":"phase_started","programId":81,"phase":"analyze","message":"IDE 81: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-25T20:04:37.621Z","level":"info","type":"phase_progress","programId":81,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-25T20:04:51.340Z","level":"info","type":"phase_completed","programId":80,"phase":"analyze","message":"IDE 80: analysis done in 14s (13736ms), domain=cardScanRead"}
+{"timestamp":"2026-02-25T20:04:51.340Z","level":"info","type":"program_failed","programId":80,"message":"IDE 80: aborted"}
+{"timestamp":"2026-02-25T20:04:51.349Z","level":"info","type":"program_completed","programId":80,"message":"IDE 80: 1 files generated in 14s (13845ms), tokens: 4K in / 1K out","data":{"duration":13845,"filesGenerated":1,"tokens":{"input":4254,"output":1394}}}
+{"timestamp":"2026-02-25T20:04:51.351Z","level":"info","type":"token_update","programId":80,"message":"Tokens updated: 4254 in / 1394 out","data":{"cumulative":{"input":28674,"output":16303,"costUsd":0.330567,"totalCalls":2},"programTokens":{"input":4254,"output":1394}}}
+{"timestamp":"2026-02-25T20:04:55.538Z","level":"info","type":"phase_completed","programId":81,"phase":"analyze","message":"IDE 81: analysis done in 18s (17914ms), domain=cardScanCreate"}
+{"timestamp":"2026-02-25T20:04:55.539Z","level":"info","type":"program_failed","programId":81,"message":"IDE 81: aborted"}
+{"timestamp":"2026-02-25T20:04:55.548Z","level":"info","type":"program_completed","programId":81,"message":"IDE 81: 1 files generated in 18s (18041ms)","data":{"duration":18041,"filesGenerated":1}}
+{"timestamp":"2026-02-25T20:04:56.729Z","level":"info","type":"phase_completed","programId":78,"phase":"analyze","message":"IDE 78: analysis done in 19s (19154ms), domain=clubMedPassPrint"}
+{"timestamp":"2026-02-25T20:04:56.730Z","level":"info","type":"program_failed","programId":78,"message":"IDE 78: aborted"}
+{"timestamp":"2026-02-25T20:04:56.739Z","level":"info","type":"program_completed","programId":78,"message":"IDE 78: 1 files generated in 19s (19243ms)","data":{"duration":19243,"filesGenerated":1}}
+{"timestamp":"2026-02-25T20:04:59.763Z","level":"info","type":"phase_completed","programId":79,"phase":"analyze","message":"IDE 79: analysis done in 22s (22171ms), domain=balanceCreditConso"}
+{"timestamp":"2026-02-25T20:04:59.764Z","level":"info","type":"program_failed","programId":79,"message":"IDE 79: aborted"}
+{"timestamp":"2026-02-25T20:04:59.773Z","level":"info","type":"program_completed","programId":79,"message":"IDE 79: 1 files generated in 22s (22273ms)","data":{"duration":22273,"filesGenerated":1}}
+{"timestamp":"2026-02-25T20:05:02.295Z","level":"info","type":"phase_completed","programId":77,"phase":"analyze","message":"IDE 77: analysis done in 25s (24755ms), domain=clubMedPass"}
+{"timestamp":"2026-02-25T20:05:02.296Z","level":"info","type":"program_failed","programId":77,"message":"IDE 77: aborted"}
+{"timestamp":"2026-02-25T20:05:02.334Z","level":"info","type":"program_completed","programId":77,"message":"IDE 77: 1 files generated in 25s (24842ms)","data":{"duration":24842,"filesGenerated":1}}
+{"timestamp":"2026-02-25T20:05:02.335Z","level":"info","type":"migration_completed","message":"Migration aborted by user"}
+{"timestamp":"2026-02-25T20:05:02.336Z","level":"info","type":"phase_started","phase":"verify-tsc","message":"Starting verification loop"}
+{"timestamp":"2026-02-25T20:05:02.337Z","level":"info","type":"phase_started","phase":"verify-tsc","message":"TSC pass 1/5: running tsc --noEmit","data":{"pass":1,"maxPasses":5,"verifyProgress":0}}
+{"timestamp":"2026-02-25T20:05:03.750Z","level":"info","type":"phase_started","phase":"verify-tsc","message":"TSC pass 1: CLEAN","data":{"pass":1,"maxPasses":5,"errors":0,"clean":true,"verifyProgress":0.7}}
+{"timestamp":"2026-02-25T20:05:03.751Z","level":"info","type":"phase_started","phase":"verify-tests","message":"Tests pass 1/3: running vitest","data":{"pass":1,"maxPasses":3,"verifyProgress":0.7}}
+{"timestamp":"2026-02-25T20:05:07.774Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Tests pass 1: 1 failures","data":{"pass":1,"maxPasses":3,"failures":1,"verifyProgress":0.75}}
+{"timestamp":"2026-02-25T20:05:07.775Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Fix tests pass 1: done","data":{"pass":1,"maxPasses":3,"verifyProgress":0.7999999999999999}}
+{"timestamp":"2026-02-25T20:05:07.776Z","level":"info","type":"phase_started","phase":"verify-tests","message":"Tests pass 2/3: running vitest","data":{"pass":2,"maxPasses":3,"verifyProgress":0.7999999999999999}}
+{"timestamp":"2026-02-25T20:05:11.698Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Tests pass 2: 1 failures","data":{"pass":2,"maxPasses":3,"failures":1,"verifyProgress":0.85}}
+{"timestamp":"2026-02-25T20:05:11.698Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Fix tests pass 2: done","data":{"pass":2,"maxPasses":3,"verifyProgress":0.8999999999999999}}
+{"timestamp":"2026-02-25T20:05:11.698Z","level":"info","type":"phase_started","phase":"verify-tests","message":"Tests pass 3/3: running vitest","data":{"pass":3,"maxPasses":3,"verifyProgress":0.8999999999999999}}
+{"timestamp":"2026-02-25T20:05:15.660Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Tests pass 3: 1 failures","data":{"pass":3,"maxPasses":3,"failures":1,"verifyProgress":0.95}}
+{"timestamp":"2026-02-25T20:05:15.660Z","level":"info","type":"verify_pass","message":"TSC: CLEAN (1 passes), Tests: FAIL (3 passes)"}
+{"timestamp":"2026-02-25T20:05:15.661Z","level":"info","type":"phase_started","phase":"integrate","message":"Starting integration"}
+{"timestamp":"2026-02-25T20:05:15.661Z","level":"info","type":"phase_completed","phase":"integrate","message":"Integration: 0 files modified"}
+{"timestamp":"2026-02-25T20:05:15.662Z","level":"info","type":"phase_started","programId":77,"phase":"review","message":"Reviewing IDE 77"}
+{"timestamp":"2026-02-25T20:05:15.662Z","level":"info","type":"phase_progress","programId":77,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-25T20:05:15.667Z","level":"info","type":"phase_completed","programId":77,"phase":"review","message":"Review IDE 77: 0% coverage","data":{"programId":77,"programName":"ClubMedPass","coveragePct":0,"rulesImplemented":0,"rulesTotal":22,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-25T20:05:15.668Z","level":"info","type":"phase_started","programId":78,"phase":"review","message":"Reviewing IDE 78"}
+{"timestamp":"2026-02-25T20:05:15.668Z","level":"info","type":"phase_progress","programId":78,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-25T20:05:15.670Z","level":"info","type":"phase_completed","programId":78,"phase":"review","message":"Review IDE 78: 0% coverage","data":{"programId":78,"programName":"ClubMedPassPrint","coveragePct":0,"rulesImplemented":0,"rulesTotal":5,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-25T20:05:15.671Z","level":"info","type":"phase_started","programId":79,"phase":"review","message":"Reviewing IDE 79"}
+{"timestamp":"2026-02-25T20:05:15.671Z","level":"info","type":"phase_progress","programId":79,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-25T20:05:15.675Z","level":"info","type":"phase_completed","programId":79,"phase":"review","message":"Review IDE 79: 0% coverage","data":{"programId":79,"programName":"BalanceCreditConso","coveragePct":0,"rulesImplemented":0,"rulesTotal":4,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-25T20:05:15.675Z","level":"info","type":"phase_started","programId":80,"phase":"review","message":"Reviewing IDE 80"}
+{"timestamp":"2026-02-25T20:05:15.675Z","level":"info","type":"phase_progress","programId":80,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-25T20:05:15.678Z","level":"info","type":"phase_completed","programId":80,"phase":"review","message":"Review IDE 80: 0% coverage","data":{"programId":80,"programName":"CardScanRead","coveragePct":0,"rulesImplemented":0,"rulesTotal":2,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-25T20:05:15.679Z","level":"info","type":"phase_started","programId":81,"phase":"review","message":"Reviewing IDE 81"}
+{"timestamp":"2026-02-25T20:05:15.680Z","level":"info","type":"phase_progress","programId":81,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-25T20:05:15.684Z","level":"info","type":"phase_completed","programId":81,"phase":"review","message":"Review IDE 81: 0% coverage","data":{"programId":81,"programName":"CardScanCreate","coveragePct":0,"rulesImplemented":0,"rulesTotal":3,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-25T20:05:15.684Z","level":"info","type":"migration_completed","message":"Migration terminee : 5/10 programmes, 5 fichiers en 38s (38198ms), tokens: 4K in / 1K out (~$0.03)"}
+{"timestamp":"2026-02-25T20:05:15.687Z","level":"info","type":"phase_completed","message":"Tracker updated: B12 → enriched (5/10 impl, 0% coverage)"}
+{"timestamp":"2026-02-25T20:05:15.830Z","level":"info","type":"git_started","message":"Auto-commit: staging files..."}

@@ -1,0 +1,68 @@
+program:
+  id: 80
+  name: Card scan read
+  complexity: MEDIUM
+  callers: []
+  callees: []
+  tasks_count: 1
+  tables_count: 0
+  expressions_count: 15
+rules:
+  - id: RM-001
+    description: Negation de (r.card [H]) (condition inversee)
+    condition: NOT (r.card [H])
+    variables:
+      - EU
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-002
+    description: "Condition composite: pv.card id [F]>'' AND NOT (r.card [H])"
+    condition: pv.card id [F]>'' AND NOT (r.card [H])
+    variables:
+      - ES
+      - EU
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+variables:
+  - local_id: EU
+    name: r.card
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: ES
+    name: pv.card id
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+tables:
+  - id: 30
+    name: gm-recherche_____gmr
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 312
+    name: ez_card
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+callees: []
+overall:
+  rules_total: 2
+  rules_impl: 0
+  rules_partial: 0
+  rules_missing: 2
+  rules_na: 0
+  variables_key_count: 2
+  callees_total: 0
+  callees_impl: 0
+  callees_missing: 0
+  coverage_pct: 0
+  status: enriched
+  generated: 2026-02-25T20:04:37.600Z
+  notes: Auto-generated from ADH-IDE-80.md

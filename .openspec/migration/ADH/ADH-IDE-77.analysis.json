@@ -1,0 +1,396 @@
+{
+  "domain": "clubMedPass",
+  "domainPascal": "ClubMedPass",
+  "complexity": "MEDIUM",
+  "entities": [
+    {
+      "name": "ClubMedCard",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "source": "ez_card.id",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "source": "ez_card.status",
+          "nullable": false
+        },
+        {
+          "name": "accountId",
+          "type": "string",
+          "source": "ez_card.account_id",
+          "nullable": false
+        },
+        {
+          "name": "balance",
+          "type": "number",
+          "source": "ez_card.balance",
+          "nullable": false
+        },
+        {
+          "name": "isOpposed",
+          "type": "boolean",
+          "source": "ez_card.is_opposed",
+          "nullable": false
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "source": "ez_card.created_at",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "name": "GuestAccount",
+      "fields": [
+        {
+          "name": "accountCode",
+          "type": "string",
+          "source": "gm-complet.account_code",
+          "nullable": false
+        },
+        {
+          "name": "guestName",
+          "type": "string",
+          "source": "gm-complet.guest_name",
+          "nullable": false
+        },
+        {
+          "name": "roomNumber",
+          "type": "string",
+          "source": "gm-complet.room_number",
+          "nullable": true
+        },
+        {
+          "name": "checkoutDate",
+          "type": "Date",
+          "source": "gm-complet.checkout_date",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "name": "Transaction",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "source": "transac_detail_bar.id",
+          "nullable": false
+        },
+        {
+          "name": "cardId",
+          "type": "string",
+          "source": "transac_detail_bar.card_id",
+          "nullable": false
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "source": "transac_detail_bar.amount",
+          "nullable": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "source": "transac_detail_bar.description",
+          "nullable": true
+        },
+        {
+          "name": "transactionDate",
+          "type": "Date",
+          "source": "transac_detail_bar.transaction_date",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "isLoading",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "string | null",
+      "default": "null"
+    },
+    {
+      "name": "scannedCardId",
+      "type": "string",
+      "default": "''"
+    },
+    {
+      "name": "currentCard",
+      "type": "ClubMedCard | null",
+      "default": "null"
+    },
+    {
+      "name": "guestAccount",
+      "type": "GuestAccount | null",
+      "default": "null"
+    },
+    {
+      "name": "transactions",
+      "type": "Transaction[]",
+      "default": "[]"
+    },
+    {
+      "name": "selectedAction",
+      "type": "string",
+      "default": "''"
+    },
+    {
+      "name": "showProcessing",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "deleteConfirmation",
+      "type": "number",
+      "default": "0"
+    },
+    {
+      "name": "barLimitActivated",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "barLimitAge",
+      "type": "number",
+      "default": "0"
+    }
+  ],
+  "actions": [
+    {
+      "name": "scanCard",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Validate card belongs to correct account",
+        "Check card status (valid, opposed, expired)",
+        "Retrieve guest account information",
+        "Load transaction history"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "createCard",
+      "params": [
+        "accountCode: string"
+      ],
+      "businessRules": [
+        "Verify account eligibility for new card",
+        "Generate new card ID",
+        "Initialize card with zero balance"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "opposeCard",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Mark card as opposed in database",
+        "Prevent further transactions",
+        "Log opposition action"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "deleteCard",
+      "params": [
+        "cardId: string",
+        "confirmation: number"
+      ],
+      "businessRules": [
+        "Require confirmation code (6)",
+        "Permanently remove card from system",
+        "Break link between GM account and physical card"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "getCardBalance",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Calculate current credit balance",
+        "Include pending transactions"
+      ],
+      "returns": "Promise<number>"
+    },
+    {
+      "name": "printSalesHistory",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Generate transaction history report",
+        "Include all sales and refunds",
+        "Format for receipt printing"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "manageAffiliates",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Show linked family members",
+        "Allow adding/removing affiliates",
+        "Maintain parent-child card relationships"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "setBarLimit",
+      "params": [
+        "cardId: string",
+        "activated: boolean",
+        "ageLimit: number"
+      ],
+      "businessRules": [
+        "Configure alcohol purchase restrictions",
+        "Set age-based limits",
+        "Apply to all affiliated cards"
+      ],
+      "returns": "Promise<void>"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "POST",
+      "path": "/api/clubMedPass/scan",
+      "queryParams": [],
+      "response": "{ card: ClubMedCard, account: GuestAccount }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/clubMedPass/create",
+      "queryParams": [],
+      "response": "ClubMedCard"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/clubMedPass/{cardId}/oppose",
+      "queryParams": [],
+      "response": "{ success: boolean }"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/clubMedPass/{cardId}",
+      "queryParams": [
+        "confirmation?"
+      ],
+      "response": "{ success: boolean }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubMedPass/{cardId}/balance",
+      "queryParams": [],
+      "response": "{ balance: number }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubMedPass/{cardId}/transactions",
+      "queryParams": [
+        "startDate?",
+        "endDate?"
+      ],
+      "response": "Transaction[]"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubMedPass/{cardId}/affiliates",
+      "queryParams": [],
+      "response": "ClubMedCard[]"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/clubMedPass/{cardId}/barLimit",
+      "queryParams": [],
+      "response": "{ success: boolean }"
+    }
+  ],
+  "uiLayout": {
+    "type": "modal-dialog",
+    "sections": [
+      {
+        "name": "header",
+        "controls": [
+          "cardScanInput",
+          "processingIndicator"
+        ]
+      },
+      {
+        "name": "cardInfo",
+        "controls": [
+          "cardIdDisplay",
+          "guestNameDisplay",
+          "roomNumberDisplay",
+          "balanceDisplay",
+          "statusDisplay"
+        ]
+      },
+      {
+        "name": "actionMenu",
+        "controls": [
+          "consultBalanceButton",
+          "printHistoryButton",
+          "manageAffiliatesButton",
+          "createCardButton",
+          "opposeCardButton",
+          "deleteCardButton",
+          "barLimitButton",
+          "taiLocalButton"
+        ]
+      },
+      {
+        "name": "transactionDetails",
+        "controls": [
+          "transactionGrid",
+          "transactionSummary"
+        ]
+      },
+      {
+        "name": "confirmationDialog",
+        "controls": [
+          "confirmationInput",
+          "confirmButton",
+          "cancelButton"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 5,
+    "description": "Sample Club Med Pass cards with different statuses (valid, opposed, expired), associated guest accounts with room numbers and checkout dates, and transaction histories including bar purchases and other resort services"
+  },
+  "dependencies": {
+    "stores": [
+      "useDataSourceStore",
+      "useGuestAccountStore",
+      "useTransactionStore"
+    ],
+    "sharedTypes": [
+      "PaymentCard",
+      "GuestInfo",
+      "TransactionRecord"
+    ],
+    "externalApis": [
+      "cardScannerService",
+      "printService",
+      "guestManagementSystem"
+    ]
+  }
+}
