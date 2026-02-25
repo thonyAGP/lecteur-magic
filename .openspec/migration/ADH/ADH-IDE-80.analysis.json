@@ -1,0 +1,200 @@
+{
+  "domain": "cardScanRead",
+  "domainPascal": "CardScanRead",
+  "complexity": "MEDIUM",
+  "entities": [
+    {
+      "name": "CardScanResult",
+      "fields": [
+        {
+          "name": "cardId",
+          "type": "string",
+          "source": "pv.card_id",
+          "nullable": false
+        },
+        {
+          "name": "isCardValid",
+          "type": "boolean",
+          "source": "r.card",
+          "nullable": false
+        },
+        {
+          "name": "code8Digits",
+          "type": "number",
+          "source": "p.code_8chiffres",
+          "nullable": true
+        },
+        {
+          "name": "filiation",
+          "type": "number",
+          "source": "p.filiation",
+          "nullable": true
+        },
+        {
+          "name": "chainU",
+          "type": "string",
+          "source": "p.chaine_u",
+          "nullable": true
+        },
+        {
+          "name": "chainU10",
+          "type": "string",
+          "source": "p.chaine_u10",
+          "nullable": true
+        },
+        {
+          "name": "clubMedPassSelect",
+          "type": "boolean",
+          "source": "p.club_med_pass_select",
+          "nullable": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "source": "p.status",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "scanResult",
+      "type": "CardScanResult | null",
+      "default": "null"
+    },
+    {
+      "name": "isScanning",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "scanError",
+      "type": "string | null",
+      "default": "null"
+    },
+    {
+      "name": "cardHistory",
+      "type": "CardScanResult[]",
+      "default": "[]"
+    }
+  ],
+  "actions": [
+    {
+      "name": "validateCardRead",
+      "params": [
+        "cardData: Partial<CardScanResult>"
+      ],
+      "businessRules": [
+        "Check if card is valid (NOT condition for r.card field)",
+        "Return false if card validation fails"
+      ],
+      "returns": "Promise<boolean>"
+    },
+    {
+      "name": "processCardScan",
+      "params": [
+        "cardId: string",
+        "cardData: Partial<CardScanResult>"
+      ],
+      "businessRules": [
+        "Validate card ID is not empty AND card is not valid",
+        "Process card data if conditions are met",
+        "Update scan result with processed data"
+      ],
+      "returns": "Promise<CardScanResult>"
+    },
+    {
+      "name": "initiateScan",
+      "params": [],
+      "businessRules": [
+        "Initialize card scanning process",
+        "Reset previous scan results",
+        "Set scanning state to active"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "completeScan",
+      "params": [
+        "result: CardScanResult"
+      ],
+      "businessRules": [
+        "Finalize scan process",
+        "Validate all required fields are present",
+        "Add to scan history"
+      ],
+      "returns": "Promise<void>"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "POST",
+      "path": "/api/cardScanRead/scan",
+      "queryParams": [],
+      "response": "CardScanResult"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cardScanRead/validate",
+      "queryParams": [
+        "cardId?"
+      ],
+      "response": "{ valid: boolean, message?: string }"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cardScanRead/history",
+      "queryParams": [
+        "limit?"
+      ],
+      "response": "CardScanResult[]"
+    }
+  ],
+  "uiLayout": {
+    "type": "utility-service",
+    "sections": [
+      {
+        "name": "scanInterface",
+        "controls": [
+          "scanButton",
+          "scanStatus",
+          "progressIndicator"
+        ]
+      },
+      {
+        "name": "resultDisplay",
+        "controls": [
+          "cardIdDisplay",
+          "validationStatus",
+          "cardDetails"
+        ]
+      },
+      {
+        "name": "errorHandling",
+        "controls": [
+          "errorMessage",
+          "retryButton"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 5,
+    "description": "Mock card scan results with various validation states, card IDs, and associated member data for testing scan functionality"
+  },
+  "dependencies": {
+    "stores": [
+      "useCardScanStore",
+      "useValidationStore"
+    ],
+    "sharedTypes": [
+      "CardScanResult",
+      "ScanValidationRule"
+    ],
+    "externalApis": [
+      "cardReaderService",
+      "memberLookupService"
+    ]
+  }
+}

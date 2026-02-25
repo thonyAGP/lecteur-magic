@@ -1,0 +1,424 @@
+program:
+  id: 77
+  name: ""
+  complexity: MEDIUM
+  callers: []
+  callees: []
+  tasks_count: 9
+  tables_count: 1
+  expressions_count: 46
+rules:
+  - id: RM-009
+    description: "Condition composite: v.Club Med Pass ID [Y]>'' AND v.ok to create [BF]"
+    condition: v.Club Med Pass ID [Y]>'' AND v.ok to create [BF]
+    variables:
+      - FL
+      - FS
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-001
+    description: "Condition composite: V.ID Club Med Pass sca... [Z]>'' AND V.Compte scanne [BM]<>P.Code 8 chiffres [B]"
+    condition: V.ID Club Med Pass sca... [Z]>'' AND V.Compte scanne [BM]<>P.Code 8 chiffres [B]
+    variables:
+      - EO
+      - FZ
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-002
+    description: Si GetParam ('CODELANGUE')='FRA' alors 'Cette carte n''appartient pas a ce compte' sinon 'This card do not
+      belong to this account')
+    condition: GetParam ('CODELANGUE')='FRA'
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-003
+    description: "Condition: V.Status card [BA] egale 'V'"
+    condition: V.Status card [BA]='V'
+    variables:
+      - FN
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-004
+    description: "Condition composite: V.Status card [BA]='O' AND NOT (V.Other card valid [BB]) AND [BP]='O' AND
+      [BR]<=p.TAI.date fin sejour [M]"
+    condition: V.Status card [BA]='O' AND NOT (V.Other card valid [BB]) AND [BP]='O' AND [BR]<=p.TAI.date fin sejour [M]
+    variables:
+      - EZ
+      - FN
+      - FO
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-005
+    description: Si v.Activation Bar Limit [BJ]='O' alors IF (v.Age Bar Limit [BK]=0 sinon 'Bar Limit Activated for
+      All','Bar Limit Activated under '&Trim (Str (v.Age Bar Limit [BK],'2'))),'Bar Limit Desactivated')
+    condition: v.Activation Bar Limit [BJ]='O'
+    variables:
+      - FW
+      - FX
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-006
+    description: "Condition: V.Action [BG] egale 'A'"
+    condition: V.Action [BG]='A'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-007
+    description: "Condition composite: [BP]<>'O' AND [BY]='Oui' AND IF ([BZ],[BZ],[BV]='O')"
+    condition: "[BP]<>'O' AND [BY]='Oui' AND IF ([BZ],[BZ],[BV]='O')"
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-008
+    description: "Condition composite: [BP]='O' OR [BY]='Non' OR [BV]='N' OR VG74"
+    condition: "[BP]='O' OR [BY]='Non' OR [BV]='N' OR VG74"
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-010
+    description: "Condition: V.Action [BG]='C' OR V.Action [BG] egale 'D'"
+    condition: V.Action [BG]='C' OR V.Action [BG]='D'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-011
+    description: "Condition: v.delete confirmation [BD] egale 6"
+    condition: v.delete confirmation [BD]=6
+    variables:
+      - FQ
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-012
+    description: "Condition: V.Action [BG]='E' OR V.Action [BG] egale 'B'"
+    condition: V.Action [BG]='E' OR V.Action [BG]='B'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-013
+    description: "Condition: V.Action [BG] egale 'Z'"
+    condition: V.Action [BG]='Z'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-014
+    description: "Condition: V.Action [BG] egale 'F'"
+    condition: V.Action [BG]='F'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-015
+    description: "Condition: V.Action [BG] egale 'P'"
+    condition: V.Action [BG]='P'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-016
+    description: "Condition: V.Action [BG] egale 'G'"
+    condition: V.Action [BG]='G'
+    variables:
+      - FT
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-017
+    description: "Condition: [CI] egale"
+    condition: "[CI]=''"
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-018
+    description: "Condition: [BV] different de 'O'"
+    condition: "[BV]<>'O'"
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-019
+    description: "Condition: [CI]<>'' AND [BV] egale 'O'"
+    condition: "[CI]<>'' AND [BV]='O'"
+    variables:
+      - FL
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-020
+    description: "Condition: v.Club Med Pass ID [Y] different de"
+    condition: v.Club Med Pass ID [Y]<>''
+    variables:
+      - FL
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-021
+    description: "Condition composite: V.Choix action [BH]>'' AND (InStr ('ABEFGHPZ',V.Choix action [BH])>0 OR V.Status card
+      [BA]='O' AND NOT (V.Other card valid [BB]) AND [BQ]<>'S' AND [BP]='O' AND V.Choix action [BH]='D' OR V.Status card
+      [BA]='V' AND V.Choix action [BH]='C' OR V.Status card [BA]='O' AND NOT (V.Other card valid [BB]) AND
+      [BR]<=p.TAI.date fin sejour [M] AND [BP]='O' AND V.Choix action [BH]='D')"
+    condition: ""
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-022
+    description: Negation de ExpCalc('45'EXP) (condition inversee)
+    condition: NOT ExpCalc('45'EXP)
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+variables:
+  - local_id: FL
+    name: v.Club Med Pass ID
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FS
+    name: v.ok to create
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: EO
+    name: P.Code 8 chiffres
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FZ
+    name: V.Compte scanne
+    type: Virtual
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FN
+    name: V.Status card
+    type: Virtual
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: EZ
+    name: p.TAI.date fin sejour
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FO
+    name: V.Other card valid
+    type: Virtual
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FW
+    name: v.Activation Bar Limit
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FX
+    name: v.Age Bar Limit
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FT
+    name: V.Action
+    type: Virtual
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FQ
+    name: v.delete confirmation
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FU
+    name: V.Choix action
+    type: Virtual
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+tables:
+  - id: 312
+    name: ez_card
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 31
+    name: gm-complet_______gmc
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 786
+    name: qualite_avant_reprise
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 728
+    name: arc_cc_total
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 14
+    name: transac_detail_bar
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 131
+    name: fichier_validation
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 47
+    name: compte_gm________cgm
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 470
+    name: comptage_coffre
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 34
+    name: hebergement______heb
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 15
+    name: transac_entete_bar
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+callees:
+  - id: 44
+    name: Appel programme
+    calls: 1
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 78
+    name: Print Ventes Club Med Pass
+    calls: 1
+    context: Impression ticket/document
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 79
+    name: Balance Credit de conso
+    calls: 1
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 80
+    name: Card scan read
+    calls: 1
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 81
+    name: Card scan create
+    calls: 1
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 82
+    name: Select affilies
+    calls: 1
+    context: Selection/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 86
+    name: Bar Limit
+    calls: 1
+    context: Sous-programme
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 173
+    name: Gestion forfait TAI LOCAL
+    calls: 1
+    context: Gestion moyens paiement
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 179
+    name: Get Printer
+    calls: 1
+    context: Impression ticket/document
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+  - id: 180
+    name: Printer choice
+    calls: 1
+    context: Impression ticket/document
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+  - id: 181
+    name: Set Listing Number
+    calls: 1
+    context: Configuration impression
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+  - id: 182
+    name: Raz Current Printer
+    calls: 1
+    context: Impression ticket/document
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+overall:
+  rules_total: 22
+  rules_impl: 0
+  rules_partial: 0
+  rules_missing: 22
+  rules_na: 0
+  variables_key_count: 12
+  callees_total: 12
+  callees_impl: 0
+  callees_missing: 8
+  coverage_pct: 0
+  status: enriched
+  generated: 2026-02-25T20:04:37.524Z
+  notes: Auto-generated from ADH-IDE-77.md

@@ -1,0 +1,249 @@
+{
+  "domain": "balanceCreditConso",
+  "domainPascal": "BalanceCreditConso",
+  "complexity": "MEDIUM",
+  "entities": [
+    {
+      "name": "CreditConsumptionBalance",
+      "fields": [
+        {
+          "name": "creditType",
+          "type": "string",
+          "source": "cc_type_detail.type",
+          "nullable": false
+        },
+        {
+          "name": "balance",
+          "type": "number",
+          "source": "cc_total_par_type.solde",
+          "nullable": false
+        },
+        {
+          "name": "totalAmount",
+          "type": "number",
+          "source": "cc_total.total",
+          "nullable": false
+        },
+        {
+          "name": "typeId",
+          "type": "number",
+          "source": "cc_type.id",
+          "nullable": false
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "source": "cc_type.description",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "name": "Village",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string",
+          "source": "initialisation___ini.village_nom",
+          "nullable": false
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "source": "gm-complet_______gmc.village_code",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "creditBalances",
+      "type": "CreditConsumptionBalance[]",
+      "default": "[]"
+    },
+    {
+      "name": "selectedVillage",
+      "type": "Village",
+      "default": "null"
+    },
+    {
+      "name": "showDetail",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "selectedCreditDetail",
+      "type": "CreditConsumptionBalance",
+      "default": "null"
+    },
+    {
+      "name": "isLoading",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "string",
+      "default": "null"
+    },
+    {
+      "name": "printMode",
+      "type": "string",
+      "default": "''"
+    }
+  ],
+  "actions": [
+    {
+      "name": "initializeVillage",
+      "params": [],
+      "businessRules": [
+        "Initialize village parameters for display"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "loadCreditBalances",
+      "params": [],
+      "businessRules": [
+        "Load credit consumption balance data from cc_total_par_type",
+        "Calculate and organize credit details for presentation"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "handlePrintGlobal",
+      "params": [],
+      "businessRules": [
+        "Condition: LastClicked () egale 'PRINT'",
+        "Generate global credit balance document"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "handlePrintDetail",
+      "params": [],
+      "businessRules": [
+        "Condition: LastClicked () egale 'PRINTDETAIL'",
+        "Generate detailed credit balance document"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "toggleDetailView",
+      "params": [],
+      "businessRules": [
+        "Si [X] alors 'Quit Detail' sinon 'Detail')",
+        "Negation de ([X]) (condition inversee)"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "selectCreditDetail",
+      "params": [
+        "credit: CreditConsumptionBalance"
+      ],
+      "businessRules": [
+        "Set selected credit for detailed view"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "getSolde",
+      "params": [
+        "creditType: string"
+      ],
+      "businessRules": [
+        "Retrieve balance for specific credit type"
+      ],
+      "returns": "Promise<number>"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "GET",
+      "path": "/api/balanceCreditConso/balances",
+      "queryParams": [
+        "villageCode?"
+      ],
+      "response": "CreditConsumptionBalance[]"
+    },
+    {
+      "method": "GET",
+      "path": "/api/balanceCreditConso/village",
+      "queryParams": [],
+      "response": "Village"
+    },
+    {
+      "method": "GET",
+      "path": "/api/balanceCreditConso/balance/{creditType}",
+      "queryParams": [],
+      "response": "number"
+    },
+    {
+      "method": "POST",
+      "path": "/api/balanceCreditConso/print/global",
+      "queryParams": [],
+      "response": "void"
+    },
+    {
+      "method": "POST",
+      "path": "/api/balanceCreditConso/print/detail",
+      "queryParams": [
+        "creditType"
+      ],
+      "response": "void"
+    }
+  ],
+  "uiLayout": {
+    "type": "dashboard-with-detail",
+    "sections": [
+      {
+        "name": "header",
+        "controls": [
+          "villageSelector",
+          "titleLabel"
+        ]
+      },
+      {
+        "name": "summary",
+        "controls": [
+          "creditBalanceGrid",
+          "totalBalance"
+        ]
+      },
+      {
+        "name": "actions",
+        "controls": [
+          "printGlobalButton",
+          "printDetailButton",
+          "detailToggleButton"
+        ]
+      },
+      {
+        "name": "detail",
+        "controls": [
+          "creditDetailModal",
+          "detailBalanceDisplay"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 5,
+    "description": "Mock credit consumption balances with various credit types (bar credits, restaurant credits, etc.) showing current balances and totals for a Club Med village context"
+  },
+  "dependencies": {
+    "stores": [
+      "useCreditStore",
+      "useVillageStore"
+    ],
+    "sharedTypes": [
+      "CreditConsumptionBalance",
+      "Village"
+    ],
+    "externalApis": [
+      "printingService"
+    ]
+  }
+}

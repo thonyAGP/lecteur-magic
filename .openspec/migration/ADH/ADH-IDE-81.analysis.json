@@ -1,0 +1,228 @@
+{
+  "domain": "cardScanCreate",
+  "domainPascal": "CardScanCreate",
+  "complexity": "LOW",
+  "entities": [
+    {
+      "name": "Card",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string",
+          "source": "ez_card.id",
+          "nullable": false
+        },
+        {
+          "name": "clientCode",
+          "type": "string",
+          "source": "ez_card.client_code",
+          "nullable": false
+        },
+        {
+          "name": "expirationDate",
+          "type": "Date",
+          "source": "ez_card.expiration_date",
+          "nullable": true
+        },
+        {
+          "name": "isActive",
+          "type": "boolean",
+          "source": "ez_card.is_active",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "name": "CardSearchResult",
+      "fields": [
+        {
+          "name": "cardId",
+          "type": "string",
+          "source": "gm-recherche_____gmr.card_id",
+          "nullable": false
+        },
+        {
+          "name": "isValid",
+          "type": "boolean",
+          "source": "gm-recherche_____gmr.is_valid",
+          "nullable": false
+        },
+        {
+          "name": "ownerFirstName",
+          "type": "string",
+          "source": "gm-recherche_____gmr.first_name",
+          "nullable": true
+        },
+        {
+          "name": "ownerLastName",
+          "type": "string",
+          "source": "gm-recherche_____gmr.last_name",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "cardId",
+      "type": "string",
+      "default": "''"
+    },
+    {
+      "name": "searchResult",
+      "type": "CardSearchResult | null",
+      "default": "null"
+    },
+    {
+      "name": "isCardValid",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "isLoading",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "string | null",
+      "default": "null"
+    },
+    {
+      "name": "validationMessage",
+      "type": "string",
+      "default": "''"
+    }
+  ],
+  "actions": [
+    {
+      "name": "validateCardOwnership",
+      "params": [
+        "isValid: boolean",
+        "firstName: string",
+        "lastName: string"
+      ],
+      "businessRules": [
+        "Si [H]='V' alors MlsTrans ('Cette carte appartient à')&' :'&Trim ([M])&' '&Trim ([L]) sinon MlsTrans ('Vous ne pouvez pas utiliser cette carte'))"
+      ],
+      "returns": "Promise<string>"
+    },
+    {
+      "name": "checkCardExists",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Negation de (r.card [C]) (condition inversee)"
+      ],
+      "returns": "Promise<boolean>"
+    },
+    {
+      "name": "validateCardInput",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Condition: r.card [C] OR Len (Trim (v.card id [B])) inferieur a 10"
+      ],
+      "returns": "Promise<boolean>"
+    },
+    {
+      "name": "searchCard",
+      "params": [
+        "cardId: string"
+      ],
+      "businessRules": [
+        "Recherche de la carte dans la table gm-recherche_____gmr"
+      ],
+      "returns": "Promise<CardSearchResult | null>"
+    },
+    {
+      "name": "createCard",
+      "params": [
+        "cardData: Partial<Card>"
+      ],
+      "businessRules": [
+        "Création d'une nouvelle carte après validation"
+      ],
+      "returns": "Promise<void>"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "GET",
+      "path": "/api/cardScanCreate/search",
+      "queryParams": [
+        "cardId"
+      ],
+      "response": "CardSearchResult"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cardScanCreate/validate",
+      "queryParams": [],
+      "response": "{ isValid: boolean, message: string }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cardScanCreate/create",
+      "queryParams": [],
+      "response": "Card"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cardScanCreate/exists",
+      "queryParams": [
+        "cardId"
+      ],
+      "response": "{ exists: boolean }"
+    }
+  ],
+  "uiLayout": {
+    "type": "form-page",
+    "sections": [
+      {
+        "name": "cardInput",
+        "controls": [
+          "cardIdInput",
+          "scanButton",
+          "validationMessage"
+        ]
+      },
+      {
+        "name": "cardDetails",
+        "controls": [
+          "ownerInfo",
+          "cardStatus",
+          "validationResult"
+        ]
+      },
+      {
+        "name": "actions",
+        "controls": [
+          "createButton",
+          "cancelButton",
+          "backButton"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 5,
+    "description": "Mock Club Med Pass cards with various validation states, including valid cards with owner information, invalid cards, and cards with different ID formats for testing validation rules"
+  },
+  "dependencies": {
+    "stores": [
+      "useCardStore",
+      "useValidationStore"
+    ],
+    "sharedTypes": [
+      "Card",
+      "CardSearchResult"
+    ],
+    "externalApis": [
+      "cardValidationService",
+      "clubMedPassService"
+    ]
+  }
+}

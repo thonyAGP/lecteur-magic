@@ -1,0 +1,266 @@
+{
+  "domain": "clubMedPassPrint",
+  "domainPascal": "ClubMedPassPrint",
+  "complexity": "LOW",
+  "entities": [
+    {
+      "name": "TransactionHeader",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "source": "transac_entete_bar.id",
+          "nullable": false
+        },
+        {
+          "name": "company",
+          "type": "string",
+          "source": "transac_entete_bar.company",
+          "nullable": true
+        },
+        {
+          "name": "account",
+          "type": "string",
+          "source": "transac_entete_bar.account",
+          "nullable": true
+        },
+        {
+          "name": "subsidiary",
+          "type": "string",
+          "source": "transac_entete_bar.subsidiary",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "name": "TransactionTotal",
+      "fields": [
+        {
+          "name": "id",
+          "type": "number",
+          "source": "cc_total.id",
+          "nullable": false
+        },
+        {
+          "name": "totalAmount",
+          "type": "number",
+          "source": "cc_total.total_amount",
+          "nullable": false
+        },
+        {
+          "name": "paymentAmount",
+          "type": "number",
+          "source": "cc_total.payment_amount",
+          "nullable": false
+        },
+        {
+          "name": "creditAmount",
+          "type": "number",
+          "source": "cc_total.credit_amount",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "name": "PrinterConfig",
+      "fields": [
+        {
+          "name": "printerNumber",
+          "type": "number",
+          "source": "system.CURRENTPRINTERNUM",
+          "nullable": false
+        },
+        {
+          "name": "printerName",
+          "type": "string",
+          "source": "system.PrinterName",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "transactionHeader",
+      "type": "TransactionHeader",
+      "default": "null"
+    },
+    {
+      "name": "transactionTotal",
+      "type": "TransactionTotal",
+      "default": "null"
+    },
+    {
+      "name": "currentPrinter",
+      "type": "PrinterConfig",
+      "default": "null"
+    },
+    {
+      "name": "isLoading",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "string",
+      "default": "null"
+    },
+    {
+      "name": "isPrinting",
+      "type": "boolean",
+      "default": "false"
+    }
+  ],
+  "actions": [
+    {
+      "name": "selectPrinter1",
+      "params": [],
+      "businessRules": [
+        "Verification que l'imprimante courante est la n1"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "selectPrinter4",
+      "params": [],
+      "businessRules": [
+        "Verification que l'imprimante courante est la n4"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "selectPrinter6",
+      "params": [],
+      "businessRules": [
+        "Verification que l'imprimante courante est la n6"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "selectPrinter8",
+      "params": [],
+      "businessRules": [
+        "Verification que l'imprimante courante est la n8"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "selectPrinter9",
+      "params": [],
+      "businessRules": [
+        "Verification que l'imprimante courante est la n9"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "loadTransactionData",
+      "params": [],
+      "businessRules": [
+        "Retrieve transaction parameters from transac_entete_bar and cc_total tables"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "printClubMedPass",
+      "params": [
+        "printerNumber: number"
+      ],
+      "businessRules": [
+        "Generate Club Med Pass document based on selected printer",
+        "Display amounts TTC, payments and consumption credits"
+      ],
+      "returns": "Promise<void>"
+    },
+    {
+      "name": "resetPrinter",
+      "params": [],
+      "businessRules": [
+        "Clean printer state after printing operation"
+      ],
+      "returns": "Promise<void>"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "GET",
+      "path": "/api/clubMedPassPrint/transaction",
+      "queryParams": [],
+      "response": "TransactionHeader"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubMedPassPrint/totals",
+      "queryParams": [],
+      "response": "TransactionTotal"
+    },
+    {
+      "method": "GET",
+      "path": "/api/clubMedPassPrint/printer-config",
+      "queryParams": [],
+      "response": "PrinterConfig"
+    },
+    {
+      "method": "POST",
+      "path": "/api/clubMedPassPrint/print",
+      "queryParams": [
+        "printerNumber"
+      ],
+      "response": "{ success: boolean }"
+    },
+    {
+      "method": "POST",
+      "path": "/api/clubMedPassPrint/reset-printer",
+      "queryParams": [],
+      "response": "{ success: boolean }"
+    }
+  ],
+  "uiLayout": {
+    "type": "print-dialog",
+    "sections": [
+      {
+        "name": "transactionSummary",
+        "controls": [
+          "company",
+          "account",
+          "subsidiary",
+          "totalAmount",
+          "paymentAmount",
+          "creditAmount"
+        ]
+      },
+      {
+        "name": "printerSelection",
+        "controls": [
+          "printer1Button",
+          "printer4Button",
+          "printer6Button",
+          "printer8Button",
+          "printer9Button"
+        ]
+      },
+      {
+        "name": "actions",
+        "controls": [
+          "printButton",
+          "cancelButton"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 3,
+    "description": "Mock Club Med Pass transactions with different printer configurations, including transaction headers with company/account/subsidiary data and totals with TTC amounts, payments and credits"
+  },
+  "dependencies": {
+    "stores": [
+      "useTransactionStore",
+      "usePrinterStore"
+    ],
+    "sharedTypes": [
+      "TransactionHeader",
+      "TransactionTotal",
+      "PrinterConfig"
+    ],
+    "externalApis": []
+  }
+}

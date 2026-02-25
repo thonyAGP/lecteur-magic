@@ -1,0 +1,76 @@
+program:
+  id: 81
+  name: ""
+  complexity: MEDIUM
+  callers: []
+  callees: []
+  tasks_count: 1
+  tables_count: 0
+  expressions_count: 11
+rules:
+  - id: RM-001
+    description: Si [H]='V' alors MlsTrans ('Cette carte appartient à')&' :'&Trim ([M])&' '&Trim ([L]) sinon MlsTrans ('Vous
+      ne pouvez pas utiliser cette carte'))
+    condition: "[H]='V'"
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-002
+    description: Negation de (r.card [C]) (condition inversee)
+    condition: NOT (r.card [C])
+    variables:
+      - EP
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-003
+    description: "Condition: r.card [C] OR Len (Trim (v.card id [B])) inferieur a 10"
+    condition: r.card [C] OR Len (Trim (v.card id [B]))<10
+    variables:
+      - EO
+      - EP
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+variables:
+  - local_id: EP
+    name: r.card
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: EO
+    name: v.card id
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+tables:
+  - id: 30
+    name: gm-recherche_____gmr
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 312
+    name: ez_card
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+callees: []
+overall:
+  rules_total: 3
+  rules_impl: 0
+  rules_partial: 0
+  rules_missing: 3
+  rules_na: 0
+  variables_key_count: 2
+  callees_total: 0
+  callees_impl: 0
+  callees_missing: 0
+  coverage_pct: 0
+  status: enriched
+  generated: 2026-02-25T20:04:37.614Z
+  notes: Auto-generated from ADH-IDE-81.md
