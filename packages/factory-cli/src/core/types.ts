@@ -749,6 +749,7 @@ export interface PipelineConfig {
   dryRun: boolean;
   generateReport: boolean;
   enrichmentMode: EnrichmentMode;
+  enrichmentBackend?: 'api' | 'bedrock';
   claudeModel?: string;
   onEvent?: (event: PipelineEvent) => void;
 }

@@ -28,8 +28,12 @@ export const createClaudeEnrichmentHook = (clientConfig?: ClaudeClientConfig): E
   name: 'claude-api',
 
   canEnrich(context: EnrichmentContext): boolean {
-    const hasKey = !!(process.env.ANTHROPIC_API_KEY || clientConfig?.apiKey);
     const hasSpec = fs.existsSync(context.specFile);
+    if (clientConfig?.backend === 'bedrock') {
+      const hasAwsCreds = !!(process.env.AWS_BEARER_TOKEN_BEDROCK && process.env.AWS_REGION);
+      return hasAwsCreds && hasSpec;
+    }
+    const hasKey = !!(process.env.ANTHROPIC_API_KEY || clientConfig?.apiKey);
     return hasKey && hasSpec;
   },
 

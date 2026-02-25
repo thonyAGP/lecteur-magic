@@ -45,6 +45,9 @@ export default defineConfig({
     // Test globals (optional - allows using describe/it without import)
     globals: false,
 
+    // Exclude Playwright E2E tests (run separately via pnpm test:e2e)
+    exclude: ['tests/e2e/**', 'node_modules/**'],
+
     // Test timeout
     testTimeout: 10000,
   },

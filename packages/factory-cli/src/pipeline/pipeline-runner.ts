@@ -59,7 +59,7 @@ const getProgramName = (batch: Batch, programId: string | number, contracts: Map
 
 const resolveEnrichmentHook = (config: PipelineConfig): EnrichmentHook | null => {
   if (config.enrichmentMode === EnrichmentMode.CLAUDE) {
-    return createClaudeEnrichmentHook({ model: config.claudeModel });
+    return createClaudeEnrichmentHook({ model: config.claudeModel, backend: config.enrichmentBackend });
   }
   return null;
 };
@@ -449,8 +449,13 @@ const processProgram = async (
         }
       } else {
         const specExists = fs.existsSync(specFile(config, programId));
-        const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
-        const reason = !hasApiKey ? 'ANTHROPIC_API_KEY not set' : !specExists ? 'spec file missing' : 'hook rejected';
+        const isBedrock = config.enrichmentBackend === 'bedrock';
+        const hasApiKey = isBedrock
+          ? !!(process.env.AWS_BEARER_TOKEN_BEDROCK && process.env.AWS_REGION)
+          : !!process.env.ANTHROPIC_API_KEY;
+        const reason = !hasApiKey
+          ? (isBedrock ? 'AWS credentials not set (AWS_BEARER_TOKEN_BEDROCK, AWS_REGION)' : 'ANTHROPIC_API_KEY not set')
+          : !specExists ? 'spec file missing' : 'hook rejected';
         emitter.emit(createEvent(PipelineEventType.PROGRAM_NEEDS_ENRICHMENT,
           `IDE ${programId} needs enrichment: ${gaps} gaps (${reason})`,
           { batchId: batch.id, programId, data: { gaps, reason } }));
