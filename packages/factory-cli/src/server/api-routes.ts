@@ -524,10 +524,22 @@ export const handleMigrateActive = (_ctx: RouteContext, res: ServerResponse): vo
 let _migrateAbortController: AbortController | null = null;
 
 export const handleMigrateAbort = (res: ServerResponse): void => {
+  // [R4.1] Check if migration is still running
+  const state = getMigrateActiveState();
+  if (!state.running) {
+    json(res, { aborted: false, message: 'Migration already completed' });
+    return;
+  }
+
+  // [R4.2] Abort active migration
   if (_migrateAbortController) {
     _migrateAbortController.abort();
     _migrateAbortController = null;
-    json(res, { aborted: true });
+
+    // Emit abort event for logging
+    addMigrateEvent({ type: 'abort_initiated', timestamp: new Date().toISOString() });
+
+    json(res, { aborted: true, message: 'Migration abort signal sent' });
   } else {
     json(res, { aborted: false, message: 'No migration running' });
   }
