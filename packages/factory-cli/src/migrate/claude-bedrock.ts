@@ -18,6 +18,7 @@ interface BedrockMessage {
 interface BedrockRequest {
   anthropic_version: string;
   max_tokens: number;
+  system?: string;
   messages: BedrockMessage[];
 }
 
@@ -60,10 +61,11 @@ const resolveBedrockModelId = (shortName?: string): string => {
   return modelMap[shortName ?? 'haiku'] ?? modelMap.haiku;
 };
 
-/** Call Claude via AWS Bedrock. */
+/** Call Claude via AWS Bedrock with optional system prompt. */
 export const callClaudeBedrock = async (
   prompt: string,
   model?: string,
+  systemPrompt?: string,
 ): Promise<ClaudeCallResult> => {
   const config = getBedrockConfig();
   if (!config) {
@@ -78,6 +80,11 @@ export const callClaudeBedrock = async (
     max_tokens: 8192,
     messages: [{ role: 'user', content: prompt }],
   };
+
+  // Use separate system prompt if provided (more efficient for Bedrock)
+  if (systemPrompt) {
+    requestBody.system = systemPrompt;
+  }
 
   const url = `https://bedrock-runtime.${config.region}.amazonaws.com/model/${encodeURIComponent(modelId)}/invoke`;
 

@@ -44,8 +44,8 @@ export const createClaudeClient = (config: ClaudeClientConfig = {}): ClaudeClien
   if (config.backend === 'bedrock') {
     return {
       async classify(systemPrompt: string, userPrompt: string): Promise<ClaudeResponse> {
-        const prompt = `${systemPrompt}\n\n${userPrompt}`;
-        const result = await callClaudeBedrock(prompt, config.model);
+        // Use separate system prompt for better Bedrock performance
+        const result = await callClaudeBedrock(userPrompt, config.model, systemPrompt);
         const { items, reasoning } = parseClaudeResponseText(result.output);
 
         return {
