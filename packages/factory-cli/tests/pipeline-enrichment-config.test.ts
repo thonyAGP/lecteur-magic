@@ -462,6 +462,129 @@ describe('pipeline enrichment events', () => {
   });
 });
 
+// ─── Bedrock enrichment backend ─────────────────────────────────
+
+describe('Bedrock enrichment backend', () => {
+  it('should set enrichmentBackend to "bedrock" when enrich=claude-bedrock', () => {
+    const dir = createTestDir();
+    testDirs.push(dir);
+    const migDir = path.join(dir, '.openspec', 'migration');
+    fs.mkdirSync(migDir, { recursive: true });
+
+    const config = resolvePipelineConfig({ projectDir: dir, enrich: 'claude-bedrock' });
+    expect(config.enrichmentBackend).toBe('bedrock');
+    expect(config.enrichmentMode).toBe(EnrichmentMode.CLAUDE);
+  });
+
+  it('should set enrichmentBackend to "api" when enrich=claude', () => {
+    const dir = createTestDir();
+    testDirs.push(dir);
+    const migDir = path.join(dir, '.openspec', 'migration');
+    fs.mkdirSync(migDir, { recursive: true });
+
+    const config = resolvePipelineConfig({ projectDir: dir, enrich: 'claude' });
+    expect(config.enrichmentBackend).toBe('api');
+    expect(config.enrichmentMode).toBe(EnrichmentMode.CLAUDE);
+  });
+
+  it('should return canEnrich=true when backend=bedrock and AWS creds set', () => {
+    const dir = setup();
+    const specFilePath = path.join(dir, 'test-spec.md');
+    fs.writeFileSync(specFilePath, '# Test spec', 'utf8');
+
+    const origToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
+    const origRegion = process.env.AWS_REGION;
+    const origKey = process.env.ANTHROPIC_API_KEY;
+    process.env.AWS_BEARER_TOKEN_BEDROCK = 'test-token';
+    process.env.AWS_REGION = 'eu-west-1';
+    delete process.env.ANTHROPIC_API_KEY;
+
+    try {
+      const hook = createClaudeEnrichmentHook({ backend: 'bedrock' });
+      const canEnrich = hook.canEnrich({
+        contract: {} as MigrationContract,
+        specFile: specFilePath,
+        codebaseDir: dir,
+      });
+      expect(canEnrich).toBe(true);
+    } finally {
+      if (origToken !== undefined) process.env.AWS_BEARER_TOKEN_BEDROCK = origToken;
+      else delete process.env.AWS_BEARER_TOKEN_BEDROCK;
+      if (origRegion !== undefined) process.env.AWS_REGION = origRegion;
+      else delete process.env.AWS_REGION;
+      if (origKey !== undefined) process.env.ANTHROPIC_API_KEY = origKey;
+    }
+  });
+
+  it('should return canEnrich=false when backend=bedrock but AWS creds missing', () => {
+    const dir = setup();
+    const specFilePath = path.join(dir, 'test-spec.md');
+    fs.writeFileSync(specFilePath, '# Test spec', 'utf8');
+
+    const origToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
+    const origRegion = process.env.AWS_REGION;
+    delete process.env.AWS_BEARER_TOKEN_BEDROCK;
+    delete process.env.AWS_REGION;
+
+    try {
+      const hook = createClaudeEnrichmentHook({ backend: 'bedrock' });
+      const canEnrich = hook.canEnrich({
+        contract: {} as MigrationContract,
+        specFile: specFilePath,
+        codebaseDir: dir,
+      });
+      expect(canEnrich).toBe(false);
+    } finally {
+      if (origToken !== undefined) process.env.AWS_BEARER_TOKEN_BEDROCK = origToken;
+      if (origRegion !== undefined) process.env.AWS_REGION = origRegion;
+    }
+  });
+
+  it('should include AWS credentials error when bedrock mode has no creds', async () => {
+    const origToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
+    const origRegion = process.env.AWS_REGION;
+    const origKey = process.env.ANTHROPIC_API_KEY;
+    delete process.env.AWS_BEARER_TOKEN_BEDROCK;
+    delete process.env.AWS_REGION;
+    delete process.env.ANTHROPIC_API_KEY;
+
+    try {
+      const dir = setup();
+      const config = createConfig(dir, {
+        enrichmentMode: EnrichmentMode.CLAUDE,
+        enrichmentBackend: 'bedrock',
+      });
+      const contractsDir = path.join(config.migrationDir, 'ADH');
+      writeTrackerJson(config.trackerFile, {
+        batches: [{
+          id: 'B1', name: 'Test', root: 200, programs: 1, status: 'contracted',
+          stats: { backendNa: 0, frontendEnrich: 0, fullyImpl: 0, coverageAvgFrontend: 0, totalPartial: 0, totalMissing: 0 },
+          priorityOrder: [200],
+        }],
+      });
+      writeSpecFile(config.specDir, 200);
+      writeContractYaml(path.join(contractsDir, 'ADH-IDE-200.contract.yaml'), {
+        program: { id: 200, name: 'BedrockTest', complexity: 'MEDIUM', callers: [], callees: [], tasksCount: 1, tablesCount: 0, expressionsCount: 5 },
+        rules: [
+          { id: 'R1', description: 'gap', condition: '', variables: [], status: 'MISSING', targetFile: '', gapNotes: '' },
+        ],
+        variables: [],
+        tables: [],
+        callees: [],
+        overall: { rulesTotal: 1, rulesImpl: 0, rulesPartial: 0, rulesMissing: 1, rulesNa: 0, variablesKeyCount: 0, calleesTotal: 0, calleesImpl: 0, calleesMissing: 0, coveragePct: 0, status: 'contracted', generated: '', notes: '' },
+      });
+
+      const result = await runBatchPipeline('B1', config);
+      expect(result.steps[0].action).toBe(PipelineAction.NEEDS_ENRICHMENT);
+      expect(result.steps[0].message).toContain('AWS credentials not set');
+    } finally {
+      if (origToken !== undefined) process.env.AWS_BEARER_TOKEN_BEDROCK = origToken;
+      if (origRegion !== undefined) process.env.AWS_REGION = origRegion;
+      if (origKey !== undefined) process.env.ANTHROPIC_API_KEY = origKey;
+    }
+  });
+});
+
 // ─── All dropdown values end-to-end ─────────────────────────────
 
 describe('dropdown values end-to-end mapping', () => {

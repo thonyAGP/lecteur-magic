@@ -480,14 +480,21 @@ export interface AnalyticsReport {
  * K4: Budget exceeded error
  */
 export class BudgetExceededError extends Error {
+  readonly currentCost: number;
+  readonly limit: number;
+  readonly limitType: 'session' | 'daily';
+
   constructor(
     message: string,
-    public readonly currentCost: number,
-    public readonly limit: number,
-    public readonly limitType: 'session' | 'daily',
+    currentCost: number,
+    limit: number,
+    limitType: 'session' | 'daily',
   ) {
     super(message);
     this.name = 'BudgetExceededError';
+    this.currentCost = currentCost;
+    this.limit = limit;
+    this.limitType = limitType;
   }
 }
 

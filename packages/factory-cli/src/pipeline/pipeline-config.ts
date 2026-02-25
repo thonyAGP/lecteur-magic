@@ -35,6 +35,7 @@ export const resolvePipelineConfig = (input: PipelineConfigInput): PipelineConfi
     dryRun: input.dryRun ?? false,
     generateReport: input.report ?? false,
     enrichmentMode: (input.enrich === 'claude' || input.enrich === 'claude-cli' || input.enrich === 'claude-bedrock') ? EnrichmentMode.CLAUDE : EnrichmentMode.MANUAL,
+    enrichmentBackend: input.enrich === 'claude-bedrock' ? 'bedrock' : 'api',
     claudeModel: input.model,
   };
 };

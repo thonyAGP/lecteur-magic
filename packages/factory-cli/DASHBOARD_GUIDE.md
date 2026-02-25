@@ -4,7 +4,7 @@
 
 ```bash
 # Depuis la racine du projet
-cd D:\Projects\Lecteur_Magic
+cd D:\Projects\ClubMed\LecteurMagic
 npx tsx tools/migration-factory/src/cli.ts serve --port 3070
 
 # Ouvrir http://localhost:3070
