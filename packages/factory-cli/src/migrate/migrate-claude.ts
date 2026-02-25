@@ -15,7 +15,6 @@ import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
 import Anthropic from '@anthropic-ai/sdk';
 import { callClaudeBedrock } from './claude-bedrock.js';
-import { callClaudeWithRetry } from './migrate-claude-retry.js';
 
 const execAsync = promisify(exec);
 
@@ -79,21 +78,18 @@ export interface ClaudeCallResult {
   tokens?: { input: number; output: number };
 }
 
-// ─── Main entry point (transparent switch with retry) ────────────
+// ─── Main entry point (transparent switch) ───────────────────────
 
-/**
- * Call Claude with automatic retry on timeout/network errors.
- * This is the main entry point used by all migration phases.
- */
 export const callClaude = async (options: ClaudeCallOptions): Promise<ClaudeCallResult> => {
-  // Wrap with retry logic (I1 integration)
-  const result = await callClaudeWithRetry(callClaudeInternal, options, (attempt, error) => {
-    // Log retry attempts
-    console.warn(`[CLAUDE RETRY] Attempt ${attempt}/3 failed: ${error.message}`, {
-      model: options.model,
-      promptLength: options.prompt.length,
-    });
-  });
+  let result: ClaudeCallResult;
+
+  if (_mode === 'api') {
+    result = await callClaudeApi(options);
+  } else if (_mode === 'bedrock') {
+    result = await callClaudeBedrock(options.prompt, options.model);
+  } else {
+    result = await callClaudeCli(options);
+  }
 
   // Accumulate tokens if tracker is active
   if (_tokenAccumulator && result.tokens) {
@@ -107,20 +103,6 @@ export const callClaude = async (options: ClaudeCallOptions): Promise<ClaudeCall
   }
 
   return result;
-};
-
-/**
- * Internal Claude call (without retry wrapper).
- * Used by callClaudeWithRetry.
- */
-const callClaudeInternal = async (options: ClaudeCallOptions): Promise<ClaudeCallResult> => {
-  if (_mode === 'api') {
-    return await callClaudeApi(options);
-  } else if (_mode === 'bedrock') {
-    return await callClaudeBedrock(options.prompt, options.model);
-  } else {
-    return await callClaudeCli(options);
-  }
 };
 
 // ─── API mode (Anthropic SDK) ────────────────────────────────────
