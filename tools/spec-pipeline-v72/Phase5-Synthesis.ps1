@@ -857,6 +857,7 @@ Add-Line "# $Project IDE $IdePosition - $programName"
 Add-Line
 Add-Line "> **Analyse**: Phases 1-4 $($pipelineFirstPhase.ToString('yyyy-MM-dd HH:mm')) -> $($pipelineLastPhase.ToString('HH:mm')) ($pipelineDurationStr) | Assemblage $($startTime.ToString('HH:mm'))"
 Add-Line "> **Pipeline**: V7.2 Enrichi"
+Add-Line "> **Enrichissement**: $($startTime.ToString('yyyy-MM-dd HH:mm')) — Sections 2, 9.4"
 Add-Line "> **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)"
 Add-Line
 
@@ -2969,6 +2970,7 @@ $summarySpec = @"
 
 > **Analyse**: $($startTime.ToString("yyyy-MM-dd HH:mm"))
 > **Pipeline**: V7.2 Enrichi
+> **Enrichissement**: $($startTime.ToString("yyyy-MM-dd HH:mm")) — Sections 2, 9.4
 
 ## RESUME EXECUTIF
 
