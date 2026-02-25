@@ -2,6 +2,7 @@
 
 > **Analyse**: Phases 1-4 2026-02-23 18:22 -> 18:22 (1s) | Assemblage 12:29
 > **Pipeline**: V7.2 Enrichi
+> **Enrichissement**: 2026-02-25 — Sections 2, 9.4
 > **Structure**: 4 onglets (Resume | Ecrans | Donnees | Connexions)
 
 <!-- TAB:Resume -->
