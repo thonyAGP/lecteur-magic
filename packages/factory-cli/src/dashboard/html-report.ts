@@ -2748,6 +2748,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     eventsProcessed: 0,
     estimatedHours: 0,
     estimatedDurationMs: 0, // Locked estimate from first completion
+    aborted: false, // Flag to ignore events after manual abort
     batchPhaseActive: false, batchPhaseStart: 0,
     batchProgress: 0, batchElapsedStart: 0, batchReviewsDone: 0,
     lastCompletedTask: null, currentTask: null, // Track for display
@@ -2815,6 +2816,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   migrateAbortBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     if (!confirm('Annuler la migration en cours ?')) return;
+
+    // Set abort flag to ignore all subsequent events
+    migrateState.aborted = true;
 
     // Immediately stop UI updates
     if (migrateState.eventSource) {
@@ -3105,9 +3109,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     var eta = computeETA();
     if (migrateState.failedProgs > 0) {
       bar.style.background = 'linear-gradient(90deg, var(--green) 0%, #f59e0b 100%)';
-      label.textContent = done + '/' + total + ' OK, ' + migrateState.failedProgs + ' \\u00e9chou\\u00e9(s) (' + pct + '%)' + eta;
+      label.textContent = done + '/' + total + ' OK, ' + migrateState.failedProgs + ' \\u00e9chou\\u00e9(s) (' + pct + '%)';
     } else {
-      label.textContent = done + '/' + total + ' programmes (' + pct + '%)' + eta;
+      label.textContent = done + '/' + total + ' programmes (' + pct + '%)';
     }
     if (migrateBadge) { migrateBadge.textContent = done + '/' + total; migrateBadge.style.display = ''; }
   }
@@ -3322,6 +3326,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         durEl.style.color = isSkipped ? '#6b7280' : (isResumed ? '#58a6ff' : (isExisting ? '#8b5cf6' : '#3fb950'));
       }
       if (migrateState.programPhases[pid]) {
+        // Increment doneProgs ONLY if not already counted (status !== 'done')
+        if (migrateState.programPhases[pid].status !== 'done') {
+          migrateState.doneProgs++;
+        }
+
         if (isSkipped) {
           // Don't override dots already marked 'done' from phase_completed events
           // Skipped programs have phase_completed before program_completed
@@ -3354,7 +3363,6 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         }
       }
       updateProgramIcon(pid, 'done');
-      migrateState.doneProgs++;
       // Lock ETA estimate after first completion: project total duration based on completed work
       if (migrateState.estimatedDurationMs === 0 && !isSkipped && dur > 0) {
         var completed = migrateState.doneProgs;
@@ -3536,6 +3544,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     migrateState.eventSource = es; // Store for abort functionality
     es.onmessage = function(ev) {
       var msg = JSON.parse(ev.data);
+
+      // Ignore all events after manual abort (EventSource may still receive in-flight messages)
+      if (migrateState.aborted) {
+        return;
+      }
 
       if (msg.type === 'stream_end') {
         es.close();
