@@ -21,9 +21,10 @@ node_modules/
 package-lock.json
 .vercel
 
-# === Environment ===
-.env
-.env*.local
+# === Environment (secrets) - catch ALL variants ===
+.env*
+!.env.example
+!.env*.example
 .claude/settings.local.json
 
 # === Temp files ===
@@ -43,7 +44,6 @@ test-results/
 tools/spec-pipeline-v72/output/
 tools/spec-pipeline-v72/regenerate-log.txt
 .openspec/pipeline-output/
-.openspec/index.json
 openspec/domains/**/*.json
 
 # === Knowledge Base (local) ===
