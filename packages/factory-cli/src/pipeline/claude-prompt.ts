@@ -42,10 +42,11 @@ Classification Rules by Item Type:
 - N/A: Only for legacy-specific rules (printer control, hardware I/O, legacy report generation)
 
 **TABLES** (database access):
-- ALL tables listed in contracts ALREADY EXIST in the SQL database (REF schema)
-- ALWAYS mark tables as IMPL - no analysis needed
-- Tables are database structures that are preserved during migration
-- Never mark tables as MISSING or N/A
+- CRITICAL: ALL tables in the contract exist in SQL database - ALWAYS status=IMPL
+- DO NOT analyze if table is "legacy" or "applicable" - just mark IMPL
+- DO NOT use N/A or MISSING for any table - only IMPL
+- Tables are migrated database structures, not code to implement
+- Example: ANY table name → status: IMPL, targetFile: "", gapNotes: "Existing SQL table"
 
 **VARIABLES** (data fields):
 - IMPL: If you find this field in TypeScript interfaces, React state, or API responses
