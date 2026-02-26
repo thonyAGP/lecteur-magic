@@ -453,7 +453,7 @@ export const handleMigrateStream = async (
       programId: e.programId as string | number | undefined,
       phase: e.phase as string | undefined,
       message: (e.message as string) ?? (e.type as string) ?? '',
-      data: e.data as Record<string, unknown> | undefined,
+      data: e as Record<string, unknown>, // FIX: Preserve entire event in data field
     });
 
     // Persist state after program completion/failure (I2)
