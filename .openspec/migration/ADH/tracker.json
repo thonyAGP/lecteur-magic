@@ -2,7 +2,7 @@
   "version": "1.0",
   "methodology": "SPECMAP",
   "created": "2026-02-11",
-  "updated": "2026-02-25",
+  "updated": "2026-02-26",
   "status": "verifying",
   "stats": {
     "total_programs": 350,
@@ -53,9 +53,9 @@
       "stats": {
         "backend_na": 0,
         "frontend_enrich": 0,
-        "fully_impl": 5,
-        "coverage_avg_frontend": 0,
-        "total_partial": 7,
+        "fully_impl": 12,
+        "coverage_avg_frontend": 30,
+        "total_partial": 0,
         "total_missing": 5
       },
       "priority_order": [
@@ -607,6 +607,184 @@
     "B1 contracted: 18 programs, 8 frontend to enrich, avg coverage 49%"
   ],
   "migrate": {
+    "32": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:00:37.930Z",
+          "completedAt": "2026-02-26T00:00:37.968Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-32.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:00:37.970Z",
+          "completedAt": "2026-02-26T00:00:37.980Z",
+          "duration": 8,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:00:37.983Z",
+          "completedAt": "2026-02-26T00:01:28.344Z",
+          "duration": 50361,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:01:28.346Z",
+          "completedAt": "2026-02-26T00:02:03.742Z",
+          "duration": 35394,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\fusionSeparationHistory.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:02:03.744Z",
+          "completedAt": "2026-02-26T00:03:16.058Z",
+          "duration": 72312,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\fusionSeparationHistoryStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:03:16.059Z",
+          "completedAt": "2026-02-26T00:03:45.986Z",
+          "duration": 29926,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-fusionSeparationHistory.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:03:45.988Z",
+          "completedAt": "2026-02-26T00:04:20.333Z",
+          "duration": 34345,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\FusionSeparationHistoryPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:04:20.335Z",
+          "completedAt": "2026-02-26T00:05:03.956Z",
+          "duration": 43620
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:05:03.957Z",
+          "completedAt": "2026-02-26T00:06:24.571Z",
+          "duration": 80613,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\fusionSeparationHistoryStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:06:24.574Z",
+          "completedAt": "2026-02-26T00:07:04.847Z",
+          "duration": 40271,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\FusionSeparationHistoryPage.test.tsx"
+        }
+      },
+      "files": [
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-32.md",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.contract.yaml",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.analysis.json",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\fusionSeparationHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\fusionSeparationHistoryStore.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-fusionSeparationHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\FusionSeparationHistoryPage.tsx",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\fusionSeparationHistoryStore.test.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\FusionSeparationHistoryPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-02-26T00:00:37.930Z",
+      "completedAt": "2026-02-26T00:07:04.859Z"
+    },
+    "33": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:07:04.862Z",
+          "completedAt": "2026-02-26T00:07:04.863Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-33.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:07:04.864Z",
+          "completedAt": "2026-02-26T00:07:04.869Z",
+          "duration": 5,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:07:04.872Z",
+          "completedAt": "2026-02-26T00:07:54.829Z",
+          "duration": 49957,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:07:54.831Z",
+          "completedAt": "2026-02-26T00:08:19.030Z",
+          "duration": 24198,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\accountHistory.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:08:19.031Z",
+          "completedAt": "2026-02-26T00:09:13.567Z",
+          "duration": 54535,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\accountHistoryStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:09:13.569Z",
+          "completedAt": "2026-02-26T00:09:36.689Z",
+          "duration": 23119,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-accountHistory.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:09:36.691Z",
+          "completedAt": "2026-02-26T00:10:50.777Z",
+          "duration": 74084,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\AccountHistoryPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:10:50.779Z",
+          "completedAt": "2026-02-26T00:13:12.547Z",
+          "duration": 141766
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:13:12.549Z",
+          "completedAt": "2026-02-26T00:13:58.936Z",
+          "duration": 46386,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\accountHistoryStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:13:58.938Z",
+          "completedAt": "2026-02-26T00:14:37.936Z",
+          "duration": 38997,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\AccountHistoryPage.test.tsx"
+        }
+      },
+      "files": [
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-33.md",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.contract.yaml",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.analysis.json",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\accountHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\accountHistoryStore.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-accountHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\AccountHistoryPage.tsx",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\accountHistoryStore.test.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\AccountHistoryPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-02-26T00:07:04.862Z",
+      "completedAt": "2026-02-26T00:14:37.937Z"
+    },
     "47": {
       "status": "completed",
       "currentPhase": null,
@@ -912,9 +1090,79 @@
       "completedAt": "2026-02-22T21:31:33.179Z"
     },
     "121": {
-      "status": "pending",
+      "status": "completed",
       "currentPhase": null,
-      "phases": {},
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:25:58.521Z",
+          "completedAt": "2026-02-26T00:25:58.545Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-121.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:25:58.546Z",
+          "completedAt": "2026-02-26T00:25:58.547Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-121.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:25:58.548Z",
+          "completedAt": "2026-02-26T00:25:58.579Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-121.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:25:58.581Z",
+          "completedAt": "2026-02-26T00:26:11.521Z",
+          "duration": 12938,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\gestionCaisse.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:26:11.527Z",
+          "completedAt": "2026-02-26T00:26:59.460Z",
+          "duration": 47931,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\gestionCaisseStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:26:59.463Z",
+          "completedAt": "2026-02-26T00:27:10.932Z",
+          "duration": 11459,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-gestionCaisse.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:27:10.935Z",
+          "completedAt": "2026-02-26T00:27:58.038Z",
+          "duration": 47102,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\GestionCaissePage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:27:58.041Z",
+          "completedAt": "2026-02-26T00:28:46.184Z",
+          "duration": 48141
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:28:46.187Z",
+          "completedAt": "2026-02-26T00:29:44.123Z",
+          "duration": 57932,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\gestionCaisseStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:29:44.125Z",
+          "completedAt": "2026-02-26T00:30:18.850Z",
+          "duration": 34723,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\GestionCaissePage.test.tsx"
+        }
+      },
       "files": [
         "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-121.md",
         "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-121.contract.yaml",
@@ -928,7 +1176,7 @@
       ],
       "errors": [],
       "startedAt": "2026-02-22T21:56:27.030Z",
-      "completedAt": "2026-02-22T21:56:27.061Z"
+      "completedAt": "2026-02-26T00:30:18.853Z"
     },
     "125": {
       "status": "failed",
@@ -1073,9 +1321,79 @@
       "completedAt": "2026-02-23T16:35:32.840Z"
     },
     "132": {
-      "status": "pending",
+      "status": "completed",
       "currentPhase": null,
-      "phases": {},
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:30:18.862Z",
+          "completedAt": "2026-02-26T00:30:18.902Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-132.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:30:18.904Z",
+          "completedAt": "2026-02-26T00:30:18.905Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-132.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:30:18.907Z",
+          "completedAt": "2026-02-26T00:30:18.911Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-132.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:30:18.912Z",
+          "completedAt": "2026-02-26T00:30:27.024Z",
+          "duration": 8111,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\sessionHistory.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:30:27.027Z",
+          "completedAt": "2026-02-26T00:31:07.695Z",
+          "duration": 40667,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\sessionHistoryStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:31:07.698Z",
+          "completedAt": "2026-02-26T00:31:15.528Z",
+          "duration": 7828,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-sessionHistory.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:31:15.531Z",
+          "completedAt": "2026-02-26T00:31:49.229Z",
+          "duration": 33697,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\SessionHistoryPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:31:49.231Z",
+          "completedAt": "2026-02-26T00:32:36.480Z",
+          "duration": 47248
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:32:36.483Z",
+          "completedAt": "2026-02-26T00:33:14.727Z",
+          "duration": 38243,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\sessionHistoryStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-02-26T00:33:14.728Z",
+          "completedAt": "2026-02-26T00:33:44.131Z",
+          "duration": 29401,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\SessionHistoryPage.test.tsx"
+        }
+      },
       "files": [
         "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-132.md",
         "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-132.contract.yaml",
@@ -1089,7 +1407,7 @@
       ],
       "errors": [],
       "startedAt": "2026-02-22T21:43:30.647Z",
-      "completedAt": "2026-02-22T21:43:30.666Z"
+      "completedAt": "2026-02-26T00:33:44.133Z"
     },
     "138": {
       "status": "completed",

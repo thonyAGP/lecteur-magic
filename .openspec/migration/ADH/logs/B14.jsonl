@@ -1,0 +1,80 @@
+{"timestamp":"2026-02-26T00:00:37.921Z","level":"info","type":"migrate_started","message":"migrate_started"}
+{"timestamp":"2026-02-26T00:00:37.922Z","level":"info","type":"migration_started","message":"Starting migration for batch B14 (3 programs)"}
+{"timestamp":"2026-02-26T00:00:37.924Z","level":"info","type":"parallel_resolved","message":"Auto-parallel: 2 agents (22 CPUs, 3 programs)","data":{"requested":0,"resolved":2,"cpus":22}}
+{"timestamp":"2026-02-26T00:00:37.925Z","level":"info","type":"program_started","programId":28,"message":"Starting IDE 28"}
+{"timestamp":"2026-02-26T00:00:37.926Z","level":"info","type":"phase_started","programId":28,"phase":"spec","message":"IDE 28: generating spec"}
+{"timestamp":"2026-02-26T00:00:37.926Z","level":"info","type":"phase_progress","programId":28,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:00:37.930Z","level":"info","type":"program_started","programId":32,"message":"Starting IDE 32"}
+{"timestamp":"2026-02-26T00:00:37.930Z","level":"info","type":"phase_started","programId":32,"phase":"spec","message":"IDE 32: generating spec"}
+{"timestamp":"2026-02-26T00:00:37.931Z","level":"info","type":"phase_progress","programId":32,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:00:37.932Z","level":"info","type":"phase_completed","programId":28,"phase":"spec","message":"IDE 28: spec done"}
+{"timestamp":"2026-02-26T00:00:37.934Z","level":"info","type":"phase_started","programId":28,"phase":"contract","message":"IDE 28: generating contract"}
+{"timestamp":"2026-02-26T00:00:37.934Z","level":"info","type":"phase_progress","programId":28,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:00:37.951Z","level":"info","type":"phase_completed","programId":28,"phase":"contract","message":"IDE 28: contract done"}
+{"timestamp":"2026-02-26T00:00:37.952Z","level":"info","type":"phase_started","programId":28,"phase":"analyze","message":"IDE 28: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:00:37.953Z","level":"info","type":"phase_progress","programId":28,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:00:37.968Z","level":"info","type":"phase_completed","programId":32,"phase":"spec","message":"IDE 32: spec done"}
+{"timestamp":"2026-02-26T00:00:37.970Z","level":"info","type":"phase_started","programId":32,"phase":"contract","message":"IDE 32: generating contract"}
+{"timestamp":"2026-02-26T00:00:37.971Z","level":"info","type":"phase_progress","programId":32,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:00:37.980Z","level":"info","type":"phase_completed","programId":32,"phase":"contract","message":"IDE 32: contract done"}
+{"timestamp":"2026-02-26T00:00:37.982Z","level":"info","type":"phase_started","programId":32,"phase":"analyze","message":"IDE 32: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:00:37.982Z","level":"info","type":"phase_progress","programId":32,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:01:28.345Z","level":"info","type":"phase_completed","programId":32,"phase":"analyze","message":"IDE 32: analysis done in 50s (50361ms), domain=fusionSeparationHistory"}
+{"timestamp":"2026-02-26T00:01:28.346Z","level":"info","type":"phase_started","programId":32,"phase":"types","message":"IDE 32: generating types"}
+{"timestamp":"2026-02-26T00:01:28.347Z","level":"info","type":"phase_progress","programId":32,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:02:03.742Z","level":"info","type":"phase_completed","programId":32,"phase":"types","message":"IDE 32: types done"}
+{"timestamp":"2026-02-26T00:02:03.744Z","level":"info","type":"phase_started","programId":32,"phase":"store","message":"IDE 32: generating store"}
+{"timestamp":"2026-02-26T00:02:03.745Z","level":"info","type":"phase_progress","programId":32,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:02:42.635Z","level":"info","type":"program_failed","programId":28,"message":"IDE 28 failed at analyze after 2m 5s (124710ms): Unexpected token 'G', \"GET    /ap\"... is not valid JSON"}
+{"timestamp":"2026-02-26T00:03:16.058Z","level":"info","type":"phase_completed","programId":32,"phase":"store","message":"IDE 32: store done"}
+{"timestamp":"2026-02-26T00:03:16.059Z","level":"info","type":"phase_started","programId":32,"phase":"api","message":"IDE 32: generating api"}
+{"timestamp":"2026-02-26T00:03:16.060Z","level":"info","type":"phase_progress","programId":32,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:03:45.986Z","level":"info","type":"phase_completed","programId":32,"phase":"api","message":"IDE 32: api done"}
+{"timestamp":"2026-02-26T00:03:45.988Z","level":"info","type":"phase_started","programId":32,"phase":"page","message":"IDE 32: generating page"}
+{"timestamp":"2026-02-26T00:03:45.988Z","level":"info","type":"phase_progress","programId":32,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:04:20.333Z","level":"info","type":"phase_completed","programId":32,"phase":"page","message":"IDE 32: page done"}
+{"timestamp":"2026-02-26T00:04:20.335Z","level":"info","type":"phase_started","programId":32,"phase":"components","message":"IDE 32: generating components"}
+{"timestamp":"2026-02-26T00:04:20.335Z","level":"info","type":"phase_progress","programId":32,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:05:03.956Z","level":"info","type":"phase_completed","programId":32,"phase":"components","message":"IDE 32: components done"}
+{"timestamp":"2026-02-26T00:05:03.957Z","level":"info","type":"phase_started","programId":32,"phase":"tests-unit","message":"IDE 32: generating unit tests"}
+{"timestamp":"2026-02-26T00:05:03.957Z","level":"info","type":"phase_progress","programId":32,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:06:24.571Z","level":"info","type":"phase_completed","programId":32,"phase":"tests-unit","message":"IDE 32: unit tests done"}
+{"timestamp":"2026-02-26T00:06:24.574Z","level":"info","type":"phase_started","programId":32,"phase":"tests-ui","message":"IDE 32: generating UI tests"}
+{"timestamp":"2026-02-26T00:06:24.575Z","level":"info","type":"phase_progress","programId":32,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:07:04.847Z","level":"info","type":"phase_completed","programId":32,"phase":"tests-ui","message":"IDE 32: UI tests done"}
+{"timestamp":"2026-02-26T00:07:04.860Z","level":"info","type":"program_completed","programId":32,"message":"IDE 32: 8 files generated in 6m 27s (386930ms)","data":{"duration":386930,"filesGenerated":8}}
+{"timestamp":"2026-02-26T00:07:04.861Z","level":"info","type":"program_started","programId":33,"message":"Starting IDE 33"}
+{"timestamp":"2026-02-26T00:07:04.862Z","level":"info","type":"phase_started","programId":33,"phase":"spec","message":"IDE 33: generating spec"}
+{"timestamp":"2026-02-26T00:07:04.862Z","level":"info","type":"phase_progress","programId":33,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:07:04.863Z","level":"info","type":"phase_completed","programId":33,"phase":"spec","message":"IDE 33: spec done"}
+{"timestamp":"2026-02-26T00:07:04.864Z","level":"info","type":"phase_started","programId":33,"phase":"contract","message":"IDE 33: generating contract"}
+{"timestamp":"2026-02-26T00:07:04.864Z","level":"info","type":"phase_progress","programId":33,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:07:04.869Z","level":"info","type":"phase_completed","programId":33,"phase":"contract","message":"IDE 33: contract done"}
+{"timestamp":"2026-02-26T00:07:04.871Z","level":"info","type":"phase_started","programId":33,"phase":"analyze","message":"IDE 33: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:07:04.872Z","level":"info","type":"phase_progress","programId":33,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:07:54.830Z","level":"info","type":"phase_completed","programId":33,"phase":"analyze","message":"IDE 33: analysis done in 50s (49957ms), domain=accountHistory"}
+{"timestamp":"2026-02-26T00:07:54.831Z","level":"info","type":"phase_started","programId":33,"phase":"types","message":"IDE 33: generating types"}
+{"timestamp":"2026-02-26T00:07:54.831Z","level":"info","type":"phase_progress","programId":33,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:08:19.030Z","level":"info","type":"phase_completed","programId":33,"phase":"types","message":"IDE 33: types done"}
+{"timestamp":"2026-02-26T00:08:19.031Z","level":"info","type":"phase_started","programId":33,"phase":"store","message":"IDE 33: generating store"}
+{"timestamp":"2026-02-26T00:08:19.032Z","level":"info","type":"phase_progress","programId":33,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:09:13.567Z","level":"info","type":"phase_completed","programId":33,"phase":"store","message":"IDE 33: store done"}
+{"timestamp":"2026-02-26T00:09:13.569Z","level":"info","type":"phase_started","programId":33,"phase":"api","message":"IDE 33: generating api"}
+{"timestamp":"2026-02-26T00:09:13.569Z","level":"info","type":"phase_progress","programId":33,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:09:36.689Z","level":"info","type":"phase_completed","programId":33,"phase":"api","message":"IDE 33: api done"}
+{"timestamp":"2026-02-26T00:09:36.691Z","level":"info","type":"phase_started","programId":33,"phase":"page","message":"IDE 33: generating page"}
+{"timestamp":"2026-02-26T00:09:36.692Z","level":"info","type":"phase_progress","programId":33,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:10:50.777Z","level":"info","type":"phase_completed","programId":33,"phase":"page","message":"IDE 33: page done"}
+{"timestamp":"2026-02-26T00:10:50.779Z","level":"info","type":"phase_started","programId":33,"phase":"components","message":"IDE 33: generating components"}
+{"timestamp":"2026-02-26T00:10:50.780Z","level":"info","type":"phase_progress","programId":33,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:13:12.547Z","level":"info","type":"phase_completed","programId":33,"phase":"components","message":"IDE 33: components done"}
+{"timestamp":"2026-02-26T00:13:12.549Z","level":"info","type":"phase_started","programId":33,"phase":"tests-unit","message":"IDE 33: generating unit tests"}
+{"timestamp":"2026-02-26T00:13:12.550Z","level":"info","type":"phase_progress","programId":33,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:13:58.936Z","level":"info","type":"phase_completed","programId":33,"phase":"tests-unit","message":"IDE 33: unit tests done"}
+{"timestamp":"2026-02-26T00:13:58.938Z","level":"info","type":"phase_started","programId":33,"phase":"tests-ui","message":"IDE 33: generating UI tests"}
+{"timestamp":"2026-02-26T00:13:58.938Z","level":"info","type":"phase_progress","programId":33,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:14:37.936Z","level":"info","type":"phase_completed","programId":33,"phase":"tests-ui","message":"IDE 33: UI tests done"}
+{"timestamp":"2026-02-26T00:14:37.938Z","level":"info","type":"program_completed","programId":33,"message":"IDE 33: 11 files generated in 7m 33s (453077ms), tokens: 0K in / 28K out","data":{"duration":453077,"filesGenerated":11,"tokens":{"input":104,"output":28323}}}
+{"timestamp":"2026-02-26T00:14:37.939Z","level":"info","type":"token_update","programId":33,"message":"Tokens updated: 104 in / 28323 out","data":{"cumulative":{"input":28778,"output":44626,"costUsd":0.7557240000000001,"totalCalls":3},"programTokens":{"input":104,"output":28323}}}
+{"timestamp":"2026-02-26T00:14:37.940Z","level":"info","type":"migration_completed","message":"[DRY-RUN] Migration terminee : 2/3 programmes, 20 fichiers en 14m 0s (840018ms), tokens: 0K in / 41K out (~$0.62)"}
+{"timestamp":"2026-02-26T00:14:37.940Z","level":"info","type":"migrate_result","message":"migrate_result","data":{"batchId":"B14","batchName":"Fusion","started":"2026-02-26T00:00:37.922Z","completed":"2026-02-26T00:14:37.940Z","dryRun":true,"programs":[{"programId":28,"programName":"IDE-28","status":"failed","filesGenerated":1,"phasesCompleted":2,"phasesTotal":10,"duration":124710,"errors":["Unexpected token 'G', \"GET    /ap\"... is not valid JSON"],"tokens":{"input":70,"output":13110}},{"programId":32,"programName":"FusionSeparationHistory","status":"completed","filesGenerated":8,"phasesCompleted":10,"phasesTotal":10,"duration":386931,"errors":[]},{"programId":33,"programName":"AccountHistory","status":"completed","filesGenerated":11,"phasesCompleted":10,"phasesTotal":10,"duration":453079,"errors":[],"tokens":{"input":104,"output":28323}}],"summary":{"total":3,"completed":2,"failed":1,"skipped":0,"totalFiles":20,"tscClean":true,"testsPass":true,"reviewAvgCoverage":0,"totalTokens":{"input":174,"output":41433},"estimatedCostUsd":0.6220169999999999}}}
