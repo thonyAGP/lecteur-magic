@@ -3540,33 +3540,52 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     migrateState.batchPhaseStart = 0;
 
     migrateState.eventsProcessed = 0;
-    var es = new EventSource(url);
-    migrateState.eventSource = es; // Store for abort functionality
-    es.onmessage = function(ev) {
-      var msg = JSON.parse(ev.data);
+    migrateState.sseRetryCount = 0; // Track retry attempts
+    migrateState.sseRetryMax = 10; // Max retries before fallback
 
-      // Ignore all events after manual abort (EventSource may still receive in-flight messages)
-      if (migrateState.aborted) {
-        return;
-      }
+    var connectSSE = function() {
+      var es = new EventSource(url);
+      migrateState.eventSource = es;
 
-      if (msg.type === 'stream_end') {
+      es.onmessage = function(ev) {
+        var msg = JSON.parse(ev.data);
+
+        // Reset retry count on successful message
+        migrateState.sseRetryCount = 0;
+
+        // Ignore all events after manual abort
+        if (migrateState.aborted) {
+          return;
+        }
+
+        if (msg.type === 'stream_end') {
+          es.close();
+          migrateState.eventSource = null;
+          clearInterval(migrateState.elapsedTid);
+          setLoading(migrateState.activeBtn || btnMigrate, false);
+          migrateAbortBtn.style.display = 'none';
+          return;
+        }
+
+        migrateState.eventsProcessed++;
+        processMigrateEvent(msg);
+      };
+
+      es.onerror = function() {
         es.close();
-        migrateState.eventSource = null;
-        clearInterval(migrateState.elapsedTid);
-        setLoading(migrateState.activeBtn || btnMigrate, false);
-        migrateAbortBtn.style.display = 'none';
-        return;
-      }
+        migrateState.sseRetryCount++;
 
-      migrateState.eventsProcessed++;
-      processMigrateEvent(msg);
-    };
+        if (migrateState.sseRetryCount <= migrateState.sseRetryMax) {
+          // Retry SSE connection with exponential backoff
+          var delay = Math.min(1000 * Math.pow(2, migrateState.sseRetryCount - 1), 30000); // Max 30s
+          addMLog('SSE connection lost - retry ' + migrateState.sseRetryCount + '/' + migrateState.sseRetryMax + ' in ' + (delay/1000) + 's...');
+          setTimeout(connectSSE, delay);
+          return;
+        }
 
-    es.onerror = function() {
-      es.close();
-      addMLog('SSE connection lost - switching to polling...');
-      // Fall back to polling instead of giving up
+        // Max retries exceeded - fallback to polling
+        addMLog('SSE connection lost after ' + migrateState.sseRetryMax + ' retries - switching to polling...');
+        // Fall back to polling instead of giving up
       var lastSeen = migrateState.eventsProcessed;
       var pollFallback = setInterval(function() {
         fetch('/api/migrate/active').then(function(r) { return r.json(); }).then(function(s) {
@@ -3600,7 +3619,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
           addMLog('Connection lost');
         });
       }, 3000);
+      };
     };
+
+    // Initial SSE connection
+    connectSSE();
   }
 
   // ─── Migrate Module (opens confirmation modal) ────────────────
