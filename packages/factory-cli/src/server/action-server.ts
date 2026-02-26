@@ -17,6 +17,7 @@ import {
   handleAnalyze, handleAnalyzeGet,
   handleTokensGet, handleTokensBatchGet, handleTokensProgramGet,
   handleLogsGet, handleLogsSearchGet, handleLogsLatestGet,
+  handleVersion,
 } from './api-routes.js';
 import type { RouteContext } from './api-routes.js';
 import { generateServerDashboard } from './dashboard-html.js';
@@ -103,6 +104,9 @@ export const startActionServer = async (config: ActionServerConfig): Promise<htt
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' });
         res.end(html);
         reqLogger.info({ statusCode: 200, size: html.length }, 'Dashboard served');
+      } else if (pathname === '/api/version' && req.method === 'GET') {
+        reqLogger.debug('Handling version request');
+        handleVersion(ctx, res);
       } else if (pathname === '/api/status' && req.method === 'GET') {
         reqLogger.debug('Handling status request');
         handleStatus(ctx, res);
