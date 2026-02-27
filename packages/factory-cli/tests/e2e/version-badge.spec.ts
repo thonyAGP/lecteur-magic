@@ -8,10 +8,9 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Version Badge & Restart Button', () => {
-  const dashboardUrl = 'http://localhost:3070';
-
   test.beforeEach(async ({ page }) => {
-    await page.goto(dashboardUrl);
+    // Use Playwright baseURL (configured in playwright.config.ts)
+    await page.goto('/');
     // Attendre que le serveur soit connecté
     await page.waitForSelector('.server-badge.connected', { timeout: 10000 });
   });

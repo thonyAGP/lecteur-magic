@@ -29,23 +29,41 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: /version-badge|restart-button/,
+    },
+    {
+      name: 'real-server',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3070',
+      },
+      testMatch: /version-badge|restart-button/,
     },
   ],
 
-  webServer: {
-    command: process.env.AWS_BEARER_TOKEN_BEDROCK
-      ? `npx tsx src/cli.ts serve --port ${E2E_PORT} --project ./tests/e2e/fixtures`
-      : `node --env-file=../../.env.clubmed.local node_modules/tsx/dist/cli.mjs src/cli.ts serve --port ${E2E_PORT} --project ./tests/e2e/fixtures`,
-    port: E2E_PORT,
-    timeout: 15_000,
-    reuseExistingServer: !process.env.CI,
-    env: {
-      NODE_ENV: 'test',
-      // Pass credentials from parent if available
-      ...(process.env.AWS_BEARER_TOKEN_BEDROCK ? {
-        AWS_BEARER_TOKEN_BEDROCK: process.env.AWS_BEARER_TOKEN_BEDROCK,
-        AWS_REGION: process.env.AWS_REGION,
-      } : {}),
+  webServer: [
+    {
+      command: process.env.AWS_BEARER_TOKEN_BEDROCK
+        ? `npx tsx src/cli.ts serve --port ${E2E_PORT} --project ./tests/e2e/fixtures`
+        : `node --env-file=../../.env.clubmed.local node_modules/tsx/dist/cli.mjs src/cli.ts serve --port ${E2E_PORT} --project ./tests/e2e/fixtures`,
+      port: E2E_PORT,
+      timeout: 15_000,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        NODE_ENV: 'test',
+        // Pass credentials from parent if available
+        ...(process.env.AWS_BEARER_TOKEN_BEDROCK ? {
+          AWS_BEARER_TOKEN_BEDROCK: process.env.AWS_BEARER_TOKEN_BEDROCK,
+          AWS_REGION: process.env.AWS_REGION,
+        } : {}),
+      },
     },
-  },
+    {
+      command: `npx tsx src/cli.ts serve --port 3070 --project ../../`,
+      port: 3070,
+      timeout: 15_000,
+      reuseExistingServer: !process.env.CI,
+      env: { NODE_ENV: 'test' },
+    },
+  ],
 });

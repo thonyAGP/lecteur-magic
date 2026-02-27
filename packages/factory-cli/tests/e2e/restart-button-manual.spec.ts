@@ -8,8 +8,6 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Restart Button - Manual Tests @manual', () => {
-  const dashboardUrl = 'http://localhost:3070';
-
   test.skip('should restart server when clicking restart button - MANUAL TEST', async ({ page }) => {
     /**
      * Ce test est skip par défaut car il nécessite :
@@ -23,7 +21,7 @@ test.describe('Restart Button - Manual Tests @manual', () => {
      */
 
     // Navigate to dashboard
-    await page.goto(dashboardUrl);
+    await page.goto(page.context().baseURL || 'http://localhost:3099');
 
     // Wait for server to be connected
     await page.waitForSelector('.server-badge.connected', { timeout: 10000 });
@@ -86,7 +84,8 @@ test.describe('Restart Button - Manual Tests @manual', () => {
     // Skip si le serveur n'est pas prêt à redémarrer
     test.skip(process.env.CI === 'true', 'Skip in CI - would restart server');
 
-    const response = await request.post(`${dashboardUrl}/api/server/restart`);
+    // Playwright request uses baseURL automatically
+    const response = await request.post('/api/server/restart');
 
     // Should return 200 with restart message
     expect(response.status()).toBe(200);
