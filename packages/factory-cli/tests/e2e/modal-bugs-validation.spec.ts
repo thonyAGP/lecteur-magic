@@ -12,15 +12,15 @@ test('Modal Migration - 4 bugs validation', async ({ page }) => {
   test.setTimeout(180000); // 3min
 
   console.log('🔍 Step 1: Navigate to dashboard');
-  await page.goto('/'); // Uses baseURL from playwright.config.ts (port 3099)
+  await page.goto('/'); // Use real dashboard, not fixtures
   await page.waitForLoadState('networkidle');
 
   console.log('🔍 Step 2: Navigate to ADH');
   await page.click('.project-card[data-goto="ADH"]');
   await page.waitForSelector('#batch-select', { timeout: 10000 });
 
-  console.log('🔍 Step 3: Select B-TEST-1 and open migration modal');
-  await page.selectOption('#batch-select', 'B-TEST-1');
+  console.log('🔍 Step 3: Select B8 and open migration modal');
+  await page.selectOption('#batch-select', 'B8'); // Use real batch B8
   await page.waitForFunction(() => {
     const btn = document.querySelector('#btn-migrate') as HTMLButtonElement;
     return btn && !btn.disabled;
@@ -33,8 +33,15 @@ test('Modal Migration - 4 bugs validation', async ({ page }) => {
     return modal && modal.classList.contains('visible');
   }, { timeout: 10000 });
 
-  console.log('🔍 Step 5: Launch migration');
-  await page.click('#migrate-confirm-modal button:has-text("Lancer")');
+  console.log('🔍 Step 5: Verify modal fields and launch migration');
+  // Wait a bit for modal to be fully initialized
+  await page.waitForTimeout(1000);
+
+  // Check modal fields
+  const targetDir = await page.locator('#modal-target-dir').inputValue();
+  console.log('📊 Target dir:', targetDir);
+
+  await page.click('#modal-launch'); // Use ID instead of has-text
 
   console.log('🔍 Step 6: Wait for overlay visible');
   await page.waitForFunction(() => {

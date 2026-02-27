@@ -4,7 +4,7 @@ test('PHASE 1 FINAL PROOF: All fixes working', async ({ page }) => {
   test.setTimeout(180000); // 3min
 
   console.log('🔍 Step 1: Navigate to dashboard');
-  await page.goto('http://localhost:3070');
+  await page.goto('/');
   await page.waitForLoadState('networkidle');
 
   console.log('🔍 Step 2: Navigate to ADH');

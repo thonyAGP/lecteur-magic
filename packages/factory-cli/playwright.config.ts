@@ -29,7 +29,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: /version-badge|restart-button/,
+      testIgnore: /version-badge|restart-button|modal-bugs-validation|phase1-final-proof|migrate-proof|migrate-modal-(ui|visual)|batch-card-sync/,
     },
     {
       name: 'real-server',
@@ -37,7 +37,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3070',
       },
-      testMatch: /version-badge|restart-button/,
+      testMatch: /version-badge|restart-button|modal-bugs-validation|phase1-final-proof|migrate-proof|migrate-modal-(ui|visual)|batch-card-sync/,
     },
   ],
 
@@ -61,7 +61,7 @@ export default defineConfig({
     {
       command: `npx tsx src/cli.ts serve --port 3070 --project ../../`,
       port: 3070,
-      timeout: 15_000,
+      timeout: 120_000, // 2 minutes - real project takes longer to index
       reuseExistingServer: !process.env.CI,
       env: { NODE_ENV: 'test' },
     },
