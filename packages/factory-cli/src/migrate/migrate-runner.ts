@@ -49,6 +49,31 @@ export const formatDuration = (ms: number): string => {
   return `${parts.join(' ')} (${ms}ms)`;
 };
 
+// ─── Phase Display Names (User-Friendly) ──────────────────────
+
+/**
+ * User-friendly phase labels (oriented towards business/user understanding)
+ * instead of technical phase names.
+ */
+export const PHASE_DISPLAY_NAMES: Record<MigratePhase, string> = {
+  [MP.SPEC]: 'Génération spécification',
+  [MP.CONTRACT]: 'Analyse contrat',
+  [MP.ANALYZE]: 'Analyse complète',
+  [MP.TYPES]: 'Types TypeScript',
+  [MP.STORE]: 'Store Zustand',
+  [MP.API]: 'API REST',
+  [MP.PAGE]: 'Page React',
+  [MP.COMPONENTS]: 'Composants UI',
+  [MP.TESTS_UNIT]: 'Tests unitaires',
+  [MP.TESTS_UI]: 'Tests Playwright',
+  [MP.VERIFY_TSC]: 'Vérification TypeScript',
+  [MP.FIX_TSC]: 'Correction TypeScript',
+  [MP.VERIFY_TESTS]: 'Vérification tests',
+  [MP.FIX_TESTS]: 'Correction tests',
+  [MP.INTEGRATE]: 'Intégration',
+  [MP.REVIEW]: 'Revue qualité',
+};
+
 // ─── Auto-parallel ────────────────────────────────────────────
 
 /** Resolve parallel count: 0 = auto (based on CPU cores and program count). */
@@ -781,23 +806,54 @@ export const createBatch = (
 
 // ─── Helpers ───────────────────────────────────────────────────
 
-const PHASE_LABELS: Record<MigratePhase, string> = {
-  [MP.SPEC]: 'Generating spec...',
-  [MP.CONTRACT]: 'Generating contract...',
-  [MP.ANALYZE]: 'Analyzing program...',
-  [MP.TYPES]: 'Generating types...',
-  [MP.STORE]: 'Generating store...',
-  [MP.API]: 'Generating API...',
-  [MP.PAGE]: 'Generating page...',
-  [MP.COMPONENTS]: 'Generating components...',
-  [MP.TESTS_UNIT]: 'Generating unit tests...',
-  [MP.TESTS_UI]: 'Generating UI tests...',
-  [MP.VERIFY_TSC]: 'Running tsc --noEmit...',
-  [MP.FIX_TSC]: 'Fixing TypeScript errors...',
-  [MP.VERIFY_TESTS]: 'Running tests...',
-  [MP.FIX_TESTS]: 'Fixing test errors...',
-  [MP.INTEGRATE]: 'Integrating modules...',
-  [MP.REVIEW]: 'Reviewing coverage...',
+/**
+ * Format an event message for better readability in the dashboard.
+ * Adds visual structure: icons, indentation, separators.
+ */
+const formatEventMessage = (
+  type: MigrateEventType,
+  message: string,
+  phase?: MigratePhase,
+  programId?: string | number,
+  data?: Record<string, unknown>,
+): string => {
+  // Program headers with visual separator
+  if (type === ET.PROGRAM_STARTED) {
+    const index = (data?.index as number) ?? 0;
+    const total = (data?.total as number) ?? 0;
+    const name = (data?.name as string) ?? '';
+    return `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📦 IDE ${programId}${name ? ' - ' + name : ''}                    [${index + 1}/${total}]\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+  }
+
+  // Program completion with summary
+  if (type === ET.PROGRAM_COMPLETED) {
+    const duration = (data?.duration as number) ?? 0;
+    const filesCount = (data?.filesCount as number) ?? 0;
+    return `\n  Résultat: SUCCÈS\n  Fichiers: ${filesCount} générés\n  Durée: ${formatDuration(duration)}\n`;
+  }
+
+  // Phase started/completed with icon and indentation
+  if (type === ET.PHASE_STARTED && phase) {
+    const label = PHASE_DISPLAY_NAMES[phase] ?? phase;
+    return `  → ${label}`;
+  }
+
+  if (type === ET.PHASE_COMPLETED && phase) {
+    const label = PHASE_DISPLAY_NAMES[phase] ?? phase;
+    const duration = (data?.duration as number);
+    const suffix = duration ? ` (${formatDuration(duration)})` : '';
+    return `  ✓ ${label}${suffix}`;
+  }
+
+  // Phase failed with warning icon
+  if (type === ET.PHASE_FAILED && phase) {
+    const label = PHASE_DISPLAY_NAMES[phase] ?? phase;
+    const error = (data?.error as string) ?? 'Unknown error';
+    return `  ✗ ${label}\n    Erreur: ${error}`;
+  }
+
+  // Default: return message as-is with light indentation
+  return `  ${message}`;
 };
 
 const emit = (
@@ -808,10 +864,13 @@ const emit = (
 ): void => {
   if (!config.onEvent) return;
 
+  // Enrich message with visual formatting
+  const displayMessage = formatEventMessage(type, message, extra?.phase, extra?.programId, extra?.data);
+
   const event: MigrateEvent = {
     type,
     timestamp: new Date().toISOString(),
-    message,
+    message: displayMessage, // Use enriched message
     phase: extra?.phase,
     programId: extra?.programId,
     ...(extra?.data ? { data: extra.data } : {}),
@@ -835,7 +894,7 @@ const emit = (
 
   // Emit phase_progress event with label for UI display
   if (type === ET.PHASE_STARTED && extra?.phase && extra?.programId) {
-    const label = PHASE_LABELS[extra.phase] ?? extra.phase;
+    const label = PHASE_DISPLAY_NAMES[extra.phase] ?? extra.phase;
     config.onEvent({
       type: 'phase_progress' as MigrateEventType,
       timestamp: new Date().toISOString(),
