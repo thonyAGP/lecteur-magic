@@ -1,0 +1,30 @@
+
+=== Migration Factory Server Restart ===
+
+[1/5] Killing server on port 3070...
+  No server running
+
+[2/5] Verifying port...
+  Done Port 3070 is free
+
+[3/5] Building code...
+  Done Build success at 12:16:31
+
+[4/5] Starting server...
+
+[5/5] Checking version...
+
+  Done Server running:
+    Version:  1.0.0-qa-phase2-3
+    Commit:   b2ad6ea2
+    Build:    2026-02-26T11:16:32.443Z
+    Started:  2026-02-26T11:16:34.314Z
+
+  Warning Server OUTDATED!
+    Expected: 4eaf602b
+    Running:  b2ad6ea2
+
+Success Server ready at http://localhost:3070
+
+Job ID: 5
+

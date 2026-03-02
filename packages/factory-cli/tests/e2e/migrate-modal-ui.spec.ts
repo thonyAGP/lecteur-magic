@@ -15,7 +15,7 @@ test.describe('Migration Modal UI - Real B8 Bedrock', () => {
 
   test.beforeEach(async ({ page }) => {
     // Navigate to dashboard (assumes server is already running)
-    await page.goto('http://localhost:3070');
+    await page.goto('/');
 
     // Wait for dashboard to load
     await page.waitForSelector('.project-card[data-goto="ADH"]', { timeout: 30000 });

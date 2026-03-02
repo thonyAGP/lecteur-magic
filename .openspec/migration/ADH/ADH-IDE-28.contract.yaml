@@ -1,0 +1,645 @@
+program:
+  id: 28
+  name: ""
+  complexity: MEDIUM
+  callers: []
+  callees: []
+  tasks_count: 192
+  tables_count: 60
+  expressions_count: 81
+rules:
+  - id: RM-002
+    description: "Condition: W0 validation [N] egale 'V'"
+    condition: W0 validation [N]='V'
+    variables:
+      - FA
+    status: IMPL
+    target_file: adh-web/src/__tests__/sessionConcurrencyStore.test.ts
+    gap_notes: ""
+  - id: RM-003
+    description: "Condition: W0 validation [N] different de 'V'"
+    condition: W0 validation [N]<>'V'
+    variables:
+      - FA
+    status: IMPL
+    target_file: adh-web/src/__tests__/sessionConcurrencyStore.test.ts
+    gap_notes: ""
+  - id: RM-001
+    description: "Condition: W0 reseau [M] different de 'R'"
+    condition: W0 reseau [M]<>'R'
+    variables:
+      - EZ
+    status: IMPL
+    target_file: adh-web/src/__tests__/fermetureSessionsStore.test.ts
+    gap_notes: ""
+  - id: RM-004
+    description: "Condition: W0 chrono histo [BA] egale 'F'"
+    condition: W0 chrono histo [BA]='F'
+    variables:
+      - FN
+    status: IMPL
+    target_file: adh-web/src/__tests__/sessionListStore.test.ts
+    gap_notes: ""
+  - id: RM-005
+    description: "Condition: W0 chrono histo [BA] different de 'F'"
+    condition: W0 chrono histo [BA]<>'F'
+    variables:
+      - FN
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-006
+    description: Negation de (W0 code LOG existe [BB]) (condition inversee)
+    condition: NOT (W0 code LOG existe [BB])
+    variables:
+      - FO
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-007
+    description: Si W0 Filiation garantie ... [BF] alors IF (W0 reprise confirmee [BD] sinon 'RETRY','DONE'),'PASSED')
+    condition: W0 Filiation garantie ... [BF]
+    variables:
+      - FJ
+      - FQ
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-008
+    description: Negation de (W0 reprise confirmee [BD]) (condition inversee)
+    condition: NOT (W0 reprise confirmee [BD])
+    variables:
+      - FJ
+      - FQ
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-009
+    description: Negation de (W0 Compte remplace à l... [BI]) (condition inversee)
+    condition: NOT (W0 Compte remplace à l... [BI])
+    variables:
+      - FJ
+      - FQ
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-011
+    description: Condition toujours vraie (flag actif)
+    condition: W0 reprise confirmee [BD]
+    variables:
+      - FJ
+      - FQ
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-010
+    description: "Condition composite: [BK]=6 OR P0 Reprise Auto [I]"
+    condition: "[BK]=6 OR P0 Reprise Auto [I]"
+    variables:
+      - EV
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-012
+    description: Negation de P0.Sans interface [J] (condition inversee)
+    condition: NOT P0.Sans interface [J]
+    variables:
+      - EW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: RM-013
+    description: Negation de VG78 (condition inversee)
+    condition: NOT VG78
+    variables: []
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+variables:
+  - local_id: FA
+    name: W0 validation
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: EZ
+    name: W0 reseau
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FN
+    name: W0 chrono histo
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FO
+    name: W0 code LOG existe
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FJ
+    name: W0 reprise
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: FQ
+    name: W0 reprise confirmee
+    type: Real
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: EV
+    name: P0 Reprise Auto
+    type: Parameter
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - local_id: EW
+    name: P0.Sans interface
+    type: Parameter
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+tables:
+  - id: 343
+    name: histo_fusionseparation_saisie
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 30
+    name: gm-recherche_____gmr
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 39
+    name: depot_garantie___dga
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 340
+    name: histo_fusionseparation
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 47
+    name: compte_gm________cgm
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 23
+    name: reseau_cloture___rec
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 51
+    name: fusion_eclatementfec
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 33
+    name: prestations______pre
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 131
+    name: fichier_validation
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 37
+    name: commentaire_gm_________acc
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 831
+    name: import_go_erreur_affection
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 837
+    name: "##_pv_customer_dat"
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 46
+    name: mvt_prestation___mpr
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 79
+    name: gratuites________gra
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 137
+    name: fichier_histotel
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 834
+    name: tpe_par_terminal
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 805
+    name: vente_par_moyen_paiement
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 40
+    name: comptable________cte
+    mode: RW
+    status: IMPL
+    target_file: adh-web/src/components/caisse/gestionCaisse/HeaderSectionPanel.tsx
+    gap_notes: ""
+  - id: 807
+    name: plafond_lit
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 32
+    name: prestations
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 312
+    name: ez_card
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 31
+    name: gm-complet_______gmc
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 35
+    name: personnel_go______go
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 786
+    name: qualite_avant_reprise
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 123
+    name: fichier_messagerie
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 147
+    name: change_vente_____chg
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 80
+    name: codes_autocom____aut
+    mode: RW
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 44
+    name: change___________chg
+    mode: RW
+    status: IMPL
+    target_file: adh-web/src/components/caisse/articleZoom/HeaderPanel.tsx
+    gap_notes: ""
+  - id: 266
+    name: cc_comptable
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 309
+    name: vente____________vep
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/components/caisse/sessionHistory/FiltersPanel.tsx
+    gap_notes: ""
+  - id: 15
+    name: transac_entete_bar
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 307
+    name: vente_option_veo
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 41
+    name: depot_objets_____doa
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 463
+    name: heure_de_passage
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 947
+    name: Table_947
+    mode: W
+    status: N/A
+    target_file: ""
+    gap_notes: Legacy-only (memory/temp table)
+  - id: 34
+    name: hebergement______heb
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 168
+    name: heb_circuit______hci
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 268
+    name: cc_total_par_type
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 272
+    name: cc_type_detail
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 48
+    name: lignes_de_solde__sld
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 271
+    name: cc_total
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 298
+    name: participants_____par
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 29
+    name: voyages__________voy
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 19
+    name: bl_detail
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 38
+    name: comptable_gratuite
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 358
+    name: import_mod
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/components/caisse/articleZoom/ArticleGridPanel.tsx
+    gap_notes: ""
+  - id: 42
+    name: depot_devises____dda
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 366
+    name: pms_print_param
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 301
+    name: details_partici__dpa
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 148
+    name: lignes_de_solde__sld
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 43
+    name: solde_devises____sda
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 263
+    name: vente
+    mode: W
+    status: IMPL
+    target_file: adh-web/src/components/caisse/sessionHistory/FiltersPanel.tsx
+    gap_notes: ""
+  - id: 382
+    name: pv_discount_reasons
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 171
+    name: commentaire______com
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 285
+    name: email
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 804
+    name: valeur_credit_bar_defaut
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 36
+    name: client_gm
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 93
+    name: vendeurs_________ven
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 1059
+    name: Table_1059
+    mode: W
+    status: N/A
+    target_file: ""
+    gap_notes: Legacy-only (memory/temp table)
+  - id: 167
+    name: troncon__________tro
+    mode: W
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 342
+    name: histo__fusionseparation_log
+    mode: R
+    status: MISSING
+    target_file: ""
+    gap_notes: ""
+  - id: 70
+    name: date_comptable___dat
+    mode: R
+    status: IMPL
+    target_file: adh-web/src/components/caisse/gestionCaisse/HeaderSectionPanel.tsx
+    gap_notes: ""
+callees:
+  - id: 35
+    name: Write histo_Fus_Sep_Log
+    calls: 13
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 30
+    name: Read histo Fus_Sep_Det
+    calls: 10
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 31
+    name: Write histo_Fus_Sep_Det
+    calls: 10
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 29
+    name: Write histo Fus_Sep
+    calls: 6
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 32
+    name: Write histo_Fus_Sep_Saisie
+    calls: 4
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 33
+    name: Delete histo_Fus_Sep_Saisie
+    calls: 2
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 43
+    name: Recuperation du titre
+    calls: 2
+    context: Recuperation donnees
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 34
+    name: Read histo_Fus_Sep_Log
+    calls: 1
+    context: Historique/consultation
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 36
+    name: Print Separation ou fusion
+    calls: 1
+    context: Impression ticket/document
+    status: MISSING
+    target: ""
+    gap_notes: ""
+  - id: 179
+    name: Get Printer
+    calls: 1
+    context: Impression ticket/document
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+  - id: 180
+    name: Printer choice
+    calls: 1
+    context: Impression ticket/document
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+  - id: 181
+    name: Set Listing Number
+    calls: 1
+    context: Configuration impression
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+  - id: 182
+    name: Raz Current Printer
+    calls: 1
+    context: Impression ticket/document
+    status: N/A
+    target: ""
+    gap_notes: Legacy print/utility (N/A for web)
+overall:
+  rules_total: 13
+  rules_impl: 4
+  rules_partial: 0
+  rules_missing: 9
+  rules_na: 0
+  variables_key_count: 8
+  callees_total: 13
+  callees_impl: 0
+  callees_missing: 9
+  coverage_pct: 11
+  status: contracted
+  generated: 2026-02-26T09:10:53.572Z
+  notes: Auto-generated from ADH-IDE-28.md

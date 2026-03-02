@@ -4,7 +4,7 @@ test('PROOF: Batch card B8 shows 1 vérifié after API load', async ({ page }) =
   test.setTimeout(60000);
 
   console.log('🔍 Step 1: Navigate to dashboard');
-  await page.goto('http://localhost:3070');
+  await page.goto('/');
   await page.waitForLoadState('networkidle');
 
   console.log('🔍 Step 2: Wait for API /api/status to load');

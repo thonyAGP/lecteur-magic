@@ -12,7 +12,7 @@ test.describe('Migration Modal Visual - Headless + Screenshots', () => {
 
   test('should display 3 new columns with visual proof', async ({ page }) => {
     // Navigate to dashboard
-    await page.goto('http://localhost:3070');
+    await page.goto('/');
     await page.waitForSelector('.project-card[data-goto="ADH"]', { timeout: 30000 });
 
     // Navigate to ADH

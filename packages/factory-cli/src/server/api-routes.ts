@@ -21,10 +21,12 @@ import type { LogEntry } from './log-storage.js';
 import { runCodegen, runCodegenEnriched } from '../generators/codegen/codegen-runner.js';
 import type { CodegenEnrichConfig, EnrichMode } from '../generators/codegen/enrich-model.js';
 import { runMigration, getMigrateStatus, createBatch } from '../migrate/migrate-runner.js';
+import { BUILD_INFO } from '../build-info.js';
+import { getGitStatus } from './git-status.js';
 import { DEFAULT_PHASE_MODELS } from '../migrate/migrate-types.js';
 import type { MigrateConfig, MigratePhase } from '../migrate/migrate-types.js';
 import { configureClaudeMode } from '../migrate/migrate-claude.js';
-import { startMigration, addMigrateEvent, endMigration, getMigrateActiveState } from './migrate-state.js';
+import { startMigration, addMigrateEvent, endMigration, getMigrateActiveState, persistState } from './migrate-state.js';
 import { createMagicAdapter } from '../adapters/magic-adapter.js';
 import { resolveDependencies } from '../calculators/dependency-resolver.js';
 import { analyzeProject, analyzedBatchesToTrackerBatches } from '../calculators/project-analyzer.js';
@@ -438,6 +440,9 @@ export const handleMigrateStream = async (
   // Buffer events for dashboard reconnection after page refresh
   startMigration(batchId, programIds.length, targetDir, claudeMode, dryRun, programList, batchEstimatedHours);
 
+  // Auto-persist state after important events (I2 integration)
+  const stateFile = path.join(config.migrationDir, config.contractSubDir, 'migration-state.json');
+
   const bufferedSend = (event: unknown) => {
     addMigrateEvent(event);
     sse.send(event);
@@ -449,8 +454,13 @@ export const handleMigrateStream = async (
       programId: e.programId as string | number | undefined,
       phase: e.phase as string | undefined,
       message: (e.message as string) ?? (e.type as string) ?? '',
-      data: e.data as Record<string, unknown> | undefined,
+      data: e as Record<string, unknown>, // FIX: Preserve entire event in data field
     });
+
+    // Persist state after program completion/failure (I2)
+    if (e.type === 'program_completed' || e.type === 'program_failed' || e.type === 'migrate_started') {
+      persistState(stateFile);
+    }
   };
 
   migrateConfig.onEvent = (event) => bufferedSend(event);
@@ -466,6 +476,11 @@ export const handleMigrateStream = async (
 
   _migrateAbortController = null;
   endMigration();
+
+  // Clear persisted state after completion (I2)
+  const { clearPersistedState } = await import('./migrate-state.js');
+  clearPersistedState(stateFile);
+
   sse.close();
 };
 
@@ -524,10 +539,22 @@ export const handleMigrateActive = (_ctx: RouteContext, res: ServerResponse): vo
 let _migrateAbortController: AbortController | null = null;
 
 export const handleMigrateAbort = (res: ServerResponse): void => {
+  // [R4.1] Check if migration is still running
+  const state = getMigrateActiveState();
+  if (!state.running) {
+    json(res, { aborted: false, message: 'Migration already completed' });
+    return;
+  }
+
+  // [R4.2] Abort active migration
   if (_migrateAbortController) {
     _migrateAbortController.abort();
     _migrateAbortController = null;
-    json(res, { aborted: true });
+
+    // Emit abort event for logging
+    addMigrateEvent({ type: 'abort_initiated', timestamp: new Date().toISOString() });
+
+    json(res, { aborted: true, message: 'Migration abort signal sent' });
   } else {
     json(res, { aborted: false, message: 'No migration running' });
   }
@@ -740,4 +767,52 @@ export const handleLogsLatestGet = (ctx: RouteContext, query: URLSearchParams, r
 
   const logs = getLatestLogs(logDir, batch, count, level);
   json(res, logs);
+};
+
+// ─── Version Info ────────────────────────────────────────────────
+
+/**
+ * GET /api/version
+ * Returns build info to verify server is running latest code.
+ */
+export const handleVersion = (_ctx: RouteContext, res: ServerResponse): void => {
+  json(res, {
+    ...BUILD_INFO,
+    serverStartTime: new Date().toISOString(),
+  });
+};
+
+/**
+ * GET /api/git/status
+ * Returns git status comparing server vs remote.
+ */
+export const handleGitStatus = (ctx: RouteContext, res: ServerResponse): void => {
+  const status = getGitStatus(ctx.projectDir);
+  json(res, status);
+};
+
+/**
+ * POST /api/server/restart
+ * Triggers server restart script.
+ */
+export const handleServerRestart = async (_ctx: RouteContext, res: ServerResponse): Promise<void> => {
+  const { exec } = await import('node:child_process');
+
+  // Execute restart script in background
+  exec('powershell -ExecutionPolicy Bypass -File ./restart-server-qa.ps1', {
+    cwd: process.cwd(),
+  }, (err) => {
+    if (err) {
+      console.error('[SERVER RESTART FAILED]', err);
+    }
+  });
+
+  // Return immediately (server will restart)
+  json(res, { restarting: true, message: 'Server restart initiated. Dashboard will reconnect automatically.' });
+
+  // Shutdown current server after response sent
+  setTimeout(() => {
+    console.log('[SERVER RESTART] Shutting down for restart...');
+    process.exit(0);
+  }, 1000);
 };

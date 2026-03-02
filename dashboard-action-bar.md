@@ -1,0 +1,313 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "SPECMAP Migration Dashboard" [level=1] [ref=e4]
+    - generic [ref=e5]: 29 projets · 1 actif · 212 programmes LIVE
+    - generic [ref=e6]: "Dernière mise à jour : 26 février 2026 à 12:01"
+  - navigation [ref=e7]:
+    - button "Vue Globale" [ref=e8] [cursor=pointer]: Vue Globale
+    - button "ADH" [ref=e10] [cursor=pointer]: ADH
+    - button "Tokens & Coûts" [ref=e12] [cursor=pointer]: Tokens & Coûts
+  - generic [ref=e14]:
+    - generic [ref=e15]: Connecté
+    - 'generic "Server: b2ad6ea2 | Latest: 4eaf602b" [ref=e327]': ⚠ 10 commits behind
+    - button "🔄 Restart" [ref=e328] [cursor=pointer]
+    - combobox [ref=e17]:
+      - option "Sélectionner un batch..." [selected]
+      - option "B2 - Caisse (17 progs, 12/17 vérifiés)"
+      - option "B3 - General (1/2) (25 progs, 25/25 vérifiés)"
+      - option "B4 - General (2/2) (23 progs, 0/23 vérifiés)"
+      - option "B5 - Impression (13 progs, 1/13 vérifiés)"
+      - option "B6 - Compte (8 progs, 0/8 vérifiés)"
+      - option "B7 - Change (10 progs, 3/10 vérifiés)"
+      - option "B8 - Stock (3 progs, 1/3 vérifiés)"
+      - option "B9 - Ventes (16 progs, 0/16 vérifiés)"
+      - option "B10 - Divers (8 progs, 1/8 vérifiés)"
+      - option "B11 - Comptes de depôt (6 progs, 0/6 vérifiés)"
+      - option "B12 - Club Med Pass menu (10 progs, 5/10 vérifiés)"
+      - option "B13 - Garantie sur compte (8 progs, 0/8 vérifiés)"
+      - option "B14 - Fusion (3 progs, 2/3 vérifiés)"
+      - option "B15 - Solde Easy Check Out (15 progs, 0/15 vérifiés)"
+      - option "B16 - Factures (Tble Compta&Vent) V3 (6 progs, 0/6 vérifiés)"
+      - option "B17 - Start (6 progs, 0/6 vérifiés)"
+      - option "B18 - Miscellaneous (18 progs, 0/18 vérifiés)"
+    - button "Pré-requis" [ref=e18] [cursor=pointer]
+    - button "Lancer Pipeline" [ref=e19] [cursor=pointer]
+    - button "Vérifier" [ref=e20] [cursor=pointer]
+    - button "Gaps" [ref=e21] [cursor=pointer]
+    - button "Calibrer" [ref=e22] [cursor=pointer]
+    - button "Générer Code" [ref=e23] [cursor=pointer]
+    - button "Migrer Module" [ref=e24] [cursor=pointer]
+    - button "Migration Auto" [ref=e25] [cursor=pointer]
+    - button "Analyser Projet" [ref=e26] [cursor=pointer]
+    - combobox "Enrichment mode" [ref=e27]:
+      - option "Sans enrichissement" [selected]
+      - option "Heuristique"
+      - option "Claude API (Perso)"
+      - option "Claude API (Bedrock)"
+      - option "Claude CLI"
+    - generic [ref=e28]:
+      - checkbox "Simulation" [ref=e29]
+      - text: Simulation
+    - button "?" [ref=e30] [cursor=pointer]
+  - generic [ref=e31]:
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - generic [ref=e34]: 1/29
+        - generic [ref=e35]: Projets actifs
+        - generic [ref=e36]: 28 en attente
+      - generic [ref=e37]:
+        - generic [ref=e38]: "212"
+        - generic [ref=e39]: Programmes LIVE
+        - generic [ref=e40]: Tous projets confondus
+      - generic [ref=e41]:
+        - generic [ref=e42]: 27/212
+        - generic [ref=e43]: Vérifiés
+        - generic [ref=e44]: 13% (33 enrichis, 1 analysés)
+      - generic [ref=e45]:
+        - generic [ref=e46]: "1"
+        - generic [ref=e47]: Analysés
+        - generic [ref=e48]: 1 programmes analysés
+    - generic [ref=e49]:
+      - heading "Pipeline globale" [level=2] [ref=e50]
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: Vérifié
+          - generic [ref=e56]: 27 (13%)
+        - generic [ref=e57]:
+          - generic [ref=e58]: Enrichi
+          - generic [ref=e61]: 33 (16%)
+        - generic [ref=e62]:
+          - generic [ref=e63]: Analysé
+          - generic [ref=e65]: 1 (0%)
+        - generic [ref=e66]:
+          - generic [ref=e67]: En attente
+          - generic [ref=e70]: 151 (71%)
+    - generic [ref=e71]:
+      - heading "Projets" [level=2] [ref=e72]
+      - generic [ref=e73]:
+        - generic [ref=e74] [cursor=pointer]:
+          - generic [ref=e75]: ADH
+          - generic [ref=e76]: Adherents/Caisse
+          - generic [ref=e78]: EN COURS
+          - generic [ref=e82]: 13%
+          - generic [ref=e83]:
+            - generic [ref=e84]: 212 LIVE
+            - generic [ref=e85]: 27 vérifiés
+            - generic [ref=e86]: 1 analysés
+            - generic [ref=e87]: 18 modules
+        - generic [ref=e88]:
+          - generic [ref=e89]: CAB
+          - generic [ref=e90]: Caisse batch
+          - generic [ref=e92]: NON DÉMARRÉ
+          - generic [ref=e93]: 23 programmes
+        - generic [ref=e94]:
+          - generic [ref=e95]: CAP
+          - generic [ref=e96]: Caisse parametres
+          - generic [ref=e98]: NON DÉMARRÉ
+          - generic [ref=e99]: 24 programmes
+        - generic [ref=e100]:
+          - generic [ref=e101]: EXB
+          - generic [ref=e102]: Exports batch
+          - generic [ref=e104]: NON DÉMARRÉ
+          - generic [ref=e105]: 25 programmes
+        - generic [ref=e106]:
+          - generic [ref=e107]: EXF
+          - generic [ref=e108]: Exports fichiers
+          - generic [ref=e110]: NON DÉMARRÉ
+          - generic [ref=e111]: 26 programmes
+        - generic [ref=e112]:
+          - generic [ref=e113]: EXM
+          - generic [ref=e114]: Exports manuels
+          - generic [ref=e116]: NON DÉMARRÉ
+          - generic [ref=e117]: 18 programmes
+        - generic [ref=e118]:
+          - generic [ref=e119]: FIN
+          - generic [ref=e120]: Finance
+          - generic [ref=e122]: NON DÉMARRÉ
+          - generic [ref=e123]: 16 programmes
+        - generic [ref=e124]:
+          - generic [ref=e125]: GES
+          - generic [ref=e126]: Gestion
+          - generic [ref=e128]: NON DÉMARRÉ
+          - generic [ref=e129]: 54 programmes
+        - generic [ref=e130]:
+          - generic [ref=e131]: Import
+          - generic [ref=e132]: Imports donnees
+          - generic [ref=e134]: NON DÉMARRÉ
+          - generic [ref=e135]: 454 programmes
+        - generic [ref=e136]:
+          - generic [ref=e137]: LOG
+          - generic [ref=e138]: Logging
+          - generic [ref=e140]: NON DÉMARRÉ
+          - generic [ref=e141]: 20 programmes
+        - generic [ref=e142]:
+          - generic [ref=e143]: MAI
+          - generic [ref=e144]: Maintenance
+          - generic [ref=e146]: NON DÉMARRÉ
+          - generic [ref=e147]: 60 programmes
+        - generic [ref=e148]:
+          - generic [ref=e149]: Menu
+          - generic [ref=e150]: Menus
+          - generic [ref=e152]: NON DÉMARRÉ
+          - generic [ref=e153]: 18 programmes
+        - generic [ref=e154]:
+          - generic [ref=e155]: NET
+          - generic [ref=e156]: Network
+          - generic [ref=e158]: NON DÉMARRÉ
+          - generic [ref=e159]: 10 programmes
+        - generic [ref=e160]:
+          - generic [ref=e161]: PBG
+          - generic [ref=e162]: Planification/Batch
+          - generic [ref=e164]: NON DÉMARRÉ
+          - generic [ref=e165]: 180 programmes
+        - generic [ref=e166]:
+          - generic [ref=e167]: PBP
+          - generic [ref=e168]: Editions/Exports
+          - generic [ref=e170]: NON DÉMARRÉ
+          - generic [ref=e171]: 242 programmes
+        - generic [ref=e172]:
+          - generic [ref=e173]: PBS
+          - generic [ref=e174]: Batch secondaire
+          - generic [ref=e176]: NON DÉMARRÉ
+          - generic [ref=e177]: 59 programmes
+        - generic [ref=e178]:
+          - generic [ref=e179]: POO
+          - generic [ref=e180]: Pooling
+          - generic [ref=e182]: NON DÉMARRÉ
+          - generic [ref=e183]: 59 programmes
+        - generic [ref=e184]:
+          - generic [ref=e185]: PTR
+          - generic [ref=e186]: Pointage
+          - generic [ref=e188]: NON DÉMARRÉ
+          - generic [ref=e189]: 27 programmes
+        - generic [ref=e190]:
+          - generic [ref=e191]: PUG
+          - generic [ref=e192]: Purge
+          - generic [ref=e194]: NON DÉMARRÉ
+          - generic [ref=e195]: 16 programmes
+        - generic [ref=e196]:
+          - generic [ref=e197]: PVE
+          - generic [ref=e198]: Point de Vente/POS
+          - generic [ref=e200]: NON DÉMARRÉ
+          - generic [ref=e201]: 160 programmes
+        - generic [ref=e202]:
+          - generic [ref=e203]: QUA
+          - generic [ref=e204]: Qualite
+          - generic [ref=e206]: NON DÉMARRÉ
+          - generic [ref=e207]: 22 programmes
+        - generic [ref=e208]:
+          - generic [ref=e209]: REF
+          - generic [ref=e210]: Reference (tables partagees)
+          - generic [ref=e212]: NON DÉMARRÉ
+          - generic [ref=e213]: 738 programmes
+        - generic [ref=e214]:
+          - generic [ref=e215]: REQ
+          - generic [ref=e216]: Requetes
+          - generic [ref=e218]: NON DÉMARRÉ
+          - generic [ref=e219]: 51 programmes
+        - generic [ref=e220]:
+          - generic [ref=e221]: RET
+          - generic [ref=e222]: Retours
+          - generic [ref=e224]: NON DÉMARRÉ
+          - generic [ref=e225]: 12 programmes
+        - generic [ref=e226]:
+          - generic [ref=e227]: TPE
+          - generic [ref=e228]: Terminal paiement
+          - generic [ref=e230]: NON DÉMARRÉ
+          - generic [ref=e231]: 3 programmes
+        - generic [ref=e232]:
+          - generic [ref=e233]: TST
+          - generic [ref=e234]: Tests
+          - generic [ref=e236]: NON DÉMARRÉ
+          - generic [ref=e237]: 5 programmes
+        - generic [ref=e238]:
+          - generic [ref=e239]: UTILS
+          - generic [ref=e240]: Utilitaires (.NET)
+          - generic [ref=e242]: NON DÉMARRÉ
+          - generic [ref=e243]: 2 programmes
+        - generic [ref=e244]:
+          - generic [ref=e245]: VIL
+          - generic [ref=e246]: Village
+          - generic [ref=e248]: NON DÉMARRÉ
+          - generic [ref=e249]: 100 programmes
+        - generic [ref=e250]:
+          - generic [ref=e251]: WEL
+          - generic [ref=e252]: Welcome/Accueil
+          - generic [ref=e254]: NON DÉMARRÉ
+          - generic [ref=e255]: 68 programmes
+  - generic [ref=e256]:
+    - heading "📚 Documentation" [level=2] [ref=e257]
+    - generic [ref=e258]:
+      - button "Architecture" [ref=e259] [cursor=pointer]
+      - button "Workflow" [ref=e260] [cursor=pointer]
+      - button "Spec Pipeline" [ref=e261] [cursor=pointer]
+      - button "SPECMAP" [ref=e262] [cursor=pointer]
+      - button "Packages" [ref=e263] [cursor=pointer]
+      - button "Commandes" [ref=e264] [cursor=pointer]
+      - button "Glossaire" [ref=e265] [cursor=pointer]
+    - generic [ref=e266]:
+      - heading "🏗️ Architecture globale" [level=3] [ref=e267]
+      - paragraph [ref=e268]: Le système de migration Magic Unipaas est composé de 5 packages principaux qui travaillent ensemble pour automatiser la migration des programmes legacy vers des applications web modernes.
+      - heading "Composants principaux" [level=4] [ref=e269]
+      - table [ref=e270]:
+        - rowgroup [ref=e271]:
+          - row "Package Technologie Rôle Statut" [ref=e272]:
+            - columnheader "Package" [ref=e273] [cursor=pointer]
+            - columnheader "Technologie" [ref=e274] [cursor=pointer]
+            - columnheader "Rôle" [ref=e275] [cursor=pointer]
+            - columnheader "Statut" [ref=e276] [cursor=pointer]
+        - rowgroup [ref=e277]:
+          - row "spec-pipeline-v72 PowerShell + MCP Génère automatiquement les specs depuis les XML Magic (5 phases) Prod" [ref=e278]:
+            - cell "spec-pipeline-v72" [ref=e279]:
+              - strong [ref=e280]: spec-pipeline-v72
+            - cell "PowerShell + MCP" [ref=e281]
+            - cell "Génère automatiquement les specs depuis les XML Magic (5 phases)" [ref=e282]
+            - cell "Prod" [ref=e283]:
+              - generic [ref=e284]: Prod
+          - row "parser TypeScript Parse les expressions Magic → AST → TypeScript/C#/Python Stable" [ref=e285]:
+            - cell "parser" [ref=e286]:
+              - strong [ref=e287]: parser
+            - cell "TypeScript" [ref=e288]
+            - cell "Parse les expressions Magic → AST → TypeScript/C#/Python" [ref=e289]
+            - cell "Stable" [ref=e290]:
+              - generic [ref=e291]: Stable
+          - row "factory-cli TypeScript Pipeline SPECMAP (CONTRACT → ENRICH → VERIFY) Dev" [ref=e292]:
+            - cell "factory-cli" [ref=e293]:
+              - strong [ref=e294]: factory-cli
+            - cell "TypeScript" [ref=e295]
+            - cell "Pipeline SPECMAP (CONTRACT → ENRICH → VERIFY)" [ref=e296]
+            - cell "Dev" [ref=e297]:
+              - generic [ref=e298]: Dev
+          - row "adh-web React 19 + Vite Application web migrée (système Caisse) Migration" [ref=e299]:
+            - cell "adh-web" [ref=e300]:
+              - strong [ref=e301]: adh-web
+            - cell "React 19 + Vite" [ref=e302]
+            - cell "Application web migrée (système Caisse)" [ref=e303]
+            - cell "Migration" [ref=e304]:
+              - generic [ref=e305]: Migration
+          - row "specmap-dashboard HTML statique Dashboard de progression multi-projets Prod" [ref=e306]:
+            - cell "specmap-dashboard" [ref=e307]:
+              - strong [ref=e308]: specmap-dashboard
+            - cell "HTML statique" [ref=e309]
+            - cell "Dashboard de progression multi-projets" [ref=e310]
+            - cell "Prod" [ref=e311]:
+              - generic [ref=e312]: Prod
+      - heading "Structure des données" [level=4] [ref=e313]
+      - generic [ref=e314]:
+        - strong [ref=e315]: 📁 .openspec/
+        - text: "- Dossier central de spécifications"
+        - list [ref=e316]:
+          - listitem [ref=e317]:
+            - code [ref=e318]: specs/
+            - text: "- Specs enrichies (212 programmes ADH)"
+          - listitem [ref=e319]:
+            - code [ref=e320]: migration/
+            - text: "- Données SPECMAP (contracts, live-programs.json)"
+          - listitem [ref=e321]:
+            - code [ref=e322]: tickets/
+            - text: "- Tickets Jira liés (CMDS-XXX, PMS-XXX)"
+          - listitem [ref=e323]:
+            - code [ref=e324]: pipeline-output/
+            - text: "- Sorties brutes du spec-pipeline"
+  - contentinfo [ref=e325]:
+    - paragraph [ref=e326]: Généré le 26 février 2026 à 12:01 par Migration Factory
