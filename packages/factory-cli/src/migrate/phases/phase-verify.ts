@@ -379,7 +379,7 @@ export const runVerifyFixLoop = async (
     tscPasses++;
     const passProgress = tscWeight * (i / maxPasses);
 
-    emitVerify(config, ET.PHASE_STARTED, `TSC pass ${i + 1}/${maxPasses}: running tsc --noEmit`, MP.VERIFY_TSC,
+    emitVerify(config, ET.PHASE_STARTED, `Vérification TypeScript (tentative ${i + 1}/${maxPasses})`, MP.VERIFY_TSC,
       { pass: i + 1, maxPasses, verifyProgress: passProgress });
 
     const tscResult = await runVerifyTscPhase(config);
@@ -387,19 +387,19 @@ export const runVerifyFixLoop = async (
 
     if (tscResult.clean) {
       tscClean = true;
-      emitVerify(config, ET.PHASE_STARTED, `TSC pass ${i + 1}: CLEAN`, MP.VERIFY_TSC,
+      emitVerify(config, ET.PHASE_STARTED, `✓ TypeScript propre (${i + 1} tentative${i > 0 ? 's' : ''})`, MP.VERIFY_TSC,
         { pass: i + 1, maxPasses, errors: 0, clean: true, verifyProgress: tscWeight });
       break;
     }
 
-    emitVerify(config, ET.PHASE_STARTED, `TSC pass ${i + 1}: ${tscResult.errorCount} errors`, MP.FIX_TSC,
+    emitVerify(config, ET.PHASE_STARTED, `⚠ ${tscResult.errorCount} erreur${tscResult.errorCount > 1 ? 's' : ''} TypeScript détectée${tscResult.errorCount > 1 ? 's' : ''}`, MP.FIX_TSC,
       { pass: i + 1, maxPasses, errors: tscResult.errorCount, verifyProgress: afterVerifyProgress });
 
     if (i < maxPasses - 1) {
       const fixResult = await runFixTscPhase(tscResult.errors, config);
       const afterFixProgress = tscWeight * ((i + 1) / maxPasses);
 
-      emitVerify(config, ET.PHASE_STARTED, `Fix TSC pass ${i + 1}: ${fixResult.filesFixed} files fixed`, MP.FIX_TSC,
+      emitVerify(config, ET.PHASE_STARTED, `✓ Correction appliquée (${fixResult.filesFixed} fichier${fixResult.filesFixed > 1 ? 's' : ''})`, MP.FIX_TSC,
         { pass: i + 1, maxPasses, filesFixed: fixResult.filesFixed, verifyProgress: afterFixProgress });
     }
   }
@@ -410,19 +410,19 @@ export const runVerifyFixLoop = async (
       testPasses++;
       const testProgress = tscWeight + (1 - tscWeight) * (i / testMaxPasses);
 
-      emitVerify(config, ET.PHASE_STARTED, `Tests pass ${i + 1}/${testMaxPasses}: running vitest`, MP.VERIFY_TESTS,
+      emitVerify(config, ET.PHASE_STARTED, `Vérification tests (tentative ${i + 1}/${testMaxPasses})`, MP.VERIFY_TESTS,
         { pass: i + 1, maxPasses: testMaxPasses, verifyProgress: testProgress });
 
       const testResult = await runVerifyTestsPhase(config, domainFilter);
 
       if (testResult.pass) {
         testsPass = true;
-        emitVerify(config, ET.PHASE_STARTED, `Tests pass ${i + 1}: ALL PASSED (${testResult.passedTests} tests)`, MP.VERIFY_TESTS,
+        emitVerify(config, ET.PHASE_STARTED, `✓ Tous les tests passent (${testResult.passedTests} test${testResult.passedTests > 1 ? 's' : ''})`, MP.VERIFY_TESTS,
           { pass: i + 1, maxPasses: testMaxPasses, passed: true, verifyProgress: 1 });
         break;
       }
 
-      emitVerify(config, ET.PHASE_STARTED, `Tests pass ${i + 1}: ${testResult.failures.length} failures`, MP.FIX_TESTS,
+      emitVerify(config, ET.PHASE_STARTED, `⚠ ${testResult.failures.length} test${testResult.failures.length > 1 ? 's' : ''} en échec`, MP.FIX_TESTS,
         { pass: i + 1, maxPasses: testMaxPasses, failures: testResult.failures.length,
           verifyProgress: tscWeight + (1 - tscWeight) * ((i + 0.5) / testMaxPasses) });
 
