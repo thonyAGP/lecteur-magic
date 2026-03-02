@@ -35,7 +35,11 @@ const emitVerify = (
 const execFileAsync = promisify(execFile);
 
 // Windows: npm/npx/pnpm are .cmd scripts, need shell:true
-const EXEC_OPTS = { shell: process.platform === 'win32' } as const;
+// Use windowsHide to prevent terminal windows from popping up
+const EXEC_OPTS = {
+  shell: process.platform === 'win32',
+  windowsHide: true, // Prevent windows from opening on Windows
+} as const;
 
 // ─── TSC Error Parsing ─────────────────────────────────────────
 
