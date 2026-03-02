@@ -18,7 +18,7 @@ test('PROOF: Migration modal displays 3 new columns', async ({ page }) => {
   });
 
   console.log('🔍 Step 1: Navigate to dashboard');
-  await page.goto('http://localhost:3070');
+  await page.goto('/');
   await page.waitForLoadState('networkidle');
   await page.screenshot({ path: 'test-results/proof-01-homepage.png', fullPage: true });
 

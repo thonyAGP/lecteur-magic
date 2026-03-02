@@ -517,6 +517,8 @@ ${MULTI_CSS}
 
 <div class="action-bar" id="action-bar">
   <span class="server-badge disconnected" id="server-badge">Hors ligne</span>
+  <span class="version-badge checking" id="version-badge" title="Git version status">⟳ Checking...</span>
+  <button class="restart-btn" id="btn-restart" title="Restart server with latest code" style="display:none">🔄 Restart</button>
   <select id="batch-select" class="action-select" disabled>
     <option value="">S\u00e9lectionner un batch...</option>
   </select>
@@ -1928,6 +1930,31 @@ const MULTI_CSS = `
 }
 .server-badge.connected { background: rgba(63,185,80,0.2); color: var(--green); }
 .server-badge.disconnected { background: rgba(72,79,88,0.3); color: var(--text-dim); }
+.version-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  cursor: help;
+}
+.version-badge.up-to-date { background: rgba(63,185,80,0.2); color: var(--green); }
+.version-badge.outdated { background: rgba(217,130,43,0.2); color: var(--orange); animation: pulse 2s infinite; }
+.version-badge.checking { background: rgba(139,148,158,0.2); color: var(--text-dim); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.restart-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--orange);
+  background: rgba(217,130,43,0.1);
+  color: var(--orange);
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s;
+}
+.restart-btn:hover { background: rgba(217,130,43,0.3); }
 .action-select {
   padding: 5px 8px;
   border: 1px solid var(--border);
@@ -2354,6 +2381,71 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
   // Activate UI
   badge.textContent = 'Connect\\u00e9';
   badge.className = 'server-badge connected';
+
+  // Check git version status
+  var versionBadge = document.getElementById('version-badge');
+  var btnRestart = document.getElementById('btn-restart');
+
+  function checkGitStatus() {
+    fetch('/api/git/status').then(function(r) { return r.json(); }).then(function(git) {
+      if (git.isUpToDate) {
+        versionBadge.textContent = '✓ v' + git.serverCommit;
+        versionBadge.className = 'version-badge up-to-date';
+        versionBadge.title = 'Server running latest code';
+        btnRestart.style.display = 'none';
+      } else {
+        versionBadge.textContent = '⚠ ' + git.behindBy + ' commits behind';
+        versionBadge.className = 'version-badge outdated';
+        versionBadge.title = 'Server: ' + git.serverCommit + ' | Latest: ' + git.latestLocalCommit;
+        btnRestart.style.display = 'inline-block';
+      }
+    }).catch(function() {
+      versionBadge.textContent = '? unknown';
+      versionBadge.className = 'version-badge checking';
+    });
+  }
+
+  // Check version on load
+  checkGitStatus();
+
+  // Auto-refresh version every 30s
+  setInterval(checkGitStatus, 30000);
+
+  // Restart button handler
+  btnRestart.addEventListener('click', function() {
+    if (!confirm('Restart server? Dashboard will reconnect automatically in ~10s.')) return;
+
+    btnRestart.disabled = true;
+    btnRestart.textContent = '⟳ Restarting...';
+
+    fetch('/api/server/restart', { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        versionBadge.textContent = '⟳ Restarting...';
+        versionBadge.className = 'version-badge checking';
+
+        // Poll for server to come back up
+        var reconnectAttempts = 0;
+        var reconnectInterval = setInterval(function() {
+          reconnectAttempts++;
+          fetch('/api/version').then(function() {
+            clearInterval(reconnectInterval);
+            location.reload(); // Reload dashboard with new code
+          }).catch(function() {
+            if (reconnectAttempts > 20) {
+              clearInterval(reconnectInterval);
+              alert('Server did not restart. Please check terminal.');
+            }
+          });
+        }, 1000);
+      })
+      .catch(function(err) {
+        btnRestart.disabled = false;
+        btnRestart.textContent = '🔄 Restart';
+        alert('Restart failed: ' + err.message);
+      });
+  });
+
   batchSelect.disabled = false;
   btnPreflight.disabled = false;
   btnRun.disabled = false;
@@ -2748,6 +2840,7 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     eventsProcessed: 0,
     estimatedHours: 0,
     estimatedDurationMs: 0, // Locked estimate from first completion
+    aborted: false, // Flag to ignore events after manual abort
     batchPhaseActive: false, batchPhaseStart: 0,
     batchProgress: 0, batchElapsedStart: 0, batchReviewsDone: 0,
     lastCompletedTask: null, currentTask: null, // Track for display
@@ -2816,6 +2909,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     e.stopPropagation();
     if (!confirm('Annuler la migration en cours ?')) return;
 
+    // Set abort flag to ignore all subsequent events
+    migrateState.aborted = true;
+
     // Immediately stop UI updates
     if (migrateState.eventSource) {
       migrateState.eventSource.close();
@@ -2836,6 +2932,19 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
 
     var bar = document.getElementById('mp-module-bar');
     if (bar) { bar.style.background = '#f85149'; }
+
+    // Clear "En cours" columns for all programs
+    var currentCells = document.querySelectorAll('[id^="mp-current-"]');
+    for (var i = 0; i < currentCells.length; i++) {
+      currentCells[i].textContent = '';
+    }
+
+    // Stop all active/pulsing dots (freeze UI state)
+    var activeDots = document.querySelectorAll('.mp-dot.active');
+    for (var i = 0; i < activeDots.length; i++) {
+      activeDots[i].classList.remove('active');
+      activeDots[i].classList.add('aborted');
+    }
 
     // Notify backend (fire-and-forget)
     fetch('/api/migrate/abort', { method: 'POST' }).catch(function() {});
@@ -3092,9 +3201,9 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     var eta = computeETA();
     if (migrateState.failedProgs > 0) {
       bar.style.background = 'linear-gradient(90deg, var(--green) 0%, #f59e0b 100%)';
-      label.textContent = done + '/' + total + ' OK, ' + migrateState.failedProgs + ' \\u00e9chou\\u00e9(s) (' + pct + '%)' + eta;
+      label.textContent = done + '/' + total + ' OK, ' + migrateState.failedProgs + ' \\u00e9chou\\u00e9(s) (' + pct + '%)';
     } else {
-      label.textContent = done + '/' + total + ' programmes (' + pct + '%)' + eta;
+      label.textContent = done + '/' + total + ' programmes (' + pct + '%)';
     }
     if (migrateBadge) { migrateBadge.textContent = done + '/' + total; migrateBadge.style.display = ''; }
   }
@@ -3309,6 +3418,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         durEl.style.color = isSkipped ? '#6b7280' : (isResumed ? '#58a6ff' : (isExisting ? '#8b5cf6' : '#3fb950'));
       }
       if (migrateState.programPhases[pid]) {
+        // Increment doneProgs ONLY if not already counted (status !== 'done')
+        if (migrateState.programPhases[pid].status !== 'done') {
+          migrateState.doneProgs++;
+        }
+
         if (isSkipped) {
           // Don't override dots already marked 'done' from phase_completed events
           // Skipped programs have phase_completed before program_completed
@@ -3341,7 +3455,6 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
         }
       }
       updateProgramIcon(pid, 'done');
-      migrateState.doneProgs++;
       // Lock ETA estimate after first completion: project total duration based on completed work
       if (migrateState.estimatedDurationMs === 0 && !isSkipped && dur > 0) {
         var completed = migrateState.doneProgs;
@@ -3519,28 +3632,53 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
     migrateState.batchPhaseStart = 0;
 
     migrateState.eventsProcessed = 0;
-    var es = new EventSource(url);
-    migrateState.eventSource = es; // Store for abort functionality
-    es.onmessage = function(ev) {
-      var msg = JSON.parse(ev.data);
+    migrateState.sseRetryCount = 0; // Track retry attempts
+    migrateState.sseRetryMax = 10; // Max retries before fallback
 
-      if (msg.type === 'stream_end') {
+    var connectSSE = function() {
+      var es = new EventSource(url);
+      migrateState.eventSource = es;
+
+      es.onmessage = function(ev) {
+        var msg = JSON.parse(ev.data);
+
+        // Reset retry count on successful message
+        migrateState.sseRetryCount = 0;
+
+        // Ignore all events after manual abort
+        if (migrateState.aborted) {
+          return;
+        }
+
+        if (msg.type === 'stream_end') {
+          es.close();
+          migrateState.eventSource = null;
+          clearInterval(migrateState.elapsedTid);
+          setLoading(migrateState.activeBtn || btnMigrate, false);
+          migrateAbortBtn.style.display = 'none';
+          return;
+        }
+
+        migrateState.eventsProcessed++;
+        processMigrateEvent(msg);
+      };
+
+      es.onerror = function() {
         es.close();
-        migrateState.eventSource = null;
-        clearInterval(migrateState.elapsedTid);
-        setLoading(migrateState.activeBtn || btnMigrate, false);
-        migrateAbortBtn.style.display = 'none';
-        return;
-      }
+        migrateState.sseRetryCount++;
 
-      migrateState.eventsProcessed++;
-      processMigrateEvent(msg);
-    };
+        if (migrateState.sseRetryCount <= migrateState.sseRetryMax) {
+          // Retry SSE connection with standard backoff (1s, 5s, 10s, 30s, 30s...)
+          var delays = [1000, 5000, 10000]; // First 3 retries
+          var delay = delays[migrateState.sseRetryCount - 1] || 30000; // Then 30s for all others
+          addMLog('SSE connection lost - retry ' + migrateState.sseRetryCount + '/' + migrateState.sseRetryMax + ' in ' + (delay/1000) + 's...');
+          setTimeout(connectSSE, delay);
+          return;
+        }
 
-    es.onerror = function() {
-      es.close();
-      addMLog('SSE connection lost - switching to polling...');
-      // Fall back to polling instead of giving up
+        // Max retries exceeded - fallback to polling
+        addMLog('SSE connection lost after ' + migrateState.sseRetryMax + ' retries - switching to polling...');
+        // Fall back to polling instead of giving up
       var lastSeen = migrateState.eventsProcessed;
       var pollFallback = setInterval(function() {
         fetch('/api/migrate/active').then(function(r) { return r.json(); }).then(function(s) {
@@ -3574,7 +3712,11 @@ document.querySelectorAll('.project-card[data-goto]').forEach(card => {
           addMLog('Connection lost');
         });
       }, 3000);
+      };
     };
+
+    // Initial SSE connection
+    connectSSE();
   }
 
   // ─── Migrate Module (opens confirmation modal) ────────────────

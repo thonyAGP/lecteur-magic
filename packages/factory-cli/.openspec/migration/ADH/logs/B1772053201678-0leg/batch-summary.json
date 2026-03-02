@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-02-25T21:00:01.679Z",
+  "batchId": "B1772053201678-0leg",
+  "totalPrograms": 2,
+  "completed": 1,
+  "failed": 1,
+  "duration_ms": 120000,
+  "totalTokens": {
+    "input": 50000,
+    "output": 20000
+  }
+}

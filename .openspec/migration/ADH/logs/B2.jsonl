@@ -1,0 +1,401 @@
+{"timestamp":"2026-02-26T00:25:58.505Z","level":"info","type":"migrate_started","message":"migrate_started"}
+{"timestamp":"2026-02-26T00:25:58.506Z","level":"info","type":"migration_started","message":"Starting migration for batch B2 (17 programs)"}
+{"timestamp":"2026-02-26T00:25:58.507Z","level":"info","type":"phase_started","message":"Decision log: D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\.migration-log\\B2"}
+{"timestamp":"2026-02-26T00:25:58.509Z","level":"info","type":"parallel_resolved","message":"Auto-parallel: 6 agents (22 CPUs, 17 programs)","data":{"requested":0,"resolved":6,"cpus":22}}
+{"timestamp":"2026-02-26T00:25:58.510Z","level":"info","type":"program_started","programId":281,"message":"Starting IDE 281"}
+{"timestamp":"2026-02-26T00:25:58.516Z","level":"info","type":"phase_started","programId":281,"phase":"spec","message":"IDE 281: generating spec"}
+{"timestamp":"2026-02-26T00:25:58.517Z","level":"info","type":"phase_progress","programId":281,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:25:58.518Z","level":"info","type":"program_started","programId":121,"message":"Starting IDE 121"}
+{"timestamp":"2026-02-26T00:25:58.521Z","level":"info","type":"phase_started","programId":121,"phase":"spec","message":"IDE 121: generating spec"}
+{"timestamp":"2026-02-26T00:25:58.522Z","level":"info","type":"phase_progress","programId":121,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:25:58.523Z","level":"info","type":"program_started","programId":116,"message":"Starting IDE 116"}
+{"timestamp":"2026-02-26T00:25:58.524Z","level":"info","type":"phase_started","programId":116,"phase":"spec","message":"IDE 116: generating spec"}
+{"timestamp":"2026-02-26T00:25:58.525Z","level":"info","type":"phase_progress","programId":116,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:25:58.525Z","level":"info","type":"program_started","programId":119,"message":"Starting IDE 119"}
+{"timestamp":"2026-02-26T00:25:58.527Z","level":"info","type":"phase_started","programId":119,"phase":"spec","message":"IDE 119: generating spec"}
+{"timestamp":"2026-02-26T00:25:58.527Z","level":"info","type":"phase_progress","programId":119,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:25:58.528Z","level":"info","type":"program_started","programId":125,"message":"Starting IDE 125"}
+{"timestamp":"2026-02-26T00:25:58.530Z","level":"info","type":"phase_started","programId":125,"phase":"spec","message":"IDE 125: generating spec"}
+{"timestamp":"2026-02-26T00:25:58.530Z","level":"info","type":"phase_progress","programId":125,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:25:58.531Z","level":"info","type":"program_started","programId":131,"message":"Starting IDE 131"}
+{"timestamp":"2026-02-26T00:25:58.536Z","level":"info","type":"phase_completed","programId":131,"phase":"spec","message":"IDE 131: spec (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.537Z","level":"info","type":"phase_completed","programId":131,"phase":"contract","message":"IDE 131: contract (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.537Z","level":"info","type":"phase_completed","programId":131,"phase":"analyze","message":"IDE 131: analyze (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.537Z","level":"info","type":"phase_completed","programId":131,"phase":"types","message":"IDE 131: types (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.538Z","level":"info","type":"phase_completed","programId":131,"phase":"store","message":"IDE 131: store (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.538Z","level":"info","type":"phase_completed","programId":131,"phase":"api","message":"IDE 131: api (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.539Z","level":"info","type":"phase_completed","programId":131,"phase":"page","message":"IDE 131: page (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.539Z","level":"info","type":"phase_completed","programId":131,"phase":"components","message":"IDE 131: components (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.539Z","level":"info","type":"phase_completed","programId":131,"phase":"tests-unit","message":"IDE 131: tests-unit (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.540Z","level":"info","type":"phase_completed","programId":131,"phase":"tests-ui","message":"IDE 131: tests-ui (reprise)"}
+{"timestamp":"2026-02-26T00:25:58.540Z","level":"info","type":"program_completed","programId":131,"message":"IDE 131: déjà généré (reprise)","data":{"resumed":true,"duration":0}}
+{"timestamp":"2026-02-26T00:25:58.541Z","level":"info","type":"phase_completed","programId":281,"phase":"spec","message":"IDE 281: spec done"}
+{"timestamp":"2026-02-26T00:25:58.543Z","level":"info","type":"phase_started","programId":281,"phase":"contract","message":"IDE 281: generating contract"}
+{"timestamp":"2026-02-26T00:25:58.543Z","level":"info","type":"phase_progress","programId":281,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:25:58.544Z","level":"info","type":"phase_completed","programId":281,"phase":"contract","message":"IDE 281: contract done"}
+{"timestamp":"2026-02-26T00:25:58.545Z","level":"info","type":"phase_started","programId":281,"phase":"analyze","message":"IDE 281: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:25:58.545Z","level":"info","type":"phase_progress","programId":281,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:25:58.545Z","level":"info","type":"phase_completed","programId":121,"phase":"spec","message":"IDE 121: spec done"}
+{"timestamp":"2026-02-26T00:25:58.546Z","level":"info","type":"phase_started","programId":121,"phase":"contract","message":"IDE 121: generating contract"}
+{"timestamp":"2026-02-26T00:25:58.547Z","level":"info","type":"phase_progress","programId":121,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:25:58.547Z","level":"info","type":"phase_completed","programId":121,"phase":"contract","message":"IDE 121: contract done"}
+{"timestamp":"2026-02-26T00:25:58.548Z","level":"info","type":"phase_started","programId":121,"phase":"analyze","message":"IDE 121: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:25:58.548Z","level":"info","type":"phase_progress","programId":121,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:25:58.549Z","level":"info","type":"phase_completed","programId":116,"phase":"spec","message":"IDE 116: spec done"}
+{"timestamp":"2026-02-26T00:25:58.550Z","level":"info","type":"phase_started","programId":116,"phase":"contract","message":"IDE 116: generating contract"}
+{"timestamp":"2026-02-26T00:25:58.550Z","level":"info","type":"phase_progress","programId":116,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:25:58.550Z","level":"info","type":"phase_completed","programId":116,"phase":"contract","message":"IDE 116: contract done"}
+{"timestamp":"2026-02-26T00:25:58.552Z","level":"info","type":"phase_started","programId":116,"phase":"analyze","message":"IDE 116: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:25:58.552Z","level":"info","type":"phase_progress","programId":116,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:25:58.553Z","level":"info","type":"phase_completed","programId":119,"phase":"spec","message":"IDE 119: spec done"}
+{"timestamp":"2026-02-26T00:25:58.554Z","level":"info","type":"phase_started","programId":119,"phase":"contract","message":"IDE 119: generating contract"}
+{"timestamp":"2026-02-26T00:25:58.555Z","level":"info","type":"phase_progress","programId":119,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:25:58.555Z","level":"info","type":"phase_completed","programId":119,"phase":"contract","message":"IDE 119: contract done"}
+{"timestamp":"2026-02-26T00:25:58.557Z","level":"info","type":"phase_started","programId":119,"phase":"analyze","message":"IDE 119: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:25:58.557Z","level":"info","type":"phase_progress","programId":119,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:25:58.558Z","level":"info","type":"phase_completed","programId":125,"phase":"spec","message":"IDE 125: spec done"}
+{"timestamp":"2026-02-26T00:25:58.560Z","level":"info","type":"phase_started","programId":125,"phase":"contract","message":"IDE 125: generating contract"}
+{"timestamp":"2026-02-26T00:25:58.560Z","level":"info","type":"phase_progress","programId":125,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:25:58.560Z","level":"info","type":"phase_completed","programId":125,"phase":"contract","message":"IDE 125: contract done"}
+{"timestamp":"2026-02-26T00:25:58.564Z","level":"info","type":"phase_started","programId":125,"phase":"analyze","message":"IDE 125: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:25:58.565Z","level":"info","type":"phase_progress","programId":125,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:25:58.568Z","level":"info","type":"phase_completed","programId":281,"phase":"analyze","message":"IDE 281: analysis done in 0s (0ms), domain=fermetureSessions"}
+{"timestamp":"2026-02-26T00:25:58.569Z","level":"info","type":"phase_started","programId":281,"phase":"types","message":"IDE 281: generating types"}
+{"timestamp":"2026-02-26T00:25:58.569Z","level":"info","type":"phase_progress","programId":281,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:25:58.581Z","level":"info","type":"phase_completed","programId":121,"phase":"analyze","message":"IDE 121: analysis done in 0s (0ms), domain=gestionCaisse"}
+{"timestamp":"2026-02-26T00:25:58.581Z","level":"info","type":"phase_started","programId":121,"phase":"types","message":"IDE 121: generating types"}
+{"timestamp":"2026-02-26T00:25:58.582Z","level":"info","type":"phase_progress","programId":121,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:25:58.597Z","level":"info","type":"phase_completed","programId":116,"phase":"analyze","message":"IDE 116: analysis done in 0s (0ms), domain=sessionConcurrency"}
+{"timestamp":"2026-02-26T00:25:58.598Z","level":"info","type":"phase_started","programId":116,"phase":"types","message":"IDE 116: generating types"}
+{"timestamp":"2026-02-26T00:25:58.598Z","level":"info","type":"phase_progress","programId":116,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:25:58.606Z","level":"info","type":"phase_completed","programId":119,"phase":"analyze","message":"IDE 119: analysis done in 0s (0ms), domain=sessionList"}
+{"timestamp":"2026-02-26T00:25:58.607Z","level":"info","type":"phase_started","programId":119,"phase":"types","message":"IDE 119: generating types"}
+{"timestamp":"2026-02-26T00:25:58.608Z","level":"info","type":"phase_progress","programId":119,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:25:58.614Z","level":"info","type":"phase_completed","programId":125,"phase":"analyze","message":"IDE 125: analysis done in 0s (0ms), domain=saisieContenuCaisse"}
+{"timestamp":"2026-02-26T00:25:58.614Z","level":"info","type":"phase_started","programId":125,"phase":"types","message":"IDE 125: generating types"}
+{"timestamp":"2026-02-26T00:25:58.614Z","level":"info","type":"phase_progress","programId":125,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:26:03.917Z","level":"info","type":"phase_completed","programId":119,"phase":"types","message":"IDE 119: types done"}
+{"timestamp":"2026-02-26T00:26:03.920Z","level":"info","type":"phase_started","programId":119,"phase":"store","message":"IDE 119: generating store"}
+{"timestamp":"2026-02-26T00:26:03.920Z","level":"info","type":"phase_progress","programId":119,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:26:05.755Z","level":"info","type":"phase_completed","programId":281,"phase":"types","message":"IDE 281: types done"}
+{"timestamp":"2026-02-26T00:26:05.757Z","level":"info","type":"phase_started","programId":281,"phase":"store","message":"IDE 281: generating store"}
+{"timestamp":"2026-02-26T00:26:05.758Z","level":"info","type":"phase_progress","programId":281,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:26:06.943Z","level":"info","type":"phase_completed","programId":116,"phase":"types","message":"IDE 116: types done"}
+{"timestamp":"2026-02-26T00:26:06.945Z","level":"info","type":"phase_started","programId":116,"phase":"store","message":"IDE 116: generating store"}
+{"timestamp":"2026-02-26T00:26:06.946Z","level":"info","type":"phase_progress","programId":116,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:26:11.522Z","level":"info","type":"phase_completed","programId":121,"phase":"types","message":"IDE 121: types done"}
+{"timestamp":"2026-02-26T00:26:11.527Z","level":"info","type":"phase_started","programId":121,"phase":"store","message":"IDE 121: generating store"}
+{"timestamp":"2026-02-26T00:26:11.528Z","level":"info","type":"phase_progress","programId":121,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:26:11.999Z","level":"info","type":"phase_completed","programId":125,"phase":"types","message":"IDE 125: types done"}
+{"timestamp":"2026-02-26T00:26:12.001Z","level":"info","type":"phase_started","programId":125,"phase":"store","message":"IDE 125: generating store"}
+{"timestamp":"2026-02-26T00:26:12.001Z","level":"info","type":"phase_progress","programId":125,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:26:18.135Z","level":"info","type":"phase_completed","programId":119,"phase":"store","message":"IDE 119: store done"}
+{"timestamp":"2026-02-26T00:26:18.138Z","level":"info","type":"phase_started","programId":119,"phase":"api","message":"IDE 119: generating api"}
+{"timestamp":"2026-02-26T00:26:18.142Z","level":"info","type":"phase_progress","programId":119,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:26:23.320Z","level":"info","type":"phase_completed","programId":281,"phase":"store","message":"IDE 281: store done"}
+{"timestamp":"2026-02-26T00:26:23.322Z","level":"info","type":"phase_started","programId":281,"phase":"api","message":"IDE 281: generating api"}
+{"timestamp":"2026-02-26T00:26:23.323Z","level":"info","type":"phase_progress","programId":281,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:26:23.678Z","level":"info","type":"phase_completed","programId":119,"phase":"api","message":"IDE 119: api done"}
+{"timestamp":"2026-02-26T00:26:23.679Z","level":"info","type":"phase_started","programId":119,"phase":"page","message":"IDE 119: generating page"}
+{"timestamp":"2026-02-26T00:26:23.679Z","level":"info","type":"phase_progress","programId":119,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:26:25.929Z","level":"info","type":"phase_completed","programId":116,"phase":"store","message":"IDE 116: store done"}
+{"timestamp":"2026-02-26T00:26:25.932Z","level":"info","type":"phase_started","programId":116,"phase":"api","message":"IDE 116: generating api"}
+{"timestamp":"2026-02-26T00:26:25.932Z","level":"info","type":"phase_progress","programId":116,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:26:33.662Z","level":"info","type":"phase_completed","programId":281,"phase":"api","message":"IDE 281: api done"}
+{"timestamp":"2026-02-26T00:26:33.665Z","level":"info","type":"phase_started","programId":281,"phase":"page","message":"IDE 281: generating page"}
+{"timestamp":"2026-02-26T00:26:33.667Z","level":"info","type":"phase_progress","programId":281,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:26:34.301Z","level":"info","type":"phase_completed","programId":116,"phase":"api","message":"IDE 116: api done"}
+{"timestamp":"2026-02-26T00:26:34.304Z","level":"info","type":"phase_started","programId":116,"phase":"page","message":"IDE 116: generating page"}
+{"timestamp":"2026-02-26T00:26:34.305Z","level":"info","type":"phase_progress","programId":116,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:26:48.151Z","level":"info","type":"phase_completed","programId":125,"phase":"store","message":"IDE 125: store done"}
+{"timestamp":"2026-02-26T00:26:48.157Z","level":"info","type":"phase_started","programId":125,"phase":"api","message":"IDE 125: generating api"}
+{"timestamp":"2026-02-26T00:26:48.158Z","level":"info","type":"phase_progress","programId":125,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:26:52.780Z","level":"info","type":"phase_completed","programId":119,"phase":"page","message":"IDE 119: page done"}
+{"timestamp":"2026-02-26T00:26:52.783Z","level":"info","type":"phase_started","programId":119,"phase":"components","message":"IDE 119: generating components"}
+{"timestamp":"2026-02-26T00:26:52.784Z","level":"info","type":"phase_progress","programId":119,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:26:58.093Z","level":"info","type":"phase_completed","programId":116,"phase":"page","message":"IDE 116: page done"}
+{"timestamp":"2026-02-26T00:26:58.097Z","level":"info","type":"phase_started","programId":116,"phase":"components","message":"IDE 116: generating components"}
+{"timestamp":"2026-02-26T00:26:58.098Z","level":"info","type":"phase_progress","programId":116,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:26:59.460Z","level":"info","type":"phase_completed","programId":121,"phase":"store","message":"IDE 121: store done"}
+{"timestamp":"2026-02-26T00:26:59.463Z","level":"info","type":"phase_started","programId":121,"phase":"api","message":"IDE 121: generating api"}
+{"timestamp":"2026-02-26T00:26:59.471Z","level":"info","type":"phase_progress","programId":121,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:27:02.645Z","level":"info","type":"phase_completed","programId":125,"phase":"api","message":"IDE 125: api done"}
+{"timestamp":"2026-02-26T00:27:02.647Z","level":"info","type":"phase_started","programId":125,"phase":"page","message":"IDE 125: generating page"}
+{"timestamp":"2026-02-26T00:27:02.648Z","level":"info","type":"phase_progress","programId":125,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:27:03.953Z","level":"info","type":"phase_completed","programId":281,"phase":"page","message":"IDE 281: page done"}
+{"timestamp":"2026-02-26T00:27:03.957Z","level":"info","type":"phase_started","programId":281,"phase":"components","message":"IDE 281: generating components"}
+{"timestamp":"2026-02-26T00:27:03.958Z","level":"info","type":"phase_progress","programId":281,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:27:10.932Z","level":"info","type":"phase_completed","programId":121,"phase":"api","message":"IDE 121: api done"}
+{"timestamp":"2026-02-26T00:27:10.935Z","level":"info","type":"phase_started","programId":121,"phase":"page","message":"IDE 121: generating page"}
+{"timestamp":"2026-02-26T00:27:10.935Z","level":"info","type":"phase_progress","programId":121,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:27:12.289Z","level":"info","type":"phase_completed","programId":119,"phase":"components","message":"IDE 119: components done"}
+{"timestamp":"2026-02-26T00:27:12.292Z","level":"info","type":"phase_started","programId":119,"phase":"tests-unit","message":"IDE 119: generating unit tests"}
+{"timestamp":"2026-02-26T00:27:12.292Z","level":"info","type":"phase_progress","programId":119,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:27:13.718Z","level":"info","type":"phase_completed","programId":116,"phase":"components","message":"IDE 116: components done"}
+{"timestamp":"2026-02-26T00:27:13.721Z","level":"info","type":"phase_started","programId":116,"phase":"tests-unit","message":"IDE 116: generating unit tests"}
+{"timestamp":"2026-02-26T00:27:13.721Z","level":"info","type":"phase_progress","programId":116,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:27:33.568Z","level":"info","type":"phase_completed","programId":125,"phase":"page","message":"IDE 125: page done"}
+{"timestamp":"2026-02-26T00:27:33.570Z","level":"info","type":"phase_started","programId":125,"phase":"components","message":"IDE 125: generating components"}
+{"timestamp":"2026-02-26T00:27:33.571Z","level":"info","type":"phase_progress","programId":125,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:27:39.849Z","level":"info","type":"phase_completed","programId":119,"phase":"tests-unit","message":"IDE 119: unit tests done"}
+{"timestamp":"2026-02-26T00:27:39.853Z","level":"info","type":"phase_started","programId":119,"phase":"tests-ui","message":"IDE 119: generating UI tests"}
+{"timestamp":"2026-02-26T00:27:39.854Z","level":"info","type":"phase_progress","programId":119,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:27:42.692Z","level":"info","type":"phase_completed","programId":281,"phase":"components","message":"IDE 281: components done"}
+{"timestamp":"2026-02-26T00:27:42.695Z","level":"info","type":"phase_started","programId":281,"phase":"tests-unit","message":"IDE 281: generating unit tests"}
+{"timestamp":"2026-02-26T00:27:42.696Z","level":"info","type":"phase_progress","programId":281,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:27:55.703Z","level":"info","type":"phase_completed","programId":116,"phase":"tests-unit","message":"IDE 116: unit tests done"}
+{"timestamp":"2026-02-26T00:27:55.707Z","level":"info","type":"phase_started","programId":116,"phase":"tests-ui","message":"IDE 116: generating UI tests"}
+{"timestamp":"2026-02-26T00:27:55.708Z","level":"info","type":"phase_progress","programId":116,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:27:58.038Z","level":"info","type":"phase_completed","programId":121,"phase":"page","message":"IDE 121: page done"}
+{"timestamp":"2026-02-26T00:27:58.041Z","level":"info","type":"phase_started","programId":121,"phase":"components","message":"IDE 121: generating components"}
+{"timestamp":"2026-02-26T00:27:58.042Z","level":"info","type":"phase_progress","programId":121,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:28:03.169Z","level":"info","type":"phase_completed","programId":119,"phase":"tests-ui","message":"IDE 119: UI tests done"}
+{"timestamp":"2026-02-26T00:28:03.180Z","level":"info","type":"program_completed","programId":119,"message":"IDE 119: 9 files generated in 2m 5s (124655ms)","data":{"duration":124655,"filesGenerated":9}}
+{"timestamp":"2026-02-26T00:28:15.913Z","level":"info","type":"phase_completed","programId":281,"phase":"tests-unit","message":"IDE 281: unit tests done"}
+{"timestamp":"2026-02-26T00:28:15.916Z","level":"info","type":"phase_started","programId":281,"phase":"tests-ui","message":"IDE 281: generating UI tests"}
+{"timestamp":"2026-02-26T00:28:15.917Z","level":"info","type":"phase_progress","programId":281,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:28:26.745Z","level":"info","type":"phase_completed","programId":116,"phase":"tests-ui","message":"IDE 116: UI tests done"}
+{"timestamp":"2026-02-26T00:28:26.754Z","level":"info","type":"program_completed","programId":116,"message":"IDE 116: 8 files generated in 2m 28s (148231ms)","data":{"duration":148231,"filesGenerated":8}}
+{"timestamp":"2026-02-26T00:28:27.354Z","level":"info","type":"phase_completed","programId":125,"phase":"components","message":"IDE 125: components done"}
+{"timestamp":"2026-02-26T00:28:27.357Z","level":"info","type":"phase_started","programId":125,"phase":"tests-unit","message":"IDE 125: generating unit tests"}
+{"timestamp":"2026-02-26T00:28:27.358Z","level":"info","type":"phase_progress","programId":125,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:28:45.509Z","level":"info","type":"phase_completed","programId":281,"phase":"tests-ui","message":"IDE 281: UI tests done"}
+{"timestamp":"2026-02-26T00:28:45.515Z","level":"info","type":"program_completed","programId":281,"message":"IDE 281: 10 files generated in 2m 47s (167005ms)","data":{"duration":167005,"filesGenerated":10}}
+{"timestamp":"2026-02-26T00:28:46.184Z","level":"info","type":"phase_completed","programId":121,"phase":"components","message":"IDE 121: components done"}
+{"timestamp":"2026-02-26T00:28:46.187Z","level":"info","type":"phase_started","programId":121,"phase":"tests-unit","message":"IDE 121: generating unit tests"}
+{"timestamp":"2026-02-26T00:28:46.188Z","level":"info","type":"phase_progress","programId":121,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:29:39.291Z","level":"info","type":"phase_completed","programId":125,"phase":"tests-unit","message":"IDE 125: unit tests done"}
+{"timestamp":"2026-02-26T00:29:39.293Z","level":"info","type":"phase_started","programId":125,"phase":"tests-ui","message":"IDE 125: generating UI tests"}
+{"timestamp":"2026-02-26T00:29:39.294Z","level":"info","type":"phase_progress","programId":125,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:29:44.123Z","level":"info","type":"phase_completed","programId":121,"phase":"tests-unit","message":"IDE 121: unit tests done"}
+{"timestamp":"2026-02-26T00:29:44.125Z","level":"info","type":"phase_started","programId":121,"phase":"tests-ui","message":"IDE 121: generating UI tests"}
+{"timestamp":"2026-02-26T00:29:44.126Z","level":"info","type":"phase_progress","programId":121,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:30:06.041Z","level":"info","type":"phase_completed","programId":125,"phase":"tests-ui","message":"IDE 125: UI tests done"}
+{"timestamp":"2026-02-26T00:30:06.050Z","level":"info","type":"program_completed","programId":125,"message":"IDE 125: 12 files generated in 4m 8s (247522ms)","data":{"duration":247522,"filesGenerated":12}}
+{"timestamp":"2026-02-26T00:30:18.850Z","level":"info","type":"phase_completed","programId":121,"phase":"tests-ui","message":"IDE 121: UI tests done"}
+{"timestamp":"2026-02-26T00:30:18.859Z","level":"info","type":"program_completed","programId":121,"message":"IDE 121: 12 files generated in 4m 20s (260341ms)","data":{"duration":260341,"filesGenerated":12}}
+{"timestamp":"2026-02-26T00:30:18.861Z","level":"info","type":"program_started","programId":132,"message":"Starting IDE 132"}
+{"timestamp":"2026-02-26T00:30:18.863Z","level":"info","type":"phase_started","programId":132,"phase":"spec","message":"IDE 132: generating spec"}
+{"timestamp":"2026-02-26T00:30:18.863Z","level":"info","type":"phase_progress","programId":132,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:30:18.864Z","level":"info","type":"program_started","programId":134,"message":"Starting IDE 134"}
+{"timestamp":"2026-02-26T00:30:18.869Z","level":"info","type":"phase_completed","programId":134,"phase":"spec","message":"IDE 134: spec (verified)"}
+{"timestamp":"2026-02-26T00:30:18.870Z","level":"info","type":"phase_completed","programId":134,"phase":"contract","message":"IDE 134: contract (verified)"}
+{"timestamp":"2026-02-26T00:30:18.870Z","level":"info","type":"phase_completed","programId":134,"phase":"analyze","message":"IDE 134: analyze (verified)"}
+{"timestamp":"2026-02-26T00:30:18.871Z","level":"info","type":"phase_completed","programId":134,"phase":"types","message":"IDE 134: types (verified)"}
+{"timestamp":"2026-02-26T00:30:18.872Z","level":"info","type":"phase_completed","programId":134,"phase":"store","message":"IDE 134: store (verified)"}
+{"timestamp":"2026-02-26T00:30:18.872Z","level":"info","type":"phase_completed","programId":134,"phase":"api","message":"IDE 134: api (verified)"}
+{"timestamp":"2026-02-26T00:30:18.873Z","level":"info","type":"phase_completed","programId":134,"phase":"page","message":"IDE 134: page (verified)"}
+{"timestamp":"2026-02-26T00:30:18.873Z","level":"info","type":"phase_completed","programId":134,"phase":"components","message":"IDE 134: components (verified)"}
+{"timestamp":"2026-02-26T00:30:18.873Z","level":"info","type":"phase_completed","programId":134,"phase":"tests-unit","message":"IDE 134: tests-unit (verified)"}
+{"timestamp":"2026-02-26T00:30:18.874Z","level":"info","type":"phase_completed","programId":134,"phase":"tests-ui","message":"IDE 134: tests-ui (verified)"}
+{"timestamp":"2026-02-26T00:30:18.874Z","level":"info","type":"program_completed","programId":134,"message":"IDE 134: déjà migré","data":{"skipped":true}}
+{"timestamp":"2026-02-26T00:30:18.876Z","level":"info","type":"program_started","programId":155,"message":"Starting IDE 155"}
+{"timestamp":"2026-02-26T00:30:18.882Z","level":"info","type":"phase_completed","programId":155,"phase":"spec","message":"IDE 155: spec (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.883Z","level":"info","type":"phase_completed","programId":155,"phase":"contract","message":"IDE 155: contract (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.884Z","level":"info","type":"phase_completed","programId":155,"phase":"analyze","message":"IDE 155: analyze (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.884Z","level":"info","type":"phase_completed","programId":155,"phase":"types","message":"IDE 155: types (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.884Z","level":"info","type":"phase_completed","programId":155,"phase":"store","message":"IDE 155: store (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.885Z","level":"info","type":"phase_completed","programId":155,"phase":"api","message":"IDE 155: api (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.885Z","level":"info","type":"phase_completed","programId":155,"phase":"page","message":"IDE 155: page (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.885Z","level":"info","type":"phase_completed","programId":155,"phase":"components","message":"IDE 155: components (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.886Z","level":"info","type":"phase_completed","programId":155,"phase":"tests-unit","message":"IDE 155: tests-unit (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.886Z","level":"info","type":"phase_completed","programId":155,"phase":"tests-ui","message":"IDE 155: tests-ui (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.886Z","level":"info","type":"program_completed","programId":155,"message":"IDE 155: déjà généré (reprise)","data":{"resumed":true,"duration":0}}
+{"timestamp":"2026-02-26T00:30:18.887Z","level":"info","type":"program_started","programId":156,"message":"Starting IDE 156"}
+{"timestamp":"2026-02-26T00:30:18.888Z","level":"info","type":"phase_completed","programId":156,"phase":"spec","message":"IDE 156: spec (verified)"}
+{"timestamp":"2026-02-26T00:30:18.889Z","level":"info","type":"phase_completed","programId":156,"phase":"contract","message":"IDE 156: contract (verified)"}
+{"timestamp":"2026-02-26T00:30:18.889Z","level":"info","type":"phase_completed","programId":156,"phase":"analyze","message":"IDE 156: analyze (verified)"}
+{"timestamp":"2026-02-26T00:30:18.889Z","level":"info","type":"phase_completed","programId":156,"phase":"types","message":"IDE 156: types (verified)"}
+{"timestamp":"2026-02-26T00:30:18.889Z","level":"info","type":"phase_completed","programId":156,"phase":"store","message":"IDE 156: store (verified)"}
+{"timestamp":"2026-02-26T00:30:18.890Z","level":"info","type":"phase_completed","programId":156,"phase":"api","message":"IDE 156: api (verified)"}
+{"timestamp":"2026-02-26T00:30:18.890Z","level":"info","type":"phase_completed","programId":156,"phase":"page","message":"IDE 156: page (verified)"}
+{"timestamp":"2026-02-26T00:30:18.890Z","level":"info","type":"phase_completed","programId":156,"phase":"components","message":"IDE 156: components (verified)"}
+{"timestamp":"2026-02-26T00:30:18.890Z","level":"info","type":"phase_completed","programId":156,"phase":"tests-unit","message":"IDE 156: tests-unit (verified)"}
+{"timestamp":"2026-02-26T00:30:18.891Z","level":"info","type":"phase_completed","programId":156,"phase":"tests-ui","message":"IDE 156: tests-ui (verified)"}
+{"timestamp":"2026-02-26T00:30:18.891Z","level":"info","type":"program_completed","programId":156,"message":"IDE 156: déjà migré","data":{"skipped":true}}
+{"timestamp":"2026-02-26T00:30:18.892Z","level":"info","type":"program_started","programId":117,"message":"Starting IDE 117"}
+{"timestamp":"2026-02-26T00:30:18.894Z","level":"info","type":"phase_started","programId":117,"phase":"spec","message":"IDE 117: generating spec"}
+{"timestamp":"2026-02-26T00:30:18.895Z","level":"info","type":"phase_progress","programId":117,"phase":"spec","message":"Generating spec...","data":{"label":"Generating spec..."}}
+{"timestamp":"2026-02-26T00:30:18.895Z","level":"info","type":"program_started","programId":118,"message":"Starting IDE 118"}
+{"timestamp":"2026-02-26T00:30:18.896Z","level":"info","type":"phase_completed","programId":118,"phase":"spec","message":"IDE 118: spec (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.897Z","level":"info","type":"phase_completed","programId":118,"phase":"contract","message":"IDE 118: contract (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.897Z","level":"info","type":"phase_completed","programId":118,"phase":"analyze","message":"IDE 118: analyze (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.897Z","level":"info","type":"phase_completed","programId":118,"phase":"types","message":"IDE 118: types (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.897Z","level":"info","type":"phase_completed","programId":118,"phase":"store","message":"IDE 118: store (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.898Z","level":"info","type":"phase_completed","programId":118,"phase":"api","message":"IDE 118: api (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.899Z","level":"info","type":"phase_completed","programId":118,"phase":"page","message":"IDE 118: page (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.899Z","level":"info","type":"phase_completed","programId":118,"phase":"components","message":"IDE 118: components (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.900Z","level":"info","type":"phase_completed","programId":118,"phase":"tests-unit","message":"IDE 118: tests-unit (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.901Z","level":"info","type":"phase_completed","programId":118,"phase":"tests-ui","message":"IDE 118: tests-ui (reprise)"}
+{"timestamp":"2026-02-26T00:30:18.902Z","level":"info","type":"program_completed","programId":118,"message":"IDE 118: déjà généré (reprise)","data":{"resumed":true,"duration":0}}
+{"timestamp":"2026-02-26T00:30:18.902Z","level":"info","type":"phase_completed","programId":132,"phase":"spec","message":"IDE 132: spec done"}
+{"timestamp":"2026-02-26T00:30:18.904Z","level":"info","type":"phase_started","programId":132,"phase":"contract","message":"IDE 132: generating contract"}
+{"timestamp":"2026-02-26T00:30:18.905Z","level":"info","type":"phase_progress","programId":132,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:30:18.905Z","level":"info","type":"phase_completed","programId":132,"phase":"contract","message":"IDE 132: contract done"}
+{"timestamp":"2026-02-26T00:30:18.907Z","level":"info","type":"phase_started","programId":132,"phase":"analyze","message":"IDE 132: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:30:18.907Z","level":"info","type":"phase_progress","programId":132,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:30:18.908Z","level":"info","type":"phase_completed","programId":117,"phase":"spec","message":"IDE 117: spec done"}
+{"timestamp":"2026-02-26T00:30:18.909Z","level":"info","type":"phase_started","programId":117,"phase":"contract","message":"IDE 117: generating contract"}
+{"timestamp":"2026-02-26T00:30:18.909Z","level":"info","type":"phase_progress","programId":117,"phase":"contract","message":"Generating contract...","data":{"label":"Generating contract..."}}
+{"timestamp":"2026-02-26T00:30:18.909Z","level":"info","type":"phase_completed","programId":117,"phase":"contract","message":"IDE 117: contract done"}
+{"timestamp":"2026-02-26T00:30:18.911Z","level":"info","type":"phase_started","programId":117,"phase":"analyze","message":"IDE 117: analyzing (Claude CLI)"}
+{"timestamp":"2026-02-26T00:30:18.911Z","level":"info","type":"phase_progress","programId":117,"phase":"analyze","message":"Analyzing program...","data":{"label":"Analyzing program..."}}
+{"timestamp":"2026-02-26T00:30:18.912Z","level":"info","type":"phase_completed","programId":132,"phase":"analyze","message":"IDE 132: analysis done in 0s (0ms), domain=sessionHistory"}
+{"timestamp":"2026-02-26T00:30:18.912Z","level":"info","type":"phase_started","programId":132,"phase":"types","message":"IDE 132: generating types"}
+{"timestamp":"2026-02-26T00:30:18.912Z","level":"info","type":"phase_progress","programId":132,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:30:18.917Z","level":"info","type":"phase_completed","programId":117,"phase":"analyze","message":"IDE 117: analysis done in 0s (0ms), domain=sessionHistory"}
+{"timestamp":"2026-02-26T00:30:18.918Z","level":"info","type":"phase_started","programId":117,"phase":"types","message":"IDE 117: generating types"}
+{"timestamp":"2026-02-26T00:30:18.918Z","level":"info","type":"phase_progress","programId":117,"phase":"types","message":"Generating types...","data":{"label":"Generating types..."}}
+{"timestamp":"2026-02-26T00:30:27.024Z","level":"info","type":"phase_completed","programId":132,"phase":"types","message":"IDE 132: types done"}
+{"timestamp":"2026-02-26T00:30:27.027Z","level":"info","type":"phase_started","programId":132,"phase":"store","message":"IDE 132: generating store"}
+{"timestamp":"2026-02-26T00:30:27.028Z","level":"info","type":"phase_progress","programId":132,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:30:27.387Z","level":"info","type":"phase_completed","programId":117,"phase":"types","message":"IDE 117: types done"}
+{"timestamp":"2026-02-26T00:30:27.390Z","level":"info","type":"phase_started","programId":117,"phase":"store","message":"IDE 117: generating store"}
+{"timestamp":"2026-02-26T00:30:27.391Z","level":"info","type":"phase_progress","programId":117,"phase":"store","message":"Generating store...","data":{"label":"Generating store..."}}
+{"timestamp":"2026-02-26T00:31:03.190Z","level":"info","type":"phase_completed","programId":117,"phase":"store","message":"IDE 117: store done"}
+{"timestamp":"2026-02-26T00:31:03.192Z","level":"info","type":"phase_started","programId":117,"phase":"api","message":"IDE 117: generating api"}
+{"timestamp":"2026-02-26T00:31:03.193Z","level":"info","type":"phase_progress","programId":117,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:31:07.695Z","level":"info","type":"phase_completed","programId":132,"phase":"store","message":"IDE 132: store done"}
+{"timestamp":"2026-02-26T00:31:07.698Z","level":"info","type":"phase_started","programId":132,"phase":"api","message":"IDE 132: generating api"}
+{"timestamp":"2026-02-26T00:31:07.699Z","level":"info","type":"phase_progress","programId":132,"phase":"api","message":"Generating API...","data":{"label":"Generating API..."}}
+{"timestamp":"2026-02-26T00:31:12.457Z","level":"info","type":"phase_completed","programId":117,"phase":"api","message":"IDE 117: api done"}
+{"timestamp":"2026-02-26T00:31:12.459Z","level":"info","type":"phase_started","programId":117,"phase":"page","message":"IDE 117: generating page"}
+{"timestamp":"2026-02-26T00:31:12.460Z","level":"info","type":"phase_progress","programId":117,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:31:15.528Z","level":"info","type":"phase_completed","programId":132,"phase":"api","message":"IDE 132: api done"}
+{"timestamp":"2026-02-26T00:31:15.531Z","level":"info","type":"phase_started","programId":132,"phase":"page","message":"IDE 132: generating page"}
+{"timestamp":"2026-02-26T00:31:15.531Z","level":"info","type":"phase_progress","programId":132,"phase":"page","message":"Generating page...","data":{"label":"Generating page..."}}
+{"timestamp":"2026-02-26T00:31:38.554Z","level":"info","type":"phase_completed","programId":117,"phase":"page","message":"IDE 117: page done"}
+{"timestamp":"2026-02-26T00:31:38.556Z","level":"info","type":"phase_started","programId":117,"phase":"components","message":"IDE 117: generating components"}
+{"timestamp":"2026-02-26T00:31:38.557Z","level":"info","type":"phase_progress","programId":117,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:31:49.229Z","level":"info","type":"phase_completed","programId":132,"phase":"page","message":"IDE 132: page done"}
+{"timestamp":"2026-02-26T00:31:49.231Z","level":"info","type":"phase_started","programId":132,"phase":"components","message":"IDE 132: generating components"}
+{"timestamp":"2026-02-26T00:31:49.232Z","level":"info","type":"phase_progress","programId":132,"phase":"components","message":"Generating components...","data":{"label":"Generating components..."}}
+{"timestamp":"2026-02-26T00:32:13.844Z","level":"info","type":"phase_completed","programId":117,"phase":"components","message":"IDE 117: components done"}
+{"timestamp":"2026-02-26T00:32:13.846Z","level":"info","type":"phase_started","programId":117,"phase":"tests-unit","message":"IDE 117: generating unit tests"}
+{"timestamp":"2026-02-26T00:32:13.847Z","level":"info","type":"phase_progress","programId":117,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:32:36.480Z","level":"info","type":"phase_completed","programId":132,"phase":"components","message":"IDE 132: components done"}
+{"timestamp":"2026-02-26T00:32:36.483Z","level":"info","type":"phase_started","programId":132,"phase":"tests-unit","message":"IDE 132: generating unit tests"}
+{"timestamp":"2026-02-26T00:32:36.483Z","level":"info","type":"phase_progress","programId":132,"phase":"tests-unit","message":"Generating unit tests...","data":{"label":"Generating unit tests..."}}
+{"timestamp":"2026-02-26T00:32:56.713Z","level":"info","type":"phase_completed","programId":117,"phase":"tests-unit","message":"IDE 117: unit tests done"}
+{"timestamp":"2026-02-26T00:32:56.716Z","level":"info","type":"phase_started","programId":117,"phase":"tests-ui","message":"IDE 117: generating UI tests"}
+{"timestamp":"2026-02-26T00:32:56.717Z","level":"info","type":"phase_progress","programId":117,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:33:14.727Z","level":"info","type":"phase_completed","programId":132,"phase":"tests-unit","message":"IDE 132: unit tests done"}
+{"timestamp":"2026-02-26T00:33:14.728Z","level":"info","type":"phase_started","programId":132,"phase":"tests-ui","message":"IDE 132: generating UI tests"}
+{"timestamp":"2026-02-26T00:33:14.729Z","level":"info","type":"phase_progress","programId":132,"phase":"tests-ui","message":"Generating UI tests...","data":{"label":"Generating UI tests..."}}
+{"timestamp":"2026-02-26T00:33:22.937Z","level":"info","type":"phase_completed","programId":117,"phase":"tests-ui","message":"IDE 117: UI tests done"}
+{"timestamp":"2026-02-26T00:33:22.943Z","level":"info","type":"program_completed","programId":117,"message":"IDE 117: 10 files generated in 3m 4s (184051ms)","data":{"duration":184051,"filesGenerated":10}}
+{"timestamp":"2026-02-26T00:33:44.131Z","level":"info","type":"phase_completed","programId":132,"phase":"tests-ui","message":"IDE 132: UI tests done"}
+{"timestamp":"2026-02-26T00:33:44.136Z","level":"info","type":"program_completed","programId":132,"message":"IDE 132: 10 files generated in 3m 25s (205275ms)","data":{"duration":205275,"filesGenerated":10}}
+{"timestamp":"2026-02-26T00:33:44.137Z","level":"info","type":"program_started","programId":128,"message":"Starting IDE 128"}
+{"timestamp":"2026-02-26T00:33:44.143Z","level":"info","type":"phase_completed","programId":128,"phase":"spec","message":"IDE 128: spec (verified)"}
+{"timestamp":"2026-02-26T00:33:44.144Z","level":"info","type":"phase_completed","programId":128,"phase":"contract","message":"IDE 128: contract (verified)"}
+{"timestamp":"2026-02-26T00:33:44.144Z","level":"info","type":"phase_completed","programId":128,"phase":"analyze","message":"IDE 128: analyze (verified)"}
+{"timestamp":"2026-02-26T00:33:44.145Z","level":"info","type":"phase_completed","programId":128,"phase":"types","message":"IDE 128: types (verified)"}
+{"timestamp":"2026-02-26T00:33:44.145Z","level":"info","type":"phase_completed","programId":128,"phase":"store","message":"IDE 128: store (verified)"}
+{"timestamp":"2026-02-26T00:33:44.146Z","level":"info","type":"phase_completed","programId":128,"phase":"api","message":"IDE 128: api (verified)"}
+{"timestamp":"2026-02-26T00:33:44.146Z","level":"info","type":"phase_completed","programId":128,"phase":"page","message":"IDE 128: page (verified)"}
+{"timestamp":"2026-02-26T00:33:44.146Z","level":"info","type":"phase_completed","programId":128,"phase":"components","message":"IDE 128: components (verified)"}
+{"timestamp":"2026-02-26T00:33:44.147Z","level":"info","type":"phase_completed","programId":128,"phase":"tests-unit","message":"IDE 128: tests-unit (verified)"}
+{"timestamp":"2026-02-26T00:33:44.148Z","level":"info","type":"phase_completed","programId":128,"phase":"tests-ui","message":"IDE 128: tests-ui (verified)"}
+{"timestamp":"2026-02-26T00:33:44.148Z","level":"info","type":"program_completed","programId":128,"message":"IDE 128: déjà migré","data":{"skipped":true}}
+{"timestamp":"2026-02-26T00:33:44.149Z","level":"info","type":"program_started","programId":133,"message":"Starting IDE 133"}
+{"timestamp":"2026-02-26T00:33:44.153Z","level":"info","type":"phase_completed","programId":133,"phase":"spec","message":"IDE 133: spec (verified)"}
+{"timestamp":"2026-02-26T00:33:44.154Z","level":"info","type":"phase_completed","programId":133,"phase":"contract","message":"IDE 133: contract (verified)"}
+{"timestamp":"2026-02-26T00:33:44.154Z","level":"info","type":"phase_completed","programId":133,"phase":"analyze","message":"IDE 133: analyze (verified)"}
+{"timestamp":"2026-02-26T00:33:44.155Z","level":"info","type":"phase_completed","programId":133,"phase":"types","message":"IDE 133: types (verified)"}
+{"timestamp":"2026-02-26T00:33:44.155Z","level":"info","type":"phase_completed","programId":133,"phase":"store","message":"IDE 133: store (verified)"}
+{"timestamp":"2026-02-26T00:33:44.156Z","level":"info","type":"phase_completed","programId":133,"phase":"api","message":"IDE 133: api (verified)"}
+{"timestamp":"2026-02-26T00:33:44.156Z","level":"info","type":"phase_completed","programId":133,"phase":"page","message":"IDE 133: page (verified)"}
+{"timestamp":"2026-02-26T00:33:44.157Z","level":"info","type":"phase_completed","programId":133,"phase":"components","message":"IDE 133: components (verified)"}
+{"timestamp":"2026-02-26T00:33:44.157Z","level":"info","type":"phase_completed","programId":133,"phase":"tests-unit","message":"IDE 133: tests-unit (verified)"}
+{"timestamp":"2026-02-26T00:33:44.158Z","level":"info","type":"phase_completed","programId":133,"phase":"tests-ui","message":"IDE 133: tests-ui (verified)"}
+{"timestamp":"2026-02-26T00:33:44.158Z","level":"info","type":"program_completed","programId":133,"message":"IDE 133: déjà migré","data":{"skipped":true}}
+{"timestamp":"2026-02-26T00:33:44.159Z","level":"info","type":"program_started","programId":142,"message":"Starting IDE 142"}
+{"timestamp":"2026-02-26T00:33:44.161Z","level":"info","type":"phase_completed","programId":142,"phase":"spec","message":"IDE 142: spec (verified)"}
+{"timestamp":"2026-02-26T00:33:44.161Z","level":"info","type":"phase_completed","programId":142,"phase":"contract","message":"IDE 142: contract (verified)"}
+{"timestamp":"2026-02-26T00:33:44.161Z","level":"info","type":"phase_completed","programId":142,"phase":"analyze","message":"IDE 142: analyze (verified)"}
+{"timestamp":"2026-02-26T00:33:44.162Z","level":"info","type":"phase_completed","programId":142,"phase":"types","message":"IDE 142: types (verified)"}
+{"timestamp":"2026-02-26T00:33:44.162Z","level":"info","type":"phase_completed","programId":142,"phase":"store","message":"IDE 142: store (verified)"}
+{"timestamp":"2026-02-26T00:33:44.163Z","level":"info","type":"phase_completed","programId":142,"phase":"api","message":"IDE 142: api (verified)"}
+{"timestamp":"2026-02-26T00:33:44.163Z","level":"info","type":"phase_completed","programId":142,"phase":"page","message":"IDE 142: page (verified)"}
+{"timestamp":"2026-02-26T00:33:44.163Z","level":"info","type":"phase_completed","programId":142,"phase":"components","message":"IDE 142: components (verified)"}
+{"timestamp":"2026-02-26T00:33:44.164Z","level":"info","type":"phase_completed","programId":142,"phase":"tests-unit","message":"IDE 142: tests-unit (verified)"}
+{"timestamp":"2026-02-26T00:33:44.164Z","level":"info","type":"phase_completed","programId":142,"phase":"tests-ui","message":"IDE 142: tests-ui (verified)"}
+{"timestamp":"2026-02-26T00:33:44.164Z","level":"info","type":"program_completed","programId":142,"message":"IDE 142: déjà migré","data":{"skipped":true}}
+{"timestamp":"2026-02-26T00:33:44.165Z","level":"info","type":"program_started","programId":138,"message":"Starting IDE 138"}
+{"timestamp":"2026-02-26T00:33:44.172Z","level":"info","type":"phase_completed","programId":138,"phase":"spec","message":"IDE 138: spec (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.173Z","level":"info","type":"phase_completed","programId":138,"phase":"contract","message":"IDE 138: contract (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.173Z","level":"info","type":"phase_completed","programId":138,"phase":"analyze","message":"IDE 138: analyze (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.174Z","level":"info","type":"phase_completed","programId":138,"phase":"types","message":"IDE 138: types (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.175Z","level":"info","type":"phase_completed","programId":138,"phase":"store","message":"IDE 138: store (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.175Z","level":"info","type":"phase_completed","programId":138,"phase":"api","message":"IDE 138: api (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.176Z","level":"info","type":"phase_completed","programId":138,"phase":"page","message":"IDE 138: page (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.176Z","level":"info","type":"phase_completed","programId":138,"phase":"components","message":"IDE 138: components (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.177Z","level":"info","type":"phase_completed","programId":138,"phase":"tests-unit","message":"IDE 138: tests-unit (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.178Z","level":"info","type":"phase_completed","programId":138,"phase":"tests-ui","message":"IDE 138: tests-ui (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.179Z","level":"info","type":"program_completed","programId":138,"message":"IDE 138: déjà généré (reprise)","data":{"resumed":true,"duration":0}}
+{"timestamp":"2026-02-26T00:33:44.180Z","level":"info","type":"program_started","programId":47,"message":"Starting IDE 47"}
+{"timestamp":"2026-02-26T00:33:44.181Z","level":"info","type":"phase_completed","programId":47,"phase":"spec","message":"IDE 47: spec (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.182Z","level":"info","type":"phase_completed","programId":47,"phase":"contract","message":"IDE 47: contract (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.183Z","level":"info","type":"phase_completed","programId":47,"phase":"analyze","message":"IDE 47: analyze (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.183Z","level":"info","type":"phase_completed","programId":47,"phase":"types","message":"IDE 47: types (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.184Z","level":"info","type":"phase_completed","programId":47,"phase":"store","message":"IDE 47: store (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.184Z","level":"info","type":"phase_completed","programId":47,"phase":"api","message":"IDE 47: api (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.185Z","level":"info","type":"phase_completed","programId":47,"phase":"page","message":"IDE 47: page (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.186Z","level":"info","type":"phase_completed","programId":47,"phase":"components","message":"IDE 47: components (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.186Z","level":"info","type":"phase_completed","programId":47,"phase":"tests-unit","message":"IDE 47: tests-unit (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.187Z","level":"info","type":"phase_completed","programId":47,"phase":"tests-ui","message":"IDE 47: tests-ui (reprise)"}
+{"timestamp":"2026-02-26T00:33:44.187Z","level":"info","type":"program_completed","programId":47,"message":"IDE 47: déjà généré (reprise)","data":{"resumed":true,"duration":0}}
+{"timestamp":"2026-02-26T00:33:44.188Z","level":"info","type":"phase_started","phase":"verify-tsc","message":"Starting verification loop"}
+{"timestamp":"2026-02-26T00:33:44.189Z","level":"info","type":"phase_started","phase":"verify-tsc","message":"TSC pass 1/5: running tsc --noEmit","data":{"pass":1,"maxPasses":5,"verifyProgress":0}}
+{"timestamp":"2026-02-26T00:33:45.093Z","level":"info","type":"phase_started","phase":"verify-tsc","message":"TSC pass 1: CLEAN","data":{"pass":1,"maxPasses":5,"errors":0,"clean":true,"verifyProgress":0.7}}
+{"timestamp":"2026-02-26T00:33:45.094Z","level":"info","type":"phase_started","phase":"verify-tests","message":"Tests pass 1/3: running vitest","data":{"pass":1,"maxPasses":3,"verifyProgress":0.7}}
+{"timestamp":"2026-02-26T00:34:14.927Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Tests pass 1: 1 failures","data":{"pass":1,"maxPasses":3,"failures":1,"verifyProgress":0.75}}
+{"timestamp":"2026-02-26T00:34:14.928Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Fix tests pass 1: done","data":{"pass":1,"maxPasses":3,"verifyProgress":0.7999999999999999}}
+{"timestamp":"2026-02-26T00:34:14.929Z","level":"info","type":"phase_started","phase":"verify-tests","message":"Tests pass 2/3: running vitest","data":{"pass":2,"maxPasses":3,"verifyProgress":0.7999999999999999}}
+{"timestamp":"2026-02-26T00:34:44.878Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Tests pass 2: 1 failures","data":{"pass":2,"maxPasses":3,"failures":1,"verifyProgress":0.85}}
+{"timestamp":"2026-02-26T00:34:44.879Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Fix tests pass 2: done","data":{"pass":2,"maxPasses":3,"verifyProgress":0.8999999999999999}}
+{"timestamp":"2026-02-26T00:34:44.880Z","level":"info","type":"phase_started","phase":"verify-tests","message":"Tests pass 3/3: running vitest","data":{"pass":3,"maxPasses":3,"verifyProgress":0.8999999999999999}}
+{"timestamp":"2026-02-26T00:35:14.479Z","level":"info","type":"phase_started","phase":"fix-tests","message":"Tests pass 3: 1 failures","data":{"pass":3,"maxPasses":3,"failures":1,"verifyProgress":0.95}}
+{"timestamp":"2026-02-26T00:35:14.480Z","level":"info","type":"verify_pass","message":"TSC: CLEAN (1 passes), Tests: FAIL (3 passes)"}
+{"timestamp":"2026-02-26T00:35:14.480Z","level":"info","type":"phase_started","phase":"integrate","message":"Starting integration"}
+{"timestamp":"2026-02-26T00:35:14.481Z","level":"info","type":"phase_completed","phase":"integrate","message":"Integration: 0 files modified"}
+{"timestamp":"2026-02-26T00:35:14.482Z","level":"info","type":"phase_started","programId":281,"phase":"review","message":"Reviewing IDE 281"}
+{"timestamp":"2026-02-26T00:35:14.483Z","level":"info","type":"phase_progress","programId":281,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:35:23.280Z","level":"info","type":"phase_completed","programId":281,"phase":"review","message":"Review IDE 281: 45% coverage","data":{"programId":281,"programName":"FermetureSessions","coveragePct":45,"rulesImplemented":1,"rulesTotal":1,"missingRules":[],"recommendations":["Add comprehensive error handling for all API operations","Implement the specific closure code generation formula from RM-001","Add data validation for session closure prerequisites","Implement proper state management for session status transitions","Add loading states and error recovery mechanisms","Create proper TypeScript interfaces for all data structures","Add unit tests for business logic implementation","Implement audit trail for session closure operations","Add proper authorization checks for session closure","Complete the missing store methods (reset, proper error handling)"]}}
+{"timestamp":"2026-02-26T00:35:23.281Z","level":"info","type":"phase_started","programId":121,"phase":"review","message":"Reviewing IDE 121"}
+{"timestamp":"2026-02-26T00:35:23.281Z","level":"info","type":"phase_progress","programId":121,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:35:31.694Z","level":"info","type":"phase_completed","programId":121,"phase":"review","message":"Review IDE 121: 65% coverage","data":{"programId":121,"programName":"GestionCaisse","coveragePct":65,"rulesImplemented":1,"rulesTotal":1,"missingRules":[],"recommendations":["Add comprehensive error handling for all API operations","Implement proper date validation for date comptable","Add UI validation for currency inputs and amount limits","Implement proper session concurrency checks before operations","Add missing task implementations for coffre2 integrity checks","Implement proper stock control validation (monnaie/produit)","Add support for multiple currency operations","Implement proper audit trail for all movements","Add real-time session monitoring and alerts","Implement proper closure process with validation steps"]}}
+{"timestamp":"2026-02-26T00:35:31.695Z","level":"info","type":"phase_started","programId":116,"phase":"review","message":"Reviewing IDE 116"}
+{"timestamp":"2026-02-26T00:35:31.696Z","level":"info","type":"phase_progress","programId":116,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:35:43.617Z","level":"info","type":"phase_completed","programId":116,"phase":"review","message":"Review IDE 116: 75% coverage","data":{"programId":116,"programName":"SessionConcurrency","coveragePct":75,"rulesImplemented":3,"rulesTotal":4,"missingRules":["RM-004: Negation de VG78 (condition inversee) - NOT VG78 condition is not implemented in any file"],"recommendations":["Implement the missing VG78 condition check in the store logic","Add proper error handling for all API endpoints in the service layer","The UI components are well-structured but need to connect to the business rules more explicitly","Add validation for the PI code calcul values ('C' and 'D') in the session registration","Consider adding logging for concurrency conflicts for audit purposes","The store has good mock data but should validate business rules during checkConcurrency","Add unit tests for all business rules, especially the missing VG78 condition","The ConflictWarningPanel should display which business rule triggered the conflict"]}}
+{"timestamp":"2026-02-26T00:35:43.618Z","level":"info","type":"phase_started","programId":119,"phase":"review","message":"Reviewing IDE 119"}
+{"timestamp":"2026-02-26T00:35:43.619Z","level":"info","type":"phase_progress","programId":119,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:35:53.346Z","level":"info","type":"phase_completed","programId":119,"phase":"review","message":"Review IDE 119: 60% coverage","data":{"programId":119,"programName":"SessionList","coveragePct":60,"rulesImplemented":3,"rulesTotal":5,"missingRules":["RM-004: Negation de (Existe session ouverte [K]) (condition inversee) - NOT (Existe session ouverte [K])","RM-005: Negation de VG78 (condition inversee) - NOT VG78"],"recommendations":["Implement missing business rule RM-004 for session existence validation in sessionListStore.ts","Implement missing business rule RM-005 for VG78 condition validation","Add proper error handling for API failures in session list endpoints","Ensure histo_sessions_caisse table entity type is properly defined to match spec table ID 246","Add validation for filters.existeSessionOuverte condition in applySessionFilters function","Complete the truncated DataSectionPanel.tsx file - missing closing brackets and complete column definition","Complete the truncated FilterSectionPanel.tsx file - missing closing components","Add comprehensive error boundary components for session list operations","Implement proper loading states and retry mechanisms for failed session fetches","Add unit tests coverage for all business rules, especially the missing RM-004 and RM-005 conditions"]}}
+{"timestamp":"2026-02-26T00:35:53.347Z","level":"info","type":"phase_started","programId":125,"phase":"review","message":"Reviewing IDE 125"}
+{"timestamp":"2026-02-26T00:35:53.348Z","level":"info","type":"phase_progress","programId":125,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:02.583Z","level":"info","type":"phase_completed","programId":125,"phase":"review","message":"Review IDE 125: 15% coverage","data":{"programId":125,"programName":"SaisieContenuCaisse","coveragePct":15,"rulesImplemented":0,"rulesTotal":1,"missingRules":["RM-001: Condition: Param quand [D] different de 'P' - Business rule condition logic not implemented in store or components"],"recommendations":["Implement RM-001 business rule condition 'Param quand [D]<>'P'' with proper EQ parameter validation in store","Add missing entity types for all 9 tables from spec (currently only 4 have proper entity definitions)","Complete missing table entities: moyen_paiement___mop (tables 89,140), tables___________tab (table 67), date_comptable___dat (table 70), email_reprise (table 501)","Add proper error handling for all API endpoints - currently mock responses don't handle error cases","Implement WebSocket integration for IDE 142 (mise à jour de session WebSocket) as mentioned in functional description","Add validation for stock quantity controls and coherence checks as described in spec","Implement calls to other programs: IDE 43 (titre membre), IDE 142 (WebSocket session), IDE 149 (calcul stocks produits)","Add proper integration points for calling programs: IDE 121, 131, 298, 299 (Gestion/Fermeture caisse)","Complete truncated components (MontantsComptesPanel.tsx and SaisieVersementsPanel.tsx are cut off)","Add comprehensive error boundary and loading states for all async operations","Implement proper currency formatting and validation for multi-currency support","Add audit trail and logging for all remise operations as this is critical for caisse closure","Implement proper stock movement validation and PV comptable generation for discrepancies"]}}
+{"timestamp":"2026-02-26T00:36:02.584Z","level":"info","type":"phase_started","programId":131,"phase":"review","message":"Reviewing IDE 131"}
+{"timestamp":"2026-02-26T00:36:02.585Z","level":"info","type":"phase_progress","programId":131,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:02.594Z","level":"info","type":"phase_completed","programId":131,"phase":"review","message":"Review IDE 131: 0% coverage","data":{"programId":131,"programName":"FermetureCaisse","coveragePct":0,"rulesImplemented":0,"rulesTotal":3,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-26T00:36:02.596Z","level":"info","type":"phase_started","programId":132,"phase":"review","message":"Reviewing IDE 132"}
+{"timestamp":"2026-02-26T00:36:02.596Z","level":"info","type":"phase_progress","programId":132,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:11.571Z","level":"info","type":"phase_completed","programId":132,"phase":"review","message":"Review IDE 132: 25% coverage","data":{"programId":132,"programName":"SessionHistory","coveragePct":25,"rulesImplemented":0,"rulesTotal":0,"missingRules":["Session existence validation before display","Session status validation (open/closed)","Read-only access enforcement","Concurrent access safety measures","Integration with parent programs (IDE 121, IDE 298)"],"recommendations":["CRITICAL: Fix type definitions - SessionHistoryState contains incorrect types (SessionOperation[] instead of SessionHistoryItem[])","CRITICAL: Implement proper table mapping - code uses SessionOperation but spec shows histo_sessions_caisse structure","CRITICAL: Add session validation logic - program should validate session existence and status before display","HIGH: Implement read-only enforcement - program is described as strictly informational with no modifications allowed","HIGH: Add proper error handling for session lookup failures","HIGH: Implement currency handling per spec (devise_in table with local currency parameters)","MEDIUM: Add integration points for calling programs (IDE 121, IDE 298)","MEDIUM: Implement proper sorting and filtering based on session dates and operators","MEDIUM: Add audit trail functionality as mentioned in functional description","LOW: Improve UI to show session history as a consultation interface rather than operations management","LOW: Add proper loading states and concurrent access handling","LOW: Implement export functionality for audit purposes"]}}
+{"timestamp":"2026-02-26T00:36:11.572Z","level":"info","type":"phase_started","programId":155,"phase":"review","message":"Reviewing IDE 155"}
+{"timestamp":"2026-02-26T00:36:11.573Z","level":"info","type":"phase_progress","programId":155,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:11.581Z","level":"info","type":"phase_completed","programId":155,"phase":"review","message":"Review IDE 155: 0% coverage","data":{"programId":155,"programName":"ControleFermetureCaisse","coveragePct":0,"rulesImplemented":0,"rulesTotal":6,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-26T00:36:11.582Z","level":"info","type":"phase_started","programId":117,"phase":"review","message":"Reviewing IDE 117"}
+{"timestamp":"2026-02-26T00:36:11.583Z","level":"info","type":"phase_progress","programId":117,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:26.091Z","level":"info","type":"phase_completed","programId":117,"phase":"review","message":"Review IDE 117: 75% coverage","data":{"programId":117,"programName":"SessionHistory","coveragePct":75,"rulesImplemented":0,"rulesTotal":0,"missingRules":[],"recommendations":["Add IDE 43 integration for account name resolution as specified in contract","Implement access rights management to control column visibility based on operator profile","Add chronological sorting functionality to reconstruct event timeline","Implement session filtering by session number and period as specified","Add proper error handling for all API operations","Ensure read-only nature of the program (no data modification capabilities)","Add integration with IDE 119 (caller program) for proper navigation flow","Implement proper table relationships for histo_sessions_caisse and histo_sessions_caisse_detail","Add devise_in table integration for currency handling","Implement proper variable mapping for all 10 specified variables (EN-EW)","Add validation for chronological counting as specified in variables","Ensure proper audit trail functionality for transaction traceability"]}}
+{"timestamp":"2026-02-26T00:36:26.092Z","level":"info","type":"phase_started","programId":118,"phase":"review","message":"Reviewing IDE 118"}
+{"timestamp":"2026-02-26T00:36:26.093Z","level":"info","type":"phase_progress","programId":118,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:26.099Z","level":"info","type":"phase_completed","programId":118,"phase":"review","message":"Review IDE 118: 0% coverage","data":{"programId":118,"programName":"SessionsOuvertes","coveragePct":0,"rulesImplemented":0,"rulesTotal":2,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-26T00:36:26.100Z","level":"info","type":"phase_started","programId":138,"phase":"review","message":"Reviewing IDE 138"}
+{"timestamp":"2026-02-26T00:36:26.101Z","level":"info","type":"phase_progress","programId":138,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:26.107Z","level":"info","type":"phase_completed","programId":138,"phase":"review","message":"Review IDE 138: 0% coverage","data":{"programId":138,"programName":"TicketFermetureSession","coveragePct":0,"rulesImplemented":0,"rulesTotal":3,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-26T00:36:26.108Z","level":"info","type":"phase_started","programId":47,"phase":"review","message":"Reviewing IDE 47"}
+{"timestamp":"2026-02-26T00:36:26.109Z","level":"info","type":"phase_progress","programId":47,"phase":"review","message":"Reviewing coverage...","data":{"label":"Reviewing coverage..."}}
+{"timestamp":"2026-02-26T00:36:26.111Z","level":"info","type":"phase_completed","programId":47,"phase":"review","message":"Review IDE 47: 0% coverage","data":{"programId":47,"programName":"SessionTimestamp","coveragePct":0,"rulesImplemented":0,"rulesTotal":0,"missingRules":["No generated files found"],"recommendations":["Run generation phases first"]}}
+{"timestamp":"2026-02-26T00:36:26.112Z","level":"info","type":"migration_completed","message":"Migration terminee : 12/17 programmes, 71 fichiers en 10m 28s (627606ms)"}
+{"timestamp":"2026-02-26T00:36:26.114Z","level":"info","type":"phase_completed","message":"Tracker updated: B2 → enriched (12/17 impl, 30% coverage)"}
+{"timestamp":"2026-02-26T00:36:26.210Z","level":"info","type":"git_started","message":"Auto-commit: staging files..."}
