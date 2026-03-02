@@ -37,12 +37,17 @@ function getCommitHash(): string {
  * Get build information.
  * Called on each API request to ensure commit hash is always up-to-date.
  */
-export const getBuildInfo = () => ({
-  version: '1.0.0-qa-phase2-3',
-  buildTimestamp: new Date().toISOString(),
-  commit: getCommitHash(), // Called on each invocation
-  phase: 'QA Phase 2+3 Complete',
-});
+export const getBuildInfo = () => {
+  const commit = getCommitHash();
+  const now = new Date().toISOString();
+  console.log(`[BUILD_INFO] Called at ${now}, commit=${commit}`); // DEBUG
+  return {
+    version: '1.0.0-qa-phase2-3',
+    buildTimestamp: now,
+    commit,
+    phase: 'QA Phase 2+3 Complete',
+  };
+};
 
 // Deprecated: Use getBuildInfo() instead
 // Kept for backward compatibility but will show stale commit

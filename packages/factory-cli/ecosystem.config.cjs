@@ -15,11 +15,10 @@ module.exports = {
   apps: [
     {
       name: 'factory-dashboard',
-      script: 'src/cli.ts',
+      script: 'dist/cli.js',
       args: 'serve --port 3070 --dir ADH --project ../../',
-      interpreter: 'node',
-      interpreter_args: '--import tsx/esm',
       cwd: __dirname,
+      exec_mode: 'fork',
       instances: 1,
       autorestart: true,
       watch: false,
