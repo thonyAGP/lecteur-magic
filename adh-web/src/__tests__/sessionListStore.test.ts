@@ -213,10 +213,10 @@ describe("sessionListStore", () => {
       await promise
 
       const finalState = useSessionListStore.getState()
-      expect(finalState.sessions).toHaveLength(3)
-      
+      expect(finalState.sessions).toHaveLength(4)
+
       const etats = finalState.sessions.map(session => session.etat)
-      expect(etats).toEqual(expect.arrayContaining(["O", "", "O"]))
+      expect(etats).toEqual(expect.arrayContaining(["O", "", "O", "O"]))
       expect(etats).not.toContain("F")
     })
 

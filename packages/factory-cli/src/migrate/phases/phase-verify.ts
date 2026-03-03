@@ -488,15 +488,19 @@ export const runVerifyFixLoop = async (
       `   → Review generated test files for correctness`,
     );
 
-    // Show first failure as example
+    // Show first 3 failures as examples
     if (lastTestFailures.length > 0) {
-      const first = lastTestFailures[0];
-      failures.push(
-        ``,
-        `   Example: ${first.testFile}`,
-        `   Test: ${first.testName}`,
-        `   Error preview: ${first.error.slice(0, 150)}...`,
-      );
+      const examples = lastTestFailures.slice(0, 3);
+      failures.push('', '   Examples:');
+
+      for (const [idx, failure] of examples.entries()) {
+        failures.push(
+          `   ${idx + 1}. ${failure.testFile}`,
+          `      Test: ${failure.testName}`,
+          `      Error: ${failure.error.slice(0, 500)}...`,
+          ''
+        );
+      }
     }
   }
 

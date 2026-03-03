@@ -35,7 +35,7 @@ vi.mock('@/stores/accountMergeStore', () => ({
   useAccountMergeStore: () => mockAccountMergeStore
 }))
 
-import { AccountMergePage } from '@/pages/AccountMergePage'
+import AccountMergePage from '@/pages/AccountMergePage'
 
 describe('AccountMergePage', () => {
   beforeEach(() => {
