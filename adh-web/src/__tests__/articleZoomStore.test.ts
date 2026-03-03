@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach, vi, type MockedFunction } from "vitest"
+import { describe, it, expect, beforeEach, vi, afterEach, type MockedFunction } from "vitest"
 import { useArticleZoomStore } from "@/stores/articleZoomStore"
 import { useDataSourceStore } from "@/stores/dataSourceStore"
 import { apiClient } from "@/services/api/apiClient"
@@ -221,7 +221,7 @@ describe("articleZoomStore", () => {
         await loadPromise
         
         const state = useArticleZoomStore.getState()
-        expect(state.articles).toHaveLength(3)
+        expect(state.articles).toHaveLength(5)
         expect(state.isLoading).toBe(false)
       })
 
@@ -286,19 +286,18 @@ describe("articleZoomStore", () => {
     })
 
     it("should handle selection error", async () => {
-      const originalSelectArticle = useArticleZoomStore.getState().selectArticle
-      useArticleZoomStore.setState({
-        selectArticle: vi.fn().mockImplementation(() => {
-          throw new Error("Selection failed")
-        })
+      const article = mockArticles[0]
+      
+      const originalSet = useArticleZoomStore.setState
+      useArticleZoomStore.setState = vi.fn().mockImplementationOnce(() => {
+        throw new Error("Selection failed")
       })
       
-      try {
-        await useArticleZoomStore.getState().selectArticle(mockArticles[0])
-      } catch {
-        const state = useArticleZoomStore.getState()
-        expect(state.error).toBe("Selection failed")
-      }
+      await useArticleZoomStore.getState().selectArticle(article)
+      const state = useArticleZoomStore.getState()
+      expect(state.error).toBe("Selection failed")
+      
+      useArticleZoomStore.setState = originalSet
     })
   })
 

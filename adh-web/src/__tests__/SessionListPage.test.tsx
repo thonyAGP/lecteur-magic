@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 const mockSessionListStore = {
   sessions: [],
@@ -52,11 +52,11 @@ vi.mock('@/components/layout', () => ({
 }))
 
 vi.mock('@/components/ui', () => ({
-  Button: ({ children, onClick, disabled, className, ...props }: any) => (
+  Button: ({ children, onClick, disabled, className, size, ...props }: unknown) => (
     <button
-      onClick={onClick}
-      disabled={disabled}
-      className={className}
+      onClick={onClick as () => void}
+      disabled={disabled as boolean}
+      className={className as string}
       data-testid="button"
       {...props}
     >
@@ -64,13 +64,14 @@ vi.mock('@/components/ui', () => ({
     </button>
   ),
   Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
-  Input: ({ value, onChange, placeholder, className, id, ...props }: any) => (
+  Input: ({ value, onChange, placeholder, className, id, type, ...props }: unknown) => (
     <input
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={className}
-      id={id}
+      value={value as string}
+      onChange={onChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+      placeholder={placeholder as string}
+      className={className as string}
+      id={id as string}
+      type={type as string}
       data-testid="input"
       {...props}
     />
@@ -82,7 +83,6 @@ vi.mock('@/lib/utils', () => ({
 }))
 
 import { SessionListPage } from '@/pages/SessionListPage'
-import { useSessionListStore } from '@/stores/sessionListStore'
 
 describe('SessionListPage', () => {
   beforeEach(() => {

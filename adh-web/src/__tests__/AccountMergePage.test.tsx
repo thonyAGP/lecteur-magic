@@ -182,11 +182,11 @@ describe('AccountMergePage', () => {
     render(<AccountMergePage />)
     
     const sourceInput = screen.getByPlaceholderText('Numéro de compte')
-    const targetInputs = screen.getAllByPlaceholderText('Numéro de compte')
+    const targetInput = screen.getAllByPlaceholderText('Numéro de compte')[1]
     const validateButton = screen.getByRole('button', { name: 'Valider les comptes' })
     
     fireEvent.change(sourceInput, { target: { value: '123' } })
-    fireEvent.change(targetInputs[1], { target: { value: '456' } })
+    fireEvent.change(targetInput, { target: { value: '456' } })
     fireEvent.click(validateButton)
     
     await waitFor(() => {
