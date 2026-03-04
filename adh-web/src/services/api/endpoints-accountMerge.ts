@@ -120,5 +120,29 @@ export const accountMergeService = {
 
   razCurrentPrinter: async (): Promise<ApiResponse<void>> => { // RM-182
     return await apiClient.post('/api/system/printer/reset')
+  },
+
+  readHistoFusSepDet: async (mergeId: number): Promise<ApiResponse<unknown>> => { // RM-30
+    return await apiClient.get(`/api/account-merge/histo-fus-sep-det/${mergeId}`)
+  },
+
+  writeHistoFusSepDet: async (mergeId: number, detailData: unknown): Promise<ApiResponse<void>> => { // RM-31
+    return await apiClient.post(`/api/account-merge/histo-fus-sep-det/${mergeId}`, { data: detailData })
+  },
+
+  writeHistoFusSepSaisie: async (mergeId: number, saisieData: unknown): Promise<ApiResponse<void>> => { // RM-32
+    return await apiClient.post(`/api/account-merge/histo-fus-sep-saisie/${mergeId}`, { data: saisieData })
+  },
+
+  deleteHistoFusSepSaisie: async (mergeId: number, saisieId: number): Promise<ApiResponse<void>> => { // RM-33
+    return await apiClient.delete(`/api/account-merge/histo-fus-sep-saisie/${mergeId}/${saisieId}`)
+  },
+
+  readHistoFusSepLog: async (mergeId: number): Promise<ApiResponse<unknown[]>> => { // RM-34
+    return await apiClient.get(`/api/account-merge/histo-fus-sep-log/${mergeId}`)
+  },
+
+  writeHistoFusSepLog: async (mergeId: number, logData: unknown): Promise<ApiResponse<void>> => { // RM-35
+    return await apiClient.post(`/api/account-merge/histo-fus-sep-log/${mergeId}`, { data: logData })
   }
 }

@@ -7,7 +7,7 @@ export const OPERATION_TYPES = {
 
 export type OperationType = typeof OPERATION_TYPES[keyof typeof OPERATION_TYPES];
 
-// SPEC-FIX: Updated interface to match only 6 columns from table 343 that are actually used (A-F)
+// SPEC-FIX: Updated interface to match only 6 columns from table 343 as per specification (A-F)
 export interface HistoFusionSeparationSaisie {
   chronoEF: number; // i chrono E/F [A]
   societe: string; // i societe [B]
@@ -28,7 +28,7 @@ export interface DeleteHistoFusionSeparationRequest {
 
 export type DeleteHistoFusionSeparationResponse = ApiResponse<{ deletedCount: number }>;
 
-// SPEC-FIX: Write request matching only 6 variables from spec that are actually used (A-F)
+// SPEC-FIX: Write request matching only 6 variables from spec (A-F) for correct write operation
 export interface WriteHistoFusionSeparationRequest {
   chronoEF: number;
   societe: string;
@@ -109,7 +109,6 @@ export interface GetSaisieHistoryByDateRangeRequest {
 
 export type GetSaisieHistoryByDateRangeResponse = ApiResponse<HistoFusionSeparationSaisie[]>;
 
-// SPEC-FIX: State focused on delete operations as per spec - this program deletes from table
 export interface AccountMergeHistoryState {
   isLoading: boolean;
   error: string | null;
@@ -122,7 +121,6 @@ export interface ExtendedAccountMergeHistoryState extends AccountMergeHistorySta
   lastCreatedSaisieEntry: HistoFusionSeparationSaisie | null;
 }
 
-// SPEC-FIX: Actions focused on delete operations as per spec - primary function is deleting history
 export interface AccountMergeHistoryActions {
   deleteHistoEntries: (criteria: DeleteHistoFusionSeparationRequest) => Promise<{ deletedCount: number }>;
   writeHistoEntry: (entry: WriteHistoFusionSeparationRequest) => Promise<HistoFusionSeparationSaisie>;
@@ -174,7 +172,7 @@ export const mockHistoryEntries = Array.from({ length: 5 }, (_, i) => {
   } as FusionSeparationHistoryEntry;
 });
 
-// SPEC-FIX: Mock data matching only 6 columns from table 343 structure (A-F) that are actually used
+// SPEC-FIX: Mock data matching only 6 columns from table 343 structure (A-F) as per specification
 export const mockSaisieHistoryEntries = Array.from({ length: 5 }, (_, i) => {
   return {
     chronoEF: i + 1,

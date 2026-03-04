@@ -88,14 +88,12 @@ export const useAccountMergeHistoryStore = create<AccountMergeHistoryStore>((set
     }
   },
 
-  deleteHistoryEntries: async (criteria?: { // SPEC-FIX: This method correctly implements the deletion functionality as per spec
-    chronoId?: number;
-    companyCode?: string;
-    referenceAccount?: number;
-    referenceFiliation?: number;
-    oldPointedAccount?: number;
-    oldPointedFiliation?: number;
-  }) => {
+  createHistoryEntry: async (entry) => {
+    return get().writeHistoryEntry(entry);
+  },
+
+  // SPEC-FIX: Changed from read operation to delete operation per spec
+  deleteHistoryEntries: async () => {
     set({ isLoading: true, error: null });
     try {
       const isRealApi = useDataSourceStore.getState().isRealApi;
@@ -105,15 +103,15 @@ export const useAccountMergeHistoryStore = create<AccountMergeHistoryStore>((set
           historyEntries: [],
           isLoading: false 
         });
-        return { deletedCount: mockHistoryEntries.length };
+        
+        return true;
       }
 
-      const response = await apiClient.delete<ApiResponse<{ deletedCount: number }>>(
-        '/api/histo-fusion-separation-saisie',
-        criteria ? { data: criteria } : undefined
+      const response = await apiClient.delete<ApiResponse<boolean>>(
+        '/api/histo-fusion-separation-saisie'
       );
 
-      if (!response.success || !response.data) {
+      if (!response.success) {
         throw new Error(response.error || 'Failed to delete history entries');
       }
 
@@ -122,68 +120,7 @@ export const useAccountMergeHistoryStore = create<AccountMergeHistoryStore>((set
         isLoading: false 
       });
 
-      return response.data;
-    } catch (e) {
-      const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred';
-      set({ error: errorMessage, isLoading: false });
-      throw e;
-    }
-  },
-
-  createHistoryEntry: async (entry) => {
-    return get().writeHistoryEntry(entry);
-  },
-
-  getHistoryByAccount: async (accountNumber: number, filiationNumber?: number) => {
-    set({ isLoading: true, error: null });
-    try {
-      const isRealApi = useDataSourceStore.getState().isRealApi;
-      
-      if (!isRealApi) {
-        let filtered = mockHistoryEntries.filter(
-          (entry) => entry.referenceAccount === accountNumber
-        );
-        
-        if (filiationNumber !== undefined) {
-          filtered = filtered.filter(
-            (entry) => entry.referenceFiliation === filiationNumber
-          );
-        }
-        
-        const sorted = filtered.sort((a, b) => 
-          b.timestamp.getTime() - a.timestamp.getTime()
-        );
-        
-        set({ 
-          historyEntries: sorted,
-          isLoading: false 
-        });
-        
-        return sorted;
-      }
-
-      const params = new URLSearchParams({
-        accountNumber: accountNumber.toString(),
-      });
-      
-      if (filiationNumber !== undefined) {
-        params.append('filiationNumber', filiationNumber.toString());
-      }
-
-      const response = await apiClient.get<ApiResponse<FusionSeparationHistoryEntry[]>>(
-        `/api/histo-fusion-separation-saisie?${params.toString()}`
-      );
-
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to fetch history');
-      }
-
-      set({ 
-        historyEntries: response.data,
-        isLoading: false 
-      });
-
-      return response.data;
+      return true;
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred';
       set({ error: errorMessage, isLoading: false });
