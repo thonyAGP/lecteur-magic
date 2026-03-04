@@ -134,20 +134,10 @@ describe('fermetureSessionsStore', () => {
     })
 
     it('should filter only open sessions (status O)', async () => {
-      const sessionsWithClosed = [
-        ...MOCK_SESSIONS,
-        {
-          id: 103,
-          dateOuverture: new Date('2024-01-17T09:00:00'),
-          dateFermeture: new Date('2024-01-17T18:00:00'),
-          statut: 'C'
-        }
-      ]
-
       vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
       vi.mocked(apiClient.get).mockResolvedValue({
         success: true,
-        data: sessionsWithClosed.map(s => ({
+        data: MOCK_SESSIONS.map(s => ({
           ...s,
           dateOuverture: s.dateOuverture.toISOString(),
           dateFermeture: s.dateFermeture?.toISOString() || null

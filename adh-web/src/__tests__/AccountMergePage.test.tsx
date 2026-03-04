@@ -181,8 +181,9 @@ describe('AccountMergePage', () => {
   it('handles account validation form submission', async () => {
     render(<AccountMergePage />)
     
-    const sourceInput = screen.getByPlaceholderText('Numéro de compte')
-    const targetInput = screen.getAllByPlaceholderText('Numéro de compte')[1]
+    const inputs = screen.getAllByPlaceholderText('Numéro de compte')
+    const sourceInput = inputs[0]
+    const targetInput = inputs[1]
     const validateButton = screen.getByRole('button', { name: 'Valider les comptes' })
     
     fireEvent.change(sourceInput, { target: { value: '123' } })
@@ -257,9 +258,9 @@ describe('AccountMergePage', () => {
   })
 
   it('handles history filtering', async () => {
-    render(<AccountMergePage />)
+    const { container } = render(<AccountMergePage />)
     
-    const dateInputs = screen.getAllByDisplayValue('')
+    const dateInputs = container.querySelectorAll('input[type="date"]')
     const filterButton = screen.getByRole('button', { name: 'Filtrer' })
     
     fireEvent.change(dateInputs[0], { target: { value: '2024-01-01' } })
@@ -267,10 +268,12 @@ describe('AccountMergePage', () => {
     fireEvent.click(filterButton)
     
     await waitFor(() => {
-      expect(mockAccountMergeStore.getMergeHistory).toHaveBeenCalledWith({
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-01-31')
-      })
+      expect(mockAccountMergeStore.getMergeHistory).toHaveBeenCalledTimes(2)
+      const lastCall = mockAccountMergeStore.getMergeHistory.mock.calls[1][0]
+      expect(lastCall.startDate).toBeInstanceOf(Date)
+      expect(lastCall.endDate).toBeInstanceOf(Date)
+      expect(lastCall.startDate.toISOString()).toContain('2024-01-01')
+      expect(lastCall.endDate.toISOString()).toContain('2024-01-31')
     })
   })
 
@@ -366,15 +369,11 @@ describe('AccountMergePage', () => {
     expect(screen.getByText('Erreur lors de la validation des comptes')).toBeInTheDocument()
   })
 
-  it('handles validation error when accounts are missing', async () => {
+  it('disables validate button when accounts are missing', () => {
     render(<AccountMergePage />)
     
     const validateButton = screen.getByRole('button', { name: 'Valider les comptes' })
-    fireEvent.click(validateButton)
-    
-    await waitFor(() => {
-      expect(mockAccountMergeStore.setError).toHaveBeenCalledWith('Veuillez saisir les numéros de compte source et cible')
-    })
+    expect(validateButton).toBeDisabled()
   })
 
   it('calls reset on component unmount', () => {

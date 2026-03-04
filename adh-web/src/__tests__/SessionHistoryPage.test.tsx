@@ -210,9 +210,10 @@ describe("SessionHistoryPage", () => {
       canApplyFilters: true
     })
 
-    render(<SessionHistoryPage />)
+    const { container } = render(<SessionHistoryPage />)
     
-    const startDateInput = screen.getByLabelText("Date début")
+    const dateInputs = container.querySelectorAll('input[type="date"]')
+    const startDateInput = dateInputs[0] as HTMLInputElement
     fireEvent.change(startDateInput, { target: { value: "2024-01-15" } })
     
     await waitFor(() => {

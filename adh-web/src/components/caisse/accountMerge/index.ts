@@ -1,6 +1,6 @@
-export { AccountSelectionPanelPanel } from './AccountSelectionPanelPanel.js';
-export { ValidationPanelPanel } from './ValidationPanelPanel.js';
-export { ProgressPanelPanel } from './ProgressPanelPanel.js';
-export { HistoryPanelPanel } from './HistoryPanelPanel.js';
-export { ActionsPanelPanel } from './ActionsPanelPanel.js';
-export { LogsPanelPanel } from './LogsPanelPanel.js';
+export { ValidationPanel } from './ValidationPanel.js';
+export { SourceSelectionPanel } from './SourceSelectionPanel.js';
+export { TargetSelectionPanel } from './TargetSelectionPanel.js';
+export { ConfirmationPanel } from './ConfirmationPanel.js';
+export { ProcessingPanel } from './ProcessingPanel.js';
+export { ResultPanel } from './ResultPanel.js';

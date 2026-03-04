@@ -1,0 +1,127 @@
+{
+  "domain": "accountMergeHistory",
+  "domainPascal": "AccountMergeHistory",
+  "complexity": "LOW",
+  "entities": [
+    {
+      "name": "FusionSeparationHistoryEntry",
+      "fields": [
+        {
+          "name": "chrono",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_chrono_ef",
+          "nullable": false
+        },
+        {
+          "name": "societe",
+          "type": "string",
+          "source": "histo_fusionseparation_saisie.i_societe",
+          "nullable": false
+        },
+        {
+          "name": "compteReference",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_compte_reference",
+          "nullable": false
+        },
+        {
+          "name": "filiationReference",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_filiation_reference",
+          "nullable": false
+        },
+        {
+          "name": "comptePointeOld",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_compte_pointe_old",
+          "nullable": false
+        },
+        {
+          "name": "filiationPointeOld",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_filiation_pointe_old",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "isDeleting",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "string | null",
+      "default": "null"
+    },
+    {
+      "name": "deletedCount",
+      "type": "number",
+      "default": "0"
+    }
+  ],
+  "actions": [
+    {
+      "name": "deleteHistoryEntries",
+      "params": [
+        "criteria: { chrono?: number; societe?: string; compteReference?: number }"
+      ],
+      "businessRules": [
+        "Delete only completed/processed fusion-separation history entries",
+        "Ensure parent fusion operation is completed before deletion",
+        "Track number of deleted records for audit purposes",
+        "Clean up historical data to reclaim disk space while maintaining data integrity"
+      ],
+      "returns": "Promise<{ deletedCount: number }>"
+    },
+    {
+      "name": "clearError",
+      "params": [],
+      "businessRules": [
+        "Reset error state after user acknowledgment"
+      ],
+      "returns": "void"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "DELETE",
+      "path": "/api/account-merge-history/entries",
+      "queryParams": [
+        "chrono?",
+        "societe?",
+        "compteReference?"
+      ],
+      "response": "{ deletedCount: number }"
+    }
+  ],
+  "uiLayout": {
+    "type": "background-task",
+    "sections": [
+      {
+        "name": "noUI",
+        "controls": [
+          "Backend-only operation called programmatically from Fusion workflow (IDE 28)"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 10,
+    "description": "Mock history entries with various chrono values, societe codes, and account references representing completed fusion/separation operations ready for cleanup"
+  },
+  "dependencies": {
+    "stores": [
+      "useAccountMergeStore"
+    ],
+    "sharedTypes": [
+      "FusionSeparationHistoryEntry",
+      "DeleteCriteria"
+    ],
+    "externalApis": [
+      "DELETE /api/account-merge-history/entries - Cleanup historical fusion-separation entries"
+    ]
+  }
+}

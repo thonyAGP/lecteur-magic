@@ -1,0 +1,215 @@
+{
+  "domain": "accountMergeHistory",
+  "domainPascal": "AccountMergeHistory",
+  "complexity": "LOW",
+  "entities": [
+    {
+      "name": "FusionSeparationHistoryEntry",
+      "fields": [
+        {
+          "name": "chronoId",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_chrono_E_F",
+          "nullable": false
+        },
+        {
+          "name": "companyCode",
+          "type": "string",
+          "source": "histo_fusionseparation_saisie.i_societe",
+          "nullable": false
+        },
+        {
+          "name": "referenceAccount",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_compte_reference",
+          "nullable": false
+        },
+        {
+          "name": "referenceFiliation",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_filiation_reference",
+          "nullable": false
+        },
+        {
+          "name": "oldPointedAccount",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_compte_pointe_old",
+          "nullable": false
+        },
+        {
+          "name": "oldPointedFiliation",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_filiation_pointe_old",
+          "nullable": false
+        },
+        {
+          "name": "newPointedAccount",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_compte_pointe_new",
+          "nullable": false
+        },
+        {
+          "name": "newPointedFiliation",
+          "type": "number",
+          "source": "histo_fusionseparation_saisie.i_filiation_pointe_new",
+          "nullable": false
+        },
+        {
+          "name": "operationType",
+          "type": "string",
+          "source": "histo_fusionseparation_saisie.i_type_E_F",
+          "nullable": false
+        },
+        {
+          "name": "lastName",
+          "type": "string",
+          "source": "histo_fusionseparation_saisie.i_nom",
+          "nullable": false
+        },
+        {
+          "name": "firstName",
+          "type": "string",
+          "source": "histo_fusionseparation_saisie.i_prenom",
+          "nullable": false
+        },
+        {
+          "name": "fullName",
+          "type": "string",
+          "source": "computed",
+          "nullable": false
+        },
+        {
+          "name": "timestamp",
+          "type": "Date",
+          "source": "histo_fusionseparation_saisie.created_at",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "stateFields": [
+    {
+      "name": "isLoading",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "name": "error",
+      "type": "string | null",
+      "default": "null"
+    },
+    {
+      "name": "lastCreatedEntry",
+      "type": "FusionSeparationHistoryEntry | null",
+      "default": "null"
+    },
+    {
+      "name": "historyEntries",
+      "type": "FusionSeparationHistoryEntry[]",
+      "default": "[]"
+    }
+  ],
+  "actions": [
+    {
+      "name": "createHistoryEntry",
+      "params": [
+        "entry: Omit<FusionSeparationHistoryEntry, 'chronoId' | 'timestamp' | 'fullName'>"
+      ],
+      "businessRules": [
+        "Compute fullName by trimming and concatenating lastName and firstName with a space separator",
+        "Generate chronoId automatically using database sequence or auto-increment",
+        "Set timestamp to current date/time",
+        "Validate operationType is either 'E' (entry), 'F' (fusion), or 'S' (separation)",
+        "Store complete account and filiation information for both old and new states",
+        "Persist entry to histo_fusionseparation_saisie table for audit trail",
+        "Entry creation must succeed atomically to ensure data integrity"
+      ],
+      "returns": "Promise<FusionSeparationHistoryEntry>"
+    },
+    {
+      "name": "getHistoryByAccount",
+      "params": [
+        "accountNumber: number",
+        "filiationNumber?: number"
+      ],
+      "businessRules": [
+        "Retrieve all history entries where referenceAccount matches accountNumber",
+        "If filiationNumber provided, filter by referenceFiliation as well",
+        "Order results by timestamp descending (most recent first)",
+        "Include both old and new account states for complete audit trail"
+      ],
+      "returns": "Promise<FusionSeparationHistoryEntry[]>"
+    },
+    {
+      "name": "getHistoryByDateRange",
+      "params": [
+        "startDate: Date",
+        "endDate: Date",
+        "operationType?: string"
+      ],
+      "businessRules": [
+        "Retrieve history entries within the specified date range",
+        "If operationType provided, filter by operation type",
+        "Order by timestamp descending",
+        "Support pagination for large result sets"
+      ],
+      "returns": "Promise<FusionSeparationHistoryEntry[]>"
+    }
+  ],
+  "apiEndpoints": [
+    {
+      "method": "POST",
+      "path": "/api/account-merge/history",
+      "queryParams": [],
+      "response": "FusionSeparationHistoryEntry"
+    },
+    {
+      "method": "GET",
+      "path": "/api/account-merge/history",
+      "queryParams": [
+        "accountNumber",
+        "filiationNumber?"
+      ],
+      "response": "FusionSeparationHistoryEntry[]"
+    },
+    {
+      "method": "GET",
+      "path": "/api/account-merge/history/date-range",
+      "queryParams": [
+        "startDate",
+        "endDate",
+        "operationType?"
+      ],
+      "response": "FusionSeparationHistoryEntry[]"
+    }
+  ],
+  "uiLayout": {
+    "type": "service-only",
+    "sections": [
+      {
+        "name": "backendService",
+        "controls": [
+          "No visible UI - persistence service only",
+          "Called by Fusion program (IDE 28) to record history",
+          "Could be displayed in history view or audit log elsewhere"
+        ]
+      }
+    ]
+  },
+  "mockData": {
+    "count": 5,
+    "description": "Generate 5 sample history entries with realistic data: mix of fusion (F) and separation (S) operations, account numbers between 1000-9999, filiation numbers 1-5, company codes '01' to '05', French names (e.g., 'Dupont', 'Martin', 'Bernard'), and timestamps spread over the last 30 days to simulate historical operations"
+  },
+  "dependencies": {
+    "stores": [
+      "useAccountMergeHistoryStore"
+    ],
+    "sharedTypes": [
+      "FusionSeparationHistoryEntry"
+    ],
+    "externalApis": [
+      "Database connection to histo_fusionseparation_saisie table",
+      "Called from accountMerge domain (Fusion program IDE 28)"
+    ]
+  }
+}

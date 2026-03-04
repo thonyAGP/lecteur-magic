@@ -208,12 +208,12 @@ describe("saisieContenuCaisseStore", () => {
       const state = useSaisieContenuCaisseStore.getState()
       
       expect(state.montantsSaisis.monnaie).toBe(1300.00)
-      expect(state.ecarts.monnaie).toBe(49.25)
+      expect(state.ecarts.monnaie).toBeCloseTo(49.25, 2)
       expect(state.remise?.montantVersement).toBe(1300.00)
-      expect(state.remise?.ecart).toBe(49.25)
+      expect(state.remise?.ecart).toBeCloseTo(49.25, 2)
       expect(state.anomalies).toHaveLength(3)
       expect(state.anomalies[2].typeAnomalie).toBe(ANOMALIE_TYPES.EXCEDENT)
-      expect(state.anomalies[2].montantEcart).toBe(49.25)
+      expect(state.anomalies[2].montantEcart).toBeCloseTo(49.25, 2)
     })
 
     it("should handle negative ecart and create manquant anomaly", async () => {
@@ -223,10 +223,10 @@ describe("saisieContenuCaisseStore", () => {
       
       const state = useSaisieContenuCaisseStore.getState()
       
-      expect(state.ecarts.monnaie).toBe(-50.75)
+      expect(state.ecarts.monnaie).toBeCloseTo(-50.75, 2)
       expect(state.anomalies).toHaveLength(3)
       expect(state.anomalies[2].typeAnomalie).toBe(ANOMALIE_TYPES.MANQUANT)
-      expect(state.anomalies[2].montantEcart).toBe(50.75)
+      expect(state.anomalies[2].montantEcart).toBeCloseTo(50.75, 2)
     })
 
     it("should not create anomaly for exact amount", async () => {
@@ -261,7 +261,7 @@ describe("saisieContenuCaisseStore", () => {
       const state = useSaisieContenuCaisseStore.getState()
       
       expect(state.remise?.montantVersement).toBe(3641.25)
-      expect(Math.round(state.remise?.ecart! * 100) / 100).toBe(4.10)
+      expect(state.remise?.ecart).toBeCloseTo(4.10, 2)
     })
   })
 
@@ -311,7 +311,14 @@ describe("saisieContenuCaisseStore", () => {
       expect(apiClient.post).toHaveBeenCalledWith('/api/saisie-contenu-caisse/valider-remise', {
         societe: "SOC001",
         typeRemise: REMISE_TYPES.PRODUIT,
-        montants: { monnaie: 1300.00 }
+        montants: {
+          monnaie: 1300.00,
+          produits: 0,
+          cartes: 0,
+          cheques: 0,
+          od: 0,
+          devises: 0
+        }
       } as ValiderRemiseRequest)
       
       expect(state.anomalies).toHaveLength(4)
@@ -393,14 +400,12 @@ describe("saisieContenuCaisseStore", () => {
       
       const state = useSaisieContenuCaisseStore.getState()
       
-      expect(state.ecarts).toEqual({
-        monnaie: 49.25,
-        produits: 4.10,
-        cartes: -40.50,
-        cheques: 0,
-        od: 4.75,
-        devises: 9.70
-      })
+      expect(state.ecarts.monnaie).toBeCloseTo(49.25, 2)
+      expect(state.ecarts.produits).toBeCloseTo(4.10, 2)
+      expect(state.ecarts.cartes).toBeCloseTo(-40.50, 2)
+      expect(state.ecarts.cheques).toBeCloseTo(0, 2)
+      expect(state.ecarts.od).toBeCloseTo(4.75, 2)
+      expect(state.ecarts.devises).toBeCloseTo(9.70, 2)
       
       expect(state.remise?.ecart).toBeCloseTo(27.30, 2)
     })

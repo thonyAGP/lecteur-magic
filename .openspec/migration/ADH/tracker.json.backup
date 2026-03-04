@@ -2,7 +2,7 @@
   "version": "1.0",
   "methodology": "SPECMAP",
   "created": "2026-02-11",
-  "updated": "2026-03-04",
+  "updated": "2026-03-03",
   "status": "verifying",
   "stats": {
     "total_programs": 350,
@@ -448,6 +448,31 @@
       "auto_detected": true
     },
     {
+      "id": "B14",
+      "name": "Fusion",
+      "root": 28,
+      "programs": 3,
+      "status": "enriched",
+      "enriched_date": "2026-02-26",
+      "stats": {
+        "backend_na": 0,
+        "frontend_enrich": 0,
+        "fully_impl": 3,
+        "coverage_avg_frontend": 0,
+        "total_partial": 0,
+        "total_missing": 0
+      },
+      "priority_order": [
+        28,
+        32,
+        33
+      ],
+      "domain": "",
+      "complexity_grade": "D",
+      "estimated_hours": 3.4,
+      "auto_detected": true
+    },
+    {
       "id": "B15",
       "name": "Solde Easy Check Out",
       "root": 64,
@@ -575,27 +600,6 @@
       "complexity_grade": "D",
       "estimated_hours": 15.3,
       "auto_detected": true
-    },
-    {
-      "id": "B14",
-      "name": "Fusion",
-      "root": "28",
-      "programs": 3,
-      "status": "enriched",
-      "enriched_date": "2026-03-04",
-      "stats": {
-        "backend_na": 0,
-        "frontend_enrich": 0,
-        "fully_impl": 3,
-        "coverage_avg_frontend": 42,
-        "total_partial": 0,
-        "total_missing": 0
-      },
-      "priority_order": [
-        "28",
-        "32",
-        "33"
-      ]
     }
   ],
   "notes": [
@@ -610,82 +614,83 @@
       "phases": {
         "spec": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.224Z",
-          "completedAt": "2026-03-04T16:04:46.286Z",
+          "startedAt": "2026-03-02T18:28:05.603Z",
+          "completedAt": "2026-03-02T18:28:05.621Z",
           "duration": 0,
           "file": "..\\..\\.openspec\\specs\\ADH-IDE-28.md"
         },
         "contract": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.291Z",
-          "completedAt": "2026-03-04T16:04:46.297Z",
+          "startedAt": "2026-03-02T18:28:05.626Z",
+          "completedAt": "2026-03-02T18:28:05.628Z",
           "duration": 0,
           "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-28.contract.yaml"
         },
         "analyze": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.307Z",
-          "completedAt": "2026-03-04T16:04:46.308Z",
+          "startedAt": "2026-03-02T18:28:05.632Z",
+          "completedAt": "2026-03-02T18:28:05.633Z",
           "duration": 0,
           "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-28.analysis.json"
         },
         "types": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.317Z",
-          "completedAt": "2026-03-04T16:04:46.323Z",
-          "duration": 0,
+          "startedAt": "2026-03-02T18:28:05.638Z",
+          "completedAt": "2026-03-02T18:28:15.586Z",
+          "duration": 9946,
           "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountMerge.ts"
         },
         "store": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.329Z",
-          "completedAt": "2026-03-04T16:04:46.335Z",
-          "duration": 0,
+          "startedAt": "2026-03-02T18:28:15.588Z",
+          "completedAt": "2026-03-02T18:28:52.976Z",
+          "duration": 37386,
           "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountMergeStore.ts"
         },
         "api": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.339Z",
-          "completedAt": "2026-03-04T16:04:46.345Z",
-          "duration": 0,
+          "startedAt": "2026-03-02T18:28:52.979Z",
+          "completedAt": "2026-03-02T18:29:02.961Z",
+          "duration": 9980,
           "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountMerge.ts"
         },
         "page": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.351Z",
-          "completedAt": "2026-03-04T16:04:46.357Z",
-          "duration": 0,
+          "startedAt": "2026-03-02T18:29:02.964Z",
+          "completedAt": "2026-03-02T18:29:44.802Z",
+          "duration": 41836,
           "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountMergePage.tsx"
         },
         "components": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.361Z",
-          "completedAt": "2026-03-04T16:04:46.370Z",
-          "duration": 2
+          "startedAt": "2026-03-02T18:29:44.805Z",
+          "completedAt": "2026-03-02T18:31:15.089Z",
+          "duration": 90282
         },
         "tests-unit": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.376Z",
-          "completedAt": "2026-03-04T16:04:46.382Z",
-          "duration": 0,
+          "startedAt": "2026-03-02T18:31:15.092Z",
+          "completedAt": "2026-03-02T18:32:08.272Z",
+          "duration": 53178,
           "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountMergeStore.test.ts"
         },
         "tests-ui": {
           "status": "completed",
-          "startedAt": "2026-03-04T16:04:46.388Z",
-          "completedAt": "2026-03-04T16:04:46.395Z",
-          "duration": 0,
+          "startedAt": "2026-03-02T18:32:08.275Z",
+          "completedAt": "2026-03-02T18:32:47.327Z",
+          "duration": 39050,
           "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountMergePage.test.tsx"
         }
       },
       "files": [
-        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-28.md",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-28.contract.yaml",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-28.analysis.json",
-        "packages\\migrations\\adh-web\\src\\types\\accountMerge.ts",
         "..\\..\\.openspec\\specs\\ADH-IDE-28.md",
         "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-28.contract.yaml",
         "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-28.analysis.json",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-qa\\src\\types\\accountMerge.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-qa\\src\\stores\\accountMergeStore.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-qa\\src\\services\\api\\endpoints-accountMerge.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-qa\\src\\pages\\AccountMergePage.tsx",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-qa\\src\\__tests__\\accountMergeStore.test.ts",
         "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountMerge.ts",
         "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountMergeStore.ts",
         "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountMerge.ts",
@@ -694,13 +699,11 @@
         "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountMergePage.test.tsx"
       ],
       "errors": [
-        "[components] ANTHROPIC_API_KEY required for API mode",
-        "ANTHROPIC_API_KEY required for API mode",
-        "[components] ANTHROPIC_API_KEY required for API mode",
-        "ANTHROPIC_API_KEY required for API mode"
+        "[tests-ui] Command failed: type \"C:\\Users\\thony\\AppData\\Local\\Temp\\mf-prompt-1772097761079-9wnt2u.txt\" | claude --print --output-format json --model sonnet\n",
+        "Command failed: type \"C:\\Users\\thony\\AppData\\Local\\Temp\\mf-prompt-1772097761079-9wnt2u.txt\" | claude --print --output-format json --model sonnet\n"
       ],
-      "startedAt": "2026-03-03T16:48:44.330Z",
-      "completedAt": "2026-03-04T16:04:46.401Z"
+      "startedAt": "2026-02-26T09:10:53.499Z",
+      "completedAt": "2026-03-02T18:32:47.330Z"
     },
     "32": {
       "status": "completed",
@@ -708,88 +711,88 @@
       "phases": {
         "spec": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.068Z",
-          "completedAt": "2026-03-04T15:45:46.124Z",
+          "startedAt": "2026-02-26T00:00:37.930Z",
+          "completedAt": "2026-02-26T00:00:37.968Z",
           "duration": 0,
-          "file": "..\\..\\.openspec\\specs\\ADH-IDE-32.md"
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-32.md"
         },
         "contract": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.131Z",
-          "completedAt": "2026-03-04T15:45:46.144Z",
-          "duration": 0,
-          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-32.contract.yaml"
+          "startedAt": "2026-02-26T00:00:37.970Z",
+          "completedAt": "2026-02-26T00:00:37.980Z",
+          "duration": 8,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.contract.yaml"
         },
         "analyze": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.160Z",
-          "completedAt": "2026-03-04T15:45:46.178Z",
-          "duration": 0,
-          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-32.analysis.json"
+          "startedAt": "2026-02-26T00:00:37.983Z",
+          "completedAt": "2026-02-26T00:01:28.344Z",
+          "duration": 50361,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.analysis.json"
         },
         "types": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.186Z",
-          "completedAt": "2026-03-04T15:45:46.213Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountMergeHistory.ts"
+          "startedAt": "2026-02-26T00:01:28.346Z",
+          "completedAt": "2026-02-26T00:02:03.742Z",
+          "duration": 35394,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\fusionSeparationHistory.ts"
         },
         "store": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.222Z",
-          "completedAt": "2026-03-04T15:45:46.251Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountMergeHistoryStore.ts"
+          "startedAt": "2026-02-26T00:02:03.744Z",
+          "completedAt": "2026-02-26T00:03:16.058Z",
+          "duration": 72312,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\fusionSeparationHistoryStore.ts"
         },
         "api": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.260Z",
-          "completedAt": "2026-03-04T15:45:46.294Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountMergeHistory.ts"
+          "startedAt": "2026-02-26T00:03:16.059Z",
+          "completedAt": "2026-02-26T00:03:45.986Z",
+          "duration": 29926,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-fusionSeparationHistory.ts"
         },
         "page": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:45:46.302Z",
-          "completedAt": "2026-03-04T15:47:39.434Z",
-          "duration": 113122,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountMergeHistoryPage.tsx"
+          "startedAt": "2026-02-26T00:03:45.988Z",
+          "completedAt": "2026-02-26T00:04:20.333Z",
+          "duration": 34345,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\FusionSeparationHistoryPage.tsx"
         },
         "components": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:47:39.439Z",
-          "completedAt": "2026-03-04T15:48:26.468Z",
-          "duration": 47023
+          "startedAt": "2026-02-26T00:04:20.335Z",
+          "completedAt": "2026-02-26T00:05:03.956Z",
+          "duration": 43620
         },
         "tests-unit": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:48:26.473Z",
-          "completedAt": "2026-03-04T15:49:49.274Z",
-          "duration": 82796,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountMergeHistoryStore.test.ts"
+          "startedAt": "2026-02-26T00:05:03.957Z",
+          "completedAt": "2026-02-26T00:06:24.571Z",
+          "duration": 80613,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\fusionSeparationHistoryStore.test.ts"
         },
         "tests-ui": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:49:49.282Z",
-          "completedAt": "2026-03-04T15:50:46.658Z",
-          "duration": 57370,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountMergeHistoryPage.test.tsx"
+          "startedAt": "2026-02-26T00:06:24.574Z",
+          "completedAt": "2026-02-26T00:07:04.847Z",
+          "duration": 40271,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\FusionSeparationHistoryPage.test.tsx"
         }
       },
       "files": [
-        "..\\..\\.openspec\\specs\\ADH-IDE-32.md",
-        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-32.contract.yaml",
-        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-32.analysis.json",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountMergeHistory.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountMergeHistoryStore.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountMergeHistory.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountMergeHistoryPage.tsx",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountMergeHistoryStore.test.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountMergeHistoryPage.test.tsx"
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-32.md",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.contract.yaml",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-32.analysis.json",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\fusionSeparationHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\fusionSeparationHistoryStore.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-fusionSeparationHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\FusionSeparationHistoryPage.tsx",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\fusionSeparationHistoryStore.test.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\FusionSeparationHistoryPage.test.tsx"
       ],
       "errors": [],
-      "startedAt": "2026-03-04T15:43:53.065Z",
-      "completedAt": "2026-03-04T15:50:46.664Z"
+      "startedAt": "2026-02-26T00:00:37.930Z",
+      "completedAt": "2026-02-26T00:07:04.859Z"
     },
     "33": {
       "status": "completed",
@@ -797,93 +800,88 @@
       "phases": {
         "spec": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:50:46.676Z",
-          "completedAt": "2026-03-04T15:50:46.681Z",
+          "startedAt": "2026-02-26T00:07:04.862Z",
+          "completedAt": "2026-02-26T00:07:04.863Z",
           "duration": 0,
-          "file": "..\\..\\.openspec\\specs\\ADH-IDE-33.md"
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-33.md"
         },
         "contract": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:50:46.685Z",
-          "completedAt": "2026-03-04T15:50:46.694Z",
-          "duration": 0,
-          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-33.contract.yaml"
+          "startedAt": "2026-02-26T00:07:04.864Z",
+          "completedAt": "2026-02-26T00:07:04.869Z",
+          "duration": 5,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.contract.yaml"
         },
         "analyze": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:50:46.712Z",
-          "completedAt": "2026-03-04T15:51:31.227Z",
-          "duration": 44515,
-          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-33.analysis.json"
+          "startedAt": "2026-02-26T00:07:04.872Z",
+          "completedAt": "2026-02-26T00:07:54.829Z",
+          "duration": 49957,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.analysis.json"
         },
         "types": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:51:31.233Z",
-          "completedAt": "2026-03-04T15:51:31.237Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountMergeHistory.ts"
+          "startedAt": "2026-02-26T00:07:54.831Z",
+          "completedAt": "2026-02-26T00:08:19.030Z",
+          "duration": 24198,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\accountHistory.ts"
         },
         "store": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:51:31.239Z",
-          "completedAt": "2026-03-04T15:51:31.243Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountMergeHistoryStore.ts"
+          "startedAt": "2026-02-26T00:08:19.031Z",
+          "completedAt": "2026-02-26T00:09:13.567Z",
+          "duration": 54535,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\accountHistoryStore.ts"
         },
         "api": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:51:31.246Z",
-          "completedAt": "2026-03-04T15:51:31.250Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountMergeHistory.ts"
+          "startedAt": "2026-02-26T00:09:13.569Z",
+          "completedAt": "2026-02-26T00:09:36.689Z",
+          "duration": 23119,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-accountHistory.ts"
         },
         "page": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:51:31.255Z",
-          "completedAt": "2026-03-04T15:51:31.264Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountMergeHistoryPage.tsx"
+          "startedAt": "2026-02-26T00:09:36.691Z",
+          "completedAt": "2026-02-26T00:10:50.777Z",
+          "duration": 74084,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\AccountHistoryPage.tsx"
         },
         "components": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:51:31.269Z",
-          "completedAt": "2026-03-04T15:52:13.755Z",
-          "duration": 42479
+          "startedAt": "2026-02-26T00:10:50.779Z",
+          "completedAt": "2026-02-26T00:13:12.547Z",
+          "duration": 141766
         },
         "tests-unit": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:52:13.759Z",
-          "completedAt": "2026-03-04T15:52:13.764Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountMergeHistoryStore.test.ts"
+          "startedAt": "2026-02-26T00:13:12.549Z",
+          "completedAt": "2026-02-26T00:13:58.936Z",
+          "duration": 46386,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\accountHistoryStore.test.ts"
         },
         "tests-ui": {
           "status": "completed",
-          "startedAt": "2026-03-04T15:52:13.767Z",
-          "completedAt": "2026-03-04T15:52:13.773Z",
-          "duration": 0,
-          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountMergeHistoryPage.test.tsx"
+          "startedAt": "2026-02-26T00:13:58.938Z",
+          "completedAt": "2026-02-26T00:14:37.936Z",
+          "duration": 38997,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\AccountHistoryPage.test.tsx"
         }
       },
       "files": [
-        "..\\..\\.openspec\\specs\\ADH-IDE-33.md",
-        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-33.contract.yaml",
-        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-33.analysis.json",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountMergeHistory.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountMergeHistoryStore.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountMergeHistory.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountMergeHistoryPage.tsx",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountMergeHistoryStore.test.ts",
-        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountMergeHistoryPage.test.tsx"
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-33.md",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.contract.yaml",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-33.analysis.json",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\types\\accountHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\stores\\accountHistoryStore.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\services\\api\\endpoints-accountHistory.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\pages\\AccountHistoryPage.tsx",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\accountHistoryStore.test.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\test-migration-b14\\src\\__tests__\\AccountHistoryPage.test.tsx"
       ],
-      "errors": [
-        "[analyze] Analyze failed after 2 attempts: ANTHROPIC_API_KEY required for API mode",
-        "Analyze failed after 2 attempts: ANTHROPIC_API_KEY required for API mode",
-        "[analyze] Analyze failed after 2 attempts: ANTHROPIC_API_KEY required for API mode",
-        "Analyze failed after 2 attempts: ANTHROPIC_API_KEY required for API mode"
-      ],
-      "startedAt": "2026-03-04T15:29:21.644Z",
-      "completedAt": "2026-03-04T15:52:13.776Z"
+      "errors": [],
+      "startedAt": "2026-02-26T00:07:04.862Z",
+      "completedAt": "2026-02-26T00:14:37.937Z"
     },
     "47": {
       "status": "completed",

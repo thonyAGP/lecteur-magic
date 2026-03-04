@@ -211,9 +211,11 @@ describe('SessionListPage', () => {
     render(<SessionListPage />)
     
     const input = screen.getByPlaceholderText('Filtrer par société...')
+    
+    fireEvent.change(input, { target: { value: 'Test Société' } })
     fireEvent.change(input, { target: { value: '' } })
     
-    expect(mockSessionListStore.setFilters).toHaveBeenCalledWith({ societe: null })
+    expect(mockSessionListStore.setFilters).toHaveBeenLastCalledWith({ societe: null })
   })
 
   it('handles error dismissal', () => {

@@ -97,7 +97,7 @@ describe('accountMergeStore', () => {
   beforeEach(() => {
     useAccountMergeStore.getState().reset()
     vi.clearAllMocks()
-    vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false })
+    vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: false } as ReturnType<typeof useDataSourceStore.getState>)
   })
 
   describe('validatePrerequisites', () => {
@@ -106,14 +106,16 @@ describe('accountMergeStore', () => {
       
       const result = await store.validatePrerequisites()
       
+      const updatedState = useAccountMergeStore.getState()
+      
       expect(result).toEqual(MOCK_VALIDATION_STATUS)
-      expect(store.validationStatus).toEqual(MOCK_VALIDATION_STATUS)
-      expect(store.isProcessing).toBe(false)
-      expect(store.error).toBe(null)
+      expect(updatedState.validationStatus).toEqual(MOCK_VALIDATION_STATUS)
+      expect(updatedState.isProcessing).toBe(false)
+      expect(updatedState.error).toBe(null)
     })
 
     it('should validate prerequisites with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: true, data: MOCK_VALIDATION_STATUS }
       })
@@ -122,13 +124,15 @@ describe('accountMergeStore', () => {
       
       const result = await store.validatePrerequisites()
       
+      const updatedState = useAccountMergeStore.getState()
+      
       expect(apiClient.post).toHaveBeenCalledWith('/api/account-merge/validate')
       expect(result).toEqual(MOCK_VALIDATION_STATUS)
-      expect(store.validationStatus).toEqual(MOCK_VALIDATION_STATUS)
+      expect(updatedState.validationStatus).toEqual(MOCK_VALIDATION_STATUS)
     })
 
     it('should handle validation error with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: false, message: 'Network validation failed' }
       })
@@ -136,27 +140,33 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       await expect(store.validatePrerequisites()).rejects.toThrow('Network validation failed')
-      expect(store.error).toBe('Network validation failed')
-      expect(store.isProcessing).toBe(false)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Network validation failed')
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should handle network error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Network error'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.validatePrerequisites()).rejects.toThrow('Network error')
-      expect(store.error).toBe('Network error')
-      expect(store.isProcessing).toBe(false)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Network error')
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should set loading state during validation', async () => {
       const store = useAccountMergeStore.getState()
       
       const promise = store.validatePrerequisites()
-      expect(store.isProcessing).toBe(true)
-      expect(store.error).toBe(null)
+      
+      const duringState = useAccountMergeStore.getState()
+      expect(duringState.isProcessing).toBe(true)
+      expect(duringState.error).toBe(null)
       
       await promise
     })
@@ -168,15 +178,17 @@ describe('accountMergeStore', () => {
       
       const result = await store.loadAccounts(100245, 100123)
       
+      const updatedState = useAccountMergeStore.getState()
+      
       expect(result.source).toEqual(expect.objectContaining({ id: 100245 }))
       expect(result.target).toEqual(expect.objectContaining({ id: 100123 }))
-      expect(store.sourceAccount).toEqual(expect.objectContaining({ id: 100245 }))
-      expect(store.targetAccount).toEqual(expect.objectContaining({ id: 100123 }))
-      expect(store.isProcessing).toBe(false)
+      expect(updatedState.sourceAccount).toEqual(expect.objectContaining({ id: 100245 }))
+      expect(updatedState.targetAccount).toEqual(expect.objectContaining({ id: 100123 }))
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should load accounts with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { 
           success: true, 
@@ -197,7 +209,7 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle account loading error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: false, message: 'Account not found' }
       })
@@ -205,7 +217,9 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       await expect(store.loadAccounts(100245, 100123)).rejects.toThrow('Account not found')
-      expect(store.error).toBe('Account not found')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Account not found')
     })
   })
 
@@ -215,18 +229,20 @@ describe('accountMergeStore', () => {
       
       const result = await store.executeMerge()
       
+      const updatedState = useAccountMergeStore.getState()
+      
       expect(result).toEqual(expect.objectContaining({
         sourceAccountId: 100245,
         targetAccountId: 100123,
         status: 'completed'
       }))
-      expect(store.mergeRequest).toBeTruthy()
-      expect(store.currentStep).toBe('completion')
-      expect(store.isProcessing).toBe(false)
+      expect(updatedState.mergeRequest).toBeTruthy()
+      expect(updatedState.currentStep).toBe('completion')
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should execute merge with parameters', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: true, data: MOCK_MERGE_REQUEST }
       })
@@ -242,14 +258,16 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle merge execution error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Merge failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.executeMerge()).rejects.toThrow('Merge failed')
-      expect(store.error).toBe('Merge failed')
-      expect(store.isProcessing).toBe(false)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Merge failed')
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should update progress during mock execution', async () => {
@@ -257,19 +275,24 @@ describe('accountMergeStore', () => {
       
       await store.executeMerge()
       
-      expect(store.progressData.current).toBeGreaterThan(0)
-      expect(store.progressData.total).toBeGreaterThan(0)
-      expect(store.progressData.table).toBeTruthy()
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.progressData.current).toBeGreaterThan(0)
+      expect(updatedState.progressData.total).toBeGreaterThan(0)
+      expect(updatedState.progressData.table).toBeTruthy()
     })
 
     it('should set step progression correctly', async () => {
       const store = useAccountMergeStore.getState()
       
       const promise = store.executeMerge()
-      expect(store.currentStep).toBe('preparation')
+      
+      const duringState = useAccountMergeStore.getState()
+      expect(duringState.currentStep).toBe('preparation')
       
       await promise
-      expect(store.currentStep).toBe('completion')
+      
+      const afterState = useAccountMergeStore.getState()
+      expect(afterState.currentStep).toBe('completion')
     })
   })
 
@@ -278,11 +301,13 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       await expect(store.saveMergeHistory(1001, 'FUSION_COMPLETE', 'Test merge')).resolves.not.toThrow()
-      expect(store.error).toBe(null)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe(null)
     })
 
     it('should save merge history with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: true }
       })
@@ -299,13 +324,15 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle save history error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Save failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.saveMergeHistory(1001, 'FUSION_COMPLETE')).rejects.toThrow('Save failed')
-      expect(store.error).toBe('Save failed')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Save failed')
     })
   })
 
@@ -314,11 +341,13 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       await expect(store.writeMergeLogs(1001, 'compte_gm', 1, true)).resolves.not.toThrow()
-      expect(store.error).toBe(null)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe(null)
     })
 
     it('should write merge logs with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: true }
       })
@@ -336,13 +365,15 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle write logs error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Write failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.writeMergeLogs(1001, 'compte_gm', 1, false)).rejects.toThrow('Write failed')
-      expect(store.error).toBe('Write failed')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Write failed')
     })
   })
 
@@ -351,11 +382,13 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       await expect(store.cleanupTemporaryData(1001)).resolves.not.toThrow()
-      expect(store.error).toBe(null)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe(null)
     })
 
     it('should cleanup temporary data with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.delete).mockResolvedValueOnce({
         data: { success: true }
       })
@@ -368,13 +401,15 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle cleanup error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.delete).mockRejectedValueOnce(new Error('Cleanup failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.cleanupTemporaryData(1001)).rejects.toThrow('Cleanup failed')
-      expect(store.error).toBe('Cleanup failed')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Cleanup failed')
     })
   })
 
@@ -383,11 +418,13 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       await expect(store.printMergeTicket(1001)).resolves.not.toThrow()
-      expect(store.error).toBe(null)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe(null)
     })
 
     it('should print merge ticket with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: true }
       })
@@ -400,13 +437,15 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle print error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Print failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.printMergeTicket(1001)).rejects.toThrow('Print failed')
-      expect(store.error).toBe('Print failed')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Print failed')
     })
   })
 
@@ -418,14 +457,15 @@ describe('accountMergeStore', () => {
       
       await store.cancelMerge()
       
-      expect(store.mergeRequest).toBe(null)
-      expect(store.currentStep).toBe('validation')
-      expect(store.progressData).toEqual({ current: 0, total: 0, table: '' })
-      expect(store.isProcessing).toBe(false)
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.mergeRequest).toBe(null)
+      expect(updatedState.currentStep).toBe('validation')
+      expect(updatedState.progressData).toEqual({ current: 0, total: 0, table: '' })
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should cancel merge with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.delete).mockResolvedValueOnce({
         data: { success: true }
       })
@@ -438,14 +478,16 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle cancel error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.delete).mockRejectedValueOnce(new Error('Cancel failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.cancelMerge()).rejects.toThrow('Cancel failed')
-      expect(store.error).toBe('Cancel failed')
-      expect(store.isProcessing).toBe(false)
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Cancel failed')
+      expect(updatedState.isProcessing).toBe(false)
     })
   })
 
@@ -455,17 +497,19 @@ describe('accountMergeStore', () => {
       
       const result = await store.getMergeHistory()
       
+      const updatedState = useAccountMergeStore.getState()
+      
       expect(result).toHaveLength(5)
       expect(result[0]).toEqual(expect.objectContaining({
         operation: 'FUSION_COMPLETE',
         mergeRequestId: 1001
       }))
-      expect(store.mergeHistory).toEqual(result)
-      expect(store.isProcessing).toBe(false)
+      expect(updatedState.mergeHistory).toEqual(result)
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should get merge history with filters and real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.get).mockResolvedValueOnce({
         data: { success: true, data: MOCK_MERGE_HISTORY }
       })
@@ -484,13 +528,15 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle get history error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('History fetch failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.getMergeHistory()).rejects.toThrow('History fetch failed')
-      expect(store.error).toBe('History fetch failed')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('History fetch failed')
     })
   })
 
@@ -500,18 +546,20 @@ describe('accountMergeStore', () => {
       
       const result = await store.getMergeLogs(1001)
       
+      const updatedState = useAccountMergeStore.getState()
+      
       expect(result).toHaveLength(5)
       expect(result[0]).toEqual(expect.objectContaining({
         mergeId: 1001,
         tableName: 'compte_gm',
         success: true
       }))
-      expect(store.mergeLogs).toEqual(result)
-      expect(store.isProcessing).toBe(false)
+      expect(updatedState.mergeLogs).toEqual(result)
+      expect(updatedState.isProcessing).toBe(false)
     })
 
     it('should get merge logs with real API', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.get).mockResolvedValueOnce({
         data: { success: true, data: MOCK_MERGE_LOGS }
       })
@@ -525,13 +573,15 @@ describe('accountMergeStore', () => {
     })
 
     it('should handle get logs error', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('Logs fetch failed'))
       
       const store = useAccountMergeStore.getState()
       
       await expect(store.getMergeLogs(1001)).rejects.toThrow('Logs fetch failed')
-      expect(store.error).toBe('Logs fetch failed')
+      
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.error).toBe('Logs fetch failed')
     })
   })
 
@@ -540,13 +590,13 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       store.setCurrentStep('preparation')
-      expect(store.currentStep).toBe('preparation')
+      expect(useAccountMergeStore.getState().currentStep).toBe('preparation')
       
       store.setCurrentStep('execution')
-      expect(store.currentStep).toBe('execution')
+      expect(useAccountMergeStore.getState().currentStep).toBe('execution')
       
       store.setCurrentStep('completion')
-      expect(store.currentStep).toBe('completion')
+      expect(useAccountMergeStore.getState().currentStep).toBe('completion')
     })
   })
 
@@ -556,7 +606,8 @@ describe('accountMergeStore', () => {
       
       store.updateProgress(25, 60, 'prestations')
       
-      expect(store.progressData).toEqual({
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.progressData).toEqual({
         current: 25,
         total: 60,
         table: 'prestations'
@@ -569,10 +620,10 @@ describe('accountMergeStore', () => {
       const store = useAccountMergeStore.getState()
       
       store.setError('Test error')
-      expect(store.error).toBe('Test error')
+      expect(useAccountMergeStore.getState().error).toBe('Test error')
       
       store.setError(null)
-      expect(store.error).toBe(null)
+      expect(useAccountMergeStore.getState().error).toBe(null)
     })
   })
 
@@ -586,16 +637,17 @@ describe('accountMergeStore', () => {
       
       store.reset()
       
-      expect(store.mergeRequest).toBe(null)
-      expect(store.sourceAccount).toBe(null)
-      expect(store.targetAccount).toBe(null)
-      expect(store.mergeHistory).toEqual([])
-      expect(store.mergeLogs).toEqual([])
-      expect(store.validationStatus).toBe(null)
-      expect(store.currentStep).toBe('validation')
-      expect(store.isProcessing).toBe(false)
-      expect(store.error).toBe(null)
-      expect(store.progressData).toEqual({ current: 0, total: 0, table: '' })
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.mergeRequest).toBe(null)
+      expect(updatedState.sourceAccount).toBe(null)
+      expect(updatedState.targetAccount).toBe(null)
+      expect(updatedState.mergeHistory).toEqual([])
+      expect(updatedState.mergeLogs).toEqual([])
+      expect(updatedState.validationStatus).toBe(null)
+      expect(updatedState.currentStep).toBe('validation')
+      expect(updatedState.isProcessing).toBe(false)
+      expect(updatedState.error).toBe(null)
+      expect(updatedState.progressData).toEqual({ current: 0, total: 0, table: '' })
     })
   })
 
@@ -629,12 +681,13 @@ describe('accountMergeStore', () => {
       
       await store.executeMerge()
       
-      expect(store.progressData.total).toBe(7)
-      expect(store.progressData.current).toBe(7)
+      const updatedState = useAccountMergeStore.getState()
+      expect(updatedState.progressData.total).toBe(7)
+      expect(updatedState.progressData.current).toBe(7)
     })
 
     it('should verify account existence before loading', async () => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true })
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({ isRealApi: true } as ReturnType<typeof useDataSourceStore.getState>)
       vi.mocked(apiClient.post).mockResolvedValueOnce({
         data: { success: false, message: 'Source account does not exist' }
       })
