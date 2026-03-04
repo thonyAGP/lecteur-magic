@@ -1,148 +1,320 @@
 import { apiClient } from "@/services/api/apiClient"
 import type { ApiResponse } from "@/services/api/apiClient"
 import type { 
-  ApiValidationRequest, 
-  ApiAccountLoadRequest, 
-  ApiMergeExecuteRequest, 
-  ApiMergeHistoryRequest, 
-  ApiMergeLogRequest,
-  Account,
-  MergeRequest,
-  MergeHistory,
-  MergeLog,
-  ValidationStatus
+  MergeValidation, 
+  MergeHistory, 
+  ValidateResponse, 
+  ExecuteMergeResponse, 
+  MergeHistoryResponse 
 } from "@/types/accountMerge"
+import { useDataSourceStore } from "@/stores/dataSourceStore"
 
 export const accountMergeService = {
-  validateMerge: async (): Promise<ApiValidationRequest> => {
-    return await apiClient.post('/api/account-merge/validate')
+  validateMerge: async (
+    sourceAccountId: string, 
+    targetAccountId: string
+  ): Promise<ValidateResponse> => {
+    const isRealApi = useDataSourceStore.getState().isRealApi
+
+    return isRealApi 
+      ? await apiClient.get<MergeValidation>('/api/accountMerge/validation', {
+          params: { sourceAccountId, targetAccountId }
+        })
+      : {
+          data: {
+            isClosureInProgress: false,
+            networkStatus: 'OK',
+            validationStatus: 'VALID'
+          },
+          status: 200
+        }
   },
 
-  loadAccounts: async (): Promise<ApiAccountLoadRequest> => {
-    return await apiClient.post('/api/account-merge/load-accounts')
-  },
+  executeMerge: async (): Promise<ExecuteMergeResponse> => {
+    const isRealApi = useDataSourceStore.getState().isRealApi
 
-  executeMerge: async (
-    autoResume?: boolean, 
-    withoutInterface?: boolean
-  ): Promise<ApiMergeExecuteRequest> => {
-    const queryParams = new URLSearchParams()
-    if (autoResume) queryParams.append('autoResume', 'true')
-    if (withoutInterface) queryParams.append('withoutInterface', 'true')
-
-    return await apiClient.post(`/api/account-merge/execute?${queryParams.toString()}`)
-  },
-
-  recordMergeHistory: async (): Promise<ApiResponse<void>> => {
-    return await apiClient.post('/api/account-merge/history')
-  },
-
-  recordMergeLogs: async (): Promise<ApiResponse<void>> => {
-    return await apiClient.post('/api/account-merge/logs')
-  },
-
-  cleanupMerge: async (mergeId: number): Promise<ApiResponse<void>> => {
-    return await apiClient.delete(`/api/account-merge/cleanup/${mergeId}`)
-  },
-
-  printMergeRequest: async (mergeId: number): Promise<ApiResponse<void>> => {
-    return await apiClient.post(`/api/account-merge/print/${mergeId}`)
-  },
-
-  cancelMerge: async (): Promise<ApiResponse<void>> => {
-    return await apiClient.delete('/api/account-merge/cancel')
+    return isRealApi
+      ? await apiClient.post<MergeHistory>('/api/accountMerge/execute')
+      : {
+          data: {
+            id: Date.now(),
+            sourceAccount: 'SRC001',
+            targetAccount: 'TGT001',
+            mergeDate: new Date(),
+            operator: 'SYSTEM',
+            status: 'COMPLETED'
+          },
+          status: 200
+        }
   },
 
   getMergeHistory: async (
-    startDate?: string, 
-    endDate?: string, 
-    accountId?: number
-  ): Promise<ApiMergeHistoryRequest> => {
-    const queryParams = new URLSearchParams()
-    if (startDate) queryParams.append('startDate', startDate)
-    if (endDate) queryParams.append('endDate', endDate)
-    if (accountId) queryParams.append('accountId', accountId.toString())
+    accountId?: string, 
+    dateFrom?: string, 
+    dateTo?: string
+  ): Promise<MergeHistoryResponse> => {
+    const isRealApi = useDataSourceStore.getState().isRealApi
 
-    return await apiClient.get(`/api/account-merge/history?${queryParams.toString()}`)
+    return isRealApi
+      ? await apiClient.get<MergeHistory[]>('/api/accountMerge/history', {
+          params: { accountId, dateFrom, dateTo }
+        })
+      : {
+          data: [{
+            id: Date.now(),
+            sourceAccount: 'SRC001',
+            targetAccount: 'TGT001',
+            mergeDate: new Date(),
+            operator: 'SYSTEM',
+            status: 'COMPLETED'
+          }],
+          status: 200
+        }
   },
 
-  getMergeLogs: async (mergeId: number): Promise<ApiMergeLogRequest> => {
-    return await apiClient.get(`/api/account-merge/logs/${mergeId}`)
+  rollbackMerge: async (): Promise<void> => {
+    const isRealApi = useDataSourceStore.getState().isRealApi
+
+    return isRealApi
+      ? await apiClient.post('/api/accountMerge/rollback')
+      : undefined
   },
 
-  writeHistoFusSep: async (mergeData: unknown): Promise<ApiResponse<void>> => { // RM-29
-    return await apiClient.post('/api/account-merge/histo-fus-sep', { data: mergeData })
+  printMergeTicket: async (): Promise<void> => {
+    const isRealApi = useDataSourceStore.getState().isRealApi
+
+    return isRealApi
+      ? await apiClient.post('/api/accountMerge/print-ticket')
+      : undefined
   },
 
-  readHistoFusSeprDet: async (mergeId: number): Promise<ApiResponse<unknown>> => { // RM-30
-    return await apiClient.get(`/api/account-merge/histo-fus-sep-det/${mergeId}`)
+  writeHistoFusSep: async (mergeData: MergeHistory): Promise<ApiResponse<void>> => { // RM-29
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep', mergeData)
   },
 
-  writeHistoFusSeprDet: async (mergeId: number, detailData: unknown): Promise<ApiResponse<void>> => { // RM-31
-    return await apiClient.post(`/api/account-merge/histo-fus-sep-det/${mergeId}`, { data: detailData })
+  readHistoFusSeqDet: async (mergeId: number): Promise<ApiResponse<unknown[]>> => { // RM-30
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: [{ 
+          id: mergeId, 
+          details: 'Mock merge details',
+          timestamp: new Date().toISOString() 
+        }], 
+        status: 200 
+      }
+    }
+    
+    return await apiClient.get(`/api/accountMerge/histo-fus-sep-det/${mergeId}`)
   },
 
-  writeHistoFusSeprSaisie: async (mergeId: number, saisieData: unknown): Promise<ApiResponse<void>> => { // RM-32
-    return await apiClient.post(`/api/account-merge/histo-fus-sep-saisie/${mergeId}`, { data: saisieData })
+  readHistoFusSepDet: async (mergeId: number): Promise<ApiResponse<unknown[]>> => { // RM-30
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: [{ 
+          id: mergeId, 
+          details: 'Mock merge separation details',
+          timestamp: new Date().toISOString() 
+        }], 
+        status: 200 
+      }
+    }
+    
+    return await apiClient.get(`/api/accountMerge/histo-fus-sep-det/${mergeId}`)
   },
 
-  deleteHistoFusSeprSaisie: async (mergeId: number, saisieId: number): Promise<ApiResponse<void>> => { // RM-33
-    return await apiClient.delete(`/api/account-merge/histo-fus-sep-saisie/${mergeId}/${saisieId}`)
+  writeHistoFusSeqDet: async (detailData: unknown): Promise<ApiResponse<void>> => { // RM-31
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep-det', detailData)
   },
 
-  readHistoFusSeprLog: async (mergeId: number): Promise<ApiResponse<unknown[]>> => { // RM-34
-    return await apiClient.get(`/api/account-merge/histo-fus-sep-log/${mergeId}`)
+  writeHistoFusSepDet: async (detailData: unknown): Promise<ApiResponse<void>> => { // RM-31
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep-det', detailData)
   },
 
-  writeHistoFusSeprLog: async (mergeId: number, logData: unknown): Promise<ApiResponse<void>> => { // RM-35
-    return await apiClient.post(`/api/account-merge/histo-fus-sep-log/${mergeId}`, { data: logData })
+  writeHistoFusSeqSaisie: async (saisieData: unknown): Promise<ApiResponse<void>> => { // RM-32
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep-saisie', saisieData)
   },
 
-  printSeparationOuFusion: async (mergeId: number, printOptions?: unknown): Promise<ApiResponse<void>> => { // RM-36
-    return await apiClient.post(`/api/account-merge/print-separation-fusion/${mergeId}`, { options: printOptions })
+  writeHistoFusSepSaisie: async (saisieData: unknown): Promise<ApiResponse<void>> => { // RM-32
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep-saisie', saisieData)
   },
 
-  recuperationDuTitre: async (accountId: number): Promise<ApiResponse<string>> => { // RM-43
-    return await apiClient.get(`/api/account-merge/titre/${accountId}`)
+  deleteHistoFusSeqSaisie: async (saisieId: number): Promise<ApiResponse<void>> => { // RM-33
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.delete(`/api/accountMerge/histo-fus-sep-saisie/${saisieId}`)
   },
 
-  getPrinter: async (): Promise<ApiResponse<{ printerName: string; isDefault: boolean }[]>> => { // RM-179
-    return await apiClient.get('/api/system/printers')
+  deleteHistoFusSepSaisie: async (saisieId: number): Promise<ApiResponse<void>> => { // RM-33
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.delete(`/api/accountMerge/histo-fus-sep-saisie/${saisieId}`)
   },
 
-  printerChoice: async (printerName: string): Promise<ApiResponse<void>> => { // RM-180
+  readHistoFusSeqLog: async (logId: number): Promise<ApiResponse<unknown[]>> => { // RM-34
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: [{ 
+          id: logId, 
+          logEntry: 'Mock log entry',
+          timestamp: new Date().toISOString() 
+        }], 
+        status: 200 
+      }
+    }
+    
+    return await apiClient.get(`/api/accountMerge/histo-fus-sep-log/${logId}`)
+  },
+
+  readHistoFusSepLog: async (logId: number): Promise<ApiResponse<unknown[]>> => { // RM-34
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: [{ 
+          id: logId, 
+          logEntry: 'Mock fusion separation log',
+          timestamp: new Date().toISOString() 
+        }], 
+        status: 200 
+      }
+    }
+    
+    return await apiClient.get(`/api/accountMerge/histo-fus-sep-log/${logId}`)
+  },
+
+  writeHistoFusSeqLog: async (logData: unknown): Promise<ApiResponse<void>> => { // RM-35
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep-log', logData)
+  },
+
+  writeHistoFusSepLog: async (logData: unknown): Promise<ApiResponse<void>> => { // RM-35
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/histo-fus-sep-log', logData)
+  },
+
+  printSeparationOuFusion: async (printData: unknown): Promise<ApiResponse<void>> => { // RM-36
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
+    return await apiClient.post('/api/accountMerge/print-separation-fusion', printData)
+  },
+
+  recuperationDuTitre: async (accountId: string): Promise<ApiResponse<{ title: string }>> => { // RM-43
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: { title: `Mock Title for Account ${accountId}` }, 
+        status: 200 
+      }
+    }
+    
+    return await apiClient.get(`/api/accountMerge/account-title/${accountId}`)
+  },
+
+  getPrinter: async (): Promise<ApiResponse<{ printerName: string; isAvailable: boolean }>> => { // RM-179
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: { 
+          printerName: 'Default Printer', 
+          isAvailable: true 
+        }, 
+        status: 200 
+      }
+    }
+    
+    return await apiClient.get('/api/system/printer')
+  },
+
+  printerChoice: async (printerName: string): Promise<ApiResponse<{ selected: boolean }>> => { // RM-180
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { 
+        data: { selected: true }, 
+        status: 200 
+      }
+    }
+    
     return await apiClient.post('/api/system/printer/select', { printerName })
   },
 
   setListingNumber: async (listingNumber: number): Promise<ApiResponse<void>> => { // RM-181
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
     return await apiClient.post('/api/system/listing-number', { listingNumber })
   },
 
   razCurrentPrinter: async (): Promise<ApiResponse<void>> => { // RM-182
+    const isRealApi = useDataSourceStore.getState().isRealApi
+    
+    if (!isRealApi) {
+      return { data: undefined, status: 200 }
+    }
+    
     return await apiClient.post('/api/system/printer/reset')
-  },
-
-  readHistoFusSepDet: async (mergeId: number): Promise<ApiResponse<unknown>> => { // RM-30
-    return await apiClient.get(`/api/account-merge/histo-fus-sep-det/${mergeId}`)
-  },
-
-  writeHistoFusSepDet: async (mergeId: number, detailData: unknown): Promise<ApiResponse<void>> => { // RM-31
-    return await apiClient.post(`/api/account-merge/histo-fus-sep-det/${mergeId}`, { data: detailData })
-  },
-
-  writeHistoFusSepSaisie: async (mergeId: number, saisieData: unknown): Promise<ApiResponse<void>> => { // RM-32
-    return await apiClient.post(`/api/account-merge/histo-fus-sep-saisie/${mergeId}`, { data: saisieData })
-  },
-
-  deleteHistoFusSepSaisie: async (mergeId: number, saisieId: number): Promise<ApiResponse<void>> => { // RM-33
-    return await apiClient.delete(`/api/account-merge/histo-fus-sep-saisie/${mergeId}/${saisieId}`)
-  },
-
-  readHistoFusSepLog: async (mergeId: number): Promise<ApiResponse<unknown[]>> => { // RM-34
-    return await apiClient.get(`/api/account-merge/histo-fus-sep-log/${mergeId}`)
-  },
-
-  writeHistoFusSepLog: async (mergeId: number, logData: unknown): Promise<ApiResponse<void>> => { // RM-35
-    return await apiClient.post(`/api/account-merge/histo-fus-sep-log/${mergeId}`, { data: logData })
   }
 }

@@ -1,13 +1,13 @@
 {
-  "domain": "accountMergeHistory",
-  "domainPascal": "AccountMergeHistory",
+  "domain": "historyCleanup",
+  "domainPascal": "HistoryCleanup",
   "complexity": "LOW",
   "entities": [
     {
-      "name": "FusionSeparationHistoryEntry",
+      "name": "HistoFusionSeparationSaisie",
       "fields": [
         {
-          "name": "chrono",
+          "name": "chronoEF",
           "type": "number",
           "source": "histo_fusionseparation_saisie.i_chrono_ef",
           "nullable": false
@@ -47,7 +47,7 @@
   ],
   "stateFields": [
     {
-      "name": "isDeleting",
+      "name": "isLoading",
       "type": "boolean",
       "default": "false"
     },
@@ -57,71 +57,82 @@
       "default": "null"
     },
     {
-      "name": "deletedCount",
-      "type": "number",
-      "default": "0"
+      "name": "deletionCriteria",
+      "type": "HistoFusionSeparationCriteria | null",
+      "default": "null"
+    },
+    {
+      "name": "deletionResult",
+      "type": "DeletionResult | null",
+      "default": "null"
     }
   ],
   "actions": [
     {
-      "name": "deleteHistoryEntries",
+      "name": "deleteHistoFusionSeparationSaisie",
       "params": [
-        "criteria: { chrono?: number; societe?: string; compteReference?: number }"
+        "criteria: HistoFusionSeparationCriteria"
       ],
       "businessRules": [
-        "Delete only completed/processed fusion-separation history entries",
-        "Ensure parent fusion operation is completed before deletion",
-        "Track number of deleted records for audit purposes",
-        "Clean up historical data to reclaim disk space while maintaining data integrity"
+        "Delete historical records from histo_fusionseparation_saisie table based on fusion/separation operation criteria",
+        "Operation should only be executed after fusion/separation process is completed",
+        "Purge records to maintain data integrity and reclaim disk space"
       ],
-      "returns": "Promise<{ deletedCount: number }>"
+      "returns": "Promise<DeletionResult>"
     },
     {
-      "name": "clearError",
-      "params": [],
-      "businessRules": [
-        "Reset error state after user acknowledgment"
+      "name": "validateDeletionCriteria",
+      "params": [
+        "criteria: HistoFusionSeparationCriteria"
       ],
-      "returns": "void"
+      "businessRules": [
+        "Ensure deletion criteria are valid before executing deletion",
+        "Prevent deletion of critical data that hasn't been processed"
+      ],
+      "returns": "Promise<boolean>"
     }
   ],
   "apiEndpoints": [
     {
       "method": "DELETE",
-      "path": "/api/account-merge-history/entries",
+      "path": "/api/historyCleanup/fusionSeparationSaisie",
       "queryParams": [
-        "chrono?",
+        "chronoEF?",
         "societe?",
-        "compteReference?"
+        "compteReference?",
+        "filiationReference?"
       ],
-      "response": "{ deletedCount: number }"
+      "response": "DeletionResult"
     }
   ],
   "uiLayout": {
-    "type": "background-task",
+    "type": "service-interface",
     "sections": [
       {
-        "name": "noUI",
+        "name": "deletionService",
         "controls": [
-          "Backend-only operation called programmatically from Fusion workflow (IDE 28)"
+          "criteriaInput",
+          "deleteButton",
+          "statusIndicator",
+          "resultDisplay"
         ]
       }
     ]
   },
   "mockData": {
-    "count": 10,
-    "description": "Mock history entries with various chrono values, societe codes, and account references representing completed fusion/separation operations ready for cleanup"
+    "count": 3,
+    "description": "Mock deletion criteria and results for testing fusion/separation history cleanup operations"
   },
   "dependencies": {
     "stores": [
-      "useAccountMergeStore"
+      "useHistoryCleanupStore"
     ],
     "sharedTypes": [
-      "FusionSeparationHistoryEntry",
-      "DeleteCriteria"
+      "HistoFusionSeparationCriteria",
+      "DeletionResult"
     ],
     "externalApis": [
-      "DELETE /api/account-merge-history/entries - Cleanup historical fusion-separation entries"
+      "fusionService"
     ]
   }
 }

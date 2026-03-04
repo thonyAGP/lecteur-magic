@@ -1,454 +1,366 @@
-import { useState, useCallback, useEffect } from 'react'
-import { ScreenLayout } from '@/components/layout'
-import { Button, Dialog, Input } from '@/components/ui'
-import { cn } from '@/lib/utils'
-import { useAccountMergeStore } from '@/stores/accountMergeStore'
+import { useCallback, useEffect, useState } from "react"
+import { useAccountMergeStore } from "@/stores/accountMergeStore"
+import { ScreenLayout } from "@/components/layout"
+import { Button, Dialog, Input } from "@/components/ui"
+import { cn } from "@/lib/utils"
 
-const AccountMergePage = () => {
-  const [sourceAccountId, setSourceAccountId] = useState('')
-  const [targetAccountId, setTargetAccountId] = useState('')
-  const [showLogsDialog, setShowLogsDialog] = useState(false)
-  const [selectedMergeId, setSelectedMergeId] = useState<number | null>(null)
-  const [historyFilters, setHistoryFilters] = useState({
-    startDate: '',
-    endDate: '',
-    accountId: ''
-  })
-
+export const AccountMergePage = () => {
   const {
-    mergeRequest,
+    mergeHistories,
     sourceAccount,
     targetAccount,
-    mergeHistory,
-    mergeLogs,
-    validationStatus,
-    currentStep,
-    isProcessing,
+    validationState,
+    isLoading,
     error,
-    progressData,
-    validatePrerequisites,
-    loadAccounts,
+    mergeProgress,
+    currentStep,
+    validateMergeConditions,
     executeMerge,
-    saveMergeHistory,
-    writeMergeLogs,
-    cleanupTemporaryData,
+    createMergeHistory,
+    rollbackMerge,
     printMergeTicket,
-    cancelMerge,
-    getMergeHistory,
-    getMergeLogs,
-    setCurrentStep,
-    updateProgress,
-    setError,
     reset
   } = useAccountMergeStore()
 
+  const [sourceAccountId, setSourceAccountId] = useState("")
+  const [targetAccountId, setTargetAccountId] = useState("")
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [showResultDialog, setShowResultDialog] = useState(false)
+
   useEffect(() => {
-    getMergeHistory()
-    
     return () => {
       reset()
     }
-  }, [getMergeHistory, reset])
+  }, [reset])
+
+  useEffect(() => {
+    if (currentStep === 'completed') {
+      setShowResultDialog(true)
+    }
+  }, [currentStep])
 
   const handleValidateAccounts = useCallback(async () => {
-    if (!sourceAccountId || !targetAccountId) {
-      setError('Veuillez saisir les numéros de compte source et cible')
+    if (!sourceAccountId.trim() || !targetAccountId.trim()) {
+      return
+    }
+    
+    if (sourceAccountId === targetAccountId) {
       return
     }
 
-    try {
-      setError(null)
-      await validatePrerequisites()
-      await loadAccounts(parseInt(sourceAccountId), parseInt(targetAccountId))
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la validation')
-    }
-  }, [sourceAccountId, targetAccountId, validatePrerequisites, loadAccounts, setError])
+    await validateMergeConditions(sourceAccountId.trim(), targetAccountId.trim())
+  }, [sourceAccountId, targetAccountId, validateMergeConditions])
 
   const handleExecuteMerge = useCallback(async () => {
-    try {
-      setError(null)
-      await executeMerge()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'exécution de la fusion')
-    }
-  }, [executeMerge, setError])
-
-  const handleCancelMerge = useCallback(async () => {
-    try {
-      await cancelMerge()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'annulation')
-    }
-  }, [cancelMerge, setError])
+    setShowConfirmDialog(false)
+    await executeMerge(sourceAccountId.trim(), targetAccountId.trim())
+  }, [sourceAccountId, targetAccountId, executeMerge])
 
   const handlePrintTicket = useCallback(async () => {
-    if (!mergeRequest) return
-    
-    try {
-      await printMergeTicket(mergeRequest.id)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de l\'impression')
+    if (mergeHistories.length > 0) {
+      await printMergeTicket(mergeHistories[0].id)
     }
-  }, [mergeRequest, printMergeTicket, setError])
+  }, [mergeHistories, printMergeTicket])
 
-  const handleViewLogs = useCallback(async (mergeId: number) => {
-    try {
-      setSelectedMergeId(mergeId)
-      await getMergeLogs(mergeId)
-      setShowLogsDialog(true)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement des logs')
+  const handleCancel = useCallback(() => {
+    setShowConfirmDialog(false)
+    reset()
+  }, [reset])
+
+  const handleClose = useCallback(() => {
+    setShowResultDialog(false)
+    reset()
+    setSourceAccountId("")
+    setTargetAccountId("")
+  }, [reset])
+
+  const getStepTitle = (step: string) => {
+    switch (step) {
+      case 'validation': return 'Account Validation'
+      case 'validated': return 'Ready to Merge'
+      case 'executing': return 'Executing Merge'
+      case 'completed': return 'Merge Completed'
+      default: return step
     }
-  }, [getMergeLogs, setError])
+  }
 
-  const handleHistoryFilter = useCallback(async () => {
-    const filters: { startDate?: Date; endDate?: Date; accountId?: number } = {}
-    
-    if (historyFilters.startDate) filters.startDate = new Date(historyFilters.startDate)
-    if (historyFilters.endDate) filters.endDate = new Date(historyFilters.endDate)
-    if (historyFilters.accountId) filters.accountId = parseInt(historyFilters.accountId)
-
-    try {
-      await getMergeHistory(filters)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du filtrage')
+  const getValidationStatusColor = (status: string) => {
+    switch (status) {
+      case 'V': return 'text-red-600'
+      case 'P': return 'text-green-600'
+      case 'A': return 'text-yellow-600'
+      default: return 'text-gray-600'
     }
-  }, [historyFilters, getMergeHistory, setError])
+  }
 
-  const getStepIndex = useCallback((step: string) => {
-    const steps = ['validation', 'preparation', 'execution', 'completion']
-    return steps.indexOf(step)
-  }, [])
+  const getNetworkStatusColor = (status: string) => {
+    switch (status) {
+      case 'R': return 'text-red-600'
+      case 'A': return 'text-green-600'
+      case 'I': return 'text-yellow-600'
+      default: return 'text-gray-600'
+    }
+  }
 
-  const formatCurrency = useCallback((amount: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount)
-  }, [])
-
-  const formatDate = useCallback((date: Date) => {
-    return new Intl.DateTimeFormat('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date)
-  }, [])
+  const canProceedToMerge = validationState && 
+    validationState.validationStatus !== 'V' && 
+    validationState.networkStatus !== 'R' &&
+    !validationState.isClosureInProgress
 
   return (
-    <ScreenLayout className="p-6 space-y-6">
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="space-y-6">
+    <ScreenLayout className="p-6">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6">Account Merge</h1>
+
+        <div className="grid gap-6">
+          {/* Account Selection Section */}
           <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-lg font-semibold mb-4">Sélection des comptes</h2>
-            
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <h2 className="text-lg font-semibold mb-4">Account Selection</h2>
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Compte source</label>
+                <label className="block text-sm font-medium mb-2">Source Account</label>
                 <Input
                   value={sourceAccountId}
                   onChange={(e) => setSourceAccountId(e.target.value)}
-                  placeholder="Numéro de compte"
-                  className="w-full"
+                  placeholder="Enter source account number"
+                  disabled={isLoading || currentStep === 'executing'}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Compte cible</label>
+                <label className="block text-sm font-medium mb-2">Target Account</label>
                 <Input
                   value={targetAccountId}
                   onChange={(e) => setTargetAccountId(e.target.value)}
-                  placeholder="Numéro de compte"
-                  className="w-full"
+                  placeholder="Enter target account number"
+                  disabled={isLoading || currentStep === 'executing'}
                 />
               </div>
             </div>
+            <div className="mt-4">
+              <Button
+                onClick={handleValidateAccounts}
+                disabled={!sourceAccountId.trim() || !targetAccountId.trim() || isLoading || sourceAccountId === targetAccountId}
+              >
+                {isLoading && currentStep === 'validation' ? 'Validating...' : 'Validate Accounts'}
+              </Button>
+            </div>
+          </div>
 
-            <Button 
-              onClick={handleValidateAccounts}
-              disabled={isProcessing || !sourceAccountId || !targetAccountId}
-              className="w-full mb-4"
-            >
-              Valider les comptes
-            </Button>
-
-            {validationStatus && (
-              <div className="space-y-2 p-3 bg-gray-50 rounded">
-                <div className="flex items-center gap-2">
+          {/* Validation Status Section */}
+          {validationState && (
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-4">Validation Status</h2>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-medium mb-2">Closure Status</h3>
                   <div className={cn(
-                    "w-3 h-3 rounded-full",
-                    validationStatus.network ? "bg-green-500" : "bg-red-500"
-                  )} />
-                  <span className="text-sm">Réseau: {validationStatus.network ? 'OK' : 'Erreur'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={cn(
-                    "w-3 h-3 rounded-full",
-                    !validationStatus.closure ? "bg-green-500" : "bg-red-500"
-                  )} />
-                  <span className="text-sm">Clôture: {!validationStatus.closure ? 'OK' : 'En cours'}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={cn(
-                    "w-3 h-3 rounded-full",
-                    validationStatus.validation === 'V' ? "bg-green-500" : "bg-red-500"
-                  )} />
-                  <span className="text-sm">Validation: {validationStatus.validation}</span>
-                </div>
-              </div>
-            )}
-
-            {sourceAccount && targetAccount && (
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="p-3 border rounded">
-                  <h4 className="font-medium text-sm mb-2">Compte source</h4>
-                  <div className="text-xs space-y-1">
-                    <div>N°: {sourceAccount.id}</div>
-                    <div>Client: {sourceAccount.clientName}</div>
-                    <div>Solde: {formatCurrency(sourceAccount.balance)}</div>
-                    <div>Statut: {sourceAccount.status}</div>
+                    "flex items-center gap-2 p-3 rounded-md",
+                    validationState.isClosureInProgress ? "bg-red-50" : "bg-green-50"
+                  )}>
+                    <div className={cn(
+                      "w-3 h-3 rounded-full",
+                      validationState.isClosureInProgress ? "bg-red-500" : "bg-green-500"
+                    )} />
+                    <span className={validationState.isClosureInProgress ? "text-red-700" : "text-green-700"}>
+                      {validationState.isClosureInProgress ? "Closure in Progress" : "No Active Closure"}
+                    </span>
                   </div>
                 </div>
-                <div className="p-3 border rounded">
-                  <h4 className="font-medium text-sm mb-2">Compte cible</h4>
-                  <div className="text-xs space-y-1">
-                    <div>N°: {targetAccount.id}</div>
-                    <div>Client: {targetAccount.clientName}</div>
-                    <div>Solde: {formatCurrency(targetAccount.balance)}</div>
-                    <div>Statut: {targetAccount.status}</div>
+
+                <div>
+                  <h3 className="font-medium mb-2">Network Status</h3>
+                  <div className="p-3 bg-gray-50 rounded-md">
+                    <span className={getNetworkStatusColor(validationState.networkStatus)}>
+                      Status: {validationState.networkStatus}
+                    </span>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
 
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-lg font-semibold mb-4">Progression</h2>
-            
-            <div className="mb-4">
-              <div className="text-sm font-medium mb-2">
-                Étape actuelle: {currentStep}
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${((getStepIndex(currentStep) + 1) / 4) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {progressData.total > 0 && (
-              <div className="space-y-2">
-                <div className="text-sm">
-                  Table en cours: <span className="font-medium">{progressData.table}</span>
-                </div>
-                <div className="text-sm">
-                  Progression: {progressData.current} / {progressData.total}
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${(progressData.current / progressData.total) * 100}%` }}
-                  />
+              <div className="mt-4">
+                <h3 className="font-medium mb-2">Validation Result</h3>
+                <div className={cn(
+                  "p-4 rounded-md border",
+                  canProceedToMerge ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
+                )}>
+                  <div className={cn(
+                    "font-medium",
+                    canProceedToMerge ? "text-green-800" : "text-red-800"
+                  )}>
+                    {canProceedToMerge ? "✓ Merge can proceed" : "✗ Merge cannot proceed"}
+                  </div>
+                  <div className={getValidationStatusColor(validationState.validationStatus)}>
+                    Validation Status: {validationState.validationStatus}
+                  </div>
                 </div>
               </div>
-            )}
 
-            {error && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-                {error}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-lg font-semibold mb-4">Actions</h2>
-            
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={handleExecuteMerge}
-                disabled={!sourceAccount || !targetAccount || isProcessing || currentStep === 'completion'}
-                variant="default"
-              >
-                {isProcessing ? 'Traitement...' : 'Exécuter fusion'}
-              </Button>
-              
-              <Button
-                onClick={handleCancelMerge}
-                disabled={!isProcessing}
-                variant="outline"
-              >
-                Annuler
-              </Button>
-              
-              <Button
-                onClick={handlePrintTicket}
-                disabled={!mergeRequest || currentStep !== 'completion'}
-                variant="outline"
-              >
-                Imprimer ticket
-              </Button>
-              
-              <Button
-                onClick={() => getMergeHistory()}
-                variant="outline"
-              >
-                Actualiser historique
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="bg-white rounded-lg border p-6">
-            <h2 className="text-lg font-semibold mb-4">Historique des fusions</h2>
-            
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              <Input
-                type="date"
-                value={historyFilters.startDate}
-                onChange={(e) => setHistoryFilters(prev => ({ ...prev, startDate: e.target.value }))}
-                className="text-xs"
-              />
-              <Input
-                type="date"
-                value={historyFilters.endDate}
-                onChange={(e) => setHistoryFilters(prev => ({ ...prev, endDate: e.target.value }))}
-                className="text-xs"
-              />
-              <Button onClick={handleHistoryFilter} size="sm">
-                Filtrer
-              </Button>
-            </div>
-
-            <div className="space-y-2 max-h-80 overflow-y-auto">
-              {mergeHistory.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 text-sm">
-                  Aucun historique trouvé
-                </div>
-              ) : (
-                mergeHistory.map((history) => (
-                  <div key={history.id} className="border rounded p-3 hover:bg-gray-50">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="text-sm font-medium">{history.operation}</div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleViewLogs(history.mergeRequestId)}
-                        className="text-xs px-2 py-1"
-                      >
-                        Logs
-                      </Button>
+              {sourceAccount && targetAccount && (
+                <div className="mt-4 grid md:grid-cols-2 gap-4">
+                  <div className="p-3 bg-blue-50 rounded-md">
+                    <h4 className="font-medium text-blue-800">Source Account</h4>
+                    <div className="text-sm text-blue-700">
+                      <div>Number: {sourceAccount.accountNumber}</div>
+                      <div>Balance: ${sourceAccount.balance.toFixed(2)}</div>
+                      <div>Status: {sourceAccount.status}</div>
                     </div>
-                    <div className="text-xs text-gray-600 mb-1">
-                      {formatDate(history.timestamp)}
-                    </div>
-                    {history.details && (
-                      <div className="text-xs text-gray-700">
-                        {history.details}
-                      </div>
-                    )}
                   </div>
-                ))
+                  <div className="p-3 bg-green-50 rounded-md">
+                    <h4 className="font-medium text-green-800">Target Account</h4>
+                    <div className="text-sm text-green-700">
+                      <div>Number: {targetAccount.accountNumber}</div>
+                      <div>Balance: ${targetAccount.balance.toFixed(2)}</div>
+                      <div>Status: {targetAccount.status}</div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
-          </div>
+          )}
 
-          {mergeRequest && (
+          {/* Merge Execution Section */}
+          {validationState && (
             <div className="bg-white rounded-lg border p-6">
-              <h2 className="text-lg font-semibold mb-4">Demande de fusion</h2>
+              <h2 className="text-lg font-semibold mb-4">Merge Execution</h2>
               
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>ID:</span>
-                  <span className="font-medium">{mergeRequest.id}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Statut:</span>
-                  <span className={cn(
-                    "px-2 py-1 rounded text-xs font-medium",
-                    mergeRequest.status === 'completed' && "bg-green-100 text-green-800",
-                    mergeRequest.status === 'pending' && "bg-yellow-100 text-yellow-800",
-                    mergeRequest.status === 'rejected' && "bg-red-100 text-red-800"
-                  )}>
-                    {mergeRequest.status}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Code chrono:</span>
-                  <span className="font-medium">{mergeRequest.chronoCode}</span>
-                </div>
-                {mergeRequest.validatedBy && (
-                  <div className="flex justify-between">
-                    <span>Validé par:</span>
-                    <span className="font-medium">{mergeRequest.validatedBy}</span>
+              {(currentStep === 'executing' || mergeProgress > 0) && (
+                <div className="mb-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Progress</span>
+                    <span>{mergeProgress}%</span>
                   </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${mergeProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="mb-4">
+                <div className="text-sm font-medium text-gray-700">Current Step:</div>
+                <div className="text-lg text-blue-600">{getStepTitle(currentStep)}</div>
+              </div>
+
+              <div className="flex gap-3">
+                {canProceedToMerge && currentStep !== 'executing' && currentStep !== 'completed' && (
+                  <Button
+                    onClick={() => setShowConfirmDialog(true)}
+                    disabled={isLoading}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Execute Merge
+                  </Button>
                 )}
-                {mergeRequest.validatedAt && (
-                  <div className="flex justify-between">
-                    <span>Validé le:</span>
-                    <span className="font-medium">{formatDate(mergeRequest.validatedAt)}</span>
-                  </div>
+                
+                {currentStep === 'executing' && (
+                  <Button
+                    onClick={handleCancel}
+                    disabled={mergeProgress > 50}
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
                 )}
               </div>
             </div>
           )}
-        </div>
-      </div>
 
-      <Dialog open={showLogsDialog} onOpenChange={setShowLogsDialog}>
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
-            <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">
-                Logs de fusion - ID {selectedMergeId}
-              </h3>
+          {/* Error Display */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="text-red-800 font-medium">Error</div>
+              <div className="text-red-700">{error}</div>
             </div>
-            
-            <div className="p-6 overflow-y-auto max-h-96">
-              {mergeLogs.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  Aucun log trouvé
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="grid grid-cols-4 gap-4 text-sm font-medium border-b pb-2">
-                    <div>Table</div>
-                    <div>Enregistrements</div>
-                    <div>Statut</div>
-                    <div>Timestamp</div>
-                  </div>
-                  {mergeLogs.map((log) => (
-                    <div key={log.id} className="grid grid-cols-4 gap-4 text-sm py-2 border-b">
-                      <div className="font-medium">{log.tableName}</div>
-                      <div>{log.recordCount}</div>
-                      <div>
-                        <span className={cn(
-                          "px-2 py-1 rounded text-xs",
-                          log.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                        )}>
-                          {log.success ? 'Succès' : 'Erreur'}
-                        </span>
+          )}
+
+          {/* Recent Merge History */}
+          {mergeHistories.length > 0 && (
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-4">Recent Merge History</h2>
+              <div className="space-y-3">
+                {mergeHistories.slice(0, 5).map((history) => (
+                  <div key={history.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
+                    <div>
+                      <div className="font-medium">
+                        {history.sourceAccount} → {history.targetAccount}
                       </div>
-                      <div>{formatDate(log.timestamp)}</div>
+                      <div className="text-sm text-gray-600">
+                        {history.mergeDate.toLocaleDateString()} by {history.operator}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <div className={cn(
+                      "px-2 py-1 rounded text-sm",
+                      history.status === 'COMPLETED' ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                    )}>
+                      {history.status}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            
-            <div className="p-6 border-t flex justify-end">
-              <Button onClick={() => setShowLogsDialog(false)}>
-                Fermer
+          )}
+        </div>
+
+        {/* Confirmation Dialog */}
+        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Confirm Merge</h3>
+            <p className="mb-4">
+              Are you sure you want to merge account {sourceAccountId} into account {targetAccountId}?
+              This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleExecuteMerge} className="bg-red-600 hover:bg-red-700">
+                Confirm Merge
               </Button>
             </div>
           </div>
-        </div>
-      </Dialog>
+        </Dialog>
+
+        {/* Result Dialog */}
+        <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Merge Completed</h3>
+            
+            {mergeHistories.length > 0 && (
+              <div className="mb-4 p-4 bg-green-50 rounded-md">
+                <div className="text-green-800 font-medium mb-2">✓ Merge Successful</div>
+                <div className="text-sm space-y-1">
+                  <div>Merge ID: {mergeHistories[0].id}</div>
+                  <div>Source Account: {mergeHistories[0].sourceAccount}</div>
+                  <div>Target Account: {mergeHistories[0].targetAccount}</div>
+                  <div>Date: {mergeHistories[0].mergeDate.toLocaleString()}</div>
+                  <div>Operator: {mergeHistories[0].operator}</div>
+                </div>
+              </div>
+            )}
+
+            {targetAccount && (
+              <div className="mb-4 p-4 bg-blue-50 rounded-md">
+                <div className="text-blue-800 font-medium mb-2">Final Account Balance</div>
+                <div className="text-lg font-bold text-blue-900">
+                  ${targetAccount.balance.toFixed(2)}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={handlePrintTicket}>
+                Print Ticket
+              </Button>
+              <Button onClick={handleClose}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </Dialog>
+      </div>
     </ScreenLayout>
   )
 }
-
-export default AccountMergePage

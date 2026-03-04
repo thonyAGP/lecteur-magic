@@ -1,891 +1,693 @@
-```typescript
 import type { ApiResponse } from "@/services/api/apiClient"
-
-export interface MergeRequest {
-  id: number
-  sourceAccountId: number
-  targetAccountId: number
-  status: 'pending' | 'validated' | 'rejected' | 'completed'
-  validatedBy: string | null
-  validatedAt: Date | null
-  chronoCode: string
-}
 
 export interface MergeHistory {
   id: number
-  mergeRequestId: number
-  timestamp: Date
-  operation: string
-  details: string | null
-}
-
-export interface MergeLog {
-  id: number
-  mergeId: number
-  operation: string
-  tableName: string
-  recordCount: number
-  timestamp: Date
-  success: boolean
+  sourceAccount: string
+  targetAccount: string
+  mergeDate: Date
+  operator: string
+  status: string
 }
 
 export interface Account {
-  id: number
-  status: 'active' | 'inactive' | 'suspended'
+  accountNumber: string
   balance: number
-  clientName: string | null
-  linkedAccounts: number | null
+  status: string
+  createdDate: Date
 }
 
-export interface ValidationStatus {
-  network: boolean
-  closure: boolean
-  validation: string
+export interface MergeValidation {
+  isClosureInProgress: boolean
+  networkStatus: string
+  validationStatus: string
 }
 
+// RM-343: histo_fusionseparation_saisie table structure
 export interface HistoFusionSeparationSaisie {
   id: number
   fusionId: number
-  typeOperation: 'fusion' | 'separation'
   saisieDate: Date
-  operateur: string
-  details: string
+  operatorId: string
+  sourceData: string
+  tempStatus: string
+  validationCode: string
 }
 
+// RM-30: gm-recherche_____gmr table structure  
 export interface GmRecherche {
   id: number
-  codeRecherche: string
-  criteres: string
-  resultats: number
-  dateCreation: Date
-} // RM-30
+  searchCriteria: string
+  accountRef: string
+  searchDate: Date
+  resultCount: number
+  searchType: string
+}
 
+// RM-39: depot_garantie___dga table structure
 export interface DepotGarantie {
   id: number
-  compteId: number
-  montant: number
-  dateDepot: Date
-  statut: 'actif' | 'libere' | 'bloque'
-  reference: string
-} // RM-39
+  accountNumber: string
+  guaranteeAmount: number
+  depositDate: Date
+  status: string
+  guaranteeType: string
+  expirationDate: Date
+}
 
+// RM-340: histo_fusionseparation table structure
+export interface HistoFusionSeparation {
+  id: number
+  sourceAccountId: string
+  targetAccountId: string
+  operationType: string
+  operationDate: Date
+  operatorId: string
+  beforeState: string
+  afterState: string
+  rollbackPossible: boolean
+}
+
+// RM-47: compte_gm________cgm table structure
 export interface CompteGm {
-  id: number
-  numeroCompte: string
-  typeCompte: string
-  solde: number
-  dateOuverture: Date
-  statut: 'ouvert' | 'ferme' | 'suspendu'
-} // RM-47
+  accountId: string
+  gmReference: string
+  accountType: string
+  balance: number
+  lastModified: Date
+  status: string
+  networkId: string
+}
 
+// RM-23: reseau_cloture___rec table structure
 export interface ReseauCloture {
-  id: number
-  reseauId: number
-  dateCloture: Date
-  motif: string
-  validePar: string
-  statut: 'en_cours' | 'complete' | 'annule'
-} // RM-23
+  networkId: string
+  closureStatus: string
+  closureDate: Date
+  closureType: string
+  operatorId: string
+  isBlocked: boolean
+}
 
+// RM-51: fusion_eclatementfec table structure
 export interface FusionEclatement {
   id: number
-  typeOperation: 'fusion' | 'eclatement'
-  compteSource: number
-  compteCible: number
-  dateOperation: Date
-  statut: 'prepare' | 'execute' | 'complete'
-} // RM-51
+  operationType: string
+  sourceAccounts: string[]
+  targetAccount: string
+  operationDate: Date
+  status: string
+  validationRequired: boolean
+}
 
+// RM-33: prestations______pre table structure
 export interface Prestations {
   id: number
-  codePrestation: string
-  libelle: string
-  tarif: number
-  dateApplication: Date
-  actif: boolean
-} // RM-33
-
-export interface PvCustomerDat {
-  id: number
-  customerId: number
-  customerData: string
-  dateCreation: Date
-  typeData: string
-  statut: 'actif' | 'archive'
-} // RM-837
-
-export interface MvtPrestation {
-  id: number
-  prestationId: number
-  typeMouvement: 'entree' | 'sortie' | 'modification'
-  dateMouvement: Date
-  quantite: number
-  montant: number
-  reference: string
-} // RM-46
-
-export interface Gratuites {
-  id: number
-  prestationId: number
-  compteId: number
-  dateGratuite: Date
-  montantGratuite: number
-  motif: string
-  autorisePar: string
-} // RM-79
-
-export interface PersonnelGo {
-  id: number
-  personnelId: string
-  nom: string
-  prenom: string
-  poste: string
-  dateEmbauche: Date
-  statut: 'actif' | 'inactif' | 'suspendu'
-  departement: string
-  droitsAcces: string
-  superviseur: string | null
-} // RM-35
-
-export interface FichierValidation {
-  id: number
-  nomFichier: string
-  typeFichier: string
-  taille: number
-  dateUpload: Date
-  statut: 'valide' | 'erreur' | 'en_attente'
-  nombreLignes: number
+  accountId: string
+  prestationType: string
+  amount: number
+  serviceDate: Date
+  description: string
+  status: string
 }
 
+// RM-131: fichier_validation table structure
+export interface FichierValidation {
+  fileId: string
+  fileName: string
+  validationType: string
+  validationDate: Date
+  validationStatus: string
+  errorCount: number
+  processedRecords: number
+}
+
+// RM-37: commentaire_gm_________acc table structure
 export interface CommentaireGm {
   id: number
-  compteId: number
-  commentaire: string
-  dateCreation: Date
-  auteur: string
-  typeCommentaire: 'info' | 'alerte' | 'note'
+  accountId: string
+  commentText: string
+  commentDate: Date
+  operatorId: string
+  commentType: string
+  isActive: boolean
 }
 
-export interface CommentaireGmAcc {
-  id: number
-  compteId: number
-  commentaireAccueil: string
-  dateCreation: Date
-  auteur: string
-  priorite: 'normale' | 'haute' | 'urgente'
-  statut: 'actif' | 'archive'
-  typeAccueil: 'reception' | 'concierge' | 'service'
-} // RM-37
-
+// RM-831: import_go_erreur_affection table structure
 export interface ImportGoErreurAffection {
   id: number
-  numeroLigne: number
-  codeErreur: string
-  messageErreur: string
-  valeurErronee: string
-  dateImport: Date
-  statut: 'non_traite' | 'corrige' | 'ignore'
+  importBatch: string
+  errorType: string
+  affectionCode: string
+  errorMessage: string
+  recordNumber: number
+  processingDate: Date
+  resolved: boolean
 }
 
+// RM-837: ##_pv_customer_dat table structure
+export interface PvCustomerDat {
+  customerId: string
+  customerData: string
+  processVersion: string
+  validationStatus: string
+  lastUpdate: Date
+  dataHash: string
+  isActive: boolean
+}
+
+// RM-46: mvt_prestation___mpr table structure
+export interface MvtPrestation {
+  id: number
+  accountId: string
+  movementType: string
+  prestationId: number
+  amount: number
+  movementDate: Date
+  description: string
+  operatorId: string
+}
+
+// RM-79: gratuites________gra table structure
+export interface Gratuites {
+  id: number
+  accountId: string
+  gratuitType: string
+  amount: number
+  validFrom: Date
+  validTo: Date
+  description: string
+  isActive: boolean
+}
+
+// RM-137: fichier_histotel table structure
 export interface FichierHistotel {
-  id: number
-  nomFichier: string
-  dateTraitement: Date
-  nombreReservations: number
-  statut: 'traite' | 'en_cours' | 'erreur'
-  versionHistotel: string
-} // RM-137
+  fileId: string
+  hotelCode: string
+  historyDate: Date
+  recordType: string
+  dataContent: string
+  processedStatus: string
+  errorCount: number
+}
 
+// RM-834: tpe_par_terminal table structure
 export interface TpeParTerminal {
-  id: number
   terminalId: string
-  tpeId: string
-  dateAssociation: Date
-  statut: 'actif' | 'inactif'
-  configuration: string
-} // RM-834
+  tpeCode: string
+  terminalType: string
+  installationDate: Date
+  status: string
+  lastTransaction: Date
+  merchantId: string
+}
 
+// RM-805: vente_par_moyen_paiement table structure
 export interface VenteParMoyenPaiement {
   id: number
-  venteId: number
-  moyenPaiement: string
-  montant: number
-  dateTransaction: Date
-  numeroTransaction: string
-  statut: 'valide' | 'annule' | 'rembourse'
-} // RM-805
-
-export interface ComptableCte {
-  id: number
-  codeComptable: string
-  libelle: string
-  typeCompte: 'actif' | 'passif' | 'charge' | 'produit'
-  solde: number
-  dateCreation: Date
-  compteParent: string | null
-  niveauCompte: number
-} // RM-40
-
-export interface PlafondLit {
-  id: number
-  categorieLogement: string
-  nombreLitsMax: number
-  dateApplication: Date
-  saisonId: number
-  tarifSupplement: number
-} // RM-807
-
-export interface EzCard {
-  id: number
-  numeroCard: string
-  typeCard: string
-  dateEmission: Date
-  dateExpiration: Date
-  statut: 'active' | 'inactive' | 'bloquee'
-  solde: number
-} // RM-312
-
-export interface GmCompletGmc {
-  id: number
-  compteId: number
-  donneesCompletes: string
-  dateGeneration: Date
-  versionGm: string
-  statut: 'actuel' | 'archive'
-  tailleDonnees: number
-  formatExport: string
-} // RM-31
-
-export interface QualiteAvantReprise {
-  id: number
-  referenceQualite: string
-  typeControle: string
-  dateControle: Date
-  resultat: 'conforme' | 'non_conforme' | 'a_verifier'
-  commentaire: string
-  controleurId: string
-} // RM-786
-
-export interface FichierMessagerie {
-  id: number
-  nomFichier: string
-  typeFichier: string
-  tailleFichier: number
-  dateReception: Date
-  expediteur: string
-  statut: 'recu' | 'traite' | 'erreur'
-  contenuMessage: string
-} // RM-123
-
-export interface ChangeVenteChg {
-  id: number
-  venteId: number
-  tauxChange: number
-  deviseSource: string
-  deviseCible: string
-  montantSource: number
-  montantCible: number
-  dateChange: Date
-  commission: number
-  numeroOperation: string
-} // RM-147
-
-export interface CodesAutocomAut {
-  id: number
-  codeAutocom: string
-  libelle: string
-  categorie: string
-  actif: boolean
-  dateCreation: Date
-  parametres: string
-  priorite: number
-} // RM-80
-
-export interface ChangeChg {
-  id: number
-  typeOperation: 'achat' | 'vente'
-  deviseSource: string
-  deviseCible: string
-  tauxChange: number
-  montant: number
-  dateOperation: Date
-  compteId: number
-  numeroTransaction: string
-  commission: number
-} // RM-44
-
-export interface VenteVep {
-  id: number
-  numeroVente: string
-  dateVente: Date
-  montantTotal: number
-  compteClient: number
-  vendeurId: string
-  statut: 'en_cours' | 'validee' | 'annulee'
-  moyenPaiement: string
-  taxe: number
-  remise: number
-} // RM-309
-
-export interface TransacEnteteBar {
-  id: number
-  numeroTransaction: string
-  dateTransaction: Date
-  montantTotal: number
-  nombreArticles: number
-  caissierId: string
-  statut: 'ouverte' | 'fermee' | 'annulee'
-  typeTransaction: 'vente' | 'remboursement'
-} // RM-15
-
-export interface VenteOptionVeo {
-  id: number
-  venteId: number
-  optionId: string
-  libelleOption: string
-  prixOption: number
-  quantite: number
-  montantTotal: number
-  dateAjout: Date
-  typeOption: string
-  obligatoire: boolean
-} // RM-307
-
-export interface DepotObjetsDoa {
-  id: number
-  numeroDepot: string
-  clientId: number
-  dateDepot: Date
-  dateRetrait: Date | null
-  description: string
-  valeurEstimee: number
-  statut: 'depose' | 'retire' | 'perdu'
-  responsableId: string
-  emplacementDepot: string
-} // RM-41
-
-export interface HeureDePassage {
-  id: number
-  passageId: string
-  heureDebut: Date
-  heureFin: Date
-  typePassage: 'entree' | 'sortie' | 'transit'
-  zoneId: number
-  compteId: number
-  statut: 'valide' | 'invalide'
-} // RM-463
-
-export interface Table947 {
-  id: number
-  referenceTable: string
-  donneesTable: string
-  dateCreation: Date
-  typeEnregistrement: string
-  statut: 'actif' | 'archive'
-  metadonnees: string
-} // RM-947
-
-export interface HebergementHeb {
-  id: number
-  codeHebergement: string
-  typeHebergement: string
-  capacite: number
-  dateOuverture: Date
-  statut: 'disponible' | 'occupe' | 'maintenance'
-  tarif: number
-  services: string
-} // RM-34
-
-export interface HebCircuitHci {
-  id: number
-  hebergementId: number
-  circuitId: string
-  ordre: number
-  dureeEtape: number
-  dateDebut: Date
-  dateFin: Date
-  statut: 'programme' | 'en_cours' | 'termine'
-} // RM-168
-
-export interface CcTotalParType {
-  id: number
-  typeTransaction: string
-  montantTotal: number
-  nombreTransactions: number
-  dateCalcul: Date
-  periodeDebut: Date
-  periodeFin: Date
-  statut: 'calcule' | 'valide'
-} // RM-268
-
-export interface CcTypeDetail {
-  id: number
-  typeId: number
-  codeDetail: string
-  libelleDetail: string
-  montant: number
-  quantite: number
-  dateTransaction: Date
-  reference: string
-} // RM-272
-
-export interface LignesDeSoldeSld {
-  id: number
-  compteId: number
-  typeLigne: 'debit' | 'credit' | 'solde'
-  montant: number
-  dateLigne: Date
-  libelle: string
-  reference: string
-  statut: 'provisoire' | 'definitif'
-} // RM-48
-
-export interface CcTotal {
-  id: number
-  totalGeneral: number
-  nombreOperations: number
-  dateCalcul: Date
-  periodeDebut: Date
-  periodeFin: Date
-  typeTotal: 'journalier' | 'hebdomadaire' | 'mensuel'
-  statut: 'provisoire' | 'definitif'
-} // RM-271
-
-export interface ParticipantsPar {
-  id: number
-  participantId: string
-  nom: string
-  prenom: string
-  dateNaissance: Date
-  typeParticipant: 'adulte' | 'enfant' | 'accompagnant'
-  circuitId: string
-  statut: 'inscrit' | 'confirme' | 'annule'
-} // RM-298
-
-export interface VoyagesVoy {
-  id: number
-  codeVoyage: string
-  destination: string
-  dateDepart: Date
-  dateRetour: Date
-  nombreParticipants: number
-  prixBase: number
-  statut: 'programme' | 'confirme' | 'annule' | 'complete'
-  typeVoyage: 'circuit' | 'sejour' | 'croisiere'
-} // RM-29
-
-export interface BlDetail {
-  id: number
-  blId: string
-  numeroLigne: number
-  articleId: string
-  quantite: number
-  prixUnitaire: number
-  montantTotal: number
-  dateCreation: Date
-  statut: 'valide' | 'annule'
-} // RM-19
-
-export interface ComptableGratuite {
-  id: number
-  compteComptable: string
-  typeGratuite: string
-  montantGratuite: number
-  dateApplication: Date
-  motif: string
-  autorisePar: string
-  statut: 'active' | 'inactive'
-} // RM-38
-
-export interface ImportMod {
-  id: number
-  nomModule: string
-  versionModule: string
-  dateImport: Date
-  fichierSource: string
-  statut: 'importe' | 'erreur' | 'en_cours'
-  nombreEnregistrements: number
-  parametres: string
-} // RM-358
-
-export interface DepotDevisesDda {
-  id: number
-  compteId: number
-  typeDevise: string
-  montantDepot: number
-  tauxChange: number
-  dateDepot: Date
-  dateEcheance: Date
-  statut: 'actif' | 'echu' | 'annule'
-  reference: string
-} // RM-42
-
-export interface PmsPrintParam {
-  id: number
-  parametreName: string
-  parametreValue: string
-  typeParametre: 'impression' | 'format' | 'config'
-  dateModification: Date
-  utilisateurModification: string
-  actif: boolean
-  description: string
-} // RM-366
-
-export interface DetailsParticiDpa {
-  id: number
-  participantId: string
-  detailType: string
-  valeurDetail: string
-  dateCreation: Date
-  dateModification: Date | null
-  statut: 'actif' | 'archive'
-  commentaire: string
-} // RM-301
-
-export interface SoldeDevisesSda {
-  id: number
-  compteId: number
-  typeDevise: string
-  soldeActuel: number
-  soldePrecedent: number
-  dateCalcul: Date
-  mouvementPeriode: number
-  statut: 'calcule' | 'valide' | 'corrige'
-} // RM-43
-
-export interface PvDiscountReasons {
-  id: number
-  codeRaison: string
-  libelleRaison: string
-  typeRemise: 'pourcentage' | 'montant'
-  valeurRemise: number
-  dateCreation: Date
-  actif: boolean
-  restrictions: string
-} // RM-382
-
-export interface CommentaireCom {
-  id: number
-  typeCommentaire: string
-  contenuCommentaire: string
-  dateCreation: Date
-  auteur: string
-  referenceObjet: string
-  priorite: 'normale' | 'haute' | 'urgente'
-  statut: 'ouvert' | 'ferme' | 'archive'
-} // RM-171
-
-export interface Email {
-  id: number
-  expediteur: string
-  destinataire: string
-  sujet: string
-  contenu: string
-  dateEnvoi: Date
-  dateReception: Date | null
-  statut: 'envoye' | 'recu' | 'lu' | 'archive'
-  pieceJointe: boolean
-} // RM-285
-
-export interface ValeurCreditBarDefaut {
-  id: number
-  codeCredit: string
-  valeurDefaut: number
-  typeCredit: 'bar' | 'restaurant' | 'boutique'
-  dateApplication: Date
-  actif: boolean
-  limiteTarifaire: number
-  description: string
-} // RM-804
-
-export interface ClientGm {
-  id: number
-  clientId: string
-  codeClient: string
-  nom: string
-  prenom: string
-  dateNaissance: Date
-  adresse: string
-  telephone: string
-  email: string
-  statut: 'actif' | 'inactif' | 'suspendu'
-  dateInscription: Date
-} // RM-36
-
-export interface VendeursVen {
-  id: number
-  vendeurId: string
-  nom: string
-  prenom: string
-  codeVendeur: string
-  commission: number
-  typeVente: string
-  secteur: string
-  dateEmbauche: Date
-  statut: 'actif' | 'inactif' | 'conge'
-} // RM-93
-
-export interface Table1059 {
-  id: number
-  referenceData: string
-  typeData: string
-  valeurData: string
-  dateCreation: Date
-  dateModification: Date | null
-  parametres: string
-  statut: 'actif' | 'archive'
-  metadonnees: string
-} // RM-1059
-
-export interface TronconTro {
-  id: number
-  codeTroncon: string
-  nomTroncon: string
-  typeTransport: 'avion' | 'train' | 'bus' | 'bateau'
-  villeDeparture: string
-  villeArrivee: string
-  dureeTrajet: number
-  distanceKm: number
-  actif: boolean
-  compagnieTransport: string
-} // RM-167
-
-export interface HistoFusionSeparationLog {
-  id: number
-  operationId: string
-  typeOperation: 'fusion' | 'separation'
-  dateOperation: Date
-  utilisateur: string
-  compteSource: string
-  compteCible: string
-  statut: 'initie' | 'en_cours' | 'complete' | 'erreur'
-  detailsOperation: string
-  resultat: string | null
-} // RM-342
-
-export interface DateComptableDat {
-  id: number
-  dateComptable: Date
-  exerciceComptable: string
-  statut: 'ouvert' | 'ferme' | 'cloture'
-  typeExercice: 'mensuel' | 'trimestriel' | 'annuel'
-  dateOuverture: Date
-  dateCloture: Date | null
-  responsable: string
-} // RM-70
-
-export interface AccountMergeState {
-  mergeRequest: MergeRequest | null
-  sourceAccount: Account | null
-  targetAccount: Account | null
-  mergeHistory: MergeHistory[]
-  mergeLogs: MergeLog[]
-  validationStatus: ValidationStatus | null
-  currentStep: 'validation' | 'preparation' | 'execution' | 'completion'
-  isProcessing: boolean
-  error: string | null
-  progressData: { current: number; total: number; table: string }
-  histoFusionSeparation: HistoFusionSeparationSaisie[] // RM-343
-  gmRecherche: GmRecherche[] // RM-30
-  depotGarantie: DepotGarantie[] // RM-39
-  compteGm: CompteGm[] // RM-47
-  reseauCloture: ReseauCloture[] // RM-23
-  fusionEclatement: FusionEclatement[] // RM-51
-  prestations: Prestations[] // RM-33
-  pvCustomerDat: PvCustomerDat[] // RM-837
-  mvtPrestation: MvtPrestation[] // RM-46
-  gratuites: Gratuites[] // RM-79
-  personnelGo: PersonnelGo[] // RM-35
-  fichierValidation: FichierValidation[] // RM-131
-  commentaireGm: CommentaireGm[] // RM-37
-  commentaireGmAcc: CommentaireGmAcc[] // RM-37
-  importGoErreur: ImportGoErreurAffection[] // RM-831
-  fichierHistotel: FichierHistotel[] // RM-137
-  tpeParTerminal: TpeParTerminal[] // RM-834
-  venteParMoyenPaiement: VenteParMoyenPaiement[] // RM-805
-  comptableCte: ComptableCte[] // RM-40
-  plafondLit: PlafondLit[] // RM-807
-  ezCard: EzCard[] // RM-312
-  gmCompletGmc: GmCompletGmc[] // RM-31
-  qualiteAvantReprise: QualiteAvantReprise[] // RM-786
-  fichierMessagerie: FichierMessagerie[] // RM-123
-  changeVenteChg: ChangeVenteChg[] // RM-147
-  codesAutocomAut: CodesAutocomAut[] // RM-80
-  changeChg: ChangeChg[] // RM-44
-  venteVep: VenteVep[] // RM-309
-  transacEnteteBar: TransacEnteteBar[] // RM-15
-  venteOptionVeo: VenteOptionVeo[] // RM-307
-  depotObjetsDoa: DepotObjetsDoa[] // RM-41
-  heureDePassage: HeureDePassage[] // RM-463
-  table947: Table947[] // RM-947
-  hebergementHeb: HebergementHeb[] // RM-34
-  hebCircuitHci: HebCircuitHci[] // RM-168
-  ccTotalParType: CcTotalParType[] // RM-268
-  ccTypeDetail: CcTypeDetail[] // RM-272
-  lignesDeSoldeSld: LignesDeSoldeSld[] // RM-48
-  ccTotal: CcTotal[] // RM-271
-  participantsPar: ParticipantsPar[] // RM-298
-  voyagesVoy: VoyagesVoy[] // RM-29
-  blDetail: BlDetail[] // RM-19
-  comptableGratuite: ComptableGratuite[] // RM-38
-  importMod: ImportMod[] // RM-358
-  depotDevisesDda: DepotDevisesDda[] // RM-42
-  pmsPrintParam: PmsPrintParam[] // RM-366
-  detailsParticiDpa: DetailsParticiDpa[] // RM-301
-  soldeDevisesSda: SoldeDevisesSda[] // RM-43
-  pvDiscountReasons: PvDiscountReasons[] // RM-382
-  commentaireCom: CommentaireCom[] // RM-171
-  email: Email[] // RM-285
-  valeurCreditBarDefaut: ValeurCreditBarDefaut[] // RM-804
-  clientGm: ClientGm[] // RM-36
-  vendeursVen: VendeursVen[] // RM-93
-  table1059: Table1059[] // RM-1059
-  tronconTro: TronconTro[] // RM-167
-  histoFusionSeparationLog: HistoFusionSeparationLog[] // RM-342
-  dateComptableDat: DateComptableDat[] // RM-70
+  saleId: string
+  paymentMethod: string
+  amount: number
+  transactionDate: Date
+  terminalId: string
+  authorizationCode: string
+  status: string
 }
 
-export type ApiValidationRequest = ApiResponse<ValidationStatus>
-
-export type ApiAccountLoadRequest = ApiResponse<{
-  source: Account
-  target: Account
-}>
-
-export type ApiMergeExecuteRequest = ApiResponse<MergeRequest>
-
-export type ApiMergeHistoryRequest = ApiResponse<MergeHistory[]>
-
-export type ApiMergeLogRequest = ApiResponse<MergeLog[]>
-
-export type ApiHistoFusionSeparationRequest = ApiResponse<HistoFusionSeparationSaisie[]> // RM-343
-
-export type ApiGmRechercheRequest = ApiResponse<GmRecherche[]> // RM-30
-
-export type ApiDepotGarantieRequest = ApiResponse<DepotGarantie[]> // RM-39
-
-export type ApiCompteGmRequest = ApiResponse<CompteGm[]> // RM-47
-
-export type ApiReseauClotureRequest = ApiResponse<ReseauCloture[]> // RM-23
-
-export type ApiFusionEclatementRequest = ApiResponse<FusionEclatement[]> // RM-51
-
-export type ApiPrestationsRequest = ApiResponse<Prestations[]> // RM-33
-
-export type ApiPvCustomerDatRequest = ApiResponse<PvCustomerDat[]> // RM-837
-
-export type ApiMvtPrestationRequest = ApiResponse<MvtPrestation[]> // RM-46
-
-export type ApiGratuitesRequest = ApiResponse<Gratuites[]> // RM-79
-
-export type ApiPersonnelGoRequest = ApiResponse<PersonnelGo[]> // RM-35
-
-export type ApiFichierValidationRequest = ApiResponse<FichierValidation[]> // RM-131
-
-export type ApiCommentaireGmRequest = ApiResponse<CommentaireGm[]> // RM-37
-
-export type ApiCommentaireGmAccRequest = ApiResponse<CommentaireGmAcc[]> // RM-37
-
-export type ApiImportGoErreurRequest = ApiResponse<ImportGoErreurAffection[]> // RM-831
-
-export type ApiFichierHistotelRequest = ApiResponse<FichierHistotel[]> // RM-137
-
-export type ApiTpeParTerminalRequest = ApiResponse<TpeParTerminal[]> // RM-834
-
-export type ApiVenteParMoyenPaiementRequest = ApiResponse<VenteParMoyenPaiement[]> // RM-805
-
-export type ApiComptableCteRequest = ApiResponse<ComptableCte[]> // RM-40
-
-export type ApiPlafondLitRequest = ApiResponse<PlafondLit[]> // RM-807
-
-export type ApiEzCardRequest = ApiResponse<EzCard[]> // RM-312
-
-export type ApiGmCompletGmcRequest = ApiResponse<GmCompletGmc[]> // RM-31
-
-export type ApiQualiteAvantRepriseRequest = ApiResponse<QualiteAvantReprise[]> // RM-786
-
-export type ApiFichierMessagerieRequest = ApiResponse<FichierMessagerie[]> // RM-123
-
-export type ApiChangeVenteChgRequest = ApiResponse<ChangeVenteChg[]> // RM-147
-
-export type ApiCodesAutocomAutRequest = ApiResponse<CodesAutocomAut[]> // RM-80
-
-export type ApiChangeChgRequest = ApiResponse<ChangeChg[]> // RM-44
-
-export type ApiVenteVepRequest = ApiResponse<VenteVep[]> // RM-309
-
-export type ApiTransacEnteteBarRequest = ApiResponse<TransacEnteteBar[]> // RM-15
-
-export type ApiVenteOptionVeoRequest = ApiResponse<VenteOptionVeo[]> // RM-307
-
-export type ApiDepotObjetsDoaRequest = ApiResponse<DepotObjetsDoa[]> // RM-41
-
-export type ApiHeureDePassageRequest = ApiResponse<HeureDePassage[]> // RM-463
-
-export type ApiTable947Request = ApiResponse<Table947[]> // RM-947
-
-export type ApiHebergementHebRequest = ApiResponse<HebergementHeb[]> // RM-34
-
-export type ApiHebCircuitHciRequest = ApiResponse<HebCircuitHci[]> // RM-168
-
-export type ApiCcTotalParTypeRequest = ApiResponse<CcTotalParType[]> // RM-268
-
-export type ApiCcTypeDetailRequest = ApiResponse<CcTypeDetail[]> // RM-272
-
-export type ApiLignesDeSoldeSldRequest = ApiResponse<LignesDeSoldeSld[]> // RM-48
-
-export type ApiCcTotalRequest = ApiResponse<CcTotal[]> // RM-271
-
-export type ApiParticipantsParRequest = ApiResponse<ParticipantsPar[]> // RM-298
-
-export type ApiVoyagesVoyRequest = ApiResponse<VoyagesVoy[]> // RM-29
-
-export type ApiBlDetailRequest = ApiResponse<BlDetail[]> // RM-19
-
-export type ApiComptableGratuiteRequest = ApiResponse<ComptableGratuite[]> // RM-38
-
-export type ApiImportModRequest = ApiResponse<ImportMod[]> // RM-358
-
-export type ApiDepotDevisesDdaRequest = ApiResponse<DepotDevisesDda[]> // RM-42
-
-export type ApiPmsPrintParamRequest = ApiResponse<PmsPrintParam[]> // RM-366
-
-export type ApiDetailsParticiDpaRequest = ApiResponse<DetailsParticiDpa[]> // RM-301
-
-export type ApiSoldeDevisesSdaRequest = ApiResponse<SoldeDevisesSda[]> // RM-43
-
-export type ApiPvDiscountReasonsRequest = ApiResponse<PvDiscountReasons[]> // RM-382
-
-export type ApiCommentaireComRequest = ApiResponse<CommentaireCom[]> // RM-171
-
-export type ApiEmailRequest = ApiResponse<Email[]> // RM-285
-
-export type ApiValeurCreditBarDefautRequest = ApiResponse<ValeurCreditBarDefaut[]> // RM-804
-
-export type ApiClientGmRequest = ApiResponse<ClientGm[]> // RM-36
-
-export type ApiVendeursVenRequest = ApiResponse<VendeursVen[]> // RM-93
-
-export type ApiTable1059Request = ApiResponse<Table1059[]> // RM-1059
-
-export type ApiTronconTroRequest = ApiResponse<TronconTro[]> // RM-167
-
-export type ApiHistoFusionSeparationLogRequest = ApiResponse<HistoFusionSeparationLog[]> // RM-342
-
-export type ApiDateComptableDatRequest = ApiResponse<DateComptableDat[]> // RM-70
-
-export const MERGE_STATUSES = {
-  PENDING: 'pending',
-  VALIDATED: 'validated',
-  REJECTED: 'rejected',
-  COMPLETED: 'completed'
-} as const
-
-export const MERGE_STEPS = {
-  VALIDATION: 'validation',
-  PREPARATION: 'preparation', 
-  EXECUTION: 'execution',
-  COMPLETION: 'completion'
-} as const
-
-export const TABLE_NAMES = {
+// RM-40: comptable________cte table structure
+export interface Comptable {
+  accountingId: string
+  accountId: string
+  debitAmount: number
+  creditAmount: number
+  accountingDate: Date
+  description: string
+  operatorId: string
+  validated: boolean
+}
+
+// RM-807: plafond_lit table structure
+export interface PlafondLit {
+  id: number
+  accountId: string
+  bedType: string
+  maxLimit: number
+  currentUsage: number
+  periodStart: Date
+  periodEnd: Date
+  isActive: boolean
+}
+
+// RM-312: ez_card table structure
+export interface EzCard {
+  cardId: string
+  accountId: string
+  cardType: string
+  issueDate: Date
+  expirationDate: Date
+  cardStatus: string
+  balance: number
+  lastUsed: Date
+}
+
+// RM-31: gm-complet_______gmc table structure
+export interface GmComplet {
+  id: number
+  accountId: string
+  completeData: string
+  completionDate: Date
+  completionStatus: string
+  operatorId: string
+  validationLevel: string
+  lastModified: Date
+}
+
+// RM-35: personnel_go______go table structure
+export interface PersonnelGo {
+  personnelId: string
+  goCode: string
+  firstName: string
+  lastName: string
+  position: string
+  department: string
+  hireDate: Date
+  status: string
+}
+
+// RM-786: qualite_avant_reprise table structure
+export interface QualiteAvantReprise {
+  id: number
+  accountId: string
+  qualityScore: number
+  assessmentDate: Date
+  assessorId: string
+  qualityLevel: string
+  repriseRequired: boolean
+  notes: string
+}
+
+// RM-123: fichier_messagerie table structure
+export interface FichierMessagerie {
+  messageId: string
+  senderId: string
+  recipientId: string
+  messageContent: string
+  sentDate: Date
+  messageType: string
+  isRead: boolean
+  attachmentCount: number
+}
+
+// RM-147: change_vente_____chg table structure
+export interface ChangeVente {
+  changeId: number
+  originalSaleId: string
+  newSaleId: string
+  changeDate: Date
+  changeType: string
+  operatorId: string
+  reason: string
+  status: string
+}
+
+// RM-80: codes_autocom____aut table structure
+export interface CodesAutocom {
+  codeId: string
+  autocomType: string
+  codeValue: string
+  description: string
+  validFrom: Date
+  validTo: Date
+  isActive: boolean
+  priority: number
+}
+
+// RM-44: change___________chg table structure
+export interface Change {
+  changeId: number
+  accountId: string
+  changeType: string
+  oldValue: string
+  newValue: string
+  changeDate: Date
+  operatorId: string
+  approved: boolean
+}
+
+// RM-266: cc_comptable table structure
+export interface CcComptable {
+  ccId: string
+  accountingCode: string
+  accountId: string
+  amount: number
+  accountingDate: Date
+  description: string
+  operatorId: string
+  validated: boolean
+  journalRef: string
+}
+
+// RM-309: vente____________vep table structure
+export interface Vente {
+  saleId: string
+  accountId: string
+  saleAmount: number
+  saleDate: Date
+  productCode: string
+  quantity: number
+  unitPrice: number
+  discountAmount: number
+  operatorId: string
+  status: string
+}
+
+// RM-15: transac_entete_bar table structure
+export interface TransacEnteteBar {
+  transactionId: string
+  barCode: string
+  transactionDate: Date
+  totalAmount: number
+  itemCount: number
+  operatorId: string
+  terminalId: string
+  status: string
+}
+
+// RM-307: vente_option_veo table structure
+export interface VenteOptionVeo {
+  id: number
+  saleId: string
+  optionCode: string
+  optionValue: string
+  optionDate: Date
+  operatorId: string
+  status: string
+  price: number
+}
+
+// RM-041: depot_objets_____doa table structure
+export interface DepotObjetsDoa {
+  id: number
+  accountId: string
+  objectType: string
+  depositDate: Date
+  returnDate: Date | null
+  status: string
+  description: string
+  operatorId: string
+}
+
+// RM-463: heure_de_passage table structure
+export interface HeureDePassage {
+  id: number
+  accountId: string
+  passageTime: Date
+  location: string
+  direction: string
+  terminalId: string
+  operatorId: string
+  validated: boolean
+}
+
+// RM-947: Table_947 table structure
+export interface Table947 {
+  id: number
+  referenceCode: string
+  dataValue: string
+  category: string
+  createdDate: Date
+  status: string
+  priority: number
+  description: string
+}
+
+// RM-034: hebergement______heb table structure
+export interface HebergementHeb {
+  id: number
+  accountId: string
+  accommodationType: string
+  checkInDate: Date
+  checkOutDate: Date
+  roomNumber: string
+  guestCount: number
+  totalAmount: number
+  status: string
+}
+
+// RM-168: heb_circuit______hci table structure
+export interface HebCircuitHci {
+  id: number
+  circuitCode: string
+  accommodationId: number
+  sequenceOrder: number
+  duration: number
+  transportType: string
+  status: string
+  operatorId: string
+}
+
+// RM-268: cc_total_par_type table structure
+export interface CcTotalParType {
+  id: number
+  accountId: string
+  totalType: string
+  totalAmount: number
+  calculationDate: Date
+  periodStart: Date
+  periodEnd: Date
+  operatorId: string
+  validated: boolean
+}
+
+// RM-272: cc_type_detail table structure
+export interface CcTypeDetail {
+  id: number
+  typeCode: string
+  detailCode: string
+  description: string
+  unitPrice: number
+  taxRate: number
+  category: string
+  isActive: boolean
+}
+
+// RM-048: lignes_de_solde__sld table structure
+export interface LignesDeSoldeSld {
+  id: number
+  accountId: string
+  balanceType: string
+  balanceAmount: number
+  balanceDate: Date
+  description: string
+  operatorId: string
+  validated: boolean
+}
+
+// RM-271: cc_total table structure
+export interface CcTotal {
+  id: number
+  accountId: string
+  totalAmount: number
+  calculationDate: Date
+  operatorId: string
+  validated: boolean
+  currency: string
+  exchangeRate: number
+}
+
+// RM-298: participants_____par table structure
+export interface ParticipantsPar {
+  participantId: string
+  accountId: string
+  firstName: string
+  lastName: string
+  birthDate: Date
+  participantType: string
+  status: string
+  registrationDate: Date
+  voyageId: string
+}
+
+// RM-29: voyages__________voy table structure
+export interface VoyagesVoy {
+  voyageId: string
+  voyageCode: string
+  destination: string
+  departureDate: Date
+  returnDate: Date
+  voyageType: string
+  capacity: number
+  status: string
+  organizerId: string
+}
+
+// RM-19: bl_detail table structure
+export interface BlDetail {
+  id: number
+  billId: string
+  lineNumber: number
+  productCode: string
+  quantity: number
+  unitPrice: number
+  totalAmount: number
+  description: string
+  taxRate: number
+}
+
+// RM-38: comptable_gratuite table structure
+export interface ComptableGratuite {
+  id: number
+  accountId: string
+  gratuitType: string
+  accountingAmount: number
+  gratuitDate: Date
+  description: string
+  operatorId: string
+  validated: boolean
+}
+
+// RM-358: import_mod table structure
+export interface ImportMod {
+  importId: string
+  moduleCode: string
+  importDate: Date
+  fileSource: string
+  recordCount: number
+  processStatus: string
+  errorCount: number
+  operatorId: string
+}
+
+// RM-42: depot_devises____dda table structure
+export interface DepotDevisesDda {
+  id: number
+  accountId: string
+  currencyCode: string
+  depositAmount: number
+  exchangeRate: number
+  localAmount: number
+  depositDate: Date
+  status: string
+  operatorId: string
+}
+
+// RM-366: pms_print_param table structure
+export interface PmsPrintParam {
+  parameterId: string
+  printType: string
+  parameterName: string
+  parameterValue: string
+  isActive: boolean
+  lastModified: Date
+  operatorId: string
+  description: string
+}
+
+// RM-301: details_partici__dpa table structure
+export interface DetailsParticiDpa {
+  detailId: number
+  participantId: string
+  detailType: string
+  detailValue: string
+  detailDate: Date
+  status: string
+  operatorId: string
+  validated: boolean
+}
+
+// RM-43: solde_devises____sda table structure
+export interface SoldeDevisesSda {
+  id: number
+  accountId: string
+  currencyCode: string
+  balanceAmount: number
+  exchangeRate: number
+  localBalance: number
+  balanceDate: Date
+  status: string
+  operatorId: string
+}
+
+// RM-382: pv_discount_reasons table structure
+export interface PvDiscountReasons {
+  reasonId: string
+  reasonCode: string
+  reasonDescription: string
+  discountType: string
+  maxDiscountPercent: number
+  isActive: boolean
+  validFrom: Date
+  validTo: Date
+}
+
+export interface AccountMergeState {
+  mergeHistories: MergeHistory[]
+  sourceAccount: Account | null
+  targetAccount: Account | null
+  validationState: MergeValidation | null
+  isLoading: boolean
+  error: string | null
+  mergeProgress: number
+  currentStep: string
+  histoSaisie: HistoFusionSeparationSaisie[]
+  gmRecherches: GmRecherche[]
+  depotGaranties: DepotGarantie[]
+  histoFusions: HistoFusionSeparation[]
+  comptesGm: CompteGm[]
+  reseauClotures: ReseauCloture[]
+  fusionEclatements: FusionEclatement[]
+  prestations: Prestations[]
+  fichiersValidation: FichierValidation[]
+  commentairesGm: CommentaireGm[]
+  importGoErreurs: ImportGoErreurAffection[]
+  pvCustomerData: PvCustomerDat[]
+  mvtPrestations: MvtPrestation[]
+  gratuites: Gratuites[]
+  fichiersHistotel: FichierHistotel[]
+  tpeTerminaux: TpeParTerminal[]
+  ventesPayment: VenteParMoyenPaiement[]
+  comptables: Comptable[]
+  plafondsLit: PlafondLit[]
+  ezCards: EzCard[]
+  gmComplets: GmComplet[]
+  personnelGo: PersonnelGo[]
+  qualiteAvantReprises: QualiteAvantReprise[]
+  fichiersMessagerie: FichierMessagerie[]
+  changesVente: ChangeVente[]
+  codesAutocom: CodesAutocom[]
+  changes: Change[]
+  ccComptables: CcComptable[]
+  ventes: Vente[]
+  transacEnteteBar: TransacEnteteBar[]
+  venteOptions: VenteOptionVeo[]
+  depotObjets: DepotObjetsDoa[]
+  heuresPassage: HeureDePassage[]
+  table947: Table947[]
+  hebergements: HebergementHeb[]
+  hebCircuits: HebCircuitHci[]
+  ccTotalParTypes: CcTotalParType[]
+  ccTypeDetails: CcTypeDetail[]
+  lignesSolde: LignesDeSoldeSld[]
+  ccTotals: CcTotal[]
+  participants: ParticipantsPar[]
+  voyages: VoyagesVoy[]
+  blDetails: BlDetail[]
+  comptableGratuites: ComptableGratuite[]
+  importMods: ImportMod[]
+  depotDevises: DepotDevisesDda[]
+  pmsPrintParams: PmsPrintParam[]
+  detailsPartici: DetailsParticiDpa[]
+  soldeDevises: SoldeDevisesSda[]
+  pvDiscountReasons: PvDiscountReasons[]
+}
+
+export interface AccountMergeActions {
+  validateMergeConditions: (sourceAccountId: string, targetAccountId: string) => Promise<void>
+  executeMerge: (sourceAccountId: string, targetAccountId: string) => Promise<void>
+  createMergeHistory: (sourceAccount: string, targetAccount: string, operator: string) => Promise<void>
+  rollbackMerge: (mergeHistoryId: number) => Promise<void>
+  printMergeTicket: (mergeHistoryId: number) => Promise<void>
+}
+
+export type ValidateResponse = ApiResponse<MergeValidation>
+export type ExecuteMergeResponse = ApiResponse<MergeHistory>
+export type MergeHistoryResponse = ApiResponse<MergeHistory[]>
