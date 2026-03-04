@@ -56,23 +56,26 @@ describe("historyCleanupStore", () => {
       }
       vi.mocked(apiClient.delete).mockResolvedValueOnce(mockResponse)
 
-      const store = useHistoryCleanupStore.getState()
+      const initialStore = useHistoryCleanupStore.getState()
       
-      expect(store.isLoading).toBe(false)
+      expect(initialStore.isLoading).toBe(false)
       
-      const resultPromise = store.deleteHistoFusionSeparationSaisie(MOCK_CRITERIA)
+      const resultPromise = initialStore.deleteHistoFusionSeparationSaisie(MOCK_CRITERIA)
       
-      expect(store.isLoading).toBe(true)
-      expect(store.deletionCriteria).toEqual(MOCK_CRITERIA)
+      const loadingStore = useHistoryCleanupStore.getState()
+      expect(loadingStore.isLoading).toBe(true)
+      expect(loadingStore.deletionCriteria).toEqual(MOCK_CRITERIA)
       
       const result = await resultPromise
       
       const expectedUrl = "/api/historyCleanup/fusionSeparationSaisie?chronoEF=12345&societe=ACME&compteReference=987654&filiationReference=456789"
       expect(apiClient.delete).toHaveBeenCalledWith(expectedUrl)
       expect(result).toEqual(MOCK_DELETION_RESULT)
-      expect(store.deletionResult).toEqual(MOCK_DELETION_RESULT)
-      expect(store.isLoading).toBe(false)
-      expect(store.error).toBe(null)
+      
+      const finalStore = useHistoryCleanupStore.getState()
+      expect(finalStore.deletionResult).toEqual(MOCK_DELETION_RESULT)
+      expect(finalStore.isLoading).toBe(false)
+      expect(finalStore.error).toBe(null)
     })
 
     it("should build URL with partial criteria", async () => {
@@ -111,9 +114,10 @@ describe("historyCleanupStore", () => {
       await expect(store.deleteHistoFusionSeparationSaisie(MOCK_CRITERIA))
         .rejects.toThrow("Failed to delete fusion separation history records")
       
-      expect(store.error).toBe("Failed to delete fusion separation history records")
-      expect(store.isLoading).toBe(false)
-      expect(store.deletionResult).toBe(null)
+      const finalStore = useHistoryCleanupStore.getState()
+      expect(finalStore.error).toBe("Failed to delete fusion separation history records")
+      expect(finalStore.isLoading).toBe(false)
+      expect(finalStore.deletionResult).toBe(null)
     })
 
     it("should handle API network error", async () => {
@@ -125,9 +129,10 @@ describe("historyCleanupStore", () => {
       await expect(store.deleteHistoFusionSeparationSaisie(MOCK_CRITERIA))
         .rejects.toThrow("Network error")
       
-      expect(store.error).toBe("Network error")
-      expect(store.isLoading).toBe(false)
-      expect(store.deletionResult).toBe(null)
+      const finalStore = useHistoryCleanupStore.getState()
+      expect(finalStore.error).toBe("Network error")
+      expect(finalStore.isLoading).toBe(false)
+      expect(finalStore.deletionResult).toBe(null)
     })
   })
 
@@ -152,8 +157,10 @@ describe("historyCleanupStore", () => {
       expect(result.recordsDeleted).toBeGreaterThanOrEqual(50)
       expect(result.recordsDeleted).toBeLessThan(250)
       expect(new Date(result.timestamp)).toBeInstanceOf(Date)
-      expect(store.deletionResult).toEqual(result)
-      expect(store.isLoading).toBe(false)
+      
+      const finalStore = useHistoryCleanupStore.getState()
+      expect(finalStore.deletionResult).toEqual(result)
+      expect(finalStore.isLoading).toBe(false)
     })
   })
 
@@ -182,8 +189,10 @@ describe("historyCleanupStore", () => {
         { criteria: MOCK_CRITERIA }
       )
       expect(isValid).toBe(true)
-      expect(store.isLoading).toBe(false)
-      expect(store.error).toBe(null)
+      
+      const finalStore = useHistoryCleanupStore.getState()
+      expect(finalStore.isLoading).toBe(false)
+      expect(finalStore.error).toBe(null)
     })
 
     it("should handle invalid criteria response", async () => {
@@ -221,8 +230,10 @@ describe("historyCleanupStore", () => {
       const isValid = await store.validateDeletionCriteria(MOCK_CRITERIA)
       
       expect(isValid).toBe(false)
-      expect(store.error).toBe("Validation failed")
-      expect(store.isLoading).toBe(false)
+      
+      const finalStore = useHistoryCleanupStore.getState()
+      expect(finalStore.error).toBe("Validation failed")
+      expect(finalStore.isLoading).toBe(false)
     })
   })
 
@@ -277,10 +288,11 @@ describe("historyCleanupStore", () => {
       
       store.reset()
       
-      expect(store.isLoading).toBe(false)
-      expect(store.error).toBe(null)
-      expect(store.deletionCriteria).toBe(null)
-      expect(store.deletionResult).toBe(null)
+      const resetStore = useHistoryCleanupStore.getState()
+      expect(resetStore.isLoading).toBe(false)
+      expect(resetStore.error).toBe(null)
+      expect(resetStore.deletionCriteria).toBe(null)
+      expect(resetStore.deletionResult).toBe(null)
     })
   })
 })

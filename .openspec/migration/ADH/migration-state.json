@@ -1,12 +1,12 @@
 {
   "running": true,
   "batch": "B14",
-  "startedAt": 1772655701503,
+  "startedAt": 1772660915771,
   "totalPrograms": 3,
   "completedPrograms": 3,
   "failedPrograms": 0,
-  "targetDir": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web",
-  "mode": "bedrock",
+  "targetDir": "D:/Projects/ClubMed/LecteurMagic/adh-web",
+  "mode": "cli",
   "dryRun": false,
   "estimatedHours": 0,
   "programList": [
@@ -28,9 +28,9 @@
       "type": "migrate_started",
       "batch": "B14",
       "programs": 3,
-      "targetDir": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web",
+      "targetDir": "D:/Projects/ClubMed/LecteurMagic/adh-web",
       "dryRun": false,
-      "mode": "bedrock",
+      "mode": "cli",
       "programList": [
         {
           "id": "28",
@@ -50,17 +50,17 @@
     },
     {
       "type": "migration_started",
-      "timestamp": "2026-03-04T20:21:41.516Z",
+      "timestamp": "2026-03-04T21:48:35.793Z",
       "message": "  Starting migration for batch B14 (3 programs)"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.527Z",
+      "timestamp": "2026-03-04T21:48:35.812Z",
       "message": "  Decision log: D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\.migration-log\\B14"
     },
     {
       "type": "parallel_resolved",
-      "timestamp": "2026-03-04T20:21:41.539Z",
+      "timestamp": "2026-03-04T21:48:35.831Z",
       "message": "  Auto-parallel: 2 agents (22 CPUs, 3 programs)",
       "data": {
         "requested": 0,
@@ -70,20 +70,20 @@
     },
     {
       "type": "program_started",
-      "timestamp": "2026-03-04T20:21:41.547Z",
+      "timestamp": "2026-03-04T21:48:35.851Z",
       "message": "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📦 IDE 28                    [1/0]\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.568Z",
+      "timestamp": "2026-03-04T21:48:35.919Z",
       "message": "  → Génération spécification",
       "phase": "spec",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:41.576Z",
+      "timestamp": "2026-03-04T21:48:35.936Z",
       "message": "Génération spécification",
       "programId": "28",
       "phase": "spec",
@@ -93,20 +93,20 @@
     },
     {
       "type": "program_started",
-      "timestamp": "2026-03-04T20:21:41.588Z",
+      "timestamp": "2026-03-04T21:48:35.953Z",
       "message": "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📦 IDE 32                    [1/0]\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "programId": "32"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.601Z",
+      "timestamp": "2026-03-04T21:48:35.970Z",
       "message": "  → Génération spécification",
       "phase": "spec",
       "programId": "32"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:41.608Z",
+      "timestamp": "2026-03-04T21:48:35.988Z",
       "message": "Génération spécification",
       "programId": "32",
       "phase": "spec",
@@ -116,21 +116,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:21:41.614Z",
+      "timestamp": "2026-03-04T21:48:36.008Z",
       "message": "  ✓ Génération spécification",
       "phase": "spec",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.623Z",
+      "timestamp": "2026-03-04T21:48:36.019Z",
       "message": "  → Analyse contrat",
       "phase": "contract",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:41.631Z",
+      "timestamp": "2026-03-04T21:48:36.032Z",
       "message": "Analyse contrat",
       "programId": "28",
       "phase": "contract",
@@ -140,21 +140,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:21:41.638Z",
+      "timestamp": "2026-03-04T21:48:36.048Z",
       "message": "  ✓ Analyse contrat",
       "phase": "contract",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.647Z",
+      "timestamp": "2026-03-04T21:48:36.067Z",
       "message": "  → Analyse complète",
       "phase": "analyze",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:41.654Z",
+      "timestamp": "2026-03-04T21:48:36.083Z",
       "message": "Analyse complète",
       "programId": "28",
       "phase": "analyze",
@@ -164,21 +164,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:21:41.693Z",
+      "timestamp": "2026-03-04T21:48:36.099Z",
       "message": "  ✓ Génération spécification",
       "phase": "spec",
       "programId": "32"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.703Z",
+      "timestamp": "2026-03-04T21:48:36.117Z",
       "message": "  → Analyse contrat",
       "phase": "contract",
       "programId": "32"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:41.712Z",
+      "timestamp": "2026-03-04T21:48:36.134Z",
       "message": "Analyse contrat",
       "programId": "32",
       "phase": "contract",
@@ -188,21 +188,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:21:41.719Z",
+      "timestamp": "2026-03-04T21:48:36.149Z",
       "message": "  ✓ Analyse contrat",
       "phase": "contract",
       "programId": "32"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:41.727Z",
+      "timestamp": "2026-03-04T21:48:36.166Z",
       "message": "  → Analyse complète",
       "phase": "analyze",
       "programId": "32"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:41.733Z",
+      "timestamp": "2026-03-04T21:48:36.183Z",
       "message": "Analyse complète",
       "programId": "32",
       "phase": "analyze",
@@ -212,95 +212,22 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:21:56.023Z",
-      "message": "  ✓ Analyse complète",
-      "phase": "analyze",
-      "programId": "32",
-      "data": {
-        "tokens": {
-          "input": 3499,
-          "output": 1549
-        }
-      }
-    },
-    {
-      "type": "token_update",
-      "timestamp": "2026-03-04T20:21:56.029Z",
-      "message": "Tokens updated: 3499 in / 1549 out",
-      "programId": "32",
-      "phase": "analyze",
-      "data": {
-        "cumulative": {
-          "input": 245104,
-          "output": 240735,
-          "costUsd": 4.346336999999999,
-          "totalCalls": 41
-        },
-        "programTokens": {
-          "input": 3499,
-          "output": 1549
-        }
-      }
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:21:56.032Z",
-      "message": "  → Types TypeScript",
-      "phase": "types",
-      "programId": "32"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:21:56.034Z",
-      "message": "Types TypeScript",
-      "programId": "32",
-      "phase": "types",
-      "data": {
-        "label": "Types TypeScript"
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:01.744Z",
+      "timestamp": "2026-03-04T21:48:36.203Z",
       "message": "  ✓ Analyse complète",
       "phase": "analyze",
       "programId": "28",
-      "data": {
-        "tokens": {
-          "input": 12972,
-          "output": 2165
-        }
-      }
-    },
-    {
-      "type": "token_update",
-      "timestamp": "2026-03-04T20:22:01.750Z",
-      "message": "Tokens updated: 12972 in / 2165 out",
-      "programId": "28",
-      "phase": "analyze",
-      "data": {
-        "cumulative": {
-          "input": 258076,
-          "output": 242900,
-          "costUsd": 4.417727999999999,
-          "totalCalls": 42
-        },
-        "programTokens": {
-          "input": 12972,
-          "output": 2165
-        }
-      }
+      "data": {}
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:01.755Z",
+      "timestamp": "2026-03-04T21:48:36.218Z",
       "message": "  → Types TypeScript",
       "phase": "types",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:01.757Z",
+      "timestamp": "2026-03-04T21:48:36.230Z",
       "message": "Types TypeScript",
       "programId": "28",
       "phase": "types",
@@ -310,21 +237,46 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:02.865Z",
+      "timestamp": "2026-03-04T21:48:36.296Z",
+      "message": "  ✓ Analyse complète",
+      "phase": "analyze",
+      "programId": "32",
+      "data": {}
+    },
+    {
+      "type": "phase_started",
+      "timestamp": "2026-03-04T21:48:36.311Z",
+      "message": "  → Types TypeScript",
+      "phase": "types",
+      "programId": "32"
+    },
+    {
+      "type": "phase_progress",
+      "timestamp": "2026-03-04T21:48:36.328Z",
+      "message": "Types TypeScript",
+      "programId": "32",
+      "phase": "types",
+      "data": {
+        "label": "Types TypeScript"
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:48:36.347Z",
       "message": "  ✓ Types TypeScript",
       "phase": "types",
       "programId": "32"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:02.873Z",
+      "timestamp": "2026-03-04T21:48:36.371Z",
       "message": "  → Store Zustand",
       "phase": "store",
       "programId": "32"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:02.878Z",
+      "timestamp": "2026-03-04T21:48:36.387Z",
       "message": "Store Zustand",
       "programId": "32",
       "phase": "store",
@@ -334,21 +286,158 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:09.233Z",
+      "timestamp": "2026-03-04T21:48:36.402Z",
+      "message": "  ✓ Store Zustand",
+      "phase": "store",
+      "programId": "32"
+    },
+    {
+      "type": "phase_started",
+      "timestamp": "2026-03-04T21:48:36.422Z",
+      "message": "  → API REST",
+      "phase": "api",
+      "programId": "32"
+    },
+    {
+      "type": "phase_progress",
+      "timestamp": "2026-03-04T21:48:36.437Z",
+      "message": "API REST",
+      "programId": "32",
+      "phase": "api",
+      "data": {
+        "label": "API REST"
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:48:36.446Z",
+      "message": "  ✓ API REST",
+      "phase": "api",
+      "programId": "32"
+    },
+    {
+      "type": "phase_started",
+      "timestamp": "2026-03-04T21:48:36.458Z",
+      "message": "  → Page React",
+      "phase": "page",
+      "programId": "32"
+    },
+    {
+      "type": "phase_progress",
+      "timestamp": "2026-03-04T21:48:36.474Z",
+      "message": "Page React",
+      "programId": "32",
+      "phase": "page",
+      "data": {
+        "label": "Page React"
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:48:36.492Z",
+      "message": "  ✓ Page React",
+      "phase": "page",
+      "programId": "32"
+    },
+    {
+      "type": "phase_started",
+      "timestamp": "2026-03-04T21:48:36.513Z",
+      "message": "  → Composants UI",
+      "phase": "components",
+      "programId": "32"
+    },
+    {
+      "type": "phase_progress",
+      "timestamp": "2026-03-04T21:48:36.529Z",
+      "message": "Composants UI",
+      "programId": "32",
+      "phase": "components",
+      "data": {
+        "label": "Composants UI"
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:48:36.549Z",
+      "message": "  ✓ Composants UI",
+      "phase": "components",
+      "programId": "32"
+    },
+    {
+      "type": "phase_started",
+      "timestamp": "2026-03-04T21:48:36.569Z",
+      "message": "  → Tests unitaires",
+      "phase": "tests-unit",
+      "programId": "32"
+    },
+    {
+      "type": "phase_progress",
+      "timestamp": "2026-03-04T21:48:36.584Z",
+      "message": "Tests unitaires",
+      "programId": "32",
+      "phase": "tests-unit",
+      "data": {
+        "label": "Tests unitaires"
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:48:36.601Z",
+      "message": "  ✓ Tests unitaires",
+      "phase": "tests-unit",
+      "programId": "32"
+    },
+    {
+      "type": "phase_started",
+      "timestamp": "2026-03-04T21:48:36.619Z",
+      "message": "  → Tests Playwright",
+      "phase": "tests-ui",
+      "programId": "32"
+    },
+    {
+      "type": "phase_progress",
+      "timestamp": "2026-03-04T21:48:36.631Z",
+      "message": "Tests Playwright",
+      "programId": "32",
+      "phase": "tests-ui",
+      "data": {
+        "label": "Tests Playwright"
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:48:36.642Z",
+      "message": "  ✓ Tests Playwright",
+      "phase": "tests-ui",
+      "programId": "32"
+    },
+    {
+      "type": "program_completed",
+      "timestamp": "2026-03-04T21:48:36.664Z",
+      "message": "\n  Résultat: SUCCÈS\n  Fichiers: 0 générés\n  Durée: 1s (711ms)\n",
+      "programId": "32",
+      "data": {
+        "duration": 711,
+        "filesGenerated": 8
+      }
+    },
+    {
+      "type": "phase_completed",
+      "timestamp": "2026-03-04T21:49:17.604Z",
       "message": "  ✓ Types TypeScript",
       "phase": "types",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:09.241Z",
+      "timestamp": "2026-03-04T21:49:17.616Z",
       "message": "  → Store Zustand",
       "phase": "store",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:09.246Z",
+      "timestamp": "2026-03-04T21:49:17.621Z",
       "message": "Store Zustand",
       "programId": "28",
       "phase": "store",
@@ -358,69 +447,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:14.521Z",
-      "message": "  ✓ Store Zustand",
-      "phase": "store",
-      "programId": "32"
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:14.528Z",
-      "message": "  → API REST",
-      "phase": "api",
-      "programId": "32"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:14.535Z",
-      "message": "API REST",
-      "programId": "32",
-      "phase": "api",
-      "data": {
-        "label": "API REST"
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:19.592Z",
-      "message": "  ✓ API REST",
-      "phase": "api",
-      "programId": "32"
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:19.599Z",
-      "message": "  → Page React",
-      "phase": "page",
-      "programId": "32"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:19.601Z",
-      "message": "Page React",
-      "programId": "32",
-      "phase": "page",
-      "data": {
-        "label": "Page React"
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:42.242Z",
+      "timestamp": "2026-03-04T21:50:57.487Z",
       "message": "  ✓ Store Zustand",
       "phase": "store",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:42.249Z",
+      "timestamp": "2026-03-04T21:50:57.497Z",
       "message": "  → API REST",
       "phase": "api",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:42.253Z",
+      "timestamp": "2026-03-04T21:50:57.505Z",
       "message": "API REST",
       "programId": "28",
       "phase": "api",
@@ -430,21 +471,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:54.617Z",
+      "timestamp": "2026-03-04T21:51:24.713Z",
       "message": "  ✓ API REST",
       "phase": "api",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:54.624Z",
+      "timestamp": "2026-03-04T21:51:24.724Z",
       "message": "  → Page React",
       "phase": "page",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:54.627Z",
+      "timestamp": "2026-03-04T21:51:24.733Z",
       "message": "Page React",
       "programId": "28",
       "phase": "page",
@@ -454,69 +495,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:22:56.901Z",
-      "message": "  ✓ Page React",
-      "phase": "page",
-      "programId": "32"
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:22:56.905Z",
-      "message": "  → Composants UI",
-      "phase": "components",
-      "programId": "32"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:22:56.907Z",
-      "message": "Composants UI",
-      "programId": "32",
-      "phase": "components",
-      "data": {
-        "label": "Composants UI"
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:23:17.846Z",
-      "message": "  ✓ Composants UI",
-      "phase": "components",
-      "programId": "32"
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:23:17.853Z",
-      "message": "  → Tests unitaires",
-      "phase": "tests-unit",
-      "programId": "32"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:23:17.858Z",
-      "message": "Tests unitaires",
-      "programId": "32",
-      "phase": "tests-unit",
-      "data": {
-        "label": "Tests unitaires"
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:23:26.633Z",
+      "timestamp": "2026-03-04T21:52:41.327Z",
       "message": "  ✓ Page React",
       "phase": "page",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:23:26.640Z",
+      "timestamp": "2026-03-04T21:52:41.337Z",
       "message": "  → Composants UI",
       "phase": "components",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:23:26.645Z",
+      "timestamp": "2026-03-04T21:52:41.344Z",
       "message": "Composants UI",
       "programId": "28",
       "phase": "components",
@@ -526,84 +519,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:23:45.756Z",
-      "message": "  ✓ Tests unitaires",
-      "phase": "tests-unit",
-      "programId": "32"
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:23:45.763Z",
-      "message": "  → Tests Playwright",
-      "phase": "tests-ui",
-      "programId": "32"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:23:45.767Z",
-      "message": "Tests Playwright",
-      "programId": "32",
-      "phase": "tests-ui",
-      "data": {
-        "label": "Tests Playwright"
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:24:15.739Z",
-      "message": "  ✓ Tests Playwright",
-      "phase": "tests-ui",
-      "programId": "32"
-    },
-    {
-      "type": "program_completed",
-      "timestamp": "2026-03-04T20:24:15.749Z",
-      "message": "\n  Résultat: SUCCÈS\n  Fichiers: 0 générés\n  Durée: 2m 34s (154161ms)\n",
-      "programId": "32",
-      "data": {
-        "duration": 154161,
-        "filesGenerated": 8,
-        "tokens": {
-          "input": 59641,
-          "output": 33008
-        }
-      }
-    },
-    {
-      "type": "token_update",
-      "timestamp": "2026-03-04T20:24:15.753Z",
-      "message": "Tokens updated: 59641 in / 33008 out",
-      "programId": "32",
-      "data": {
-        "cumulative": {
-          "input": 317717,
-          "output": 275908,
-          "costUsd": 5.091771,
-          "totalCalls": 43
-        },
-        "programTokens": {
-          "input": 59641,
-          "output": 33008
-        }
-      }
-    },
-    {
-      "type": "phase_completed",
-      "timestamp": "2026-03-04T20:24:40.910Z",
+      "timestamp": "2026-03-04T21:56:22.636Z",
       "message": "  ✓ Composants UI",
       "phase": "components",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:24:40.917Z",
+      "timestamp": "2026-03-04T21:56:22.647Z",
       "message": "  → Tests unitaires",
       "phase": "tests-unit",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:24:40.922Z",
+      "timestamp": "2026-03-04T21:56:22.653Z",
       "message": "Tests unitaires",
       "programId": "28",
       "phase": "tests-unit",
@@ -613,21 +543,21 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:25:21.065Z",
+      "timestamp": "2026-03-04T21:58:26.038Z",
       "message": "  ✓ Tests unitaires",
       "phase": "tests-unit",
       "programId": "28"
     },
     {
       "type": "phase_started",
-      "timestamp": "2026-03-04T20:25:21.072Z",
+      "timestamp": "2026-03-04T21:58:26.050Z",
       "message": "  → Tests Playwright",
       "phase": "tests-ui",
       "programId": "28"
     },
     {
       "type": "phase_progress",
-      "timestamp": "2026-03-04T20:25:21.077Z",
+      "timestamp": "2026-03-04T21:58:26.057Z",
       "message": "Tests Playwright",
       "programId": "28",
       "phase": "tests-ui",
@@ -637,304 +567,105 @@
     },
     {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:25:54.329Z",
+      "timestamp": "2026-03-04T21:59:59.935Z",
       "message": "  ✓ Tests Playwright",
       "phase": "tests-ui",
       "programId": "28"
     },
     {
       "type": "program_completed",
-      "timestamp": "2026-03-04T20:25:54.347Z",
-      "message": "\n  Résultat: SUCCÈS\n  Fichiers: 0 générés\n  Durée: 4m 13s (252800ms)\n",
+      "timestamp": "2026-03-04T21:59:59.969Z",
+      "message": "\n  Résultat: SUCCÈS\n  Fichiers: 0 générés\n  Durée: 11m 24s (684117ms)\n",
       "programId": "28",
       "data": {
-        "duration": 252800,
+        "duration": 684117,
         "filesGenerated": 11
       }
     },
     {
       "type": "program_started",
-      "timestamp": "2026-03-04T20:25:54.350Z",
+      "timestamp": "2026-03-04T21:59:59.987Z",
       "message": "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📦 IDE 33                    [1/0]\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:25:54.353Z",
-      "message": "  → Génération spécification",
-      "phase": "spec",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:25:54.355Z",
-      "message": "Génération spécification",
-      "programId": "33",
-      "phase": "spec",
-      "data": {
-        "label": "Génération spécification"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:25:54.357Z",
+      "timestamp": "2026-03-04T22:00:00.000Z",
       "message": "  ✓ Génération spécification",
       "phase": "spec",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:25:54.364Z",
-      "message": "  → Analyse contrat",
-      "phase": "contract",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:25:54.371Z",
-      "message": "Analyse contrat",
-      "programId": "33",
-      "phase": "contract",
-      "data": {
-        "label": "Analyse contrat"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:25:54.376Z",
+      "timestamp": "2026-03-04T22:00:00.015Z",
       "message": "  ✓ Analyse contrat",
       "phase": "contract",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:25:54.382Z",
-      "message": "  → Analyse complète",
-      "phase": "analyze",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:25:54.386Z",
-      "message": "Analyse complète",
-      "programId": "33",
-      "phase": "analyze",
-      "data": {
-        "label": "Analyse complète"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:26:08.970Z",
+      "timestamp": "2026-03-04T22:00:00.027Z",
       "message": "  ✓ Analyse complète",
       "phase": "analyze",
-      "programId": "33",
-      "data": {
-        "tokens": {
-          "input": 3212,
-          "output": 1134
-        }
-      }
-    },
-    {
-      "type": "token_update",
-      "timestamp": "2026-03-04T20:26:08.977Z",
-      "message": "Tokens updated: 3212 in / 1134 out",
-      "programId": "33",
-      "phase": "analyze",
-      "data": {
-        "cumulative": {
-          "input": 320929,
-          "output": 277042,
-          "costUsd": 5.118417,
-          "totalCalls": 44
-        },
-        "programTokens": {
-          "input": 3212,
-          "output": 1134
-        }
-      }
-    },
-    {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:26:08.982Z",
-      "message": "  → Types TypeScript",
-      "phase": "types",
       "programId": "33"
     },
     {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:26:08.985Z",
-      "message": "Types TypeScript",
-      "programId": "33",
-      "phase": "types",
-      "data": {
-        "label": "Types TypeScript"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:26:14.884Z",
+      "timestamp": "2026-03-04T22:00:00.040Z",
       "message": "  ✓ Types TypeScript",
       "phase": "types",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:26:14.894Z",
-      "message": "  → Store Zustand",
-      "phase": "store",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:26:14.899Z",
-      "message": "Store Zustand",
-      "programId": "33",
-      "phase": "store",
-      "data": {
-        "label": "Store Zustand"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:26:27.858Z",
+      "timestamp": "2026-03-04T22:00:00.055Z",
       "message": "  ✓ Store Zustand",
       "phase": "store",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:26:27.867Z",
-      "message": "  → API REST",
-      "phase": "api",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:26:27.871Z",
-      "message": "API REST",
-      "programId": "33",
-      "phase": "api",
-      "data": {
-        "label": "API REST"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:26:34.020Z",
+      "timestamp": "2026-03-04T22:00:00.070Z",
       "message": "  ✓ API REST",
       "phase": "api",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:26:34.028Z",
-      "message": "  → Page React",
-      "phase": "page",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:26:34.034Z",
-      "message": "Page React",
-      "programId": "33",
-      "phase": "page",
-      "data": {
-        "label": "Page React"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:26:57.579Z",
+      "timestamp": "2026-03-04T22:00:00.087Z",
       "message": "  ✓ Page React",
       "phase": "page",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:26:57.585Z",
-      "message": "  → Composants UI",
-      "phase": "components",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:26:57.591Z",
-      "message": "Composants UI",
-      "programId": "33",
-      "phase": "components",
-      "data": {
-        "label": "Composants UI"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:27:20.163Z",
+      "timestamp": "2026-03-04T22:00:00.099Z",
       "message": "  ✓ Composants UI",
       "phase": "components",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:27:20.169Z",
-      "message": "  → Tests unitaires",
-      "phase": "tests-unit",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:27:20.171Z",
-      "message": "Tests unitaires",
-      "programId": "33",
-      "phase": "tests-unit",
-      "data": {
-        "label": "Tests unitaires"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:27:49.133Z",
+      "timestamp": "2026-03-04T22:00:00.112Z",
       "message": "  ✓ Tests unitaires",
       "phase": "tests-unit",
       "programId": "33"
     },
     {
-      "type": "phase_started",
-      "timestamp": "2026-03-04T20:27:49.138Z",
-      "message": "  → Tests Playwright",
-      "phase": "tests-ui",
-      "programId": "33"
-    },
-    {
-      "type": "phase_progress",
-      "timestamp": "2026-03-04T20:27:49.141Z",
-      "message": "Tests Playwright",
-      "programId": "33",
-      "phase": "tests-ui",
-      "data": {
-        "label": "Tests Playwright"
-      }
-    },
-    {
       "type": "phase_completed",
-      "timestamp": "2026-03-04T20:28:15.764Z",
+      "timestamp": "2026-03-04T22:00:00.121Z",
       "message": "  ✓ Tests Playwright",
       "phase": "tests-ui",
       "programId": "33"
     },
     {
       "type": "program_completed",
-      "timestamp": "2026-03-04T20:28:15.774Z",
-      "message": "\n  Résultat: SUCCÈS\n  Fichiers: 0 générés\n  Durée: 2m 21s (141424ms)\n",
+      "timestamp": "2026-03-04T22:00:00.135Z",
+      "message": "\n  Résultat: SUCCÈS\n  Fichiers: 0 générés\n  Durée: 0s (0ms)\n",
       "programId": "33",
       "data": {
-        "duration": 141424,
-        "filesGenerated": 8,
-        "tokens": {
-          "input": 22598,
-          "output": 15415
-        }
+        "resumed": true,
+        "duration": 0
       }
     }
   ]

@@ -1,169 +1,144 @@
-import { useCallback } from "react"
-import type { Account, MergeValidation } from "@/types/accountMerge"
-import { useAccountMergeStore } from "@/stores/accountMergeStore"
-import { Button, Input } from "@/components/ui"
-import { cn } from "@/lib/utils"
+import type { Account, MergeValidation } from "@/types/accountMerge";
+import { Button, Input } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 interface AccountSelectionPanelProps {
-  sourceAccountId: string
-  targetAccountId: string
-  onSourceAccountChange: (value: string) => void
-  onTargetAccountChange: (value: string) => void
-  onValidateAccounts: () => Promise<void>
-  className?: string
+  sourceAccountInput: string;
+  targetAccountInput: string;
+  onSourceAccountChange: (value: string) => void;
+  onTargetAccountChange: (value: string) => void;
+  onValidate: () => void;
+  isLoading?: boolean;
+  error?: string | null;
+  sourceAccount?: Account | null;
+  targetAccount?: Account | null;
+  validationState?: MergeValidation | null;
+  className?: string;
 }
 
 export const AccountSelectionPanel = ({
-  sourceAccountId,
-  targetAccountId,
+  sourceAccountInput,
+  targetAccountInput,
   onSourceAccountChange,
   onTargetAccountChange,
-  onValidateAccounts,
-  className
+  onValidate,
+  isLoading = false,
+  error = null,
+  sourceAccount = null,
+  targetAccount = null,
+  validationState = null,
+  className,
 }: AccountSelectionPanelProps) => {
-  const {
-    sourceAccount,
-    targetAccount,
-    validationState,
-    isLoading,
-    error
-  } = useAccountMergeStore()
-
-  const isValidationDisabled = !sourceAccountId.trim() || 
-                               !targetAccountId.trim() || 
-                               sourceAccountId === targetAccountId ||
-                               isLoading
-
-  const handleValidation = useCallback(async () => {
-    if (!isValidationDisabled) {
-      await onValidateAccounts()
-    }
-  }, [isValidationDisabled, onValidateAccounts])
-
-  const renderAccountInfo = (account: Account | null, type: 'source' | 'target') => {
-    if (!account) return null
-
-    return (
-      <div className={cn(
-        "mt-2 p-3 rounded-md border",
-        type === 'source' ? "bg-blue-50 border-blue-200" : "bg-green-50 border-green-200"
-      )}>
-        <div className="text-sm font-medium">
-          Account: {account.accountNumber}
-        </div>
-        <div className="text-sm text-gray-600">
-          Balance: ${account.balance.toLocaleString()}
-        </div>
-        <div className="text-sm text-gray-600">
-          Status: <span className={cn(
-            "font-medium",
-            account.status === 'active' ? "text-green-600" : "text-orange-600"
-          )}>
-            {account.status}
-          </span>
-        </div>
-      </div>
-    )
-  }
-
-  const renderValidationResults = () => {
-    if (!validationState) return null
-
-    const hasErrors = validationState.isClosureInProgress || 
-                      validationState.networkStatus !== 'online' ||
-                      validationState.validationStatus !== 'valid'
-
-    return (
-      <div className={cn(
-        "mt-4 p-3 rounded-md border",
-        hasErrors ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"
-      )}>
-        <div className="text-sm font-medium mb-2">
-          Validation Results
-        </div>
-        
-        <div className="space-y-1 text-sm">
-          <div className="flex justify-between">
-            <span>Closure in Progress:</span>
-            <span className={cn(
-              "font-medium",
-              validationState.isClosureInProgress ? "text-red-600" : "text-green-600"
-            )}>
-              {validationState.isClosureInProgress ? "Yes" : "No"}
-            </span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span>Network Status:</span>
-            <span className={cn(
-              "font-medium",
-              validationState.networkStatus === 'online' ? "text-green-600" : "text-orange-600"
-            )}>
-              {validationState.networkStatus}
-            </span>
-          </div>
-          
-          <div className="flex justify-between">
-            <span>Validation Status:</span>
-            <span className={cn(
-              "font-medium",
-              validationState.validationStatus === 'valid' ? "text-green-600" : "text-red-600"
-            )}>
-              {validationState.validationStatus}
-            </span>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const isValidationDisabled = !sourceAccountInput || !targetAccountInput || isLoading;
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Source Account ID
-          </label>
-          <Input
-            value={sourceAccountId}
-            onChange={(e) => onSourceAccountChange(e.target.value)}
-            placeholder="Enter source account ID"
-            disabled={isLoading}
-            className="w-full"
-          />
-          {renderAccountInfo(sourceAccount, 'source')}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Target Account ID
-          </label>
-          <Input
-            value={targetAccountId}
-            onChange={(e) => onTargetAccountChange(e.target.value)}
-            placeholder="Enter target account ID"
-            disabled={isLoading}
-            className="w-full"
-          />
-          {renderAccountInfo(targetAccount, 'target')}
-        </div>
-
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
+    <div className={cn("space-y-6", className)}>
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold mb-4">Sélection des comptes</h2>
+        
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="source-account" className="block text-sm font-medium text-gray-700 mb-1">
+              Compte source
+            </label>
+            <Input
+              id="source-account"
+              type="text"
+              value={sourceAccountInput}
+              onChange={(e) => onSourceAccountChange(e.target.value)}
+              placeholder="Numéro de compte source"
+              disabled={isLoading}
+              className="w-full"
+            />
           </div>
-        )}
 
-        <Button
-          onClick={handleValidation}
-          disabled={isValidationDisabled}
-          className="w-full"
-        >
-          {isLoading ? "Validating..." : "Validate Accounts"}
-        </Button>
+          <div>
+            <label htmlFor="target-account" className="block text-sm font-medium text-gray-700 mb-1">
+              Compte cible
+            </label>
+            <Input
+              id="target-account"
+              type="text"
+              value={targetAccountInput}
+              onChange={(e) => onTargetAccountChange(e.target.value)}
+              placeholder="Numéro de compte cible"
+              disabled={isLoading}
+              className="w-full"
+            />
+          </div>
 
-        {renderValidationResults()}
+          <Button
+            onClick={onValidate}
+            disabled={isValidationDisabled}
+            className="w-full"
+          >
+            {isLoading ? "Validation en cours..." : "Valider les comptes"}
+          </Button>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-md p-3">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {sourceAccount && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-md font-semibold mb-3">Compte source</h3>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt className="text-gray-600">Numéro de compte:</dt>
+            <dd className="font-medium">{sourceAccount.accountNumber}</dd>
+            <dt className="text-gray-600">Solde:</dt>
+            <dd className="font-medium">{sourceAccount.balance.toFixed(2)} €</dd>
+            <dt className="text-gray-600">Statut:</dt>
+            <dd className="font-medium">{sourceAccount.status}</dd>
+            <dt className="text-gray-600">Date de création:</dt>
+            <dd className="font-medium">
+              {new Date(sourceAccount.createdDate).toLocaleDateString()}
+            </dd>
+          </dl>
+        </div>
+      )}
+
+      {targetAccount && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-md font-semibold mb-3">Compte cible</h3>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt className="text-gray-600">Numéro de compte:</dt>
+            <dd className="font-medium">{targetAccount.accountNumber}</dd>
+            <dt className="text-gray-600">Solde:</dt>
+            <dd className="font-medium">{targetAccount.balance.toFixed(2)} €</dd>
+            <dt className="text-gray-600">Statut:</dt>
+            <dd className="font-medium">{targetAccount.status}</dd>
+            <dt className="text-gray-600">Date de création:</dt>
+            <dd className="font-medium">
+              {new Date(targetAccount.createdDate).toLocaleDateString()}
+            </dd>
+          </dl>
+        </div>
+      )}
+
+      {validationState && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h3 className="text-md font-semibold mb-3">État de validation</h3>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <dt className="text-gray-600">Clôture en cours:</dt>
+            <dd className="font-medium">
+              {validationState.isClosureInProgress ? "Oui" : "Non"}
+            </dd>
+            <dt className="text-gray-600">Statut réseau:</dt>
+            <dd className="font-medium">{validationState.networkStatus}</dd>
+            <dt className="text-gray-600">Statut de validation:</dt>
+            <dd className={cn(
+              "font-medium",
+              validationState.validationStatus === "OK" ? "text-green-600" : "text-red-600"
+            )}>
+              {validationState.validationStatus}
+            </dd>
+          </dl>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};

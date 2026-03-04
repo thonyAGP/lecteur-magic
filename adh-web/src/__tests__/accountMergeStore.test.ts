@@ -1,435 +1,574 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest"
-import { useAccountMergeStore } from "@/stores/accountMergeStore"
-import { useDataSourceStore } from "@/stores/dataSourceStore"
-import { apiClient } from "@/services/api/apiClient"
-import type { ApiResponse } from "@/services/api/apiClient"
-import type { MergeValidation, MergeHistory, Account } from "@/types/accountMerge"
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { useAccountMergeStore } from "@/stores/accountMergeStore";
+import { useDataSourceStore } from "@/stores/dataSourceStore";
+import { apiClient } from "@/services/api/apiClient";
+import type { ApiResponse } from "@/services/api/apiClient";
+import type {
+  MergeHistory,
+  Account,
+  MergeValidation,
+} from "@/types/accountMerge";
 
-vi.mock("@/services/api/apiClient")
-vi.mock("@/stores/dataSourceStore")
+vi.mock("@/stores/dataSourceStore");
+vi.mock("@/services/api/apiClient");
 
-const MOCK_SOURCE_ACCOUNT_ID = "ACC001"
-const MOCK_TARGET_ACCOUNT_ID = "ACC002"
-const MOCK_OPERATOR = "USER123"
-const MOCK_MERGE_HISTORY_ID = 1001
+const MOCK_SOURCE_ACCOUNT: Account = {
+  accountNumber: "ACC001",
+  balance: 1250.75,
+  status: "active",
+  createdDate: new Date("2023-06-10"),
+};
 
-const MOCK_SOURCE_BALANCE = 2450.75
-const MOCK_TARGET_BALANCE = 8932.50
-const EXPECTED_COMBINED_BALANCE = MOCK_SOURCE_BALANCE + MOCK_TARGET_BALANCE
+const MOCK_TARGET_ACCOUNT: Account = {
+  accountNumber: "ACC002",
+  balance: 3450.20,
+  status: "active",
+  createdDate: new Date("2022-03-15"),
+};
 
 const MOCK_VALIDATION: MergeValidation = {
   isClosureInProgress: false,
-  networkStatus: 'R',
-  validationStatus: 'P'
-}
-
-const MOCK_VALIDATION_CLOSURE_ACTIVE: MergeValidation = {
-  isClosureInProgress: true,
-  networkStatus: 'R',
-  validationStatus: 'V'
-}
-
-const MOCK_VALIDATION_NETWORK_ERROR: MergeValidation = {
-  isClosureInProgress: false,
-  networkStatus: 'E',
-  validationStatus: 'P'
-}
-
-const MOCK_SOURCE_ACCOUNT: Account = {
-  accountNumber: MOCK_SOURCE_ACCOUNT_ID,
-  balance: MOCK_SOURCE_BALANCE,
-  status: 'ACTIVE',
-  createdDate: new Date('2023-06-15')
-}
-
-const MOCK_TARGET_ACCOUNT: Account = {
-  accountNumber: MOCK_TARGET_ACCOUNT_ID,
-  balance: MOCK_TARGET_BALANCE,
-  status: 'ACTIVE',
-  createdDate: new Date('2022-11-20')
-}
+  networkStatus: "OK",
+  validationStatus: "PASSED",
+};
 
 const MOCK_MERGE_HISTORY: MergeHistory = {
-  id: MOCK_MERGE_HISTORY_ID,
-  sourceAccount: MOCK_SOURCE_ACCOUNT_ID,
-  targetAccount: MOCK_TARGET_ACCOUNT_ID,
-  mergeDate: new Date(),
-  operator: MOCK_OPERATOR,
-  status: 'COMPLETED'
-}
+  id: 1,
+  sourceAccount: "ACC001",
+  targetAccount: "ACC002",
+  mergeDate: new Date("2024-01-15T10:30:00"),
+  operator: "John Doe",
+  status: "completed",
+};
 
 describe("accountMergeStore", () => {
-  let store: ReturnType<typeof useAccountMergeStore>
-
   beforeEach(() => {
-    vi.clearAllMocks()
-    useAccountMergeStore.setState({
-      mergeHistories: [],
-      sourceAccount: null,
-      targetAccount: null,
-      validationState: null,
-      isLoading: false,
-      error: null,
-      mergeProgress: 0,
-      currentStep: 'validation'
-    })
-    store = useAccountMergeStore.getState()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
+    useAccountMergeStore.getState().reset();
+    vi.clearAllMocks();
+  });
 
   describe("validateMergeConditions with real API", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: true
-      } as never)
-    })
+        isRealApi: true,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
     it("should validate merge conditions successfully", async () => {
-      const mockResponse = {
+      const mockResponse: ApiResponse<MergeValidation> = {
         success: true,
-        data: MOCK_VALIDATION
-      }
-      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
+        data: MOCK_VALIDATION,
+      };
 
-      await store.validateMergeConditions(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
-      expect(apiClient.get).toHaveBeenCalledWith('/api/accountMerge/validation', {
-        params: { sourceAccountId: MOCK_SOURCE_ACCOUNT_ID, targetAccountId: MOCK_TARGET_ACCOUNT_ID }
-      })
-      expect(useAccountMergeStore.getState().validationState).toEqual(MOCK_VALIDATION)
-      expect(useAccountMergeStore.getState().currentStep).toBe('validated')
-      expect(useAccountMergeStore.getState().isLoading).toBe(false)
-      expect(useAccountMergeStore.getState().error).toBeNull()
-    })
+      const store = useAccountMergeStore.getState();
 
-    it("should reject when validation status is 'V' (RM-002)", async () => {
-      const mockResponse = {
+      await store.validateMergeConditions("ACC001", "ACC002");
+
+      expect(apiClient.get).toHaveBeenCalledWith(
+        "/api/accountMerge/validation?sourceAccountId=ACC001&targetAccountId=ACC002"
+      );
+      
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.validationState).toEqual(MOCK_VALIDATION);
+      expect(updatedStore.currentStep).toBe("validated");
+      expect(updatedStore.isLoading).toBe(false);
+      expect(updatedStore.error).toBeNull();
+    });
+
+    it("should throw error when closure is in progress (RM-002)", async () => {
+      const mockValidationClosure: MergeValidation = {
+        isClosureInProgress: true,
+        networkStatus: "OK",
+        validationStatus: "V",
+      };
+
+      const mockResponse: ApiResponse<MergeValidation> = {
         success: true,
-        data: MOCK_VALIDATION_CLOSURE_ACTIVE
-      }
-      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
+        data: mockValidationClosure,
+      };
 
-      await store.validateMergeConditions(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
-      expect(useAccountMergeStore.getState().error).toBe('Closure validation is active - merge cannot proceed')
-      expect(useAccountMergeStore.getState().currentStep).toBe('validation')
-    })
+      const store = useAccountMergeStore.getState();
 
-    it("should reject when network status is not 'R' and validation status is not 'V' (RM-001, RM-003)", async () => {
-      const mockResponse = {
+      await expect(
+        store.validateMergeConditions("ACC001", "ACC002")
+      ).rejects.toThrow("Closure in progress, merge not allowed");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Closure in progress, merge not allowed");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+
+    it("should throw error when network is blocked (RM-001)", async () => {
+      const mockValidationNetwork: MergeValidation = {
+        isClosureInProgress: false,
+        networkStatus: "R",
+        validationStatus: "PASSED",
+      };
+
+      const mockResponse: ApiResponse<MergeValidation> = {
         success: true,
-        data: MOCK_VALIDATION_NETWORK_ERROR
-      }
-      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
+        data: mockValidationNetwork,
+      };
 
-      await store.validateMergeConditions(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
 
-      expect(useAccountMergeStore.getState().error).toBe('Network status prevents merge operation')
-      expect(useAccountMergeStore.getState().currentStep).toBe('validation')
-    })
+      const store = useAccountMergeStore.getState();
 
-    it("should handle API error", async () => {
-      vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('API Error'))
+      await expect(
+        store.validateMergeConditions("ACC001", "ACC002")
+      ).rejects.toThrow("Network blocked, merge not allowed");
 
-      await store.validateMergeConditions(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Network blocked, merge not allowed");
+      expect(updatedStore.isLoading).toBe(false);
+    });
 
-      expect(useAccountMergeStore.getState().error).toBe('API Error')
-      expect(useAccountMergeStore.getState().isLoading).toBe(false)
-    })
-  })
+    it("should handle API failure", async () => {
+      const mockResponse: ApiResponse<MergeValidation> = {
+        success: false,
+        error: "Network error",
+      };
+
+      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse);
+
+      const store = useAccountMergeStore.getState();
+
+      await expect(
+        store.validateMergeConditions("ACC001", "ACC002")
+      ).rejects.toThrow("Network error");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Network error");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("validateMergeConditions with mock data", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: false
-      } as never)
-    })
+        isRealApi: false,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
-    it("should use mock data and validate successfully", async () => {
-      await store.validateMergeConditions(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+    it("should validate merge conditions with mock data", async () => {
+      const store = useAccountMergeStore.getState();
 
-      expect(apiClient.get).not.toHaveBeenCalled()
-      const finalState = useAccountMergeStore.getState()
-      expect(finalState.validationState).toEqual({
+      await store.validateMergeConditions("ACC001", "ACC002");
+
+      expect(apiClient.get).not.toHaveBeenCalled();
+      
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.validationState).toEqual({
         isClosureInProgress: false,
-        networkStatus: 'A',
-        validationStatus: 'P'
-      })
-      expect(finalState.sourceAccount?.balance).toBe(MOCK_SOURCE_BALANCE)
-      expect(finalState.targetAccount?.balance).toBe(MOCK_TARGET_BALANCE)
-      expect(finalState.currentStep).toBe('validated')
-    })
-  })
+        networkStatus: "OK",
+        validationStatus: "PASSED",
+      });
+      expect(updatedStore.sourceAccount?.accountNumber).toBe("ACC001");
+      expect(updatedStore.targetAccount?.accountNumber).toBe("ACC002");
+      expect(updatedStore.currentStep).toBe("validated");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("executeMerge with real API", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: true
-      } as never)
-      vi.useFakeTimers()
-    })
+        isRealApi: true,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
-    it("should execute merge successfully", async () => {
-      const mockResponse = {
+    it("should execute merge successfully with progress updates", async () => {
+      const mockResponse: ApiResponse<MergeHistory> = {
         success: true,
-        data: MOCK_MERGE_HISTORY
-      }
-      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse)
+        data: MOCK_MERGE_HISTORY,
+      };
 
-      const executeMergePromise = store.executeMerge(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
+
+      const store = useAccountMergeStore.getState();
+      const initialHistoryCount = store.mergeHistories.length;
+
+      await store.executeMerge("ACC001", "ACC002");
+
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/api/accountMerge/execute",
+        {
+          sourceAccountId: "ACC001",
+          targetAccountId: "ACC002",
+        }
+      );
       
-      vi.advanceTimersByTime(2000)
-      await executeMergePromise
+      const updatedStore = useAccountMergeStore.getState();
+      const expectedProgress = 100;
+      const expectedHistoryCount = initialHistoryCount + 1;
+      
+      expect(updatedStore.mergeProgress).toBe(expectedProgress);
+      expect(updatedStore.currentStep).toBe("completed");
+      expect(updatedStore.mergeHistories.length).toBe(expectedHistoryCount);
+      expect(updatedStore.isLoading).toBe(false);
+      expect(updatedStore.error).toBeNull();
+    });
 
-      expect(apiClient.post).toHaveBeenCalledWith('/api/accountMerge/execute', {
-        sourceAccountId: MOCK_SOURCE_ACCOUNT_ID,
-        targetAccountId: MOCK_TARGET_ACCOUNT_ID
-      })
-      const finalState = useAccountMergeStore.getState()
-      expect(finalState.mergeHistories).toHaveLength(1)
-      expect(finalState.mergeHistories[0]).toEqual(MOCK_MERGE_HISTORY)
-      expect(finalState.currentStep).toBe('completed')
-      expect(finalState.mergeProgress).toBe(100)
-    })
+    it("should throw error when merge already finalized (RM-004)", async () => {
+      useAccountMergeStore.setState({ currentStep: "F" });
 
-    it("should handle API error during merge", async () => {
-      vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Merge failed'))
+      const store = useAccountMergeStore.getState();
 
-      await store.executeMerge(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+      await expect(
+        store.executeMerge("ACC001", "ACC002")
+      ).rejects.toThrow("Merge already finalized");
 
-      expect(useAccountMergeStore.getState().error).toBe('Merge failed')
-      expect(useAccountMergeStore.getState().currentStep).toBe('executing')
-    })
-  })
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Merge already finalized");
+      expect(updatedStore.mergeProgress).toBe(0);
+    });
+
+    it("should handle API failure during merge", async () => {
+      const mockResponse: ApiResponse<MergeHistory> = {
+        success: false,
+        error: "Merge execution failed",
+      };
+
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
+
+      const store = useAccountMergeStore.getState();
+
+      await expect(
+        store.executeMerge("ACC001", "ACC002")
+      ).rejects.toThrow("Merge execution failed");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Merge execution failed");
+      expect(updatedStore.mergeProgress).toBe(0);
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("executeMerge with mock data", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: false
-      } as never)
-      vi.useFakeTimers()
-    })
+        isRealApi: false,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
-    it("should execute merge with mock data and update balances", async () => {
-      const executeMergePromise = store.executeMerge(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID)
+    it("should execute merge with mock data and create history with PASSED status (RM-008)", async () => {
+      const store = useAccountMergeStore.getState();
+      const initialHistoryCount = store.mergeHistories.length;
+
+      await store.executeMerge("ACC001", "ACC002");
+
+      expect(apiClient.post).not.toHaveBeenCalled();
       
-      vi.advanceTimersByTime(3000)
-      await executeMergePromise
-
-      expect(apiClient.post).not.toHaveBeenCalled()
-      const finalState = useAccountMergeStore.getState()
-      expect(finalState.mergeHistories).toHaveLength(1)
-      expect(finalState.sourceAccount?.balance).toBe(0)
-      expect(finalState.sourceAccount?.status).toBe('MERGED')
-      expect(finalState.targetAccount?.balance).toBe(11383.25)
-      expect(finalState.targetAccount?.status).toBe('ACTIVE')
-      expect(finalState.currentStep).toBe('completed')
-      expect(finalState.mergeProgress).toBe(100)
-    })
-  })
+      const updatedStore = useAccountMergeStore.getState();
+      const expectedProgress = 100;
+      const expectedHistoryCount = initialHistoryCount + 1;
+      
+      expect(updatedStore.mergeProgress).toBe(expectedProgress);
+      expect(updatedStore.currentStep).toBe("completed");
+      expect(updatedStore.mergeHistories.length).toBe(expectedHistoryCount);
+      
+      const newHistory = updatedStore.mergeHistories[updatedStore.mergeHistories.length - 1];
+      expect(newHistory.sourceAccount).toBe("ACC001");
+      expect(newHistory.targetAccount).toBe("ACC002");
+      expect(newHistory.status).toBe("PASSED");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("createMergeHistory with real API", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: true
-      } as never)
-    })
+        isRealApi: true,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
     it("should create merge history successfully", async () => {
-      vi.mocked(apiClient.get).mockResolvedValueOnce({ success: true, data: [] })
+      const mockResponse: ApiResponse<MergeHistory> = {
+        success: true,
+        data: MOCK_MERGE_HISTORY,
+      };
 
-      await store.createMergeHistory(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID, MOCK_OPERATOR)
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
-      expect(apiClient.get).toHaveBeenCalledWith('/api/accountMerge/history', {
-        params: { accountId: MOCK_SOURCE_ACCOUNT_ID }
-      })
-      expect(useAccountMergeStore.getState().isLoading).toBe(false)
-      expect(useAccountMergeStore.getState().error).toBeNull()
-    })
+      const store = useAccountMergeStore.getState();
+      const initialHistoryCount = store.mergeHistories.length;
 
-    it("should handle API error during history creation", async () => {
-      vi.mocked(apiClient.get).mockRejectedValueOnce(new Error('History creation failed'))
+      await store.createMergeHistory("ACC001", "ACC002", "John Doe");
 
-      await store.createMergeHistory(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID, MOCK_OPERATOR)
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/api/accountMerge/history",
+        {
+          sourceAccount: "ACC001",
+          targetAccount: "ACC002",
+          operator: "John Doe",
+        }
+      );
+      
+      const updatedStore = useAccountMergeStore.getState();
+      const expectedHistoryCount = initialHistoryCount + 1;
+      
+      expect(updatedStore.mergeHistories.length).toBe(expectedHistoryCount);
+      expect(updatedStore.isLoading).toBe(false);
+      expect(updatedStore.error).toBeNull();
+    });
 
-      expect(useAccountMergeStore.getState().error).toBe('History creation failed')
-    })
-  })
+    it("should handle API failure when creating history", async () => {
+      const mockResponse: ApiResponse<MergeHistory> = {
+        success: false,
+        error: "Failed to create merge history",
+      };
+
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
+
+      const store = useAccountMergeStore.getState();
+
+      await expect(
+        store.createMergeHistory("ACC001", "ACC002", "John Doe")
+      ).rejects.toThrow("Failed to create merge history");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Failed to create merge history");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("createMergeHistory with mock data", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: false
-      } as never)
-    })
+        isRealApi: false,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
-    it("should create history with mock data", async () => {
-      await store.createMergeHistory(MOCK_SOURCE_ACCOUNT_ID, MOCK_TARGET_ACCOUNT_ID, MOCK_OPERATOR)
+    it("should create merge history with mock data and completed status", async () => {
+      const store = useAccountMergeStore.getState();
+      const initialHistoryCount = store.mergeHistories.length;
 
-      expect(apiClient.get).not.toHaveBeenCalled()
-      const finalState = useAccountMergeStore.getState()
-      expect(finalState.mergeHistories).toHaveLength(1)
-      expect(finalState.mergeHistories[0].sourceAccount).toBe(MOCK_SOURCE_ACCOUNT_ID)
-      expect(finalState.mergeHistories[0].targetAccount).toBe(MOCK_TARGET_ACCOUNT_ID)
-      expect(finalState.mergeHistories[0].operator).toBe(MOCK_OPERATOR)
-      expect(finalState.mergeHistories[0].status).toBe('PENDING')
-    })
-  })
+      await store.createMergeHistory("ACC001", "ACC002", "John Doe");
+
+      expect(apiClient.post).not.toHaveBeenCalled();
+      
+      const updatedStore = useAccountMergeStore.getState();
+      const expectedHistoryCount = initialHistoryCount + 1;
+      
+      expect(updatedStore.mergeHistories.length).toBe(expectedHistoryCount);
+      
+      const newHistory = updatedStore.mergeHistories[updatedStore.mergeHistories.length - 1];
+      expect(newHistory.sourceAccount).toBe("ACC001");
+      expect(newHistory.targetAccount).toBe("ACC002");
+      expect(newHistory.operator).toBe("John Doe");
+      expect(newHistory.status).toBe("completed");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("rollbackMerge with real API", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: true
-      } as never)
-    })
+        isRealApi: true,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
-    it("should rollback merge successfully", async () => {
-      vi.mocked(apiClient.post).mockResolvedValueOnce({ success: true, data: {} })
+    it("should rollback merge successfully and update status", async () => {
+      const mockResponse: ApiResponse<void> = {
+        success: true,
+        data: undefined,
+      };
 
-      await store.rollbackMerge(MOCK_MERGE_HISTORY_ID)
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
-      expect(apiClient.post).toHaveBeenCalledWith('/api/accountMerge/rollback', { 
-        mergeHistoryId: MOCK_MERGE_HISTORY_ID 
-      })
-      expect(useAccountMergeStore.getState().currentStep).toBe('rollback_completed')
-      expect(useAccountMergeStore.getState().isLoading).toBe(false)
-    })
+      useAccountMergeStore.setState({
+        mergeHistories: [MOCK_MERGE_HISTORY],
+      });
 
-    it("should handle API error during rollback", async () => {
-      vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Rollback failed'))
+      const store = useAccountMergeStore.getState();
 
-      await store.rollbackMerge(MOCK_MERGE_HISTORY_ID)
+      await store.rollbackMerge(1);
 
-      expect(useAccountMergeStore.getState().error).toBe('Rollback failed')
-    })
-  })
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/api/accountMerge/rollback",
+        {
+          mergeHistoryId: 1,
+        }
+      );
+      
+      const updatedStore = useAccountMergeStore.getState();
+      const rolledBackHistory = updatedStore.mergeHistories.find((h) => h.id === 1);
+      expect(rolledBackHistory?.status).toBe("rollback");
+      expect(updatedStore.isLoading).toBe(false);
+      expect(updatedStore.error).toBeNull();
+    });
+
+    it("should handle API failure during rollback", async () => {
+      const mockResponse: ApiResponse<void> = {
+        success: false,
+        error: "Rollback failed",
+      };
+
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
+
+      const store = useAccountMergeStore.getState();
+
+      await expect(
+        store.rollbackMerge(1)
+      ).rejects.toThrow("Rollback failed");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Rollback failed");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("rollbackMerge with mock data", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: false
-      } as never)
+        isRealApi: false,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
+
+    it("should rollback merge with mock data and update status", async () => {
       useAccountMergeStore.setState({
         mergeHistories: [MOCK_MERGE_HISTORY],
-        sourceAccount: null,
-        targetAccount: null,
-        validationState: null,
-        isLoading: false,
-        error: null,
-        mergeProgress: 0,
-        currentStep: 'validation'
-      })
-    })
+      });
 
-    it("should rollback merge with mock data", async () => {
-      await store.rollbackMerge(MOCK_MERGE_HISTORY_ID)
+      const store = useAccountMergeStore.getState();
 
-      expect(apiClient.post).not.toHaveBeenCalled()
-      const finalState = useAccountMergeStore.getState()
-      expect(finalState.mergeHistories[0].status).toBe('ROLLED_BACK')
-      expect(finalState.currentStep).toBe('rollback_completed')
-    })
-  })
+      await store.rollbackMerge(1);
+
+      expect(apiClient.post).not.toHaveBeenCalled();
+      
+      const updatedStore = useAccountMergeStore.getState();
+      const rolledBackHistory = updatedStore.mergeHistories.find((h) => h.id === 1);
+      expect(rolledBackHistory?.status).toBe("rollback");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("printMergeTicket with real API", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: true
-      } as never)
-    })
+        isRealApi: true,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
 
     it("should print merge ticket successfully", async () => {
-      vi.mocked(apiClient.post).mockResolvedValueOnce({ success: true, data: {} })
+      const mockResponse: ApiResponse<void> = {
+        success: true,
+        data: undefined,
+      };
 
-      await store.printMergeTicket(MOCK_MERGE_HISTORY_ID)
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
 
-      expect(apiClient.post).toHaveBeenCalledWith('/api/accountMerge/print-ticket', { 
-        mergeHistoryId: MOCK_MERGE_HISTORY_ID 
-      })
-      expect(useAccountMergeStore.getState().isLoading).toBe(false)
-      expect(useAccountMergeStore.getState().error).toBeNull()
-    })
+      const store = useAccountMergeStore.getState();
 
-    it("should handle API error during ticket printing", async () => {
-      vi.mocked(apiClient.post).mockRejectedValueOnce(new Error('Print failed'))
+      await store.printMergeTicket(1);
 
-      await store.printMergeTicket(MOCK_MERGE_HISTORY_ID)
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/api/accountMerge/print-ticket",
+        {
+          mergeHistoryId: 1,
+        }
+      );
+      
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.isLoading).toBe(false);
+      expect(updatedStore.error).toBeNull();
+    });
 
-      expect(useAccountMergeStore.getState().error).toBe('Print failed')
-    })
-  })
+    it("should handle API failure when printing ticket", async () => {
+      const mockResponse: ApiResponse<void> = {
+        success: false,
+        error: "Print ticket failed",
+      };
+
+      vi.mocked(apiClient.post).mockResolvedValueOnce(mockResponse);
+
+      const store = useAccountMergeStore.getState();
+
+      await expect(
+        store.printMergeTicket(1)
+      ).rejects.toThrow("Print ticket failed");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Print ticket failed");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("printMergeTicket with mock data", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: false
-      } as never)
+        isRealApi: false,
+      } as ReturnType<typeof useDataSourceStore.getState>);
+    });
+
+    it("should print merge ticket with mock data and log details", async () => {
       useAccountMergeStore.setState({
         mergeHistories: [MOCK_MERGE_HISTORY],
-        sourceAccount: null,
-        targetAccount: null,
-        validationState: null,
-        isLoading: false,
-        error: null,
-        mergeProgress: 0,
-        currentStep: 'validation'
-      })
-      vi.spyOn(console, 'log').mockImplementation(() => {})
-    })
+      });
 
-    it("should print ticket with mock data", async () => {
-      await store.printMergeTicket(MOCK_MERGE_HISTORY_ID)
+      const store = useAccountMergeStore.getState();
+      const consoleSpy = vi.spyOn(console, "log");
 
-      expect(apiClient.post).not.toHaveBeenCalled()
-      expect(console.log).toHaveBeenCalledWith(`Printing merge ticket for merge ID: ${MOCK_MERGE_HISTORY_ID}`)
-      expect(useAccountMergeStore.getState().isLoading).toBe(false)
-    })
+      await store.printMergeTicket(1);
 
-    it("should handle missing merge history", async () => {
-      useAccountMergeStore.setState({
-        mergeHistories: [],
-        sourceAccount: null,
-        targetAccount: null,
-        validationState: null,
-        isLoading: false,
-        error: null,
-        mergeProgress: 0,
-        currentStep: 'validation'
-      })
+      expect(apiClient.post).not.toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith("Printing merge ticket:", {
+        id: 1,
+        sourceAccount: "ACC001",
+        targetAccount: "ACC002",
+        mergeDate: MOCK_MERGE_HISTORY.mergeDate,
+        operator: "John Doe",
+        status: "completed",
+      });
+      
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.isLoading).toBe(false);
 
-      await store.printMergeTicket(999)
+      consoleSpy.mockRestore();
+    });
 
-      expect(useAccountMergeStore.getState().error).toBe('Merge history not found')
-    })
-  })
+    it("should throw error when merge history not found", async () => {
+      const store = useAccountMergeStore.getState();
+
+      await expect(
+        store.printMergeTicket(999)
+      ).rejects.toThrow("Merge history not found");
+
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.error).toBe("Merge history not found");
+      expect(updatedStore.isLoading).toBe(false);
+    });
+  });
 
   describe("reset", () => {
-    it("should reset all state to initial values", () => {
+    it("should reset store to initial state", () => {
       useAccountMergeStore.setState({
         mergeHistories: [MOCK_MERGE_HISTORY],
         sourceAccount: MOCK_SOURCE_ACCOUNT,
         targetAccount: MOCK_TARGET_ACCOUNT,
         validationState: MOCK_VALIDATION,
         isLoading: true,
-        error: 'Some error',
+        error: "Some error",
         mergeProgress: 50,
-        currentStep: 'executing'
-      })
+        currentStep: "updating",
+      });
 
-      store.reset()
+      const store = useAccountMergeStore.getState();
+      store.reset();
 
-      const finalState = useAccountMergeStore.getState()
-      expect(finalState.mergeHistories).toEqual([])
-      expect(finalState.sourceAccount).toBeNull()
-      expect(finalState.targetAccount).toBeNull()
-      expect(finalState.validationState).toBeNull()
-      expect(finalState.isLoading).toBe(false)
-      expect(finalState.error).toBeNull()
-      expect(finalState.mergeProgress).toBe(0)
-      expect(finalState.currentStep).toBe('validation')
-    })
-  })
-})
+      const updatedStore = useAccountMergeStore.getState();
+      expect(updatedStore.mergeHistories).toEqual([]);
+      expect(updatedStore.sourceAccount).toBeNull();
+      expect(updatedStore.targetAccount).toBeNull();
+      expect(updatedStore.validationState).toBeNull();
+      expect(updatedStore.isLoading).toBe(false);
+      expect(updatedStore.error).toBeNull();
+      expect(updatedStore.mergeProgress).toBe(0);
+      expect(updatedStore.currentStep).toBe("validation");
+    });
+  });
+});

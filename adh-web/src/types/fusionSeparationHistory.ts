@@ -28,16 +28,7 @@ export interface FusionSeparationHistoryWriteRequest {
   entry: FusionSeparationHistoryEntry
 }
 
-export type FusionSeparationHistoryGetResponse = FusionSeparationHistoryEntry[]
-
+// SPEC-FIX: Removed getEntries endpoint - spec indicates W:1 R:0 L:0 (write-only, no read operations)
 export type FusionSeparationHistoryApiEndpoints = {
   writeEntry: ApiResponse<FusionSeparationHistoryWriteRequest, void>
-  getEntries: ApiResponse<
-    { 
-      societe?: string, 
-      compteReference?: number, 
-      typeEF?: string 
-    }, 
-    FusionSeparationHistoryGetResponse
-  >
 }

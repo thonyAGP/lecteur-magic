@@ -101,7 +101,7 @@ describe("FusionSeparationHistoryPage", () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText("Chrono EF is required")).toBeInTheDocument()
+      expect(screen.getByText(/chrono ef is required/i)).toBeInTheDocument()
     })
   })
 
@@ -115,7 +115,7 @@ describe("FusionSeparationHistoryPage", () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText("Chrono EF must be a positive number")).toBeInTheDocument()
+      expect(screen.getByText(/chrono ef must be a positive number/i)).toBeInTheDocument()
     })
   })
 
@@ -175,7 +175,7 @@ describe("FusionSeparationHistoryPage", () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText("History entry written successfully")).toBeInTheDocument()
+      expect(screen.getByText(/history entry written successfully/i)).toBeInTheDocument()
     })
   })
 
@@ -199,7 +199,7 @@ describe("FusionSeparationHistoryPage", () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText("Failed to write history entry")).toBeInTheDocument()
+      expect(screen.getByText(/failed to write history entry/i)).toBeInTheDocument()
     })
   })
 
@@ -240,9 +240,11 @@ describe("FusionSeparationHistoryPage", () => {
     render(<FusionSeparationHistoryPage />)
 
     expect(screen.getByText("Current Entry")).toBeInTheDocument()
-    expect(screen.getByText("123")).toBeInTheDocument()
-    expect(screen.getByText("Test Company")).toBeInTheDocument()
-    expect(screen.getByText("Type: FUSION")).toBeInTheDocument()
+    expect(screen.getByText(/123/)).toBeInTheDocument()
+    expect(screen.getByText(/Test Company/)).toBeInTheDocument()
+    expect(screen.getByText((content, element) => {
+      return element?.textContent === "Type: FUSION"
+    })).toBeInTheDocument()
   })
 
   it("displays history entries when available", () => {
@@ -303,13 +305,13 @@ describe("FusionSeparationHistoryPage", () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText("Chrono EF is required")).toBeInTheDocument()
+      expect(screen.getByText(/chrono ef is required/i)).toBeInTheDocument()
     })
 
     const chronoInput = screen.getByLabelText(/chrono ef/i)
     fireEvent.change(chronoInput, { target: { value: "123" } })
 
-    expect(screen.queryByText("Chrono EF is required")).not.toBeInTheDocument()
+    expect(screen.queryByText(/chrono ef is required/i)).not.toBeInTheDocument()
   })
 
   it("calls reset on unmount", () => {

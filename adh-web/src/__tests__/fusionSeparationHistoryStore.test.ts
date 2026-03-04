@@ -136,28 +136,6 @@ describe("fusionSeparationHistoryStore", () => {
     })
   })
 
-  describe("writeHistoryEntry with mock data", () => {
-    beforeEach(() => {
-      vi.mocked(useDataSourceStore.getState).mockReturnValue({
-        isRealApi: false
-      })
-    })
-
-    it("should write history entry with mock delay", async () => {
-      const startTime = Date.now()
-      await useFusionSeparationHistoryStore.getState().writeHistoryEntry(MOCK_ENTRY_1)
-      const endTime = Date.now()
-
-      expect(endTime - startTime).toBeGreaterThanOrEqual(490)
-      expect(apiClient.post).not.toHaveBeenCalled()
-      
-      const state = useFusionSeparationHistoryStore.getState()
-      expect(state.historyEntries).toEqual([MOCK_ENTRY_1])
-      expect(state.isLoading).toBe(false)
-      expect(state.error).toBeNull()
-    })
-  })
-
   describe("loadHistoryEntries with real API", () => {
     beforeEach(() => {
       vi.mocked(useDataSourceStore.getState).mockReturnValue({
@@ -223,7 +201,7 @@ describe("fusionSeparationHistoryStore", () => {
 
       const state = useFusionSeparationHistoryStore.getState()
       expect(apiClient.get).not.toHaveBeenCalled()
-      expect(state.historyEntries.length).toBe(4)
+      expect(state.historyEntries.length).toBe(3)
       expect(state.isLoading).toBe(false)
     })
 
@@ -339,6 +317,28 @@ describe("fusionSeparationHistoryStore", () => {
       expect(state.isLoading).toBe(false)
       expect(state.error).toBeNull()
       expect(state.currentEntry).toBeNull()
+    })
+  })
+
+  describe("writeHistoryEntry with mock data", () => {
+    beforeEach(() => {
+      vi.mocked(useDataSourceStore.getState).mockReturnValue({
+        isRealApi: false
+      })
+    })
+
+    it("should write history entry with mock delay", async () => {
+      const startTime = Date.now()
+      await useFusionSeparationHistoryStore.getState().writeHistoryEntry(MOCK_ENTRY_1)
+      const endTime = Date.now()
+
+      expect(endTime - startTime).toBeGreaterThanOrEqual(490)
+      expect(apiClient.post).not.toHaveBeenCalled()
+      
+      const state = useFusionSeparationHistoryStore.getState()
+      expect(state.historyEntries).toEqual([MOCK_ENTRY_1])
+      expect(state.isLoading).toBe(false)
+      expect(state.error).toBeNull()
     })
   })
 

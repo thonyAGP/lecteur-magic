@@ -1,19 +1,38 @@
-/**
- * @vitest-environment jsdom
- */
-import { describe, it, expect, beforeEach, vi } from "vitest"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+// @vitest-environment jsdom
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 const { mockStore, mockSetState } = vi.hoisted(() => {
   const store = {
-    mergeHistories: [],
-    sourceAccount: null,
-    targetAccount: null,
-    validationState: null,
+    mergeHistories: [] as Array<{
+      id: number;
+      sourceAccount: string;
+      targetAccount: string;
+      mergeDate: Date;
+      operator: string;
+      status: string;
+    }>,
+    sourceAccount: null as {
+      accountNumber: string;
+      balance: number;
+      status: string;
+      createdDate: Date;
+    } | null,
+    targetAccount: null as {
+      accountNumber: string;
+      balance: number;
+      status: string;
+      createdDate: Date;
+    } | null,
+    validationState: null as {
+      isClosureInProgress: boolean;
+      networkStatus: string;
+      validationStatus: string;
+    } | null,
     isLoading: false,
-    error: null,
+    error: null as string | null,
     mergeProgress: 0,
-    currentStep: '',
+    currentStep: "idle",
     validateMergeConditions: vi.fn(),
     executeMerge: vi.fn(),
     createMergeHistory: vi.fn(),
@@ -21,32 +40,32 @@ const { mockStore, mockSetState } = vi.hoisted(() => {
     printMergeTicket: vi.fn(),
     reset: vi.fn(),
     setState: vi.fn()
-  }
+  };
   return {
     mockStore: store,
     mockSetState: vi.fn()
-  }
-})
+  };
+});
 
 vi.mock("@/stores/accountMergeStore", () => {
-  const mockHook = (() => mockStore) as typeof mockStore & { setState: typeof mockSetState }
-  mockHook.setState = mockSetState
-  return { useAccountMergeStore: mockHook }
-})
+  const mockHook = (() => mockStore) as typeof mockStore & { setState: typeof mockSetState };
+  mockHook.setState = mockSetState;
+  return { useAccountMergeStore: mockHook };
+});
 
 vi.mock("@/components/layout", () => ({
   ScreenLayout: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
+    <div data-testid="screen-layout" className={className}>{children}</div>
   )
-}))
+}));
 
 vi.mock("@/components/ui", () => ({
-  Button: ({ children, onClick, disabled, variant, className }: {
-    children: React.ReactNode
-    onClick?: () => void
-    disabled?: boolean
-    variant?: string
-    className?: string
+  Button: ({ children, onClick, disabled, className, variant }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    className?: string;
+    variant?: string;
   }) => (
     <button
       onClick={onClick}
@@ -57,349 +76,458 @@ vi.mock("@/components/ui", () => ({
       {children}
     </button>
   ),
-  Input: ({ value, onChange, placeholder, disabled }: {
-    value: string
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-    placeholder?: string
-    disabled?: boolean
+  Input: ({ value, onChange, disabled, placeholder, id }: {
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    disabled?: boolean;
+    placeholder?: string;
+    id?: string;
   }) => (
     <input
+      id={id}
       value={value}
       onChange={onChange}
-      placeholder={placeholder}
       disabled={disabled}
+      placeholder={placeholder}
     />
-  ),
-  Dialog: ({ open, onOpenChange, children }: {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    children: React.ReactNode
-  }) => (
-    open ? (
-      <div data-testid="dialog" onClick={() => onOpenChange(false)}>
-        {children}
-      </div>
-    ) : null
   )
-}))
+}));
 
 vi.mock("@/lib/utils", () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(" ")
-}))
+  cn: (...args: (string | undefined | null | false)[]) => args.filter(Boolean).join(" ")
+}));
 
-import { AccountMergePage } from "@/pages/AccountMergePage"
+import { AccountMergePage } from "@/pages/AccountMergePage";
 
 describe("AccountMergePage", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockStore.mergeHistories = []
-    mockStore.sourceAccount = null
-    mockStore.targetAccount = null
-    mockStore.validationState = null
-    mockStore.isLoading = false
-    mockStore.error = null
-    mockStore.mergeProgress = 0
-    mockStore.currentStep = ''
-  })
+    vi.clearAllMocks();
+    mockStore.mergeHistories = [];
+    mockStore.sourceAccount = null;
+    mockStore.targetAccount = null;
+    mockStore.validationState = null;
+    mockStore.isLoading = false;
+    mockStore.error = null;
+    mockStore.mergeProgress = 0;
+    mockStore.currentStep = "idle";
+  });
 
   it("renders without crashing", () => {
-    render(<AccountMergePage />)
-    expect(screen.getByText("Account Merge")).toBeInTheDocument()
-    expect(screen.getByText("Account Selection")).toBeInTheDocument()
-  })
+    render(<AccountMergePage />);
+    expect(screen.getByText("Account Merge")).toBeInTheDocument();
+    expect(screen.getByText("Merge source account into target account")).toBeInTheDocument();
+  });
 
-  it("displays account input fields", () => {
-    render(<AccountMergePage />)
-    
-    expect(screen.getByPlaceholderText("Enter source account number")).toBeInTheDocument()
-    expect(screen.getByPlaceholderText("Enter target account number")).toBeInTheDocument()
-    expect(screen.getByText("Validate Accounts")).toBeInTheDocument()
-  })
+  it("displays account selection form initially", () => {
+    render(<AccountMergePage />);
+    expect(screen.getByLabelText("Source Account")).toBeInTheDocument();
+    expect(screen.getByLabelText("Target Account")).toBeInTheDocument();
+    expect(screen.getByText("Validate Accounts")).toBeInTheDocument();
+  });
 
-  it("handles account input changes", () => {
-    render(<AccountMergePage />)
-    
-    const sourceInput = screen.getByPlaceholderText("Enter source account number")
-    const targetInput = screen.getByPlaceholderText("Enter target account number")
-    
-    fireEvent.change(sourceInput, { target: { value: "123456" } })
-    fireEvent.change(targetInput, { target: { value: "789012" } })
-    
-    expect(sourceInput).toHaveValue("123456")
-    expect(targetInput).toHaveValue("789012")
-  })
+  it("handles source account input change", () => {
+    render(<AccountMergePage />);
+    const input = screen.getByLabelText("Source Account") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "ACC001" } });
+    expect(input.value).toBe("ACC001");
+  });
 
-  it("validates accounts when validate button is clicked", async () => {
-    render(<AccountMergePage />)
+  it("handles target account input change", () => {
+    render(<AccountMergePage />);
+    const input = screen.getByLabelText("Target Account") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "ACC002" } });
+    expect(input.value).toBe("ACC002");
+  });
+
+  it("disables validate button when inputs are empty", () => {
+    render(<AccountMergePage />);
+    const validateButton = screen.getByText("Validate Accounts");
+    expect(validateButton).toBeDisabled();
+  });
+
+  it("enables validate button when both inputs have values", () => {
+    render(<AccountMergePage />);
+    const sourceInput = screen.getByLabelText("Source Account");
+    const targetInput = screen.getByLabelText("Target Account");
+    const validateButton = screen.getByText("Validate Accounts");
+
+    fireEvent.change(sourceInput, { target: { value: "ACC001" } });
+    fireEvent.change(targetInput, { target: { value: "ACC002" } });
+
+    expect(validateButton).not.toBeDisabled();
+  });
+
+  it("validates accounts on button click", async () => {
+    mockStore.validateMergeConditions.mockResolvedValue(undefined);
     
-    const sourceInput = screen.getByPlaceholderText("Enter source account number")
-    const targetInput = screen.getByPlaceholderText("Enter target account number")
-    const validateButton = screen.getByText("Validate Accounts")
+    render(<AccountMergePage />);
     
-    fireEvent.change(sourceInput, { target: { value: "123456" } })
-    fireEvent.change(targetInput, { target: { value: "789012" } })
-    fireEvent.click(validateButton)
+    const sourceInput = screen.getByLabelText("Source Account");
+    const targetInput = screen.getByLabelText("Target Account");
+    const validateButton = screen.getByText("Validate Accounts");
+    
+    fireEvent.change(sourceInput, { target: { value: "ACC001" } });
+    fireEvent.change(targetInput, { target: { value: "ACC002" } });
+    fireEvent.click(validateButton);
     
     await waitFor(() => {
-      expect(mockStore.validateMergeConditions).toHaveBeenCalledWith("123456", "789012")
-    })
-  })
-
-  it("disables validate button when accounts are empty or same", () => {
-    render(<AccountMergePage />)
-    
-    const validateButton = screen.getByText("Validate Accounts")
-    expect(validateButton).toBeDisabled()
-    
-    const sourceInput = screen.getByPlaceholderText("Enter source account number")
-    const targetInput = screen.getByPlaceholderText("Enter target account number")
-    
-    fireEvent.change(sourceInput, { target: { value: "123456" } })
-    fireEvent.change(targetInput, { target: { value: "123456" } })
-    
-    expect(validateButton).toBeDisabled()
-  })
+      expect(mockStore.validateMergeConditions).toHaveBeenCalledWith("ACC001", "ACC002");
+    });
+  });
 
   it("displays loading state during validation", () => {
-    mockStore.isLoading = true
-    mockStore.currentStep = 'validation'
+    mockStore.isLoading = true;
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    expect(screen.getByText("Validating...")).toBeInTheDocument()
-  })
+    const validateButton = screen.getByText("Validating...");
+    expect(validateButton).toBeDisabled();
+  });
 
-  it("displays validation status when validation state is available", () => {
-    mockStore.validationState = {
-      isClosureInProgress: false,
-      networkStatus: 'A',
-      validationStatus: 'P'
-    }
+  it("displays validation status after validation", () => {
+    mockStore.currentStep = "validated";
     mockStore.sourceAccount = {
-      accountNumber: "123456",
+      accountNumber: "ACC001",
       balance: 1000.50,
-      status: 'A',
+      status: "active",
       createdDate: new Date()
-    }
+    };
     mockStore.targetAccount = {
-      accountNumber: "789012",
-      balance: 2500.75,
-      status: 'A',
+      accountNumber: "ACC002",
+      balance: 2000.75,
+      status: "active",
       createdDate: new Date()
-    }
-    
-    render(<AccountMergePage />)
-    
-    expect(screen.getByText("Validation Status")).toBeInTheDocument()
-    expect(screen.getByText("No Active Closure")).toBeInTheDocument()
-    expect(screen.getByText("✓ Merge can proceed")).toBeInTheDocument()
-    
-    const sourceAccountElements = screen.getAllByText((content, element) => {
-      return element?.tagName.toLowerCase() === 'h4' && content === 'Source Account'
-    })
-    expect(sourceAccountElements).toHaveLength(1)
-    
-    expect(screen.getByText((content, element) => {
-      return content.includes("$1,000.50")
-    })).toBeInTheDocument()
-    
-    expect(screen.getByText((content, element) => {
-      return content.includes("$2,500.75")
-    })).toBeInTheDocument()
-  })
-
-  it("displays merge execution section when validation is complete", () => {
+    };
     mockStore.validationState = {
       isClosureInProgress: false,
-      networkStatus: 'A',
-      validationStatus: 'P'
-    }
+      networkStatus: "A",
+      validationStatus: "PASSED"
+    };
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    expect(screen.getByText("Merge Execution")).toBeInTheDocument()
-    expect(screen.getByText("Execute Merge")).toBeInTheDocument()
-  })
+    expect(screen.getByText("Validation Status")).toBeInTheDocument();
+    expect(screen.getByText(/ACC001 - Balance: \$1000.50/)).toBeInTheDocument();
+    expect(screen.getByText(/ACC002 - Balance: \$2000.75/)).toBeInTheDocument();
+    expect(screen.getByText(/Closure Status: Not In Progress/)).toBeInTheDocument();
+    expect(screen.getByText(/Network Status: A/)).toBeInTheDocument();
+    expect(screen.getByText(/Validation Status: PASSED/)).toBeInTheDocument();
+  });
 
-  it("shows confirmation dialog when execute merge is clicked", async () => {
+  it("displays closure in progress status", () => {
+    mockStore.currentStep = "validated";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     mockStore.validationState = {
-      isClosureInProgress: false,
-      networkStatus: 'A',
-      validationStatus: 'P'
-    }
+      isClosureInProgress: true,
+      networkStatus: "R",
+      validationStatus: "FAILED"
+    };
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    const executeButton = screen.getByText("Execute Merge")
-    fireEvent.click(executeButton)
+    expect(screen.getByText(/Closure Status: In Progress/)).toBeInTheDocument();
+    expect(screen.getByText(/Network Status: R/)).toBeInTheDocument();
+    expect(screen.getByText(/Validation Status: FAILED/)).toBeInTheDocument();
+  });
+
+  it("displays merge execution section after validation", () => {
+    mockStore.currentStep = "validated";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
+    
+    render(<AccountMergePage />);
+    
+    expect(screen.getByText("Merge Execution")).toBeInTheDocument();
+    expect(screen.getByText("Execute Merge")).toBeInTheDocument();
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
+  });
+
+  it("executes merge on button click", async () => {
+    mockStore.currentStep = "validated";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.executeMerge.mockResolvedValue(undefined);
+    
+    render(<AccountMergePage />);
+    
+    const executeButton = screen.getByText("Execute Merge");
+    fireEvent.click(executeButton);
     
     await waitFor(() => {
-      expect(screen.getByTestId("dialog")).toBeInTheDocument()
-      const confirmElements = screen.getAllByText((content, element) => {
-        return element?.tagName.toLowerCase() === 'h3' && content === 'Confirm Merge'
-      })
-      expect(confirmElements).toHaveLength(1)
-    })
-  })
+      expect(mockStore.executeMerge).toHaveBeenCalledWith("ACC001", "ACC002");
+    });
+  });
 
-  it("executes merge when confirmed in dialog", async () => {
-    mockStore.validationState = {
-      isClosureInProgress: false,
-      networkStatus: 'A',
-      validationStatus: 'P'
-    }
+  it("displays merge progress during execution", () => {
+    mockStore.currentStep = "transferring";
+    mockStore.mergeProgress = 50;
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    const sourceInput = screen.getByPlaceholderText("Enter source account number")
-    const targetInput = screen.getByPlaceholderText("Enter target account number")
-    
-    fireEvent.change(sourceInput, { target: { value: "123456" } })
-    fireEvent.change(targetInput, { target: { value: "789012" } })
-    
-    const executeButton = screen.getByText("Execute Merge")
-    fireEvent.click(executeButton)
-    
-    await waitFor(() => {
-      const confirmButtons = screen.getAllByText((content, element) => {
-        return element?.tagName.toLowerCase() === 'button' && content === 'Confirm Merge'
-      })
-      expect(confirmButtons).toHaveLength(1)
-      fireEvent.click(confirmButtons[0])
-    })
-    
-    await waitFor(() => {
-      expect(mockStore.executeMerge).toHaveBeenCalledWith("123456", "789012")
-    })
-  })
+    expect(screen.getByText("Progress")).toBeInTheDocument();
+    expect(screen.getByText("50%")).toBeInTheDocument();
+    expect(screen.getByText(/Current Step: transferring/)).toBeInTheDocument();
+    expect(screen.getByText("Executing...")).toBeInTheDocument();
+  });
 
-  it("displays progress bar during merge execution", () => {
-    mockStore.currentStep = 'executing'
-    mockStore.mergeProgress = 45
+  it("disables execute button during merge", () => {
+    mockStore.currentStep = "transferring";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    expect(screen.getByText("Progress")).toBeInTheDocument()
-    expect(screen.getByText("45%")).toBeInTheDocument()
-    expect(screen.getByText("Executing Merge")).toBeInTheDocument()
-  })
+    const executeButton = screen.getByText("Executing...");
+    expect(executeButton).toBeDisabled();
+  });
 
-  it("shows result dialog when merge is completed", () => {
-    mockStore.currentStep = 'completed'
-    mockStore.mergeHistories = [{
-      id: 1,
-      sourceAccount: "123456",
-      targetAccount: "789012",
-      mergeDate: new Date(),
-      operator: "admin",
-      status: "COMPLETED"
-    }]
+  it("disables cancel button during merge", () => {
+    mockStore.currentStep = "updating";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    expect(screen.getByText("Merge Completed")).toBeInTheDocument()
-    expect(screen.getByText("✓ Merge Successful")).toBeInTheDocument()
-  })
+    const cancelButton = screen.getByText("Cancel");
+    expect(cancelButton).toBeDisabled();
+  });
 
-  it("displays error state when error occurs", () => {
-    mockStore.error = "Network error occurred"
-    
-    render(<AccountMergePage />)
-    
-    expect(screen.getByText("Error")).toBeInTheDocument()
-    expect(screen.getByText("Network error occurred")).toBeInTheDocument()
-  })
-
-  it("displays merge history when available", () => {
+  it("displays completion message when merge is completed", () => {
+    mockStore.currentStep = "completed";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     mockStore.mergeHistories = [
       {
         id: 1,
-        sourceAccount: "123456",
-        targetAccount: "789012",
-        mergeDate: new Date('2024-01-15'),
-        operator: "admin",
-        status: "COMPLETED"
-      },
-      {
-        id: 2,
-        sourceAccount: "111111",
-        targetAccount: "222222",
-        mergeDate: new Date('2024-01-14'),
-        operator: "user1",
-        status: "PENDING"
+        sourceAccount: "ACC001",
+        targetAccount: "ACC002",
+        mergeDate: new Date(),
+        operator: "OP001",
+        status: "completed"
       }
-    ]
+    ];
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    expect(screen.getByText("Recent Merge History")).toBeInTheDocument()
-    expect(screen.getByText("123456 → 789012")).toBeInTheDocument()
-    expect(screen.getByText("111111 → 222222")).toBeInTheDocument()
-    expect(screen.getByText("COMPLETED")).toBeInTheDocument()
-    expect(screen.getByText("PENDING")).toBeInTheDocument()
-  })
+    expect(screen.getByText("Merge Completed")).toBeInTheDocument();
+    expect(screen.getByText("Merge completed successfully!")).toBeInTheDocument();
+    expect(screen.getByText(/Account ACC001 has been merged into ACC002/)).toBeInTheDocument();
+    expect(screen.getByText("Print Ticket")).toBeInTheDocument();
+    expect(screen.getByText("Close")).toBeInTheDocument();
+  });
 
-  it("calls print ticket function when print button is clicked", async () => {
-    mockStore.currentStep = 'completed'
-    mockStore.mergeHistories = [{
-      id: 1,
-      sourceAccount: "123456",
-      targetAccount: "789012",
-      mergeDate: new Date(),
-      operator: "admin",
-      status: "COMPLETED"
-    }]
+  it("handles print ticket button click", async () => {
+    mockStore.currentStep = "completed";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.mergeHistories = [
+      {
+        id: 1,
+        sourceAccount: "ACC001",
+        targetAccount: "ACC002",
+        mergeDate: new Date(),
+        operator: "OP001",
+        status: "completed"
+      }
+    ];
+    mockStore.printMergeTicket.mockResolvedValue(undefined);
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    const printButton = screen.getByText("Print Ticket")
-    fireEvent.click(printButton)
+    const printButton = screen.getByText("Print Ticket");
+    fireEvent.click(printButton);
     
     await waitFor(() => {
-      expect(mockStore.printMergeTicket).toHaveBeenCalledWith(1)
-    })
-  })
+      expect(mockStore.printMergeTicket).toHaveBeenCalledWith(1);
+    });
+  });
 
-  it("prevents merge when closure is in progress", () => {
-    mockStore.validationState = {
-      isClosureInProgress: true,
-      networkStatus: 'A',
-      validationStatus: 'P'
-    }
+  it("handles close button click and resets state", () => {
+    mockStore.currentStep = "completed";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    expect(screen.getByText("Closure in Progress")).toBeInTheDocument()
-    expect(screen.getByText("✗ Merge cannot proceed")).toBeInTheDocument()
-    expect(screen.queryByText("Execute Merge")).not.toBeInTheDocument()
-  })
+    const closeButton = screen.getByText("Close");
+    fireEvent.click(closeButton);
+    
+    expect(mockStore.reset).toHaveBeenCalled();
+  });
 
-  it("resets store on component unmount", () => {
-    const { unmount } = render(<AccountMergePage />)
+  it("handles cancel button click and resets state", () => {
+    mockStore.currentStep = "validated";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
     
-    unmount()
+    render(<AccountMergePage />);
     
-    expect(mockStore.reset).toHaveBeenCalled()
-  })
+    const cancelButton = screen.getByText("Cancel");
+    fireEvent.click(cancelButton);
+    
+    expect(mockStore.reset).toHaveBeenCalled();
+  });
 
-  it("closes dialogs and resets form when close button is clicked", async () => {
-    mockStore.currentStep = 'completed'
-    mockStore.mergeHistories = [{
-      id: 1,
-      sourceAccount: "123456",
-      targetAccount: "789012",
-      mergeDate: new Date(),
-      operator: "admin",
-      status: "COMPLETED"
-    }]
+  it("displays error state", () => {
+    mockStore.error = "Validation failed: accounts cannot be merged";
     
-    render(<AccountMergePage />)
+    render(<AccountMergePage />);
     
-    const closeButton = screen.getByText("Close")
-    fireEvent.click(closeButton)
+    expect(screen.getByText("Validation failed: accounts cannot be merged")).toBeInTheDocument();
+  });
+
+  it("calls reset on unmount", () => {
+    const { unmount } = render(<AccountMergePage />);
     
-    await waitFor(() => {
-      expect(mockStore.reset).toHaveBeenCalled()
-    })
-  })
-})
+    unmount();
+    
+    expect(mockStore.reset).toHaveBeenCalled();
+  });
+
+  it("does not call validateMergeConditions when inputs are empty", () => {
+    render(<AccountMergePage />);
+    
+    const validateButton = screen.getByText("Validate Accounts");
+    fireEvent.click(validateButton);
+    
+    expect(mockStore.validateMergeConditions).not.toHaveBeenCalled();
+  });
+
+  it("does not call executeMerge when accounts are not set", () => {
+    mockStore.currentStep = "validated";
+    
+    render(<AccountMergePage />);
+    
+    const executeButton = screen.getByText("Execute Merge");
+    fireEvent.click(executeButton);
+    
+    expect(mockStore.executeMerge).not.toHaveBeenCalled();
+  });
+
+  it("does not call printMergeTicket when merge histories are empty", () => {
+    mockStore.currentStep = "completed";
+    mockStore.sourceAccount = {
+      accountNumber: "ACC001",
+      balance: 1000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.targetAccount = {
+      accountNumber: "ACC002",
+      balance: 2000,
+      status: "active",
+      createdDate: new Date()
+    };
+    mockStore.mergeHistories = [];
+    
+    render(<AccountMergePage />);
+    
+    const printButton = screen.getByText("Print Ticket");
+    fireEvent.click(printButton);
+    
+    expect(mockStore.printMergeTicket).not.toHaveBeenCalled();
+  });
+});

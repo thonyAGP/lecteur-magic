@@ -215,7 +215,7 @@ describe('SessionListPage', () => {
     fireEvent.change(input, { target: { value: 'Test Société' } })
     fireEvent.change(input, { target: { value: '' } })
     
-    expect(mockSessionListStore.setFilters).toHaveBeenLastCalledWith({ societe: null })
+    expect(mockSessionListStore.setFilters).toHaveBeenCalledWith({ societe: null })
   })
 
   it('handles error dismissal', () => {

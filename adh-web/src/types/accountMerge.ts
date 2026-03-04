@@ -1,693 +1,534 @@
-import type { ApiResponse } from "@/services/api/apiClient"
+import type { ApiResponse } from "@/services/api/apiClient";
 
 export interface MergeHistory {
-  id: number
-  sourceAccount: string
-  targetAccount: string
-  mergeDate: Date
-  operator: string
-  status: string
+  id: number;
+  sourceAccount: string;
+  targetAccount: string;
+  mergeDate: Date;
+  operator: string;
+  status: string;
 }
 
 export interface Account {
-  accountNumber: string
-  balance: number
-  status: string
-  createdDate: Date
+  accountNumber: string;
+  balance: number;
+  status: string;
+  createdDate: Date;
 }
 
 export interface MergeValidation {
-  isClosureInProgress: boolean
-  networkStatus: string
-  validationStatus: string
-}
-
-// RM-343: histo_fusionseparation_saisie table structure
-export interface HistoFusionSeparationSaisie {
-  id: number
-  fusionId: number
-  saisieDate: Date
-  operatorId: string
-  sourceData: string
-  tempStatus: string
-  validationCode: string
-}
-
-// RM-30: gm-recherche_____gmr table structure  
-export interface GmRecherche {
-  id: number
-  searchCriteria: string
-  accountRef: string
-  searchDate: Date
-  resultCount: number
-  searchType: string
-}
-
-// RM-39: depot_garantie___dga table structure
-export interface DepotGarantie {
-  id: number
-  accountNumber: string
-  guaranteeAmount: number
-  depositDate: Date
-  status: string
-  guaranteeType: string
-  expirationDate: Date
-}
-
-// RM-340: histo_fusionseparation table structure
-export interface HistoFusionSeparation {
-  id: number
-  sourceAccountId: string
-  targetAccountId: string
-  operationType: string
-  operationDate: Date
-  operatorId: string
-  beforeState: string
-  afterState: string
-  rollbackPossible: boolean
-}
-
-// RM-47: compte_gm________cgm table structure
-export interface CompteGm {
-  accountId: string
-  gmReference: string
-  accountType: string
-  balance: number
-  lastModified: Date
-  status: string
-  networkId: string
-}
-
-// RM-23: reseau_cloture___rec table structure
-export interface ReseauCloture {
-  networkId: string
-  closureStatus: string
-  closureDate: Date
-  closureType: string
-  operatorId: string
-  isBlocked: boolean
-}
-
-// RM-51: fusion_eclatementfec table structure
-export interface FusionEclatement {
-  id: number
-  operationType: string
-  sourceAccounts: string[]
-  targetAccount: string
-  operationDate: Date
-  status: string
-  validationRequired: boolean
-}
-
-// RM-33: prestations______pre table structure
-export interface Prestations {
-  id: number
-  accountId: string
-  prestationType: string
-  amount: number
-  serviceDate: Date
-  description: string
-  status: string
-}
-
-// RM-131: fichier_validation table structure
-export interface FichierValidation {
-  fileId: string
-  fileName: string
-  validationType: string
-  validationDate: Date
-  validationStatus: string
-  errorCount: number
-  processedRecords: number
-}
-
-// RM-37: commentaire_gm_________acc table structure
-export interface CommentaireGm {
-  id: number
-  accountId: string
-  commentText: string
-  commentDate: Date
-  operatorId: string
-  commentType: string
-  isActive: boolean
-}
-
-// RM-831: import_go_erreur_affection table structure
-export interface ImportGoErreurAffection {
-  id: number
-  importBatch: string
-  errorType: string
-  affectionCode: string
-  errorMessage: string
-  recordNumber: number
-  processingDate: Date
-  resolved: boolean
-}
-
-// RM-837: ##_pv_customer_dat table structure
-export interface PvCustomerDat {
-  customerId: string
-  customerData: string
-  processVersion: string
-  validationStatus: string
-  lastUpdate: Date
-  dataHash: string
-  isActive: boolean
-}
-
-// RM-46: mvt_prestation___mpr table structure
-export interface MvtPrestation {
-  id: number
-  accountId: string
-  movementType: string
-  prestationId: number
-  amount: number
-  movementDate: Date
-  description: string
-  operatorId: string
-}
-
-// RM-79: gratuites________gra table structure
-export interface Gratuites {
-  id: number
-  accountId: string
-  gratuitType: string
-  amount: number
-  validFrom: Date
-  validTo: Date
-  description: string
-  isActive: boolean
-}
-
-// RM-137: fichier_histotel table structure
-export interface FichierHistotel {
-  fileId: string
-  hotelCode: string
-  historyDate: Date
-  recordType: string
-  dataContent: string
-  processedStatus: string
-  errorCount: number
-}
-
-// RM-834: tpe_par_terminal table structure
-export interface TpeParTerminal {
-  terminalId: string
-  tpeCode: string
-  terminalType: string
-  installationDate: Date
-  status: string
-  lastTransaction: Date
-  merchantId: string
-}
-
-// RM-805: vente_par_moyen_paiement table structure
-export interface VenteParMoyenPaiement {
-  id: number
-  saleId: string
-  paymentMethod: string
-  amount: number
-  transactionDate: Date
-  terminalId: string
-  authorizationCode: string
-  status: string
-}
-
-// RM-40: comptable________cte table structure
-export interface Comptable {
-  accountingId: string
-  accountId: string
-  debitAmount: number
-  creditAmount: number
-  accountingDate: Date
-  description: string
-  operatorId: string
-  validated: boolean
-}
-
-// RM-807: plafond_lit table structure
-export interface PlafondLit {
-  id: number
-  accountId: string
-  bedType: string
-  maxLimit: number
-  currentUsage: number
-  periodStart: Date
-  periodEnd: Date
-  isActive: boolean
-}
-
-// RM-312: ez_card table structure
-export interface EzCard {
-  cardId: string
-  accountId: string
-  cardType: string
-  issueDate: Date
-  expirationDate: Date
-  cardStatus: string
-  balance: number
-  lastUsed: Date
-}
-
-// RM-31: gm-complet_______gmc table structure
-export interface GmComplet {
-  id: number
-  accountId: string
-  completeData: string
-  completionDate: Date
-  completionStatus: string
-  operatorId: string
-  validationLevel: string
-  lastModified: Date
-}
-
-// RM-35: personnel_go______go table structure
-export interface PersonnelGo {
-  personnelId: string
-  goCode: string
-  firstName: string
-  lastName: string
-  position: string
-  department: string
-  hireDate: Date
-  status: string
-}
-
-// RM-786: qualite_avant_reprise table structure
-export interface QualiteAvantReprise {
-  id: number
-  accountId: string
-  qualityScore: number
-  assessmentDate: Date
-  assessorId: string
-  qualityLevel: string
-  repriseRequired: boolean
-  notes: string
-}
-
-// RM-123: fichier_messagerie table structure
-export interface FichierMessagerie {
-  messageId: string
-  senderId: string
-  recipientId: string
-  messageContent: string
-  sentDate: Date
-  messageType: string
-  isRead: boolean
-  attachmentCount: number
-}
-
-// RM-147: change_vente_____chg table structure
-export interface ChangeVente {
-  changeId: number
-  originalSaleId: string
-  newSaleId: string
-  changeDate: Date
-  changeType: string
-  operatorId: string
-  reason: string
-  status: string
-}
-
-// RM-80: codes_autocom____aut table structure
-export interface CodesAutocom {
-  codeId: string
-  autocomType: string
-  codeValue: string
-  description: string
-  validFrom: Date
-  validTo: Date
-  isActive: boolean
-  priority: number
-}
-
-// RM-44: change___________chg table structure
-export interface Change {
-  changeId: number
-  accountId: string
-  changeType: string
-  oldValue: string
-  newValue: string
-  changeDate: Date
-  operatorId: string
-  approved: boolean
-}
-
-// RM-266: cc_comptable table structure
-export interface CcComptable {
-  ccId: string
-  accountingCode: string
-  accountId: string
-  amount: number
-  accountingDate: Date
-  description: string
-  operatorId: string
-  validated: boolean
-  journalRef: string
-}
-
-// RM-309: vente____________vep table structure
-export interface Vente {
-  saleId: string
-  accountId: string
-  saleAmount: number
-  saleDate: Date
-  productCode: string
-  quantity: number
-  unitPrice: number
-  discountAmount: number
-  operatorId: string
-  status: string
-}
-
-// RM-15: transac_entete_bar table structure
-export interface TransacEnteteBar {
-  transactionId: string
-  barCode: string
-  transactionDate: Date
-  totalAmount: number
-  itemCount: number
-  operatorId: string
-  terminalId: string
-  status: string
-}
-
-// RM-307: vente_option_veo table structure
-export interface VenteOptionVeo {
-  id: number
-  saleId: string
-  optionCode: string
-  optionValue: string
-  optionDate: Date
-  operatorId: string
-  status: string
-  price: number
-}
-
-// RM-041: depot_objets_____doa table structure
-export interface DepotObjetsDoa {
-  id: number
-  accountId: string
-  objectType: string
-  depositDate: Date
-  returnDate: Date | null
-  status: string
-  description: string
-  operatorId: string
-}
-
-// RM-463: heure_de_passage table structure
-export interface HeureDePassage {
-  id: number
-  accountId: string
-  passageTime: Date
-  location: string
-  direction: string
-  terminalId: string
-  operatorId: string
-  validated: boolean
-}
-
-// RM-947: Table_947 table structure
-export interface Table947 {
-  id: number
-  referenceCode: string
-  dataValue: string
-  category: string
-  createdDate: Date
-  status: string
-  priority: number
-  description: string
-}
-
-// RM-034: hebergement______heb table structure
-export interface HebergementHeb {
-  id: number
-  accountId: string
-  accommodationType: string
-  checkInDate: Date
-  checkOutDate: Date
-  roomNumber: string
-  guestCount: number
-  totalAmount: number
-  status: string
-}
-
-// RM-168: heb_circuit______hci table structure
-export interface HebCircuitHci {
-  id: number
-  circuitCode: string
-  accommodationId: number
-  sequenceOrder: number
-  duration: number
-  transportType: string
-  status: string
-  operatorId: string
-}
-
-// RM-268: cc_total_par_type table structure
-export interface CcTotalParType {
-  id: number
-  accountId: string
-  totalType: string
-  totalAmount: number
-  calculationDate: Date
-  periodStart: Date
-  periodEnd: Date
-  operatorId: string
-  validated: boolean
-}
-
-// RM-272: cc_type_detail table structure
-export interface CcTypeDetail {
-  id: number
-  typeCode: string
-  detailCode: string
-  description: string
-  unitPrice: number
-  taxRate: number
-  category: string
-  isActive: boolean
-}
-
-// RM-048: lignes_de_solde__sld table structure
-export interface LignesDeSoldeSld {
-  id: number
-  accountId: string
-  balanceType: string
-  balanceAmount: number
-  balanceDate: Date
-  description: string
-  operatorId: string
-  validated: boolean
-}
-
-// RM-271: cc_total table structure
-export interface CcTotal {
-  id: number
-  accountId: string
-  totalAmount: number
-  calculationDate: Date
-  operatorId: string
-  validated: boolean
-  currency: string
-  exchangeRate: number
-}
-
-// RM-298: participants_____par table structure
-export interface ParticipantsPar {
-  participantId: string
-  accountId: string
-  firstName: string
-  lastName: string
-  birthDate: Date
-  participantType: string
-  status: string
-  registrationDate: Date
-  voyageId: string
-}
-
-// RM-29: voyages__________voy table structure
-export interface VoyagesVoy {
-  voyageId: string
-  voyageCode: string
-  destination: string
-  departureDate: Date
-  returnDate: Date
-  voyageType: string
-  capacity: number
-  status: string
-  organizerId: string
-}
-
-// RM-19: bl_detail table structure
-export interface BlDetail {
-  id: number
-  billId: string
-  lineNumber: number
-  productCode: string
-  quantity: number
-  unitPrice: number
-  totalAmount: number
-  description: string
-  taxRate: number
-}
-
-// RM-38: comptable_gratuite table structure
-export interface ComptableGratuite {
-  id: number
-  accountId: string
-  gratuitType: string
-  accountingAmount: number
-  gratuitDate: Date
-  description: string
-  operatorId: string
-  validated: boolean
-}
-
-// RM-358: import_mod table structure
-export interface ImportMod {
-  importId: string
-  moduleCode: string
-  importDate: Date
-  fileSource: string
-  recordCount: number
-  processStatus: string
-  errorCount: number
-  operatorId: string
-}
-
-// RM-42: depot_devises____dda table structure
-export interface DepotDevisesDda {
-  id: number
-  accountId: string
-  currencyCode: string
-  depositAmount: number
-  exchangeRate: number
-  localAmount: number
-  depositDate: Date
-  status: string
-  operatorId: string
-}
-
-// RM-366: pms_print_param table structure
-export interface PmsPrintParam {
-  parameterId: string
-  printType: string
-  parameterName: string
-  parameterValue: string
-  isActive: boolean
-  lastModified: Date
-  operatorId: string
-  description: string
-}
-
-// RM-301: details_partici__dpa table structure
-export interface DetailsParticiDpa {
-  detailId: number
-  participantId: string
-  detailType: string
-  detailValue: string
-  detailDate: Date
-  status: string
-  operatorId: string
-  validated: boolean
-}
-
-// RM-43: solde_devises____sda table structure
-export interface SoldeDevisesSda {
-  id: number
-  accountId: string
-  currencyCode: string
-  balanceAmount: number
-  exchangeRate: number
-  localBalance: number
-  balanceDate: Date
-  status: string
-  operatorId: string
-}
-
-// RM-382: pv_discount_reasons table structure
-export interface PvDiscountReasons {
-  reasonId: string
-  reasonCode: string
-  reasonDescription: string
-  discountType: string
-  maxDiscountPercent: number
-  isActive: boolean
-  validFrom: Date
-  validTo: Date
+  isClosureInProgress: boolean;
+  networkStatus: string;
+  validationStatus: string;
 }
 
 export interface AccountMergeState {
-  mergeHistories: MergeHistory[]
-  sourceAccount: Account | null
-  targetAccount: Account | null
-  validationState: MergeValidation | null
-  isLoading: boolean
-  error: string | null
-  mergeProgress: number
-  currentStep: string
-  histoSaisie: HistoFusionSeparationSaisie[]
-  gmRecherches: GmRecherche[]
-  depotGaranties: DepotGarantie[]
-  histoFusions: HistoFusionSeparation[]
-  comptesGm: CompteGm[]
-  reseauClotures: ReseauCloture[]
-  fusionEclatements: FusionEclatement[]
-  prestations: Prestations[]
-  fichiersValidation: FichierValidation[]
-  commentairesGm: CommentaireGm[]
-  importGoErreurs: ImportGoErreurAffection[]
-  pvCustomerData: PvCustomerDat[]
-  mvtPrestations: MvtPrestation[]
-  gratuites: Gratuites[]
-  fichiersHistotel: FichierHistotel[]
-  tpeTerminaux: TpeParTerminal[]
-  ventesPayment: VenteParMoyenPaiement[]
-  comptables: Comptable[]
-  plafondsLit: PlafondLit[]
-  ezCards: EzCard[]
-  gmComplets: GmComplet[]
-  personnelGo: PersonnelGo[]
-  qualiteAvantReprises: QualiteAvantReprise[]
-  fichiersMessagerie: FichierMessagerie[]
-  changesVente: ChangeVente[]
-  codesAutocom: CodesAutocom[]
-  changes: Change[]
-  ccComptables: CcComptable[]
-  ventes: Vente[]
-  transacEnteteBar: TransacEnteteBar[]
-  venteOptions: VenteOptionVeo[]
-  depotObjets: DepotObjetsDoa[]
-  heuresPassage: HeureDePassage[]
-  table947: Table947[]
-  hebergements: HebergementHeb[]
-  hebCircuits: HebCircuitHci[]
-  ccTotalParTypes: CcTotalParType[]
-  ccTypeDetails: CcTypeDetail[]
-  lignesSolde: LignesDeSoldeSld[]
-  ccTotals: CcTotal[]
-  participants: ParticipantsPar[]
-  voyages: VoyagesVoy[]
-  blDetails: BlDetail[]
-  comptableGratuites: ComptableGratuite[]
-  importMods: ImportMod[]
-  depotDevises: DepotDevisesDda[]
-  pmsPrintParams: PmsPrintParam[]
-  detailsPartici: DetailsParticiDpa[]
-  soldeDevises: SoldeDevisesSda[]
-  pvDiscountReasons: PvDiscountReasons[]
+  mergeHistories: MergeHistory[];
+  sourceAccount: Account | null;
+  targetAccount: Account | null;
+  validationState: MergeValidation | null;
+  isLoading: boolean;
+  error: string | null;
+  mergeProgress: number;
+  currentStep: string;
 }
 
 export interface AccountMergeActions {
-  validateMergeConditions: (sourceAccountId: string, targetAccountId: string) => Promise<void>
-  executeMerge: (sourceAccountId: string, targetAccountId: string) => Promise<void>
-  createMergeHistory: (sourceAccount: string, targetAccount: string, operator: string) => Promise<void>
-  rollbackMerge: (mergeHistoryId: number) => Promise<void>
-  printMergeTicket: (mergeHistoryId: number) => Promise<void>
+  validateMergeConditions(sourceAccountId: string, targetAccountId: string): Promise<void>;
+  executeMerge(sourceAccountId: string, targetAccountId: string): Promise<void>;
+  createMergeHistory(sourceAccount: string, targetAccount: string, operator: string): Promise<void>;
+  rollbackMerge(mergeHistoryId: number): Promise<void>;
+  printMergeTicket(mergeHistoryId: number): Promise<void>;
 }
 
-export type ValidateResponse = ApiResponse<MergeValidation>
-export type ExecuteMergeResponse = ApiResponse<MergeHistory>
-export type MergeHistoryResponse = ApiResponse<MergeHistory[]>
+export interface ValidateMergeRequest {
+  sourceAccountId: string;
+  targetAccountId: string;
+}
+
+export type ValidateMergeResponse = ApiResponse<MergeValidation>;
+
+export interface ExecuteMergeRequest {
+  sourceAccountId: string;
+  targetAccountId: string;
+}
+
+export type ExecuteMergeResponse = ApiResponse<MergeHistory>;
+
+export interface FetchMergeHistoryRequest {
+  accountId?: string;
+  dateFrom?: Date;
+  dateTo?: Date;
+}
+
+export type FetchMergeHistoryResponse = ApiResponse<MergeHistory[]>;
+
+export interface RollbackMergeRequest {
+  mergeHistoryId: number;
+}
+
+export type RollbackMergeResponse = ApiResponse<void>;
+
+export interface PrintMergeTicketRequest {
+  mergeHistoryId: number;
+}
+
+export type PrintMergeTicketResponse = ApiResponse<void>;
+
+export interface HistoFusionSeparationSaisie {
+  id: number;
+  accountId: string;
+  operationType: "FUSION" | "SEPARATION";
+  inputDate: Date;
+  operator: string;
+  status: string;
+  data: Record<string, unknown>;
+}
+
+export interface GmRecherche {
+  id: number;
+  searchCriteria: string;
+  searchDate: Date;
+  resultCount: number;
+  userId: string;
+}
+
+export interface DepotGarantie {
+  id: number;
+  accountId: string;
+  depositAmount: number;
+  depositDate: Date;
+  status: string;
+  expirationDate?: Date;
+  deletionDate?: Date;
+}
+
+export interface HistoFusionSeparation {
+  id: number;
+  sourceAccountId: string;
+  targetAccountId: string;
+  operationType: "FUSION" | "SEPARATION";
+  operationDate: Date;
+  operator: string;
+  status: string;
+  reversalDate?: Date;
+  validated: boolean;
+}
+
+export interface CompteGm {
+  accountId: string;
+  accountNumber: string;
+  balance: number;
+  status: string;
+  createdDate: Date;
+  lastModifiedDate: Date;
+  networkId?: string;
+  closureStatus?: string;
+  filiationStatus?: string;
+}
+
+export interface ReseauCloture {
+  id: number;
+  networkId: string;
+  closureStartDate: Date;
+  closureEndDate?: Date;
+  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+  operator: string;
+}
+
+export interface FusionEclatement {
+  id: number;
+  fusionId: number;
+  accountId: string;
+  splitType: string;
+  splitDate: Date;
+  amount?: number;
+  status: string;
+  validated: boolean;
+}
+
+export interface Prestation {
+  id: number;
+  accountId: string;
+  prestationType: string;
+  amount: number;
+  prestationDate: Date;
+  status: string;
+  description?: string;
+  transferredToAccount?: string;
+}
+
+export interface FichierValidation {
+  id: number;
+  fileName: string;
+  validationDate: Date;
+  validationStatus: "PENDING" | "VALIDATED" | "REJECTED";
+  validator?: string;
+  errors?: string[];
+  relatedEntityType?: string;
+  relatedEntityId?: string;
+}
+
+export interface CommentaireGm {
+  id: number;
+  accountId: string;
+  comment: string;
+  commentDate: Date;
+  userId: string;
+  category?: string;
+  relatedOperation?: string;
+}
+
+export interface ImportGoErreurAffection {
+  id: number;
+  importId: string;
+  errorCode: string;
+  errorMessage: string;
+  affectedEntityType: string;
+  affectedEntityId: string;
+  importDate: Date;
+  resolved: boolean;
+  severity?: string;
+}
+
+export interface PvCustomerData {
+  id: number;
+  customerId: string;
+  customerData: Record<string, unknown>;
+  processDate: Date;
+  status: string;
+  batchId?: string;
+  sessionId?: string;
+}
+
+export interface MvtPrestation {
+  id: number;
+  prestationId: number;
+  accountId: string;
+  movementType: string;
+  movementDate: Date;
+  amount: number;
+  sourceAccount?: string;
+  targetAccount?: string;
+  status: string;
+  description?: string;
+  operator?: string;
+}
+
+export interface Gratuites {
+  id: number;
+  accountId: string;
+  gratuitType: string;
+  amount: number;
+  gratuitDate: Date;
+  expirationDate?: Date;
+  status: string;
+  description?: string;
+  createdBy: string;
+  transferredToAccount?: string;
+}
+
+export interface FichierHistotel {
+  id: number;
+  accountId: string;
+  histotelData: Record<string, unknown>;
+  recordDate: Date;
+  status: string;
+  operator?: string;
+  mergeRelated: boolean;
+}
+
+export interface TpeParTerminal {
+  id: number;
+  terminalId: string;
+  tpeType: string;
+  status: string;
+  installationDate: Date;
+  lastTransactionDate?: Date;
+  locationCode?: string;
+  commission?: number;
+}
+
+export interface VenteParMoyenPaiement {
+  id: number;
+  accountId: string;
+  paymentMethod: string;
+  saleAmount: number;
+  saleDate: Date;
+  transactionId?: string;
+  status: string;
+  terminalId?: string;
+  validated: boolean;
+}
+
+export interface ComptableCompte {
+  id: number;
+  accountNumber: string;
+  accountType: string;
+  balance: number;
+  currency: string;
+  status: string;
+  openingDate: Date;
+  closingDate?: Date;
+  relatedAccountId?: string;
+}
+
+export interface PlafondLit {
+  id: number;
+  roomId: string;
+  bedLimit: number;
+  effectiveDate: Date;
+  expirationDate?: Date;
+  status: string;
+  overrideReason?: string;
+  operator?: string;
+}
+
+export interface EzCard {
+  id: number;
+  cardNumber: string;
+  accountId: string;
+  issueDate: Date;
+  expirationDate?: Date;
+  status: string;
+  balance: number;
+  lastUsedDate?: Date;
+  transferredToCard?: string;
+}
+
+export interface GmComplet {
+  id: number;
+  accountId: string;
+  completeData: Record<string, unknown>;
+  lastSyncDate: Date;
+  status: string;
+  validationStatus: string;
+  operator?: string;
+}
+
+export interface PersonnelGo {
+  id: number;
+  goId: string;
+  firstName: string;
+  lastName: string;
+  position: string;
+  status: string;
+  hireDate: Date;
+  departureDate?: Date;
+  assignedAccountId?: string;
+}
+
+export interface QualiteAvantReprise {
+  id: number;
+  accountId: string;
+  qualityLevel: string;
+  assessmentDate: Date;
+  assessor: string;
+  notes?: string;
+  score?: number;
+  reprisePlanned: boolean;
+  repriseDate?: Date;
+}
+
+export interface FichierMessagerie {
+  id: number;
+  messageId: string;
+  accountId?: string;
+  messageType: string;
+  subject: string;
+  messageDate: Date;
+  sender: string;
+  recipient: string;
+  status: string;
+  content?: string;
+  attachments?: string[];
+}
+
+export interface ChangeVente {
+  id: number;
+  accountId: string;
+  saleId: string;
+  changeType: string;
+  changeDate: Date;
+  originalAmount: number;
+  newAmount: number;
+  operator: string;
+  status: string;
+  reason?: string;
+  validated: boolean;
+}
+
+export interface CodesAutocom {
+  id: number;
+  code: string;
+  category: string;
+  description: string;
+  value: string;
+  effectiveDate: Date;
+  expirationDate?: Date;
+  status: string;
+  displayOrder?: number;
+}
+
+export interface Change {
+  id: number;
+  accountId: string;
+  exchangeDate: Date;
+  fromCurrency: string;
+  toCurrency: string;
+  fromAmount: number;
+  toAmount: number;
+  exchangeRate: number;
+  commission: number;
+  operator: string;
+  status: string;
+  transactionId?: string;
+}
+
+export interface CcComptable {
+  id: number;
+  accountNumber: string;
+  accountId: string;
+  entryDate: Date;
+  entryType: string;
+  debitAmount: number;
+  creditAmount: number;
+  balance: number;
+  description?: string;
+  operator: string;
+  validated: boolean;
+  validationDate?: Date;
+  fiscalPeriod?: string;
+}
+
+export interface Vente {
+  id: number;
+  accountId: string;
+  saleDate: Date;
+  saleType: string;
+  totalAmount: number;
+  taxAmount: number;
+  netAmount: number;
+  paymentMethod: string;
+  status: string;
+  terminalId?: string;
+  operator: string;
+  invoiceNumber?: string;
+  cancelled: boolean;
+  cancellationDate?: Date;
+}
+
+export interface TransacEnteteBar {
+  id: number;
+  transactionId: string;
+  accountId: string;
+  transactionDate: Date;
+  barLocation: string;
+  totalAmount: number;
+  taxAmount: number;
+  status: string;
+  operator: string;
+  sessionId?: string;
+  validated: boolean;
+  validationDate?: Date;
+}
+
+export interface VenteOption {
+  id: number;
+  saleId: number;
+  optionType: string;
+  optionCode: string;
+  optionValue: string;
+  optionPrice: number;
+  quantity: number;
+  status: string;
+  addedDate: Date;
+  operator?: string;
+}
+
+export interface DepotObjets {
+  id: number;
+  accountId: string;
+  depositDate: Date;
+  objectDescription: string;
+  objectType: string;
+  quantity: number;
+  estimatedValue?: number;
+  storageLocation: string;
+  status: string;
+  retrievalDate?: Date;
+  operator: string;
+  notes?: string;
+}
+
+export interface HeureDePassage {
+  id: number;
+  accountId: string;
+  passageDate: Date;
+  passageTime: string;
+  location: string;
+  direction: "IN" | "OUT";
+  activityType?: string;
+  operator?: string;
+  validated: boolean;
+  notes?: string;
+}
+
+export interface Table947 {
+  id: number;
+  entityId: string;
+  entityType: string;
+  recordData: Record<string, unknown>;
+  recordDate: Date;
+  status: string;
+  operator?: string;
+  relatedAccountId?: string;
+}
+
+export const TABLE_NAMES = {
+  GM_RECHERCHE: "gm-recherche_____gmr",
+  DEPOT_GARANTIE: "depot_garantie___dga",
+  COMPTE_GM: "compte_gm________cgm",
+  RESEAU_CLOTURE: "reseau_cloture___rec",
+  FUSION_ECLATEMENT: "fusion_eclatementfec",
+  PRESTATIONS: "prestations______pre",
+  COMMENTAIRE_GM: "commentaire_gm_________acc",
+  PV_CUSTOMER_DATA: "##_pv_customer_dat",
+  MVT_PRESTATION: "mvt_prestation___mpr",
+  GRATUITES: "gratuites________gra",
+  FICHIER_HISTOTEL: "fichier_histotel",
+  TPE_PAR_TERMINAL: "tpe_par_terminal",
+  VENTE_PAR_MOYEN_PAIEMENT: "vente_par_moyen_paiement",
+  COMPTABLE_COMPTE: "comptable________cte",
+  PLAFOND_LIT: "plafond_lit",
+  EZ_CARD: "ez_card",
+  GM_COMPLET: "gm-complet_______gmc",
+  PERSONNEL_GO: "personnel_go______go",
+  QUALITE_AVANT_REPRISE: "qualite_avant_reprise",
+  FICHIER_MESSAGERIE: "fichier_messagerie",
+  CHANGE_VENTE: "change_vente_____chg",
+  CODES_AUTOCOM: "codes_autocom____aut",
+  CHANGE: "change___________chg",
+  CC_COMPTABLE: "cc_comptable",
+  VENTE: "vente____________vep",
+  TRANSAC_ENTETE_BAR: "transac_entete_bar",
+  VENTE_OPTION: "vente_option_veo",
+  DEPOT_OBJETS: "depot_objets_____doa",
+  HEURE_DE_PASSAGE: "heure_de_passage",
+  TABLE_947: "Table_947",
+} as const;
+
+export const ACCOUNT_MERGE_ACTIONS = {
+  SET_LOADING: "SET_LOADING",
+  SET_ERROR: "SET_ERROR",
+  SET_SOURCE_ACCOUNT: "SET_SOURCE_ACCOUNT",
+  SET_TARGET_ACCOUNT: "SET_TARGET_ACCOUNT",
+  SET_VALIDATION_STATE: "SET_VALIDATION_STATE",
+  SET_MERGE_PROGRESS: "SET_MERGE_PROGRESS",
+  SET_CURRENT_STEP: "SET_CURRENT_STEP",
+  ADD_MERGE_HISTORY: "ADD_MERGE_HISTORY",
+  FETCH_MERGE_HISTORIES: "FETCH_MERGE_HISTORIES",
+  CLEAR_STATE: "CLEAR_STATE",
+} as const;
+
+export type AccountMergeActionType = typeof ACCOUNT_MERGE_ACTIONS[keyof typeof ACCOUNT_MERGE_ACTIONS];

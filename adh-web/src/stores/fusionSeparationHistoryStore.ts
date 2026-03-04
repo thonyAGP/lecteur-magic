@@ -77,46 +77,12 @@ export const useFusionSeparationHistoryStore = create<FusionSeparationHistorySta
     }
   },
 
-  formatFullName: (nom: string, prenom: string) => { // SPEC-FIX: Corrected from backticks to + operator per CONCATENATION expression 12
+  formatFullName: (nom: string, prenom: string) => {
     return `${nom.trim()} ${prenom.trim()}`
   },
 
   setCurrentEntry: (entry: FusionSeparationHistoryEntry) => {
     set({ currentEntry: entry })
-  },
-
-  loadHistoryEntries: async (filters?: { societe?: string; compteReference?: number; typeEF?: string }) => {
-    set({ isLoading: true, error: null })
-    
-    try {
-      const isRealApi = useDataSourceStore.getState().isRealApi
-      let entries: FusionSeparationHistoryEntry[]
-      
-      if (isRealApi) {
-        const response = await apiClient.get("/api/fusion-separation-history/entries", { params: filters })
-        entries = response.data
-      } else {
-        await new Promise(resolve => setTimeout(resolve, 300))
-        entries = mockHistoryEntries.filter(entry => {
-          if (filters?.societe && !entry.societe.toLowerCase().includes(filters.societe.toLowerCase())) {
-            return false
-          }
-          if (filters?.compteReference && entry.compteReference !== filters.compteReference) {
-            return false
-          }
-          if (filters?.typeEF && entry.typeEF !== filters.typeEF) {
-            return false
-          }
-          return true
-        })
-      }
-      
-      set({ historyEntries: entries, isLoading: false })
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to load history entries"
-      set({ error: errorMessage, isLoading: false })
-      throw error
-    }
   },
 
   reset: () => {
