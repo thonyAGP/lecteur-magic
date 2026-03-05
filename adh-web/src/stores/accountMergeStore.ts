@@ -45,6 +45,7 @@ type AccountMergeStore = AccountMergeState & AccountMergeActions & {
   setGlobalFlag78: (value: boolean) => void;
   setAlwaysActiveFlag: (value: boolean) => void;
   setValidation: (value: string) => void;
+  checkBusinessRule004: () => boolean;
   checkBusinessRule005: () => boolean;
   checkBusinessRule006: () => boolean;
   checkBusinessRule007: () => string;
@@ -167,6 +168,11 @@ const handleMergeExecution = async (
 ) => {
   const currentState = get();
   
+  const isFusionCondition = currentState.w0ChronoHisto === "F"; // RM-004
+  if (isFusionCondition) {
+    console.log("Fusion condition detected, proceeding with standard fusion flow");
+  }
+  
   const isNonFusion = currentState.w0ChronoHisto !== "F"; // RM-005
   if (isNonFusion) {
     console.warn("Warning: chrono histo is not set to Fusion");
@@ -205,13 +211,13 @@ const handleMergeExecution = async (
     console.warn("Warning: always active flag condition not met");
   }
 
-  const sansInterfaceBlocked = currentState.p0SansInterface; // RM-012
-  if (sansInterfaceBlocked) {
+  const sansInterfaceBlocked = !currentState.p0SansInterface; // RM-012
+  if (!sansInterfaceBlocked) {
     console.warn("Warning: sans interface flag is active");
   }
 
-  const vg78Blocked = currentState.globalFlag78; // RM-013
-  if (vg78Blocked) {
+  const vg78Blocked = !currentState.globalFlag78; // RM-013
+  if (!vg78Blocked) {
     console.warn("Warning: global flag VG78 is active");
   }
 
@@ -293,6 +299,11 @@ const handleValidationSuccess = (
 
 export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
   ...initialState,
+
+  checkBusinessRule004: () => {
+    const state = get();
+    return state.w0ChronoHisto === "F"; // RM-004
+  },
 
   checkBusinessRule005: () => {
     const state = get();
@@ -392,16 +403,16 @@ export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
 
   checkBusinessRules: () => {
     const state = get();
-    return (
-      state.checkBusinessRule005() &&
-      state.checkBusinessRule006() &&
-      state.checkBusinessRule008() &&
-      state.checkBusinessRule009() &&
-      state.checkBusinessRule010() &&
-      state.checkBusinessRule011() &&
-      state.checkBusinessRule012() &&
-      state.checkBusinessRule013()
-    );
+    const rule005Result = state.w0ChronoHisto !== "F"; // RM-005
+    const rule006Result = !state.w0CodeLog; // RM-006
+    const rule008Result = !state.w0RepriseConfirmee; // RM-008
+    const rule009Result = !state.w0CompteRemplace; // RM-009
+    const rule010Result = state.chronoHisto === "6" || state.p0RepriseAuto; // RM-010
+    const rule011Result = state.w0RepriseConfirmee; // RM-011
+    const rule012Result = !state.p0SansInterface; // RM-012
+    const rule013Result = !state.globalFlag78; // RM-013
+    
+    return rule005Result && rule006Result && rule008Result && rule009Result && rule010Result && rule011Result && rule012Result && rule013Result;
   },
 
   validateNetworkStatus: () => {
@@ -411,21 +422,23 @@ export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
 
   validateClosureBlocking: () => {
     const state = get();
-    return state.validation !== "V"; // RM-002 and RM-003
+    const validationNotV = state.validation !== "V"; // RM-003
+    const validationIsV = state.validation === "V"; // RM-002
+    return validationNotV && !validationIsV;
   },
 
   validateAllBusinessRules: () => {
     const state = get();
-    return (
-      state.checkBusinessRule005() &&
-      state.checkBusinessRule006() &&
-      state.checkBusinessRule008() &&
-      state.checkBusinessRule009() &&
-      state.checkBusinessRule010() &&
-      state.checkBusinessRule011() &&
-      state.checkBusinessRule012() &&
-      state.checkBusinessRule013()
-    );
+    const rule005 = state.w0ChronoHisto !== "F"; // RM-005
+    const rule006 = !state.w0CodeLog; // RM-006
+    const rule008 = !state.w0RepriseConfirmee; // RM-008
+    const rule009 = !state.w0CompteRemplace; // RM-009
+    const rule010 = state.chronoHisto === "6" || state.p0RepriseAuto; // RM-010
+    const rule011 = state.w0RepriseConfirmee; // RM-011
+    const rule012 = !state.p0SansInterface; // RM-012
+    const rule013 = !state.globalFlag78; // RM-013
+    
+    return rule005 && rule006 && rule008 && rule009 && rule010 && rule011 && rule012 && rule013;
   },
 
   validateMergeConditions: async (sourceAccountId: string, targetAccountId: string) => {

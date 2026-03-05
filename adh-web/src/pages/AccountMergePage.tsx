@@ -217,6 +217,7 @@ export const AccountMergePage = () => {
     validateMergeConditions,
     executeMerge,
     printMergeTicket,
+    rollbackMerge,
     reset,
     checkBusinessRules,
     validateNetworkStatus,
@@ -256,48 +257,94 @@ export const AccountMergePage = () => {
 
   // RM-005: W0 chrono histo [BA] different de 'F'
   const executeRM005 = useCallback((account: unknown): boolean => {
-    return evaluateBusinessRule005(account);
-  }, [evaluateBusinessRule005]);
+    if (!account || typeof account !== 'object' || !('chronoHisto' in account)) {
+      return false;
+    }
+    const chronoHisto = (account as { chronoHisto: string }).chronoHisto;
+    return chronoHisto !== 'F';
+  }, []);
 
-  // RM-006: Negation de (W0 code LOG existe [BB]) (condition inversee)
+  // RM-006: Negation de (W0 code LOG existe [BB])
   const executeRM006 = useCallback((account: unknown): boolean => {
-    return evaluateBusinessRule006(account);
-  }, [evaluateBusinessRule006]);
+    if (!account || typeof account !== 'object' || !('codeLog' in account)) {
+      return true;
+    }
+    const codeLog = (account as { codeLog: string | null }).codeLog;
+    return !codeLog || codeLog.trim() === '';
+  }, []);
 
   // RM-007: Si W0 Filiation garantie ... [BF] alors IF (W0 reprise confirmee [BD] sinon 'RETRY','DONE'),'PASSED')
   const executeRM007 = useCallback((account: unknown): 'RETRY' | 'DONE' | 'PASSED' => {
-    return evaluateBusinessRule007(account);
-  }, [evaluateBusinessRule007]);
+    if (!account || typeof account !== 'object') {
+      return 'RETRY';
+    }
+    
+    const hasFilitionGarantie = 'filiationGarantie' in account && (account as { filiationGarantie: boolean }).filiationGarantie;
+    
+    if (!hasFilitionGarantie) {
+      return 'PASSED';
+    }
+    
+    const repriseConfirmee = 'repriseConfirmee' in account && (account as { repriseConfirmee: boolean }).repriseConfirmee;
+    return repriseConfirmee ? 'DONE' : 'RETRY';
+  }, []);
 
-  // RM-008: Negation de (W0 reprise confirmee [BD]) (condition inversee)
+  // RM-008: Negation de (W0 reprise confirmee [BD])
   const executeRM008 = useCallback((account: unknown): boolean => {
-    return evaluateBusinessRule008(account);
-  }, [evaluateBusinessRule008]);
+    if (!account || typeof account !== 'object' || !('repriseConfirmee' in account)) {
+      return true;
+    }
+    const repriseConfirmee = (account as { repriseConfirmee: boolean }).repriseConfirmee;
+    return !repriseConfirmee;
+  }, []);
 
-  // RM-009: Negation de (W0 Compte remplace à l... [BI]) (condition inversee)
+  // RM-009: Negation de (W0 Compte remplace à l... [BI])
   const executeRM009 = useCallback((account: unknown): boolean => {
-    return evaluateBusinessRule009(account);
-  }, [evaluateBusinessRule009]);
+    if (!account || typeof account !== 'object' || !('compteRemplace' in account)) {
+      return true;
+    }
+    const compteRemplace = (account as { compteRemplace: boolean }).compteRemplace;
+    return !compteRemplace;
+  }, []);
 
   // RM-010: Condition composite: [BK]=6 OR P0 Reprise Auto [I]
   const executeRM010 = useCallback((sourceAcc: unknown, targetAcc: unknown): boolean => {
-    return evaluateBusinessRule010(sourceAcc, targetAcc);
-  }, [evaluateBusinessRule010]);
+    let bkCondition = false;
+    let repriseAutoCondition = false;
+    
+    if (sourceAcc && typeof sourceAcc === 'object' && 'statusBK' in sourceAcc) {
+      bkCondition = (sourceAcc as { statusBK: number }).statusBK === 6;
+    }
+    
+    if (targetAcc && typeof targetAcc === 'object' && 'repriseAuto' in targetAcc) {
+      repriseAutoCondition = (targetAcc as { repriseAuto: boolean }).repriseAuto;
+    }
+    
+    return bkCondition || repriseAutoCondition;
+  }, []);
 
   // RM-011: Condition toujours vraie (flag actif)
   const executeRM011 = useCallback((): boolean => {
-    return evaluateBusinessRule011();
-  }, [evaluateBusinessRule011]);
+    return true;
+  }, []);
 
-  // RM-012: Negation de P0.Sans interface [J] (condition inversee)
+  // RM-012: Negation de P0.Sans interface [J]
   const executeRM012 = useCallback((account: unknown): boolean => {
-    return evaluateBusinessRule012(account);
-  }, [evaluateBusinessRule012]);
+    if (!account || typeof account !== 'object' || !('sansInterface' in account)) {
+      return true;
+    }
+    const sansInterface = (account as { sansInterface: boolean }).sansInterface;
+    return !sansInterface;
+  }, []);
 
-  // RM-013: Negation de VG78 (condition inversee)
+  // RM-013: Negation de VG78
   const executeRM013 = useCallback((state: unknown): boolean => {
-    return evaluateBusinessRule013(state);
-  }, [evaluateBusinessRule013]);
+    if (!state || typeof state !== 'object' || !('vg78' in state)) {
+      return true;
+    }
+    const vg78 = (state as { vg78: boolean }).vg78;
+    return !vg78;
+  }, []);
 
   const evaluateAllBusinessRules = useCallback((): BusinessRulesResult | null => {
     if (!sourceAccount || !targetAccount) {
@@ -305,15 +352,15 @@ export const AccountMergePage = () => {
     }
 
     try {
-      const rm005 = executeRM005(sourceAccount);
-      const rm006 = executeRM006(sourceAccount);
-      const rm007 = executeRM007(sourceAccount);
-      const rm008 = executeRM008(sourceAccount);
-      const rm009 = executeRM009(sourceAccount);
-      const rm010 = executeRM010(sourceAccount, targetAccount);
-      const rm011 = executeRM011();
-      const rm012 = executeRM012(targetAccount);
-      const rm013 = executeRM013(validationState);
+      const rm005 = evaluateBusinessRule005 ? evaluateBusinessRule005(sourceAccount) : executeRM005(sourceAccount);
+      const rm006 = evaluateBusinessRule006 ? evaluateBusinessRule006(sourceAccount) : executeRM006(sourceAccount);
+      const rm007 = evaluateBusinessRule007 ? evaluateBusinessRule007(sourceAccount) : executeRM007(sourceAccount);
+      const rm008 = evaluateBusinessRule008 ? evaluateBusinessRule008(sourceAccount) : executeRM008(sourceAccount);
+      const rm009 = evaluateBusinessRule009 ? evaluateBusinessRule009(sourceAccount) : executeRM009(sourceAccount);
+      const rm010 = evaluateBusinessRule010 ? evaluateBusinessRule010(sourceAccount, targetAccount) : executeRM010(sourceAccount, targetAccount);
+      const rm011 = evaluateBusinessRule011 ? evaluateBusinessRule011() : executeRM011();
+      const rm012 = evaluateBusinessRule012 ? evaluateBusinessRule012(targetAccount) : executeRM012(targetAccount);
+      const rm013 = evaluateBusinessRule013 ? evaluateBusinessRule013(validationState) : executeRM013(validationState);
 
       return {
         rm005: { passed: rm005, description: "Chrono histo different de 'F'" },
@@ -334,6 +381,15 @@ export const AccountMergePage = () => {
     sourceAccount,
     targetAccount,
     validationState,
+    evaluateBusinessRule005,
+    evaluateBusinessRule006,
+    evaluateBusinessRule007,
+    evaluateBusinessRule008,
+    evaluateBusinessRule009,
+    evaluateBusinessRule010,
+    evaluateBusinessRule011,
+    evaluateBusinessRule012,
+    evaluateBusinessRule013,
     executeRM005,
     executeRM006,
     executeRM007,
@@ -519,6 +575,22 @@ export const AccountMergePage = () => {
     handleRuleValidationError
   ]);
 
+  const handleRollbackMerge = useCallback(async () => {
+    if (!mergeHistories.length) {
+      return;
+    }
+    
+    const latestMerge = mergeHistories[mergeHistories.length - 1];
+    
+    try {
+      if (rollbackMerge) {
+        await rollbackMerge(latestMerge.id);
+      }
+    } catch (err) {
+      console.error("Rollback failed:", err);
+    }
+  }, [mergeHistories, rollbackMerge]);
+
   const handlePrintTicket = useCallback(async () => {
     if (mergeHistories.length === 0) {
       return;
@@ -699,89 +771,4 @@ export const AccountMergePage = () => {
                 label={`RM-006: ${businessRulesResult.rm006.description}`}
               />
               <ValidationStatusIndicator
-                isValid={businessRulesResult.rm007.passed}
-                label={`RM-007: ${businessRulesResult.rm007.description}`}
-              />
-              <ValidationStatusIndicator
-                isValid={businessRulesResult.rm008.passed}
-                label={`RM-008: ${businessRulesResult.rm008.description}`}
-              />
-              <ValidationStatusIndicator
-                isValid={businessRulesResult.rm009.passed}
-                label={`RM-009: ${businessRulesResult.rm009.description}`}
-              />
-              <ValidationStatusIndicator
-                isValid={businessRulesResult.rm010.passed}
-                label={`RM-010: ${businessRulesResult.rm010.description}`}
-              />
-              <ValidationStatusIndicator
-                isValid={businessRulesResult.rm011.passed}
-                label={`RM-011: ${businessRulesResult.rm011.description}`}
-              />
-              <ValidationStatusIndicator
-                isValid={businessRulesResult.rm012.passed}
-                label={`RM-012: ${businessRulesResult.rm012.description}`}
-              />
-              <ValidationStatusIndicator
-                isValid={businessRulesResult.rm013.passed}
-                label={`RM-013: ${businessRulesResult.rm013.description}`}
-              />
-            </div>
-            
-            <div className="mt-4">
-              <ValidationStatusIndicator
-                isValid={checkAllRulesPassed(businessRulesResult)}
-                label="All Business Rules Status"
-              />
-            </div>
-          </div>
-        )}
-
-        {isValidated && !isMergeCompleted && (
-          <div className="rounded-lg border bg-card p-6 space-y-4">
-            <h2 className="text-xl font-semibold">Merge Execution</h2>
-            {isMergeInProgress && (
-              <div className="space-y-4">
-                <ProgressBar progress={mergeProgress} />
-                <TaskProgressIndicator currentTask={currentTask} totalTasks={totalTasks} />
-                <div className="text-sm text-muted-foreground">
-                  Current Step: {currentStep} | Task: {currentTask}/{totalTasks}
-                </div>
-              </div>
-            )}
-            <div className="flex gap-2">
-              <Button
-                onClick={handleExecuteMerge}
-                disabled={
-                  isMergeInProgress || 
-                  isLoading || 
-                  isRetrying ||
-                  currentStep !== "validated" || 
-                  !businessRulesResult ||
-                  !checkAllRulesPassed(businessRulesResult) ||
-                  hasClosureBlocking
-                }
-                className="flex-1"
-              >
-                {isMergeInProgress ? "Executing..." : "Execute Merge"}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleClose}
-                disabled={isMergeInProgress || isRetrying}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {isMergeCompleted && (
-          <div className="rounded-lg border bg-card p-6 space-y-4">
-            <h2 className="text-xl font-semibold">Merge Completed</h2>
-            <div className="rounded-lg bg-success/10 p-4 border border-success/20">
-              <div className="font-medium text-success">Merge completed successfully!</div>
-              <div className="text-sm text-muted-foreground mt-2">
-                Account {sourceAccount?.accountNumber} has been merged into {targetAccount?.accountNumber}
-              </div>
-              <div className="
+                isValid={businessR

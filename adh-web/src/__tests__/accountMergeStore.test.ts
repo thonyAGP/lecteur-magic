@@ -273,7 +273,7 @@ describe("accountMergeStore", () => {
       } as ReturnType<typeof useDataSourceStore.getState>);
     });
 
-    it("should execute merge with mock data and create history with PASSED status (RM-008)", async () => {
+    it("should execute merge with mock data and create history with completed status (RM-008)", async () => {
       useAccountMergeStore.setState({
         chronoHisto: "6",
         w0ChronoHisto: null,

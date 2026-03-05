@@ -29,6 +29,12 @@ vi.mock("@/stores/historyCleanupStore", () => {
   return { useHistoryCleanupStore: mockHook }
 })
 
+vi.mock("@/stores/dataSourceStore", () => ({
+  useDataSourceStore: () => ({
+    getState: () => ({ isRealApi: false })
+  })
+}))
+
 import { HistoryCleanupPage } from "@/pages/HistoryCleanupPage"
 
 describe("HistoryCleanupPage", () => {
@@ -38,13 +44,22 @@ describe("HistoryCleanupPage", () => {
     mockStore.error = null
     mockStore.deletionCriteria = null
     mockStore.deletionResult = null
+    
+    // Reset URL to avoid session context interference
+    Object.defineProperty(window, 'location', {
+      value: {
+        search: '',
+        href: 'http://localhost'
+      },
+      writable: true
+    })
   })
 
   it("renders without crashing", () => {
     render(<HistoryCleanupPage />)
     
     expect(screen.getByText("History Cleanup Service")).toBeInTheDocument()
-    expect(screen.getByText("Deletion Criteria")).toBeInTheDocument()
+    expect(screen.getByText(/Deletion Criteria/)).toBeInTheDocument()
     expect(screen.getByPlaceholderText("Enter chrono EF")).toBeInTheDocument()
     expect(screen.getByPlaceholderText("Enter societe code")).toBeInTheDocument()
     expect(screen.getByPlaceholderText("Enter compte reference")).toBeInTheDocument()
