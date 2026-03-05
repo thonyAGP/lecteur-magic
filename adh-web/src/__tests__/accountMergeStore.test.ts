@@ -185,9 +185,15 @@ describe("accountMergeStore", () => {
 
     it("should execute merge successfully with progress updates", async () => {
       useAccountMergeStore.setState({
-        repriseConfirmee: true,
-        chronoHisto: 6,
-        reprise: false,
+        chronoHisto: "6",
+        w0ChronoHisto: "A",
+        w0CodeLog: null,
+        w0RepriseConfirmee: false,
+        w0CompteRemplace: false,
+        p0RepriseAuto: true,
+        p0SansInterface: false,
+        globalFlag78: false,
+        alwaysActiveFlag: true,
       });
 
       const mockResponse: ApiResponse<MergeHistory> = {
@@ -237,9 +243,15 @@ describe("accountMergeStore", () => {
 
     it("should handle API failure during merge", async () => {
       useAccountMergeStore.setState({
-        repriseConfirmee: true,
-        chronoHisto: 6,
-        reprise: false,
+        chronoHisto: "6",
+        w0ChronoHisto: "A",
+        w0CodeLog: null,
+        w0RepriseConfirmee: false,
+        w0CompteRemplace: false,
+        p0RepriseAuto: true,
+        p0SansInterface: false,
+        globalFlag78: false,
+        alwaysActiveFlag: true,
       });
 
       const mockResponse: ApiResponse<MergeHistory> = {
@@ -271,9 +283,16 @@ describe("accountMergeStore", () => {
 
     it("should execute merge with mock data and create history with PASSED status (RM-008)", async () => {
       useAccountMergeStore.setState({
-        repriseConfirmee: true,
-        chronoHisto: 6,
-        reprise: false,
+        chronoHisto: "6",
+        w0ChronoHisto: "A",
+        w0CodeLog: null,
+        w0RepriseConfirmee: false,
+        w0CompteRemplace: false,
+        p0RepriseAuto: true,
+        p0SansInterface: false,
+        globalFlag78: false,
+        alwaysActiveFlag: true,
+        w0FiliationGarantie: false,
       });
 
       const store = useAccountMergeStore.getState();

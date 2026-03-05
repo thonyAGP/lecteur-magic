@@ -46,10 +46,22 @@ export const AccountMergePage = () => {
     executeMerge,
     printMergeTicket,
     reset,
+    checkBusinessRules,
   } = useAccountMergeStore();
 
   const [sourceAccountInput, setSourceAccountInput] = useState("");
   const [targetAccountInput, setTargetAccountInput] = useState("");
+  const [businessRulesResult, setBusinessRulesResult] = useState<{
+    rm005: boolean;
+    rm006: boolean;
+    rm007: string;
+    rm008: boolean;
+    rm009: boolean;
+    rm010: boolean;
+    rm011: boolean;
+    rm012: boolean;
+    rm013: boolean;
+  } | null>(null);
 
   const { isValidated, isMergeInProgress, isMergeCompleted } = getValidationStepStatuses(currentStep);
 
@@ -59,27 +71,101 @@ export const AccountMergePage = () => {
     };
   }, [reset]);
 
+  const evaluateBusinessRules = useCallback(() => {
+    if (!sourceAccount || !targetAccount) {
+      return null;
+    }
+
+    // RM-005: Condition: W0 chrono histo [BA] different de 'F'
+    const rm005 = sourceAccount.chronoHisto !== 'F';
+
+    // RM-006: Negation de (W0 code LOG existe [BB]) (condition inversee)
+    const rm006 = !sourceAccount.logCodeExists;
+
+    // RM-007: Si W0 Filiation garantie ... [BF] alors IF (W0 reprise confirmee [BD] sinon 'RETRY','DONE'),'PASSED')
+    const rm007 = sourceAccount.filiationGarantie 
+      ? (sourceAccount.repriseConfirmee ? 'PASSED' : 'DONE')
+      : 'RETRY';
+
+    // RM-008: Negation de (W0 reprise confirmee [BD]) (condition inversee)
+    const rm008 = !sourceAccount.repriseConfirmee;
+
+    // RM-009: Negation de (W0 Compte remplace à l... [BI]) (condition inversee)
+    const rm009 = !sourceAccount.compteRemplace;
+
+    // RM-010: Condition composite: [BK]=6 OR P0 Reprise Auto [I]
+    const rm010 = sourceAccount.statusBK === 6 || targetAccount.repriseAuto;
+
+    // RM-011: Condition toujours vraie (flag actif)
+    const rm011 = true;
+
+    // RM-012: Negation de P0.Sans interface [J] (condition inversee)
+    const rm012 = !targetAccount.sansInterface;
+
+    // RM-013: Negation de VG78 (condition inversee)
+    const rm013 = !validationState?.vg78Flag;
+
+    return {
+      rm005,
+      rm006,
+      rm007,
+      rm008,
+      rm009,
+      rm010,
+      rm011,
+      rm012,
+      rm013
+    };
+  }, [sourceAccount, targetAccount, validationState]);
+
   const handleValidateAccounts = useCallback(async () => {
     if (!sourceAccountInput || !targetAccountInput) {
       return;
     }
     try {
       await validateMergeConditions(sourceAccountInput, targetAccountInput);
+      const rulesResult = evaluateBusinessRules();
+      setBusinessRulesResult(rulesResult);
+      
+      if (checkBusinessRules) {
+        await checkBusinessRules(sourceAccountInput, targetAccountInput);
+      }
     } catch (err) {
       console.error("Validation failed:", err);
     }
-  }, [sourceAccountInput, targetAccountInput, validateMergeConditions]);
+  }, [sourceAccountInput, targetAccountInput, validateMergeConditions, evaluateBusinessRules, checkBusinessRules]);
 
   const handleExecuteMerge = useCallback(async () => {
     if (!sourceAccount || !targetAccount) {
       return;
     }
+
+    const rulesResult = evaluateBusinessRules();
+    if (!rulesResult) {
+      return;
+    }
+
+    const allRulesPassed = rulesResult.rm005 && 
+                          rulesResult.rm006 && 
+                          rulesResult.rm007 === 'PASSED' && 
+                          rulesResult.rm008 && 
+                          rulesResult.rm009 && 
+                          rulesResult.rm010 && 
+                          rulesResult.rm011 && 
+                          rulesResult.rm012 && 
+                          rulesResult.rm013;
+
+    if (!allRulesPassed) {
+      console.error("Business rules validation failed");
+      return;
+    }
+
     try {
       await executeMerge(sourceAccount.accountNumber, targetAccount.accountNumber);
     } catch (err) {
       console.error("Merge execution failed:", err);
     }
-  }, [sourceAccount, targetAccount, executeMerge]);
+  }, [sourceAccount, targetAccount, executeMerge, evaluateBusinessRules]);
 
   const handlePrintTicket = useCallback(async () => {
     if (mergeHistories.length === 0) {
@@ -97,7 +183,15 @@ export const AccountMergePage = () => {
     reset();
     setSourceAccountInput("");
     setTargetAccountInput("");
+    setBusinessRulesResult(null);
   }, [reset]);
+
+  useEffect(() => {
+    if (sourceAccount && targetAccount) {
+      const rulesResult = evaluateBusinessRules();
+      setBusinessRulesResult(rulesResult);
+    }
+  }, [sourceAccount, targetAccount, evaluateBusinessRules]);
 
   return (
     <ScreenLayout className="p-6">
@@ -181,6 +275,50 @@ export const AccountMergePage = () => {
               <ValidationStatusIndicator
                 isValid={validationState?.validationStatus === "PASSED"}
                 label={`Validation Status: ${validationState?.validationStatus}`}
+              />
+            </div>
+          </div>
+        )}
+
+        {businessRulesResult && isValidated && !isMergeCompleted && (
+          <div className="rounded-lg border bg-card p-6 space-y-4">
+            <h2 className="text-xl font-semibold">Business Rules Validation</h2>
+            <div className="space-y-2">
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm005}
+                label="RM-005: Chrono histo different de 'F'"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm006}
+                label="RM-006: Code LOG n'existe pas"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm007 === 'PASSED'}
+                label={`RM-007: Filiation garantie status: ${businessRulesResult.rm007}`}
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm008}
+                label="RM-008: Reprise non confirmee"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm009}
+                label="RM-009: Compte non remplace"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm010}
+                label="RM-010: Status BK=6 ou Reprise Auto"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm011}
+                label="RM-011: Flag actif"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm012}
+                label="RM-012: Interface disponible"
+              />
+              <ValidationStatusIndicator
+                isValid={businessRulesResult.rm013}
+                label="RM-013: VG78 non active"
               />
             </div>
           </div>

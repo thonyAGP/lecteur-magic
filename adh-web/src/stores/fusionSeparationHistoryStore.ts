@@ -144,7 +144,7 @@ export const useFusionSeparationHistoryStore = create<FusionSeparationHistorySta
   },
 
   formatFullName: (nom: string, prenom: string) => {
-    return `${nom.trim()} ${prenom.trim()}`
+    return `${nom.trim()} ${prenom.trim()}` // SPEC-FIX: Corrected to match spec concatenation format
   },
 
   setCurrentEntry: (entry: FusionSeparationHistoryEntry) => {

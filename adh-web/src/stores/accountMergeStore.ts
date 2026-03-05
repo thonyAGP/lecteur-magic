@@ -16,13 +16,43 @@ import { apiClient } from "@/services/api/apiClient";
 type AccountMergeStore = AccountMergeState & AccountMergeActions & {
   reset: () => void;
   reseau: string | null;
-  chronoHisto: number | null;
+  chronoHisto: string | null;
   reprise: boolean;
   repriseConfirmee: boolean;
+  w0Reprise: boolean;
+  w0RepriseConfirmee: boolean;
+  w0ChronoHisto: string | null;
+  w0CodeLog: string | null;
+  w0FiliationGarantie: boolean;
+  w0CompteRemplace: boolean;
+  p0RepriseAuto: boolean;
+  p0SansInterface: boolean;
+  globalFlag78: boolean;
+  alwaysActiveFlag: boolean;
   setReseau: (value: string | null) => void;
-  setChronoHisto: (value: number | null) => void;
+  setChronoHisto: (value: string | null) => void;
   setReprise: (value: boolean) => void;
   setRepriseConfirmee: (value: boolean) => void;
+  setW0Reprise: (value: boolean) => void;
+  setW0RepriseConfirmee: (value: boolean) => void;
+  setW0ChronoHisto: (value: string | null) => void;
+  setW0CodeLog: (value: string | null) => void;
+  setW0FiliationGarantie: (value: boolean) => void;
+  setW0CompteRemplace: (value: boolean) => void;
+  setP0RepriseAuto: (value: boolean) => void;
+  setP0SansInterface: (value: boolean) => void;
+  setGlobalFlag78: (value: boolean) => void;
+  setAlwaysActiveFlag: (value: boolean) => void;
+  checkBusinessRule005: () => boolean;
+  checkBusinessRule006: () => boolean;
+  checkBusinessRule007: () => string;
+  checkBusinessRule008: () => boolean;
+  checkBusinessRule009: () => boolean;
+  checkBusinessRule010: () => boolean;
+  checkBusinessRule011: () => boolean;
+  checkBusinessRule012: () => boolean;
+  checkBusinessRule013: () => boolean;
+  validateAllBusinessRules: () => boolean;
 };
 
 const mockMergeHistories: MergeHistory[] = [
@@ -88,7 +118,7 @@ const mockValidation: MergeValidation = {
   validationStatus: "PASSED",
 };
 
-const initialState: AccountMergeState & Pick<AccountMergeStore, "reseau" | "chronoHisto" | "reprise" | "repriseConfirmee"> = {
+const initialState: AccountMergeState & Pick<AccountMergeStore, "reseau" | "chronoHisto" | "reprise" | "repriseConfirmee" | "w0Reprise" | "w0RepriseConfirmee" | "w0ChronoHisto" | "w0CodeLog" | "w0FiliationGarantie" | "w0CompteRemplace" | "p0RepriseAuto" | "p0SansInterface" | "globalFlag78" | "alwaysActiveFlag"> = {
   mergeHistories: [],
   sourceAccount: null,
   targetAccount: null,
@@ -101,6 +131,16 @@ const initialState: AccountMergeState & Pick<AccountMergeStore, "reseau" | "chro
   chronoHisto: null,
   reprise: false,
   repriseConfirmee: false,
+  w0Reprise: false,
+  w0RepriseConfirmee: false,
+  w0ChronoHisto: null,
+  w0CodeLog: null,
+  w0FiliationGarantie: false,
+  w0CompteRemplace: false,
+  p0RepriseAuto: false,
+  p0SansInterface: false,
+  globalFlag78: false,
+  alwaysActiveFlag: true,
 };
 
 const handleMergeExecution = async (
@@ -110,85 +150,64 @@ const handleMergeExecution = async (
   set: (partial: Partial<AccountMergeStore>) => void,
   get: () => AccountMergeStore
 ) => {
-  const chronoValue = state.chronoHisto ?? 6;
-  const repriseAuto = state.reprise;
-  const sansInterface = false;
-  const globalFlag78 = false;
-  const logCodeExists = false;
-  const repriseConfirmed = state.repriseConfirmee;
-  const compteRemplace = false;
-  const filiationGarantie = true;
-
   if (state.currentStep === "F") { 
     throw new Error("Merge already finalized"); // RM-004
   }
 
-  if (state.currentStep !== "F") { // RM-005
-    if (!logCodeExists) { // RM-006
-      if (chronoValue === 6 || repriseAuto) { // RM-010
-        if (!sansInterface) { // RM-012
-          if (!globalFlag78) { // RM-013
-            if (repriseConfirmed) { // RM-011
-              if (!compteRemplace) { // RM-009
-                if (filiationGarantie) { // RM-007
-                  const mergeStatus = repriseConfirmed ? "PASSED" : "RETRY"; // RM-008
+  if (!state.validateAllBusinessRules()) {
+    throw new Error("Business rules validation failed");
+  }
 
-                  set({ mergeProgress: 25, currentStep: "transferring" });
-                  await new Promise((resolve) => setTimeout(resolve, 500));
+  set({ mergeProgress: 25, currentStep: "transferring" });
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
-                  set({ mergeProgress: 50, currentStep: "updating" });
-                  await new Promise((resolve) => setTimeout(resolve, 500));
+  set({ mergeProgress: 50, currentStep: "updating" });
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
-                  set({ mergeProgress: 75, currentStep: "recording" });
-                  await new Promise((resolve) => setTimeout(resolve, 500));
+  set({ mergeProgress: 75, currentStep: "recording" });
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
-                  const isRealApi = useDataSourceStore.getState().isRealApi;
+  const isRealApi = useDataSourceStore.getState().isRealApi;
 
-                  if (isRealApi) {
-                    const response = await apiClient.post<ExecuteMergeResponse>(
-                      "/api/accountMerge/execute",
-                      {
-                        sourceAccountId,
-                        targetAccountId,
-                      }
-                    );
-
-                    if (!response.success) {
-                      throw new Error(response.error || "Merge execution failed");
-                    }
-
-                    set({
-                      mergeProgress: 100,
-                      currentStep: "completed",
-                      isLoading: false,
-                      mergeHistories: [...state.mergeHistories, response.data],
-                    });
-                  } else {
-                    await new Promise((resolve) => setTimeout(resolve, 800));
-
-                    const newHistory: MergeHistory = {
-                      id: Date.now(),
-                      sourceAccount: sourceAccountId,
-                      targetAccount: targetAccountId,
-                      mergeDate: new Date(),
-                      operator: "Current User",
-                      status: mergeStatus,
-                    };
-
-                    set({
-                      mergeProgress: 100,
-                      currentStep: "completed",
-                      isLoading: false,
-                      mergeHistories: [...state.mergeHistories, newHistory],
-                    });
-                  }
-                }
-              }
-            }
-          }
-        }
+  if (isRealApi) {
+    const response = await apiClient.post<ExecuteMergeResponse>(
+      "/api/accountMerge/execute",
+      {
+        sourceAccountId,
+        targetAccountId,
       }
+    );
+
+    if (!response.success) {
+      throw new Error(response.error || "Merge execution failed");
     }
+
+    set({
+      mergeProgress: 100,
+      currentStep: "completed",
+      isLoading: false,
+      mergeHistories: [...state.mergeHistories, response.data],
+    });
+  } else {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const mergeStatus = state.checkBusinessRule007();
+
+    const newHistory: MergeHistory = {
+      id: Date.now(),
+      sourceAccount: sourceAccountId,
+      targetAccount: targetAccountId,
+      mergeDate: new Date(),
+      operator: "Current User",
+      status: mergeStatus,
+    };
+
+    set({
+      mergeProgress: 100,
+      currentStep: "completed",
+      isLoading: false,
+      mergeHistories: [...state.mergeHistories, newHistory],
+    });
   }
 };
 
@@ -201,7 +220,7 @@ const handleValidationSuccess = (
   set({
     validationState: validation,
     reseau: validation.networkStatus,
-    chronoHisto: 6,
+    chronoHisto: "6",
     reprise: false,
     repriseConfirmee: false,
     sourceAccount: { ...mockSourceAccount, accountNumber: sourceAccountId },
@@ -213,6 +232,77 @@ const handleValidationSuccess = (
 
 export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
   ...initialState,
+
+  checkBusinessRule005: () => {
+    // RM-005: Condition: W0 chrono histo [BA] different de 'F'
+    const state = get();
+    return state.w0ChronoHisto !== "F";
+  },
+
+  checkBusinessRule006: () => {
+    // RM-006: Negation de (W0 code LOG existe [BB]) (condition inversee)
+    const state = get();
+    return !state.w0CodeLog;
+  },
+
+  checkBusinessRule007: () => {
+    // RM-007: Si W0 Filiation garantie ... [BF] alors IF (W0 reprise confirmee [BD] sinon 'RETRY','DONE'),'PASSED')
+    const state = get();
+    if (state.w0FiliationGarantie) {
+      return state.w0RepriseConfirmee ? "DONE" : "RETRY";
+    }
+    return "PASSED";
+  },
+
+  checkBusinessRule008: () => {
+    // RM-008: Negation de (W0 reprise confirmee [BD]) (condition inversee)
+    const state = get();
+    return !state.w0RepriseConfirmee;
+  },
+
+  checkBusinessRule009: () => {
+    // RM-009: Negation de (W0 Compte remplace à l... [BI]) (condition inversee)
+    const state = get();
+    return !state.w0CompteRemplace;
+  },
+
+  checkBusinessRule010: () => {
+    // RM-010: Condition composite: [BK]=6 OR P0 Reprise Auto [I]
+    const state = get();
+    return state.chronoHisto === "6" || state.p0RepriseAuto;
+  },
+
+  checkBusinessRule011: () => {
+    // RM-011: Condition toujours vraie (flag actif)
+    const state = get();
+    return state.alwaysActiveFlag;
+  },
+
+  checkBusinessRule012: () => {
+    // RM-012: Negation de P0.Sans interface [J] (condition inversee)
+    const state = get();
+    return !state.p0SansInterface;
+  },
+
+  checkBusinessRule013: () => {
+    // RM-013: Negation de VG78 (condition inversee)
+    const state = get();
+    return !state.globalFlag78;
+  },
+
+  validateAllBusinessRules: () => {
+    const state = get();
+    return (
+      state.checkBusinessRule005() &&
+      state.checkBusinessRule006() &&
+      state.checkBusinessRule008() &&
+      state.checkBusinessRule009() &&
+      state.checkBusinessRule010() &&
+      state.checkBusinessRule011() &&
+      state.checkBusinessRule012() &&
+      state.checkBusinessRule013()
+    );
+  },
 
   validateMergeConditions: async (sourceAccountId: string, targetAccountId: string) => {
     set({ isLoading: true, error: null });
@@ -425,7 +515,7 @@ export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
     set({ reseau: value });
   },
 
-  setChronoHisto: (value: number | null) => {
+  setChronoHisto: (value: string | null) => {
     set({ chronoHisto: value });
   },
 
@@ -435,6 +525,46 @@ export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
 
   setRepriseConfirmee: (value: boolean) => {
     set({ repriseConfirmee: value });
+  },
+
+  setW0Reprise: (value: boolean) => {
+    set({ w0Reprise: value });
+  },
+
+  setW0RepriseConfirmee: (value: boolean) => {
+    set({ w0RepriseConfirmee: value });
+  },
+
+  setW0ChronoHisto: (value: string | null) => {
+    set({ w0ChronoHisto: value });
+  },
+
+  setW0CodeLog: (value: string | null) => {
+    set({ w0CodeLog: value });
+  },
+
+  setW0FiliationGarantie: (value: boolean) => {
+    set({ w0FiliationGarantie: value });
+  },
+
+  setW0CompteRemplace: (value: boolean) => {
+    set({ w0CompteRemplace: value });
+  },
+
+  setP0RepriseAuto: (value: boolean) => {
+    set({ p0RepriseAuto: value });
+  },
+
+  setP0SansInterface: (value: boolean) => {
+    set({ p0SansInterface: value });
+  },
+
+  setGlobalFlag78: (value: boolean) => {
+    set({ globalFlag78: value });
+  },
+
+  setAlwaysActiveFlag: (value: boolean) => {
+    set({ alwaysActiveFlag: value });
   },
 
   reset: () => {

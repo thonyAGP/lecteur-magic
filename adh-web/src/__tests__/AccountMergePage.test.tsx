@@ -17,17 +17,34 @@ const { mockStore, mockSetState } = vi.hoisted(() => {
       balance: number;
       status: string;
       createdDate: Date;
+      chronoHisto?: string;
+      logCodeExists?: boolean;
+      filiationGarantie?: boolean;
+      repriseConfirmee?: boolean;
+      compteRemplace?: boolean;
+      statusBK?: number;
+      repriseAuto?: boolean;
+      sansInterface?: boolean;
     } | null,
     targetAccount: null as {
       accountNumber: string;
       balance: number;
       status: string;
       createdDate: Date;
+      chronoHisto?: string;
+      logCodeExists?: boolean;
+      filiationGarantie?: boolean;
+      repriseConfirmee?: boolean;
+      compteRemplace?: boolean;
+      statusBK?: number;
+      repriseAuto?: boolean;
+      sansInterface?: boolean;
     } | null,
     validationState: null as {
       isClosureInProgress: boolean;
       networkStatus: string;
       validationStatus: string;
+      vg78Flag?: boolean;
     } | null,
     isLoading: false,
     error: null as string | null,
@@ -39,6 +56,7 @@ const { mockStore, mockSetState } = vi.hoisted(() => {
     rollbackMerge: vi.fn(),
     printMergeTicket: vi.fn(),
     reset: vi.fn(),
+    checkBusinessRules: vi.fn(),
     setState: vi.fn()
   };
   return {
@@ -269,13 +287,35 @@ describe("AccountMergePage", () => {
       accountNumber: "ACC001",
       balance: 1000,
       status: "active",
-      createdDate: new Date()
+      createdDate: new Date(),
+      chronoHisto: "A",
+      logCodeExists: false,
+      filiationGarantie: true,
+      repriseConfirmee: true,
+      compteRemplace: false,
+      statusBK: 6,
+      repriseAuto: false,
+      sansInterface: false
     };
     mockStore.targetAccount = {
       accountNumber: "ACC002",
       balance: 2000,
       status: "active",
-      createdDate: new Date()
+      createdDate: new Date(),
+      chronoHisto: "B",
+      logCodeExists: false,
+      filiationGarantie: false,
+      repriseConfirmee: false,
+      compteRemplace: false,
+      statusBK: 1,
+      repriseAuto: true,
+      sansInterface: false
+    };
+    mockStore.validationState = {
+      isClosureInProgress: false,
+      networkStatus: "A",
+      validationStatus: "PASSED",
+      vg78Flag: false
     };
     mockStore.executeMerge.mockResolvedValue(undefined);
     
