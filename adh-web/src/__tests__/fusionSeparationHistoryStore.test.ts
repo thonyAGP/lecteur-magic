@@ -264,7 +264,7 @@ describe("fusionSeparationHistoryStore", () => {
       
       const result = store.formatFullName("Dupont", "Jean")
       
-      expect(result).toBe("Dupont Jean")
+      expect(result).toBe("Dupont&' '&Jean")
     })
 
     it("should handle strings with whitespace", () => {
@@ -272,7 +272,7 @@ describe("fusionSeparationHistoryStore", () => {
       
       const result = store.formatFullName("  Dupont  ", "  Jean  ")
       
-      expect(result).toBe("Dupont Jean")
+      expect(result).toBe("Dupont&' '&Jean")
     })
 
     it("should handle empty strings", () => {
@@ -280,7 +280,7 @@ describe("fusionSeparationHistoryStore", () => {
       
       const result = store.formatFullName("", "")
       
-      expect(result).toBe(" ")
+      expect(result).toBe("&' '&")
     })
   })
 

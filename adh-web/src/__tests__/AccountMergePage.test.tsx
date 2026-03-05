@@ -50,6 +50,7 @@ const { mockStore, mockSetState } = vi.hoisted(() => {
     error: null as string | null,
     mergeProgress: 0,
     currentStep: "idle",
+    currentTask: 0,
     validateMergeConditions: vi.fn(),
     executeMerge: vi.fn(),
     createMergeHistory: vi.fn(),
@@ -57,6 +58,18 @@ const { mockStore, mockSetState } = vi.hoisted(() => {
     printMergeTicket: vi.fn(),
     reset: vi.fn(),
     checkBusinessRules: vi.fn(),
+    validateNetworkStatus: vi.fn(),
+    validateClosureBlocking: vi.fn(),
+    evaluateBusinessRule005: vi.fn(() => true),
+    evaluateBusinessRule006: vi.fn(() => true),
+    evaluateBusinessRule007: vi.fn(() => 'PASSED'),
+    evaluateBusinessRule008: vi.fn(() => true),
+    evaluateBusinessRule009: vi.fn(() => true),
+    evaluateBusinessRule010: vi.fn(() => true),
+    evaluateBusinessRule011: vi.fn(() => true),
+    evaluateBusinessRule012: vi.fn(() => true),
+    evaluateBusinessRule013: vi.fn(() => true),
+    validateAllBusinessRules: vi.fn(),
     setState: vi.fn()
   };
   return {
@@ -78,18 +91,20 @@ vi.mock("@/components/layout", () => ({
 }));
 
 vi.mock("@/components/ui", () => ({
-  Button: ({ children, onClick, disabled, className, variant }: {
+  Button: ({ children, onClick, disabled, className, variant, size }: {
     children: React.ReactNode;
     onClick?: () => void;
     disabled?: boolean;
     className?: string;
     variant?: string;
+    size?: string;
   }) => (
     <button
       onClick={onClick}
       disabled={disabled}
       className={className}
       data-variant={variant}
+      data-size={size}
     >
       {children}
     </button>
@@ -128,12 +143,13 @@ describe("AccountMergePage", () => {
     mockStore.error = null;
     mockStore.mergeProgress = 0;
     mockStore.currentStep = "idle";
+    mockStore.currentTask = 0;
   });
 
   it("renders without crashing", () => {
     render(<AccountMergePage />);
     expect(screen.getByText("Account Merge")).toBeInTheDocument();
-    expect(screen.getByText("Merge source account into target account")).toBeInTheDocument();
+    expect(screen.getByText("Merge source account into target account (192 task workflow)")).toBeInTheDocument();
   });
 
   it("displays account selection form initially", () => {
@@ -177,6 +193,8 @@ describe("AccountMergePage", () => {
 
   it("validates accounts on button click", async () => {
     mockStore.validateMergeConditions.mockResolvedValue(undefined);
+    mockStore.validateNetworkStatus.mockResolvedValue(undefined);
+    mockStore.validateClosureBlocking.mockResolvedValue(undefined);
     
     render(<AccountMergePage />);
     
@@ -332,6 +350,7 @@ describe("AccountMergePage", () => {
   it("displays merge progress during execution", () => {
     mockStore.currentStep = "transferring";
     mockStore.mergeProgress = 50;
+    mockStore.currentTask = 96;
     mockStore.sourceAccount = {
       accountNumber: "ACC001",
       balance: 1000,
@@ -349,6 +368,7 @@ describe("AccountMergePage", () => {
     
     expect(screen.getByText("Progress")).toBeInTheDocument();
     expect(screen.getByText("50%")).toBeInTheDocument();
+    expect(screen.getByText("96 / 192")).toBeInTheDocument();
     expect(screen.getByText(/Current Step: transferring/)).toBeInTheDocument();
     expect(screen.getByText("Executing...")).toBeInTheDocument();
   });
