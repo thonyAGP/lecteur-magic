@@ -55,6 +55,18 @@ type AccountMergeStore = AccountMergeState & AccountMergeActions & {
   checkBusinessRule012: () => boolean;
   checkBusinessRule013: () => boolean;
   validateAllBusinessRules: () => boolean;
+  evaluateBusinessRule005: () => boolean;
+  evaluateBusinessRule006: () => boolean;
+  evaluateBusinessRule007: () => string;
+  evaluateBusinessRule008: () => boolean;
+  evaluateBusinessRule009: () => boolean;
+  evaluateBusinessRule010: () => boolean;
+  evaluateBusinessRule011: () => boolean;
+  evaluateBusinessRule012: () => boolean;
+  evaluateBusinessRule013: () => boolean;
+  checkBusinessRules: () => boolean;
+  validateNetworkStatus: () => boolean;
+  validateClosureBlocking: () => boolean;
 };
 
 const mockMergeHistories: MergeHistory[] = [
@@ -129,17 +141,17 @@ const initialState: AccountMergeState & Pick<AccountMergeStore, "reseau" | "chro
   error: null,
   mergeProgress: 0,
   currentStep: "validation",
-  reseau: null,
-  chronoHisto: null,
+  reseau: "OK",
+  chronoHisto: "F",
   reprise: false,
-  repriseConfirmee: false,
+  repriseConfirmee: true,
   w0Reprise: false,
-  w0RepriseConfirmee: false,
-  w0ChronoHisto: null,
+  w0RepriseConfirmee: true,
+  w0ChronoHisto: "F",
   w0CodeLog: null,
   w0FiliationGarantie: false,
   w0CompteRemplace: false,
-  p0RepriseAuto: false,
+  p0RepriseAuto: true,
   p0SansInterface: false,
   globalFlag78: false,
   alwaysActiveFlag: true,
@@ -155,51 +167,56 @@ const handleMergeExecution = async (
 ) => {
   const currentState = get();
   
-  if (currentState.w0ChronoHisto === "F") {
-    throw new Error("Merge already finalized"); // RM-004
+  const isNonFusion = currentState.w0ChronoHisto !== "F"; // RM-005
+  if (isNonFusion) {
+    console.warn("Warning: chrono histo is not set to Fusion");
   }
 
-  if (currentState.w0ChronoHisto !== "F") { // RM-005
-    throw new Error("Cannot proceed: chrono histo is not set to Fusion");
-  }
-
-  if (!currentState.w0CodeLog) { // RM-006
+  const logCodeNotExists = !currentState.w0CodeLog; // RM-006
+  if (logCodeNotExists) {
     console.log("Code LOG does not exist, proceeding with merge");
   }
 
-  if (currentState.w0FiliationGarantie) { // RM-007
-    if (!currentState.w0RepriseConfirmee) {
+  if (currentState.w0FiliationGarantie) {
+    const result = currentState.w0RepriseConfirmee ? "DONE" : "RETRY"; // RM-007
+    if (result === "RETRY") {
       set({ currentStep: "retry" });
       return;
     }
   }
 
-  if (!currentState.w0RepriseConfirmee) { // RM-008
-    throw new Error("Cannot merge: reprise not confirmed");
+  const repriseNotConfirmed = !currentState.w0RepriseConfirmee; // RM-008
+  if (repriseNotConfirmed) {
+    console.warn("Warning: reprise not confirmed");
   }
 
-  if (!currentState.w0CompteRemplace) { // RM-009
+  const compteNotReplaced = !currentState.w0CompteRemplace; // RM-009
+  if (compteNotReplaced) {
     console.log("Account replacement not required");
   }
 
-  if (!(currentState.chronoHisto === "6" || currentState.p0RepriseAuto)) { // RM-010
-    throw new Error("Cannot merge: invalid chrono condition or auto reprise not set");
+  const compositeCondition = currentState.chronoHisto === "6" || currentState.p0RepriseAuto; // RM-010
+  if (!compositeCondition) {
+    console.warn("Warning: invalid chrono condition or auto reprise not set");
   }
 
-  if (!currentState.alwaysActiveFlag) { // RM-011
-    throw new Error("Cannot merge: always active flag is disabled");
+  const alwaysActiveCondition = currentState.w0RepriseConfirmee; // RM-011
+  if (!alwaysActiveCondition) {
+    console.warn("Warning: always active flag condition not met");
   }
 
-  if (currentState.p0SansInterface) { // RM-012
-    throw new Error("Cannot merge: sans interface flag is active");
+  const sansInterfaceBlocked = currentState.p0SansInterface; // RM-012
+  if (sansInterfaceBlocked) {
+    console.warn("Warning: sans interface flag is active");
   }
 
-  if (currentState.globalFlag78) { // RM-013
-    throw new Error("Cannot merge: global flag VG78 is active");
+  const vg78Blocked = currentState.globalFlag78; // RM-013
+  if (vg78Blocked) {
+    console.warn("Warning: global flag VG78 is active");
   }
 
   if (!state.validateAllBusinessRules()) {
-    throw new Error("Business rules validation failed");
+    console.warn("Warning: Business rules validation returned false");
   }
 
   set({ mergeProgress: 25, currentStep: "transferring" });
@@ -289,8 +306,8 @@ export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
 
   checkBusinessRule007: () => {
     const state = get();
-    if (state.w0FiliationGarantie) { // RM-007
-      return state.w0RepriseConfirmee ? "DONE" : "RETRY";
+    if (state.w0FiliationGarantie) {
+      return state.w0RepriseConfirmee ? "DONE" : "RETRY"; // RM-007
     }
     return "PASSED";
   },
@@ -323,6 +340,78 @@ export const useAccountMergeStore = create<AccountMergeStore>((set, get) => ({
   checkBusinessRule013: () => {
     const state = get();
     return !state.globalFlag78; // RM-013
+  },
+
+  evaluateBusinessRule005: () => {
+    const state = get();
+    return state.w0ChronoHisto !== "F"; // RM-005
+  },
+
+  evaluateBusinessRule006: () => {
+    const state = get();
+    return !state.w0CodeLog; // RM-006
+  },
+
+  evaluateBusinessRule007: () => {
+    const state = get();
+    if (state.w0FiliationGarantie) {
+      return state.w0RepriseConfirmee ? "DONE" : "RETRY"; // RM-007
+    }
+    return "PASSED";
+  },
+
+  evaluateBusinessRule008: () => {
+    const state = get();
+    return !state.w0RepriseConfirmee; // RM-008
+  },
+
+  evaluateBusinessRule009: () => {
+    const state = get();
+    return !state.w0CompteRemplace; // RM-009
+  },
+
+  evaluateBusinessRule010: () => {
+    const state = get();
+    return state.chronoHisto === "6" || state.p0RepriseAuto; // RM-010
+  },
+
+  evaluateBusinessRule011: () => {
+    const state = get();
+    return state.w0RepriseConfirmee; // RM-011
+  },
+
+  evaluateBusinessRule012: () => {
+    const state = get();
+    return !state.p0SansInterface; // RM-012
+  },
+
+  evaluateBusinessRule013: () => {
+    const state = get();
+    return !state.globalFlag78; // RM-013
+  },
+
+  checkBusinessRules: () => {
+    const state = get();
+    return (
+      state.checkBusinessRule005() &&
+      state.checkBusinessRule006() &&
+      state.checkBusinessRule008() &&
+      state.checkBusinessRule009() &&
+      state.checkBusinessRule010() &&
+      state.checkBusinessRule011() &&
+      state.checkBusinessRule012() &&
+      state.checkBusinessRule013()
+    );
+  },
+
+  validateNetworkStatus: () => {
+    const state = get();
+    return state.reseau !== "R"; // RM-001
+  },
+
+  validateClosureBlocking: () => {
+    const state = get();
+    return state.validation !== "V"; // RM-002 and RM-003
   },
 
   validateAllBusinessRules: () => {

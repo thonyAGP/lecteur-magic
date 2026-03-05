@@ -29,6 +29,25 @@ export interface FusionSeparationHistoryWriteRequest {
 
 export interface FusionSeparationHistoryGetResponse extends Array<FusionSeparationHistoryEntry> {}
 
+export interface HistoFusionSeparationSaisieTable {
+  iChronoEF: number
+  iSociete: string
+  iCompteReference: number
+  iFiliationReference: number
+  iComptePointeOld: number
+  iFiliationPointeOld: number
+  iComptePointeNew: number
+  iFiliationPointeNew: number
+  iTypeEF: string
+  iNom: string
+  iPrenom: string
+}
+
+export interface HistoFusionSeparationSaisieWriteRequest {
+  data: HistoFusionSeparationSaisieTable
+}
+
 export type FusionSeparationHistoryApiEndpoints = {
   writeEntry: (request: FusionSeparationHistoryWriteRequest) => Promise<ApiResponse<void>>
+  writeHistoFusionSeparationSaisie: (request: HistoFusionSeparationSaisieWriteRequest) => Promise<ApiResponse<void>> // TABLE 343
 }

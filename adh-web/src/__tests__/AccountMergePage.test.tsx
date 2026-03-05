@@ -123,6 +123,13 @@ vi.mock("@/components/ui", () => ({
       disabled={disabled}
       placeholder={placeholder}
     />
+  ),
+  Dialog: ({ open, onOpenChange, children }: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    children: React.ReactNode;
+  }) => (
+    open ? <div data-testid="dialog" onClick={() => onOpenChange(false)}>{children}</div> : null
   )
 }));
 

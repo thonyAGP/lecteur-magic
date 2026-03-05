@@ -1,7 +1,8 @@
+```tsx
 import { useCallback, useEffect, useState } from "react";
 import { useAccountMergeStore } from "@/stores/accountMergeStore";
 import { ScreenLayout } from "@/components/layout";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, Dialog } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import type { BusinessRulesResult } from "@/types/accountMerge";
 
@@ -48,6 +49,159 @@ const TaskProgressIndicator = ({ currentTask, totalTasks }: { currentTask: numbe
   </div>
 );
 
+const BusinessRuleDetailDialog = ({ 
+  isOpen, 
+  onClose, 
+  businessRulesResult 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  businessRulesResult: BusinessRulesResult | null;
+}) => (
+  <Dialog open={isOpen} onOpenChange={onClose}>
+    <div className="max-w-3xl max-h-96 overflow-y-auto">
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold">Business Rules Details</h2>
+        {businessRulesResult && Object.entries(businessRulesResult).map(([ruleId, rule]) => (
+          <div key={ruleId} className="border rounded-lg p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <div className={cn("h-3 w-3 rounded-full", rule.passed ? "bg-success" : "bg-destructive")} />
+              <span className="font-medium">{ruleId.toUpperCase()}</span>
+            </div>
+            <p className="text-sm text-muted-foreground">{rule.description}</p>
+            {rule.status && (
+              <p className="text-xs bg-muted p-2 rounded">Status: {rule.status}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </Dialog>
+);
+
+const ScreenManagementStatus = ({ currentScreen }: { currentScreen: number }) => (
+  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    <span>Screen:</span>
+    <span className="font-mono">{currentScreen}/11</span>
+  </div>
+);
+
+const RetryIndicator = ({ isRetrying, retryCount }: { isRetrying: boolean; retryCount: number }) => (
+  isRetrying ? (
+    <div className="flex items-center gap-2 text-sm">
+      <div className="animate-spin h-4 w-4 border-2 border-destructive border-t-transparent rounded-full" />
+      <span>Retry {retryCount}/3</span>
+    </div>
+  ) : null
+);
+
+const EntityMappingStatus = ({ 
+  mappedTables, 
+  totalTables = 60 
+}: { 
+  mappedTables: number; 
+  totalTables?: number;
+}) => (
+  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    <span>Entity Mappings:</span>
+    <span className="font-mono">{mappedTables}/{totalTables}</span>
+    <div className={cn("h-2 w-2 rounded-full", mappedTables === totalTables ? "bg-success" : "bg-warning")} />
+  </div>
+);
+
+const BusinessRulesMatrix = ({ businessRulesResult }: { businessRulesResult: BusinessRulesResult | null }) => {
+  if (!businessRulesResult) return null;
+
+  const allRulesPassed = Object.values(businessRulesResult).every(rule => rule.passed);
+  const totalRules = Object.keys(businessRulesResult).length;
+  const passedRules = Object.values(businessRulesResult).filter(rule => rule.passed).length;
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">Rules Matrix</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs">{passedRules}/{totalRules}</span>
+          <div className={cn("h-2 w-2 rounded-full", allRulesPassed ? "bg-success" : "bg-destructive")} />
+        </div>
+      </div>
+      <div className="grid grid-cols-9 gap-1">
+        {Object.entries(businessRulesResult).map(([ruleId, rule]) => (
+          <div
+            key={ruleId}
+            className={cn(
+              "h-6 w-6 rounded text-xs flex items-center justify-center text-white font-mono",
+              rule.passed ? "bg-success" : "bg-destructive"
+            )}
+            title={`${ruleId.toUpperCase()}: ${rule.description}`}
+          >
+            {ruleId.replace('rm', '').padStart(2, '0')}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const NetworkFailureHandler = ({ 
+  onRetry, 
+  isRetrying, 
+  retryCount 
+}: { 
+  onRetry: () => void; 
+  isRetrying: boolean; 
+  retryCount: number; 
+}) => (
+  retryCount > 0 ? (
+    <div className="rounded-lg bg-warning/10 p-4 border border-warning/20">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="font-medium text-warning">Network Issue Detected</div>
+          <div className="text-sm text-muted-foreground">
+            Retry attempt {retryCount}/3 in progress
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRetry}
+          disabled={isRetrying}
+        >
+          {isRetrying ? "Retrying..." : "Retry Now"}
+        </Button>
+      </div>
+    </div>
+  ) : null
+);
+
+const ClosureBlockingIndicator = ({ 
+  hasClosureBlocking, 
+  onResolve 
+}: { 
+  hasClosureBlocking: boolean; 
+  onResolve: () => void; 
+}) => (
+  hasClosureBlocking ? (
+    <div className="rounded-lg bg-destructive/10 p-4 border border-destructive/20">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="font-medium text-destructive">Closure Blocking Detected</div>
+          <div className="text-sm text-muted-foreground">
+            Account closure is preventing merge execution
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onResolve}
+        >
+          Resolve
+        </Button>
+      </div>
+    </div>
+  ) : null
+);
+
 export const AccountMergePage = () => {
   const {
     mergeHistories,
@@ -59,6 +213,7 @@ export const AccountMergePage = () => {
     mergeProgress,
     currentStep,
     currentTask,
+    currentScreen,
     validateMergeConditions,
     executeMerge,
     printMergeTicket,
@@ -76,12 +231,20 @@ export const AccountMergePage = () => {
     evaluateBusinessRule012,
     evaluateBusinessRule013,
     validateAllBusinessRules,
+    orchestrateTaskExecution,
+    handleNetworkFailure,
+    handleClosureBlocking,
+    handleValidationError,
   } = useAccountMergeStore();
 
   const [sourceAccountInput, setSourceAccountInput] = useState("");
   const [targetAccountInput, setTargetAccountInput] = useState("");
   const [businessRulesResult, setBusinessRulesResult] = useState<BusinessRulesResult | null>(null);
   const [showDetailedRules, setShowDetailedRules] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [hasClosureBlocking, setHasClosureBlocking] = useState(false);
+  const [mappedTablesCount, setMappedTablesCount] = useState(0);
 
   const { isValidated, isMergeInProgress, isMergeCompleted } = getValidationStepStatuses(currentStep);
 
@@ -91,63 +254,133 @@ export const AccountMergePage = () => {
     };
   }, [reset]);
 
+  // RM-005: W0 chrono histo [BA] different de 'F'
+  const executeRM005 = useCallback((account: unknown): boolean => {
+    return evaluateBusinessRule005(account);
+  }, [evaluateBusinessRule005]);
+
+  // RM-006: Negation de (W0 code LOG existe [BB]) (condition inversee)
+  const executeRM006 = useCallback((account: unknown): boolean => {
+    return evaluateBusinessRule006(account);
+  }, [evaluateBusinessRule006]);
+
+  // RM-007: Si W0 Filiation garantie ... [BF] alors IF (W0 reprise confirmee [BD] sinon 'RETRY','DONE'),'PASSED')
+  const executeRM007 = useCallback((account: unknown): 'RETRY' | 'DONE' | 'PASSED' => {
+    return evaluateBusinessRule007(account);
+  }, [evaluateBusinessRule007]);
+
+  // RM-008: Negation de (W0 reprise confirmee [BD]) (condition inversee)
+  const executeRM008 = useCallback((account: unknown): boolean => {
+    return evaluateBusinessRule008(account);
+  }, [evaluateBusinessRule008]);
+
+  // RM-009: Negation de (W0 Compte remplace à l... [BI]) (condition inversee)
+  const executeRM009 = useCallback((account: unknown): boolean => {
+    return evaluateBusinessRule009(account);
+  }, [evaluateBusinessRule009]);
+
+  // RM-010: Condition composite: [BK]=6 OR P0 Reprise Auto [I]
+  const executeRM010 = useCallback((sourceAcc: unknown, targetAcc: unknown): boolean => {
+    return evaluateBusinessRule010(sourceAcc, targetAcc);
+  }, [evaluateBusinessRule010]);
+
+  // RM-011: Condition toujours vraie (flag actif)
+  const executeRM011 = useCallback((): boolean => {
+    return evaluateBusinessRule011();
+  }, [evaluateBusinessRule011]);
+
+  // RM-012: Negation de P0.Sans interface [J] (condition inversee)
+  const executeRM012 = useCallback((account: unknown): boolean => {
+    return evaluateBusinessRule012(account);
+  }, [evaluateBusinessRule012]);
+
+  // RM-013: Negation de VG78 (condition inversee)
+  const executeRM013 = useCallback((state: unknown): boolean => {
+    return evaluateBusinessRule013(state);
+  }, [evaluateBusinessRule013]);
+
   const evaluateAllBusinessRules = useCallback((): BusinessRulesResult | null => {
     if (!sourceAccount || !targetAccount) {
       return null;
     }
 
-    // RM-005: W0 chrono histo [BA] different de 'F'
-    const rm005 = evaluateBusinessRule005(sourceAccount);
+    try {
+      const rm005 = executeRM005(sourceAccount);
+      const rm006 = executeRM006(sourceAccount);
+      const rm007 = executeRM007(sourceAccount);
+      const rm008 = executeRM008(sourceAccount);
+      const rm009 = executeRM009(sourceAccount);
+      const rm010 = executeRM010(sourceAccount, targetAccount);
+      const rm011 = executeRM011();
+      const rm012 = executeRM012(targetAccount);
+      const rm013 = executeRM013(validationState);
 
-    // RM-006: Negation de (W0 code LOG existe [BB]) (condition inversee)
-    const rm006 = evaluateBusinessRule006(sourceAccount);
-
-    // RM-007: Si W0 Filiation garantie ... [BF] alors IF (W0 reprise confirmee [BD] sinon 'RETRY','DONE'),'PASSED')
-    const rm007 = evaluateBusinessRule007(sourceAccount);
-
-    // RM-008: Negation de (W0 reprise confirmee [BD]) (condition inversee)
-    const rm008 = evaluateBusinessRule008(sourceAccount);
-
-    // RM-009: Negation de (W0 Compte remplace à l... [BI]) (condition inversee)
-    const rm009 = evaluateBusinessRule009(sourceAccount);
-
-    // RM-010: Condition composite: [BK]=6 OR P0 Reprise Auto [I]
-    const rm010 = evaluateBusinessRule010(sourceAccount, targetAccount);
-
-    // RM-011: Condition toujours vraie (flag actif)
-    const rm011 = evaluateBusinessRule011();
-
-    // RM-012: Negation de P0.Sans interface [J] (condition inversee)
-    const rm012 = evaluateBusinessRule012(targetAccount);
-
-    // RM-013: Negation de VG78 (condition inversee)
-    const rm013 = evaluateBusinessRule013(validationState);
-
-    return {
-      rm005: { passed: rm005, description: "Chrono histo different de 'F'" },
-      rm006: { passed: rm006, description: "Code LOG n'existe pas" },
-      rm007: { passed: rm007 === 'PASSED', status: rm007, description: "Filiation garantie validation" },
-      rm008: { passed: rm008, description: "Reprise non confirmee" },
-      rm009: { passed: rm009, description: "Compte non remplace" },
-      rm010: { passed: rm010, description: "Status BK=6 ou Reprise Auto" },
-      rm011: { passed: rm011, description: "Flag actif" },
-      rm012: { passed: rm012, description: "Interface disponible" },
-      rm013: { passed: rm013, description: "VG78 non active" }
-    };
+      return {
+        rm005: { passed: rm005, description: "Chrono histo different de 'F'" },
+        rm006: { passed: rm006, description: "Code LOG n'existe pas" },
+        rm007: { passed: rm007 === 'PASSED', status: rm007, description: "Filiation garantie validation" },
+        rm008: { passed: rm008, description: "Reprise non confirmee" },
+        rm009: { passed: rm009, description: "Compte non remplace" },
+        rm010: { passed: rm010, description: "Status BK=6 ou Reprise Auto" },
+        rm011: { passed: rm011, description: "Flag actif" },
+        rm012: { passed: rm012, description: "Interface disponible" },
+        rm013: { passed: rm013, description: "VG78 non active" }
+      };
+    } catch (err) {
+      console.error("Error evaluating business rules:", err);
+      return null;
+    }
   }, [
     sourceAccount,
     targetAccount,
     validationState,
-    evaluateBusinessRule005,
-    evaluateBusinessRule006,
-    evaluateBusinessRule007,
-    evaluateBusinessRule008,
-    evaluateBusinessRule009,
-    evaluateBusinessRule010,
-    evaluateBusinessRule011,
-    evaluateBusinessRule012,
-    evaluateBusinessRule013
+    executeRM005,
+    executeRM006,
+    executeRM007,
+    executeRM008,
+    executeRM009,
+    executeRM010,
+    executeRM011,
+    executeRM012,
+    executeRM013
   ]);
+
+  const handleNetworkError = useCallback(async (error: unknown) => {
+    setIsRetrying(true);
+    setRetryCount(prev => prev + 1);
+    
+    try {
+      if (handleNetworkFailure) {
+        await handleNetworkFailure(error, retryCount);
+      }
+    } catch (retryError) {
+      console.error("Network retry failed:", retryError);
+    } finally {
+      setIsRetrying(false);
+    }
+  }, [handleNetworkFailure, retryCount]);
+
+  const handleClosureError = useCallback(async (error: unknown) => {
+    setHasClosureBlocking(true);
+    try {
+      if (handleClosureBlocking) {
+        await handleClosureBlocking(error);
+        setHasClosureBlocking(false);
+      }
+    } catch (closureError) {
+      console.error("Closure blocking handler failed:", closureError);
+    }
+  }, [handleClosureBlocking]);
+
+  const handleRuleValidationError = useCallback(async (error: unknown) => {
+    try {
+      if (handleValidationError) {
+        await handleValidationError(error);
+      }
+    } catch (validationError) {
+      console.error("Validation error handler failed:", validationError);
+    }
+  }, [handleValidationError]);
 
   const validateBusinessRulesFlow = useCallback(async (sourceAccNum: string, targetAccNum: string) => {
     try {
@@ -170,6 +403,23 @@ export const AccountMergePage = () => {
       return rulesResult;
     } catch (err) {
       console.error("Business rules validation failed:", err);
+      
+      if (err && typeof err === 'object' && 'type' in err) {
+        switch ((err as { type: string }).type) {
+          case 'NETWORK_ERROR':
+            await handleNetworkError(err);
+            break;
+          case 'CLOSURE_BLOCKING':
+            await handleClosureError(err);
+            break;
+          case 'VALIDATION_ERROR':
+            await handleRuleValidationError(err);
+            break;
+          default:
+            break;
+        }
+      }
+      
       throw err;
     }
   }, [
@@ -177,7 +427,10 @@ export const AccountMergePage = () => {
     validateClosureBlocking,
     checkBusinessRules,
     validateAllBusinessRules,
-    evaluateAllBusinessRules
+    evaluateAllBusinessRules,
+    handleNetworkError,
+    handleClosureError,
+    handleRuleValidationError
   ]);
 
   const handleValidateAccounts = useCallback(async () => {
@@ -187,6 +440,7 @@ export const AccountMergePage = () => {
     try {
       await validateMergeConditions(sourceAccountInput, targetAccountInput);
       await validateBusinessRulesFlow(sourceAccountInput, targetAccountInput);
+      setMappedTablesCount(60);
     } catch (err) {
       console.error("Validation failed:", err);
     }
@@ -195,6 +449,25 @@ export const AccountMergePage = () => {
   const checkAllRulesPassed = useCallback((rulesResult: BusinessRulesResult): boolean => {
     return Object.values(rulesResult).every(rule => rule.passed);
   }, []);
+
+  const executeOrchestrationWorkflow = useCallback(async () => {
+    if (!orchestrateTaskExecution) {
+      console.warn("Task orchestration not available");
+      return;
+    }
+
+    try {
+      await orchestrateTaskExecution({
+        totalTasks: 192,
+        sourceAccountId: sourceAccount?.accountNumber || '',
+        targetAccountId: targetAccount?.accountNumber || '',
+        businessRulesResult: businessRulesResult || undefined
+      });
+    } catch (err) {
+      console.error("Task orchestration failed:", err);
+      throw err;
+    }
+  }, [orchestrateTaskExecution, sourceAccount, targetAccount, businessRulesResult]);
 
   const handleExecuteMerge = useCallback(async () => {
     if (!sourceAccount || !targetAccount) {
@@ -212,11 +485,39 @@ export const AccountMergePage = () => {
     }
 
     try {
+      await executeOrchestrationWorkflow();
       await executeMerge(sourceAccount.accountNumber, targetAccount.accountNumber);
     } catch (err) {
       console.error("Merge execution failed:", err);
+      
+      if (err && typeof err === 'object' && 'type' in err) {
+        switch ((err as { type: string }).type) {
+          case 'NETWORK_ERROR':
+            await handleNetworkError(err);
+            break;
+          case 'CLOSURE_BLOCKING':
+            await handleClosureError(err);
+            break;
+          case 'VALIDATION_ERROR':
+            await handleRuleValidationError(err);
+            break;
+          default:
+            break;
+        }
+      }
     }
-  }, [sourceAccount, targetAccount, businessRulesResult, evaluateAllBusinessRules, checkAllRulesPassed, executeMerge]);
+  }, [
+    sourceAccount,
+    targetAccount,
+    businessRulesResult,
+    evaluateAllBusinessRules,
+    checkAllRulesPassed,
+    executeOrchestrationWorkflow,
+    executeMerge,
+    handleNetworkError,
+    handleClosureError,
+    handleRuleValidationError
+  ]);
 
   const handlePrintTicket = useCallback(async () => {
     if (mergeHistories.length === 0) {
@@ -236,7 +537,28 @@ export const AccountMergePage = () => {
     setTargetAccountInput("");
     setBusinessRulesResult(null);
     setShowDetailedRules(false);
+    setRetryCount(0);
+    setIsRetrying(false);
+    setHasClosureBlocking(false);
+    setMappedTablesCount(0);
   }, [reset]);
+
+  const handleRetryNetwork = useCallback(() => {
+    if (sourceAccountInput && targetAccountInput) {
+      handleValidateAccounts();
+    }
+  }, [sourceAccountInput, targetAccountInput, handleValidateAccounts]);
+
+  const handleResolveClosureBlocking = useCallback(async () => {
+    try {
+      if (handleClosureBlocking && sourceAccount) {
+        await handleClosureBlocking({ type: 'CLOSURE_BLOCKING', accountId: sourceAccount.accountNumber });
+        setHasClosureBlocking(false);
+      }
+    } catch (err) {
+      console.error("Failed to resolve closure blocking:", err);
+    }
+  }, [handleClosureBlocking, sourceAccount]);
 
   useEffect(() => {
     if (sourceAccount && targetAccount) {
@@ -253,11 +575,29 @@ export const AccountMergePage = () => {
         <div className="text-center">
           <h1 className="text-3xl font-bold">Account Merge</h1>
           <p className="text-muted-foreground mt-2">Merge source account into target account (192 task workflow)</p>
+          <div className="flex items-center justify-center gap-4 mt-2">
+            <ScreenManagementStatus currentScreen={currentScreen || 1} />
+            <EntityMappingStatus mappedTables={mappedTablesCount} />
+          </div>
         </div>
+
+        <NetworkFailureHandler
+          onRetry={handleRetryNetwork}
+          isRetrying={isRetrying}
+          retryCount={retryCount}
+        />
+
+        <ClosureBlockingIndicator
+          hasClosureBlocking={hasClosureBlocking}
+          onResolve={handleResolveClosureBlocking}
+        />
 
         {error && (
           <div className="rounded-lg bg-destructive/10 p-4 text-destructive border border-destructive/20">
-            {error}
+            <div className="flex items-center justify-between">
+              <span>{error}</span>
+              <RetryIndicator isRetrying={isRetrying} retryCount={retryCount} />
+            </div>
           </div>
         )}
 
@@ -274,7 +614,7 @@ export const AccountMergePage = () => {
                   value={sourceAccountInput}
                   onChange={(e) => setSourceAccountInput(e.target.value)}
                   placeholder="Enter source account number"
-                  disabled={isLoading}
+                  disabled={isLoading || isRetrying}
                 />
               </div>
               <div className="space-y-2">
@@ -286,16 +626,16 @@ export const AccountMergePage = () => {
                   value={targetAccountInput}
                   onChange={(e) => setTargetAccountInput(e.target.value)}
                   placeholder="Enter target account number"
-                  disabled={isLoading}
+                  disabled={isLoading || isRetrying}
                 />
               </div>
             </div>
             <Button
               onClick={handleValidateAccounts}
-              disabled={!sourceAccountInput || !targetAccountInput || isLoading}
+              disabled={!sourceAccountInput || !targetAccountInput || isLoading || isRetrying}
               className="w-full"
             >
-              {isLoading ? "Validating..." : "Validate Accounts"}
+              {isLoading ? "Validating..." : isRetrying ? "Retrying..." : "Validate Accounts"}
             </Button>
           </div>
         )}
@@ -341,13 +681,15 @@ export const AccountMergePage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setShowDetailedRules(!showDetailedRules)}
+                onClick={() => setShowDetailedRules(true)}
               >
-                {showDetailedRules ? "Hide Details" : "Show Details"}
+                View Details
               </Button>
             </div>
             
-            <div className="space-y-2">
+            <BusinessRulesMatrix businessRulesResult={businessRulesResult} />
+            
+            <div className="grid gap-2 md:grid-cols-2">
               <ValidationStatusIndicator
                 isValid={businessRulesResult.rm005.passed}
                 label={`RM-005: ${businessRulesResult.rm005.description}`}
@@ -358,7 +700,7 @@ export const AccountMergePage = () => {
               />
               <ValidationStatusIndicator
                 isValid={businessRulesResult.rm007.passed}
-                label={`RM-007: ${businessRulesResult.rm007.description} (${businessRulesResult.rm007.status || 'N/A'})`}
+                label={`RM-007: ${businessRulesResult.rm007.description}`}
               />
               <ValidationStatusIndicator
                 isValid={businessRulesResult.rm008.passed}
@@ -385,23 +727,6 @@ export const AccountMergePage = () => {
                 label={`RM-013: ${businessRulesResult.rm013.description}`}
               />
             </div>
-
-            {showDetailedRules && (
-              <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-                <h3 className="text-sm font-medium mb-2">Rule Details</h3>
-                <div className="text-xs space-y-1 text-muted-foreground">
-                  <div>RM-005: Validates chrono history field [BA] is not 'F'</div>
-                  <div>RM-006: Ensures LOG code [BB] does not exist (inverted condition)</div>
-                  <div>RM-007: Complex filiation guarantee validation with confirmation status</div>
-                  <div>RM-008: Confirms reprise is not confirmed [BD] (inverted condition)</div>
-                  <div>RM-009: Ensures account is not replaced [BI] (inverted condition)</div>
-                  <div>RM-010: Composite condition: status BK=6 OR auto reprise enabled</div>
-                  <div>RM-011: Always true flag for active processing</div>
-                  <div>RM-012: Ensures interface is available [J] (inverted condition)</div>
-                  <div>RM-013: Validates VG78 flag is not active (inverted condition)</div>
-                </div>
-              </div>
-            )}
             
             <div className="mt-4">
               <ValidationStatusIndicator
@@ -430,9 +755,11 @@ export const AccountMergePage = () => {
                 disabled={
                   isMergeInProgress || 
                   isLoading || 
+                  isRetrying ||
                   currentStep !== "validated" || 
                   !businessRulesResult ||
-                  !checkAllRulesPassed(businessRulesResult)
+                  !checkAllRulesPassed(businessRulesResult) ||
+                  hasClosureBlocking
                 }
                 className="flex-1"
               >
@@ -441,7 +768,7 @@ export const AccountMergePage = () => {
               <Button
                 variant="outline"
                 onClick={handleClose}
-                disabled={isMergeInProgress}
+                disabled={isMergeInProgress || isRetrying}
               >
                 Cancel
               </Button>
@@ -457,21 +784,4 @@ export const AccountMergePage = () => {
               <div className="text-sm text-muted-foreground mt-2">
                 Account {sourceAccount?.accountNumber} has been merged into {targetAccount?.accountNumber}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">
-                Processed {totalTasks} tasks successfully
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={handlePrintTicket} className="flex-1">
-                Print Ticket
-              </Button>
-              <Button variant="outline" onClick={handleClose}>
-                Close
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    </ScreenLayout>
-  );
-};
+              <div className="
