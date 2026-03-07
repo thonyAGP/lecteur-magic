@@ -872,6 +872,451 @@
       "startedAt": "2026-03-04T20:25:54.353Z",
       "completedAt": "2026-03-04T20:28:15.771Z"
     },
+    "42": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:56:49.677Z",
+          "completedAt": "2026-03-06T18:56:49.677Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-42.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:56:49.680Z",
+          "completedAt": "2026-03-06T18:56:49.710Z",
+          "duration": 30,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-42.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:56:49.712Z",
+          "completedAt": "2026-03-06T18:57:03.007Z",
+          "duration": 13294,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-42.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:57:03.010Z",
+          "completedAt": "2026-03-06T18:57:08.132Z",
+          "duration": 5122,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\authenticationControl.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:57:08.134Z",
+          "completedAt": "2026-03-06T18:57:20.609Z",
+          "duration": 12475,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\authenticationControlStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:57:20.611Z",
+          "completedAt": "2026-03-06T18:57:26.355Z",
+          "duration": 5744,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-authenticationControl.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:57:26.356Z",
+          "completedAt": "2026-03-06T18:57:55.888Z",
+          "duration": 29531,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AuthenticationControlPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:57:55.890Z",
+          "completedAt": "2026-03-06T18:58:14.202Z",
+          "duration": 18312
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:58:14.204Z",
+          "completedAt": "2026-03-06T18:58:36.375Z",
+          "duration": 22170,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\authenticationControlStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:58:36.377Z",
+          "completedAt": "2026-03-06T18:59:01.461Z",
+          "duration": 25084,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AuthenticationControlPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-42.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-42.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-42.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\authenticationControl.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\authenticationControlStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-authenticationControl.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AuthenticationControlPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\authenticationControlStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AuthenticationControlPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T18:56:49.677Z",
+      "completedAt": "2026-03-06T18:59:01.464Z"
+    },
+    "43": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.484Z",
+          "completedAt": "2026-03-06T18:59:01.484Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-43.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.485Z",
+          "completedAt": "2026-03-06T18:59:01.485Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-43.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.486Z",
+          "completedAt": "2026-03-06T18:59:01.486Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-43.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.487Z",
+          "completedAt": "2026-03-06T18:59:01.487Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\titleLookup.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.488Z",
+          "completedAt": "2026-03-06T18:59:01.489Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\titleLookupStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.489Z",
+          "completedAt": "2026-03-06T18:59:01.491Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-titleLookup.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.493Z",
+          "completedAt": "2026-03-06T18:59:01.493Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\TitleLookupPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.495Z",
+          "completedAt": "2026-03-06T18:59:01.495Z",
+          "duration": 0
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.496Z",
+          "completedAt": "2026-03-06T18:59:01.496Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\titleLookupStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.497Z",
+          "completedAt": "2026-03-06T18:59:01.497Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\TitleLookupPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-43.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-43.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-43.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\titleLookup.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\titleLookupStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-titleLookup.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\TitleLookupPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\titleLookupStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\TitleLookupPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T18:59:01.484Z",
+      "completedAt": "2026-03-06T18:59:01.498Z"
+    },
+    "44": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.501Z",
+          "completedAt": "2026-03-06T18:59:01.501Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-44.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.502Z",
+          "completedAt": "2026-03-06T18:59:01.502Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-44.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.503Z",
+          "completedAt": "2026-03-06T18:59:01.503Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-44.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.504Z",
+          "completedAt": "2026-03-06T18:59:01.504Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\programDispatch.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.505Z",
+          "completedAt": "2026-03-06T18:59:01.506Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\programDispatchStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.506Z",
+          "completedAt": "2026-03-06T18:59:01.507Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-programDispatch.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.507Z",
+          "completedAt": "2026-03-06T18:59:01.508Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\ProgramDispatchPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.509Z",
+          "completedAt": "2026-03-06T18:59:01.509Z",
+          "duration": 0
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.510Z",
+          "completedAt": "2026-03-06T18:59:01.510Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\programDispatchStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.511Z",
+          "completedAt": "2026-03-06T18:59:01.511Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\ProgramDispatchPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-44.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-44.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-44.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\programDispatch.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\programDispatchStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-programDispatch.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\ProgramDispatchPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\programDispatchStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\ProgramDispatchPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T18:59:01.501Z",
+      "completedAt": "2026-03-06T18:59:01.513Z"
+    },
+    "45": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.516Z",
+          "completedAt": "2026-03-06T18:59:01.516Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-45.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.517Z",
+          "completedAt": "2026-03-06T18:59:01.525Z",
+          "duration": 8,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-45.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:01.527Z",
+          "completedAt": "2026-03-06T18:59:12.644Z",
+          "duration": 11117,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-45.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:12.647Z",
+          "completedAt": "2026-03-06T18:59:17.790Z",
+          "duration": 5143,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\languageRecovery.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:17.793Z",
+          "completedAt": "2026-03-06T18:59:27.685Z",
+          "duration": 9892,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\languageRecoveryStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:27.687Z",
+          "completedAt": "2026-03-06T18:59:34.486Z",
+          "duration": 6799,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-languageRecovery.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T18:59:34.487Z",
+          "completedAt": "2026-03-06T19:00:25.275Z",
+          "duration": 50788,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\LanguageRecoveryPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:00:25.277Z",
+          "completedAt": "2026-03-06T19:00:38.148Z",
+          "duration": 12871
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:00:38.150Z",
+          "completedAt": "2026-03-06T19:01:01.472Z",
+          "duration": 23322,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\languageRecoveryStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:01.476Z",
+          "completedAt": "2026-03-06T19:01:16.980Z",
+          "duration": 15504,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\LanguageRecoveryPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-45.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-45.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-45.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\languageRecovery.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\languageRecoveryStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-languageRecovery.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\LanguageRecoveryPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\languageRecoveryStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\LanguageRecoveryPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T18:59:01.516Z",
+      "completedAt": "2026-03-06T19:01:16.983Z"
+    },
+    "46": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:16.988Z",
+          "completedAt": "2026-03-06T19:01:16.988Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-46.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:16.990Z",
+          "completedAt": "2026-03-06T19:01:16.992Z",
+          "duration": 2,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-46.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:16.994Z",
+          "completedAt": "2026-03-06T19:01:26.334Z",
+          "duration": 9340,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-46.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:26.337Z",
+          "completedAt": "2026-03-06T19:01:35.346Z",
+          "duration": 9009,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\systemVersion.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:35.348Z",
+          "completedAt": "2026-03-06T19:01:45.709Z",
+          "duration": 10361,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\systemVersionStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:45.710Z",
+          "completedAt": "2026-03-06T19:01:52.783Z",
+          "duration": 7072,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-systemVersion.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:01:52.785Z",
+          "completedAt": "2026-03-06T19:02:17.450Z",
+          "duration": 24665,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\SystemVersionPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:02:17.452Z",
+          "completedAt": "2026-03-06T19:02:26.256Z",
+          "duration": 8804
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:02:26.259Z",
+          "completedAt": "2026-03-06T19:02:53.114Z",
+          "duration": 26855,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\systemVersionStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:02:53.117Z",
+          "completedAt": "2026-03-06T19:03:06.055Z",
+          "duration": 12937,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\SystemVersionPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-46.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-46.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-46.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\systemVersion.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\systemVersionStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-systemVersion.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\SystemVersionPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\systemVersionStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\SystemVersionPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T19:01:16.988Z",
+      "completedAt": "2026-03-06T19:03:06.057Z"
+    },
     "47": {
       "status": "completed",
       "currentPhase": null,
@@ -960,6 +1405,629 @@
       "errors": [],
       "startedAt": "2026-02-22T20:51:46.396Z",
       "completedAt": "2026-02-23T14:43:45.124Z"
+    },
+    "48": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.067Z",
+          "completedAt": "2026-03-06T19:03:06.067Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-48.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.068Z",
+          "completedAt": "2026-03-06T19:03:06.068Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-48.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.069Z",
+          "completedAt": "2026-03-06T19:03:06.069Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-48.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.071Z",
+          "completedAt": "2026-03-06T19:03:06.071Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\integriteDates.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.072Z",
+          "completedAt": "2026-03-06T19:03:06.072Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\integriteDatesStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.073Z",
+          "completedAt": "2026-03-06T19:03:06.085Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-integriteDates.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.088Z",
+          "completedAt": "2026-03-06T19:03:06.089Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\IntegriteDatesPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.091Z",
+          "completedAt": "2026-03-06T19:03:06.093Z",
+          "duration": 2
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.096Z",
+          "completedAt": "2026-03-06T19:03:06.096Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\integriteDatesStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T19:03:06.098Z",
+          "completedAt": "2026-03-06T19:03:06.098Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\IntegriteDatesPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-48.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-48.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-48.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\integriteDates.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\integriteDatesStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-integriteDates.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\IntegriteDatesPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\integriteDatesStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\IntegriteDatesPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T19:03:06.067Z",
+      "completedAt": "2026-03-06T19:03:06.100Z"
+    },
+    "69": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:45:58.487Z",
+          "completedAt": "2026-03-06T16:45:58.488Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-69.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:45:58.489Z",
+          "completedAt": "2026-03-06T16:45:58.534Z",
+          "duration": 45,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-69.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:46:35.299Z",
+          "completedAt": "2026-03-06T16:47:04.341Z",
+          "duration": 29042,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-69.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:47:04.343Z",
+          "completedAt": "2026-03-06T16:47:04.343Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatement.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:47:04.344Z",
+          "completedAt": "2026-03-06T16:47:36.861Z",
+          "duration": 32517,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:47:36.863Z",
+          "completedAt": "2026-03-06T16:47:45.414Z",
+          "duration": 8549,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatement.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:47:45.416Z",
+          "completedAt": "2026-03-06T16:48:24.814Z",
+          "duration": 39398,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:48:24.816Z",
+          "completedAt": "2026-03-06T16:49:43.116Z",
+          "duration": 78300
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:49:43.118Z",
+          "completedAt": "2026-03-06T16:50:31.552Z",
+          "duration": 48433,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:50:31.554Z",
+          "completedAt": "2026-03-06T16:51:08.428Z",
+          "duration": 36873,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-69.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-69.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-69.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatement.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatement.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T16:45:58.487Z",
+      "completedAt": "2026-03-06T16:51:08.430Z"
+    },
+    "70": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:36:36.736Z",
+          "completedAt": "2026-03-07T09:36:36.747Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-70.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:36:36.749Z",
+          "completedAt": "2026-03-07T09:36:36.750Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-70.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:36:36.752Z",
+          "completedAt": "2026-03-07T09:36:36.755Z",
+          "duration": 0,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-70.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:36:36.756Z",
+          "completedAt": "2026-03-07T09:36:43.744Z",
+          "duration": 6988,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountStatement.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:36:43.747Z",
+          "completedAt": "2026-03-07T09:37:09.614Z",
+          "duration": 25867,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountStatementStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:37:09.616Z",
+          "completedAt": "2026-03-07T09:37:17.672Z",
+          "duration": 8055,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountStatement.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:37:17.676Z",
+          "completedAt": "2026-03-07T09:37:42.243Z",
+          "duration": 24567,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountStatementPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:37:42.248Z",
+          "completedAt": "2026-03-07T09:38:37.614Z",
+          "duration": 55365
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:38:37.617Z",
+          "completedAt": "2026-03-07T09:39:30.328Z",
+          "duration": 52711,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountStatementStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-07T09:39:30.331Z",
+          "completedAt": "2026-03-07T09:39:57.161Z",
+          "duration": 26829,
+          "file": "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountStatementPage.test.tsx"
+        }
+      },
+      "files": [
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\specs\\ADH-IDE-70.md",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-70.contract.yaml",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\.openspec\\migration\\ADH\\ADH-IDE-70.analysis.json",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\types\\accountStatement.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\stores\\accountStatementStore.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\services\\api\\endpoints-accountStatement.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\pages\\AccountStatementPage.tsx",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\accountStatementStore.test.ts",
+        "D:\\Projects\\ClubMed\\LecteurMagic\\adh-web\\src\\__tests__\\AccountStatementPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-07T09:36:36.736Z",
+      "completedAt": "2026-03-07T09:39:57.165Z"
+    },
+    "71": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.280Z",
+          "completedAt": "2026-03-06T21:41:42.286Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-71.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.288Z",
+          "completedAt": "2026-03-06T21:41:42.288Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-71.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.289Z",
+          "completedAt": "2026-03-06T21:41:42.291Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-71.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.293Z",
+          "completedAt": "2026-03-06T21:41:42.295Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatementPrint.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.296Z",
+          "completedAt": "2026-03-06T21:41:42.298Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementPrintStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.300Z",
+          "completedAt": "2026-03-06T21:41:42.301Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatementPrint.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.303Z",
+          "completedAt": "2026-03-06T21:41:42.306Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPrintPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.308Z",
+          "completedAt": "2026-03-06T21:41:42.311Z",
+          "duration": 1
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.312Z",
+          "completedAt": "2026-03-06T21:41:42.316Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementPrintStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.318Z",
+          "completedAt": "2026-03-06T21:41:42.325Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPrintPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-71.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-71.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-71.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatementPrint.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementPrintStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatementPrint.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPrintPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementPrintStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPrintPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T21:41:42.280Z",
+      "completedAt": "2026-03-06T21:41:42.327Z"
+    },
+    "73": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.354Z",
+          "completedAt": "2026-03-06T21:41:42.365Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-73.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.367Z",
+          "completedAt": "2026-03-06T21:41:42.367Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-73.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.369Z",
+          "completedAt": "2026-03-06T21:41:42.371Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-73.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.373Z",
+          "completedAt": "2026-03-06T21:41:42.375Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatementPrint.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.377Z",
+          "completedAt": "2026-03-06T21:41:42.379Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementPrintStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.380Z",
+          "completedAt": "2026-03-06T21:41:42.382Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatementPrint.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.384Z",
+          "completedAt": "2026-03-06T21:41:42.387Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPrintPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.388Z",
+          "completedAt": "2026-03-06T21:41:42.391Z",
+          "duration": 0
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.393Z",
+          "completedAt": "2026-03-06T21:41:42.395Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementPrintStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T21:41:42.396Z",
+          "completedAt": "2026-03-06T21:41:42.406Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPrintPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-73.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-73.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-73.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatementPrint.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementPrintStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatementPrint.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPrintPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementPrintStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPrintPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T21:41:42.354Z",
+      "completedAt": "2026-03-06T21:41:42.408Z"
+    },
+    "74": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:51:08.438Z",
+          "completedAt": "2026-03-06T16:51:08.566Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-74.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:51:08.568Z",
+          "completedAt": "2026-03-06T16:51:08.578Z",
+          "duration": 10,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-74.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:51:08.579Z",
+          "completedAt": "2026-03-06T16:51:25.975Z",
+          "duration": 17396,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-74.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:51:25.979Z",
+          "completedAt": "2026-03-06T16:51:34.515Z",
+          "duration": 8536,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\printExtrait.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:51:34.518Z",
+          "completedAt": "2026-03-06T16:51:57.001Z",
+          "duration": 22483,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\printExtraitStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:51:57.003Z",
+          "completedAt": "2026-03-06T16:52:02.362Z",
+          "duration": 5358,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-printExtrait.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:52:02.364Z",
+          "completedAt": "2026-03-06T16:52:32.428Z",
+          "duration": 30064,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\PrintExtraitPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:52:32.431Z",
+          "completedAt": "2026-03-06T16:53:12.312Z",
+          "duration": 39881
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:53:12.314Z",
+          "completedAt": "2026-03-06T16:53:52.418Z",
+          "duration": 40104,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\printExtraitStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:53:52.420Z",
+          "completedAt": "2026-03-06T16:54:20.699Z",
+          "duration": 28278,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\PrintExtraitPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-74.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-74.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-74.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\printExtrait.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\printExtraitStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-printExtrait.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\PrintExtraitPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\printExtraitStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\PrintExtraitPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T16:51:08.438Z",
+      "completedAt": "2026-03-06T16:54:20.701Z"
+    },
+    "76": {
+      "status": "completed",
+      "currentPhase": null,
+      "phases": {
+        "spec": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:20.718Z",
+          "completedAt": "2026-03-06T16:54:20.718Z",
+          "duration": 0,
+          "file": "..\\..\\.openspec\\specs\\ADH-IDE-76.md"
+        },
+        "contract": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:20.719Z",
+          "completedAt": "2026-03-06T16:54:20.735Z",
+          "duration": 15,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-76.contract.yaml"
+        },
+        "analyze": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:20.737Z",
+          "completedAt": "2026-03-06T16:54:37.226Z",
+          "duration": 16489,
+          "file": "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-76.analysis.json"
+        },
+        "types": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:37.230Z",
+          "completedAt": "2026-03-06T16:54:37.230Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatement.ts"
+        },
+        "store": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:37.232Z",
+          "completedAt": "2026-03-06T16:54:37.233Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementStore.ts"
+        },
+        "api": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:37.234Z",
+          "completedAt": "2026-03-06T16:54:37.235Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatement.ts"
+        },
+        "page": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:37.236Z",
+          "completedAt": "2026-03-06T16:54:37.236Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPage.tsx"
+        },
+        "components": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:54:37.238Z",
+          "completedAt": "2026-03-06T16:55:00.782Z",
+          "duration": 23544
+        },
+        "tests-unit": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:55:00.784Z",
+          "completedAt": "2026-03-06T16:55:00.784Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementStore.test.ts"
+        },
+        "tests-ui": {
+          "status": "completed",
+          "startedAt": "2026-03-06T16:55:00.787Z",
+          "completedAt": "2026-03-06T16:55:00.787Z",
+          "duration": 0,
+          "file": "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPage.test.tsx"
+        }
+      },
+      "files": [
+        "..\\..\\.openspec\\specs\\ADH-IDE-76.md",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-76.contract.yaml",
+        "..\\..\\.openspec\\migration\\ADH\\ADH-IDE-76.analysis.json",
+        "..\\..\\packages\\migrations\\adh-web\\src\\types\\accountStatement.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\stores\\accountStatementStore.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\services\\api\\endpoints-accountStatement.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\pages\\AccountStatementPage.tsx",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\accountStatementStore.test.ts",
+        "..\\..\\packages\\migrations\\adh-web\\src\\__tests__\\AccountStatementPage.test.tsx"
+      ],
+      "errors": [],
+      "startedAt": "2026-03-06T16:54:20.718Z",
+      "completedAt": "2026-03-06T16:55:00.788Z"
     },
     "77": {
       "status": "completed",
