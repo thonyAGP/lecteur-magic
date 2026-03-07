@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
+    "@magic-migration/data-model": "workspace:*",
     "@magic-migration/parser": "workspace:*",
     "better-sqlite3": "^12.6.2",
     "chalk": "^5.4.1",
