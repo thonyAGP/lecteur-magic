@@ -721,10 +721,11 @@ CREATE TABLE IF NOT EXISTS variable_modifications (
 - [ ] Documentation utilisateur API
 
 ### En cours
-- [ ] **CHG-002** Quick Fixes Pipeline V7.2 - Réduire durée 10h→3-4h (en cours: 2026-03-07)
+- [ ] **CHG-003** Pipeline V8 avec PARSE + DATA_MODEL - Coverage 85%+ (en cours: 2026-03-07)
 - [x] **P1.1** Reparer connexion MCP magic-interpreter (en cours: 2026-01-10)
 
 ### Terminees
+- [x] **CHG-002** Quick Fixes Pipeline V7.2 (terminée: 2026-03-07) - Durée -97%, timeout -100%, parallel 4x, tokens -88%. Commits: 28c524c3, 587259db. Tests: 993/993 passed. Validation: MOD_EXTRAIT 18m51s.
 - [x] **AUDIT PDCA Phase 1** (terminee: 2026-01-27) - Archive parsers v1-v4, README scripts (66), +4 patterns KB (16 total), Tests MCP 88/88. Scorecard global: MCP A+, Patterns B+, Migration C
 - [x] **Synergie Ecosysteme Tiers 1-5** (terminee: 2026-01-25) - Feedback loop, Pattern sync FTS5, Variable lineage, ECF Registry, Change Impact Analysis. 14 outils MCP, 5 commandes KbIndexRunner, Schema v5. 762 composants partagés
 - [x] **Amelioration Systeme Analyse Tickets + Migration Specs** (terminee: 2026-01-24) - Schema v2 (3 tables), ExpressionCacheService, auto-capitalize, track-metrics, MigrationExtractor, Generate-MigrationSpec
