@@ -51,6 +51,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^4.0.18",
+    "handlebars": "^4.7.8",
     "pm2": "^6.0.14",
     "tsx": "^4.21.0",
     "typescript": "^5.9.0",

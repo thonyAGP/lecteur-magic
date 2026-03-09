@@ -640,9 +640,8 @@ export const handleAnalyzeGet = async (
 export const handleTokensGet = (ctx: RouteContext, query: URLSearchParams, res: ServerResponse): void => {
   const dir = query.get('dir') ?? ctx.dir;
   const config = resolveConfig({ ...ctx, dir });
-  const migrationDir = path.join(config.migrationDir, config.contractSubDir);
 
-  const data = getTokensData(migrationDir);
+  const data = getTokensData(config.migrationDir);
   if (!data) {
     json(res, { global: { input: 0, output: 0, costUsd: 0, totalCalls: 0 }, batches: {}, programs: {} });
     return;
@@ -664,9 +663,8 @@ export const handleTokensBatchGet = (ctx: RouteContext, query: URLSearchParams, 
   }
 
   const config = resolveConfig({ ...ctx, dir });
-  const migrationDir = path.join(config.migrationDir, config.contractSubDir);
 
-  const data = getBatchTokens(migrationDir, batch);
+  const data = getBatchTokens(config.migrationDir, batch);
   if (!data) {
     json(res, { input: 0, output: 0, costUsd: 0, perPhase: {} });
     return;
@@ -688,9 +686,8 @@ export const handleTokensProgramGet = (ctx: RouteContext, query: URLSearchParams
   }
 
   const config = resolveConfig({ ...ctx, dir });
-  const migrationDir = path.join(config.migrationDir, config.contractSubDir);
 
-  const data = getProgramTokens(migrationDir, program);
+  const data = getProgramTokens(config.migrationDir, program);
   if (!data) {
     json(res, { input: 0, output: 0, costUsd: 0 });
     return;

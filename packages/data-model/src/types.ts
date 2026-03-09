@@ -45,3 +45,21 @@ export interface GlobalVarMapping {
   description?: string;
   usedInPrograms: number[];
 }
+
+/**
+ * VG Registry - Full scan of all VG variables across programs
+ */
+export interface VgRegistryEntry {
+  vgId: number;
+  name: string;
+  type: string;
+  category: 'SESSION' | 'RIGHTS' | 'CONFIG' | 'BUSINESS' | 'UNKNOWN';
+  definedIn: number[];  // program IDs where VG is defined/written
+  usedIn: number[];     // program IDs where VG is read/referenced
+}
+
+export interface VgRegistry {
+  generated: string;
+  totalVars: number;
+  variables: VgRegistryEntry[];
+}

@@ -2,7 +2,7 @@
   "version": "1.0",
   "methodology": "SPECMAP",
   "created": "2026-02-25",
-  "updated": "2026-03-02",
+  "updated": "2026-03-07",
   "status": "active",
   "stats": {
     "total_programs": 10,
@@ -13,7 +13,7 @@
     "enriched": 1,
     "verified": 0,
     "max_level": 3,
-    "last_computed": "2026-03-02T18:37:05.648Z"
+    "last_computed": "2026-03-07T12:35:35.957Z"
   },
   "batches": [
     {
@@ -61,7 +61,7 @@
       "root": 105,
       "programs": 1,
       "status": "contracted",
-      "contracted_date": "2026-03-02",
+      "contracted_date": "2026-03-07",
       "stats": {
         "backend_na": 0,
         "frontend_enrich": 0,
