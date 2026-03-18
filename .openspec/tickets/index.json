@@ -178,6 +178,15 @@
                              "program":  "ADH IDE 247 (DEVERSEMENT) + Vente GP",
                              "rootCause":  "Vente ecrit service label au lieu de description OD dans col 6 source, DEVERSEMENT copie fidelement",
                              "createdDate":  "2026-02-04"
+                         },
+                         {
+                             "hasLocalData":  true,
+                             "status":  "analyse-complete",
+                             "key":  "PMS-1521",
+                             "summary":  "POS SKI: evolution pour LOCATION CASQUE - EPI Settings",
+                             "lastAnalysis":  "2026-03-18",
+                             "program":  "PVE Prg_178 - Menu Equipment inventory",
+                             "createdDate":  "2026-03-17"
                          }
                      ],
     "tickets":  []
